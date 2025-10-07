@@ -5,6 +5,8 @@ A Model Context Protocol (MCP) server providing **human-like memory dynamics** f
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 
+> **📖 New to this project?** Start with the [ELI5 Guide](ELI5.md) for a simple explanation of what this does and how to use it.
+
 ## Overview
 
 This repository contains research, design, and a complete implementation of a short-term memory system that combines:
@@ -205,15 +207,13 @@ Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_
         "/path/to/stm-research",
         "run",
         "stm-server"
-      ],
-      "env": {
-        "STM_STORAGE_PATH": "~/.stm/jsonl",
-        "LTM_VAULT_PATH": "~/Documents/Obsidian/Vault"
-      }
+      ]
     }
   }
 }
 ```
+
+**Note:** Storage paths are configured in your `.env` file, not in the MCP config. The server reads all configuration from `.env` automatically.
 
 ### Maintenance
 

@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [0.3.0] - 2025-10-07
 
 ### Added
+- **ELI5.md** - Simple, beginner-friendly guide explaining what this project does and how to use it.
 - Decay models: power-law (default), exponential, and two-component with configurable parameters.
 - Unified search surfaced as an MCP tool (`search_unified`) alongside the CLI (`stm-search`).
 - Maintenance CLI (`stm-maintenance`) to show JSONL storage stats and compact files.
