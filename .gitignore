@@ -6,6 +6,7 @@ AGENTS.md
 .claude/
 .gemini/
 .codex/
+research/
 
 # Python
 __pycache__/
