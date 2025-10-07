@@ -211,6 +211,92 @@ if matches_explicit_recall(message):
 - Acknowledge briefly: "Got it" or "I'll remember that"
 - Don't over-explain: No "I've saved this to memory ID..."
 
+### 6. Direct to Long-Term Storage (Permanent Memory)
+
+**When to trigger:**
+- User explicitly requests permanent/permanent storage
+- User uses emphatic language about never forgetting
+- User wants to make a formal note for future reference
+- Critical information that should never decay
+
+**Trigger Phrases:**
+
+```
+"Never forget this..."
+"Make a note..."
+"Write this down..."
+"Document this..."
+"Record this permanently..."
+"Add to my permanent notes..."
+"Save to my knowledge base..."
+```
+
+**Examples:**
+
+```
+User: "Never forget that the API key rotation happens on the 1st of each month"
+→ Save directly to LTM (Obsidian vault)
+→ Folder: stm-promoted or appropriate category
+→ No STM decay - permanent immediately
+
+User: "Make a note: Sarah prefers she/her pronouns"
+→ Save directly to LTM
+→ Tag: [personal, preferences, pronouns]
+→ Acknowledge: "Noted."
+
+User: "Write this down - the production server IP is 192.168.1.100"
+→ Save directly to LTM
+→ High importance permanent record
+→ Acknowledge briefly
+```
+
+**Implementation Pattern:**
+
+```python
+# Detect direct-to-LTM phrases
+direct_ltm_phrases = [
+    "never forget", "make a note", "write this down",
+    "document this", "record this permanently",
+    "add to my permanent notes", "save to my knowledge base"
+]
+
+if matches_direct_ltm(message):
+    # Skip STM entirely - go straight to vault
+    await write_to_vault(
+        content=extract_content(message),
+        folder=infer_folder(message),  # e.g., "stm-promoted", "critical-info"
+        tags=infer_tags(message),
+        frontmatter={
+            "source": "direct_user_request",
+            "priority": "permanent",
+            "created": datetime.now().isoformat()
+        }
+    )
+    # Acknowledge briefly: "Noted." or "Got it, recorded permanently."
+```
+
+**Key Differences from Regular Explicit Saves:**
+
+| Phrase Type | Destination | Decay | Strength | Use Case |
+|-------------|-------------|-------|----------|----------|
+| Auto-save ("I prefer...") | STM | Yes (3-day half-life) | 1.0 | Normal context |
+| Explicit ("Remember that...") | STM | Yes (slower decay) | 1.5-2.0 | Important info |
+| Direct to LTM ("Never forget...") | LTM vault | No decay | N/A (permanent) | Critical/permanent |
+
+**Acknowledgment Patterns:**
+
+```
+Good:
+- "Noted."
+- "Recorded."
+- "Got it, saved permanently."
+- "I've made a note of that."
+
+Bad:
+- "I've written this to file://vault/notes/mem_123.md with YAML frontmatter..."
+- "Should I also save this to short-term memory?"
+```
+
 ## System Prompt Template
 
 ### For AI Assistants Using STM
@@ -241,7 +327,13 @@ You have access to a short-term memory (STM) system with temporal decay. Use it 
    - No user notification needed - happens invisibly
    - Use unified search to access both STM and LTM seamlessly
 
-5. **Be Natural**
+5. **Direct to Permanent Storage**
+   - When user says "Never forget...", "Make a note...", "Write this down..."
+   - Save directly to LTM (Obsidian vault) bypassing STM
+   - No decay, permanent immediately
+   - Acknowledge briefly: "Noted." or "Recorded."
+
+6. **Be Natural**
    - Don't announce "I'm saving this to memory"
    - Don't say "I found 3 matching memories"
    - Don't ask "Should I save this permanently?"
@@ -270,11 +362,29 @@ You: "Let me search my memory... I found 1 result: 'I prefer using Vim for code 
 
 ## Tool Usage Guidelines
 
-- `save_memory`: For preferences, decisions, facts, credentials
+- `save_memory`: For preferences, decisions, facts, credentials (to STM)
+- `write_note`: For permanent storage when user says "never forget", "make a note" (to LTM)
 - `search_memory`: For recall and context retrieval (searches both STM and LTM)
 - `touch_memory`: After successful recall to reinforce
 - `promote_memory`: System handles automatically based on score/usage
 - `gc`: System handles automatically (garbage collection)
+
+## Memory Operation Tiers
+
+**Tier 1 - Auto-save (Invisible):**
+- User: "I prefer dark mode"
+- Action: `save_memory(content="prefers dark mode", strength=1.0)`
+- Destination: STM with 3-day half-life decay
+
+**Tier 2 - Explicit (High Priority):**
+- User: "Remember that I'm allergic to peanuts"
+- Action: `save_memory(content="allergic to peanuts", strength=2.0)`
+- Destination: STM with slower decay (higher strength)
+
+**Tier 3 - Direct to Permanent:**
+- User: "Never forget: production deploy is Fridays at 3pm"
+- Action: `write_note(title="Production Deploy Schedule", content="...")`
+- Destination: LTM vault (permanent, no decay)
 ```
 
 ## Advanced Patterns
@@ -396,6 +506,7 @@ For teams implementing smart prompting:
 
 - [ ] System prompt includes auto-save, auto-recall, auto-reinforce, auto-promote patterns
 - [ ] LLM trained/prompted to detect information-sharing cues
+- [ ] Direct-to-LTM phrase detection ("never forget", "make a note", "write this down")
 - [ ] Tag inference based on conversation context
 - [ ] Natural language integration (no exposed tool calls)
 - [ ] Temporal awareness (check memory age/score before citing)
