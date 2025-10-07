@@ -156,6 +156,61 @@ for cluster in clusters:
         prompt_user_for_consolidation(cluster)
 ```
 
+### 5. Explicit Memory Requests (User-Initiated)
+
+**When to trigger:**
+- User explicitly asks you to remember something
+- User wants to ensure something is saved
+- User requests recall of specific information
+
+**Examples:**
+
+```
+User: "Remember that I prefer tabs over spaces"
+→ Save with high strength (user explicitly requested)
+
+User: "Don't forget I'm allergic to shellfish"
+→ Save with strength=2.0 (critical health info, explicit)
+
+User: "Keep in mind that we use Python 3.11"
+→ Save as normal preference
+
+User: "What did I tell you about my database setup?"
+→ Search for database memories, surface all relevant info
+```
+
+**Implementation Pattern:**
+```python
+# Detect explicit memory requests
+explicit_save_phrases = [
+    "remember that", "don't forget", "keep in mind",
+    "save this", "make a note", "store this"
+]
+
+explicit_recall_phrases = [
+    "what did i tell you about", "what do you remember about",
+    "recall", "do you remember"
+]
+
+if matches_explicit_save(message):
+    await save_memory(
+        content=extract_content(message),
+        strength=1.5,  # User-requested = important
+        meta={"source": "explicit_request"}
+    )
+    # Acknowledge naturally: "Got it, I'll remember that."
+
+if matches_explicit_recall(message):
+    results = await search_memory(query=extract_query(message))
+    # Present findings naturally
+```
+
+**Key Points:**
+- Honor explicit requests immediately
+- Use higher strength (1.5-2.0) for explicit saves
+- Acknowledge briefly: "Got it" or "I'll remember that"
+- Don't over-explain: No "I've saved this to memory ID..."
+
 ## System Prompt Template
 
 ### For AI Assistants Using STM
