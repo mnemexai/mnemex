@@ -1,6 +1,11 @@
 # Research notes and project instructions (private)
 stm-server-research.md
 CLAUDE.md
+GEMINI.md
+AGENTS.md
+.claude/
+.gemini/
+.codex/
 
 # Python
 __pycache__/
