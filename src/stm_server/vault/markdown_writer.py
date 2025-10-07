@@ -7,7 +7,7 @@ and wikilinks. Does NOT use Basic Memory MCP code (AGPL license).
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import frontmatter
 
@@ -25,7 +25,7 @@ class MarkdownWriter:
         self.vault_path = vault_path
         self.vault_path.mkdir(parents=True, exist_ok=True)
 
-    def create_wikilink(self, target: str, alias: Optional[str] = None) -> str:
+    def create_wikilink(self, target: str, alias: str | None = None) -> str:
         """
         Create a wikilink string.
 
@@ -52,11 +52,11 @@ class MarkdownWriter:
         content: str,
         folder: str = "",
         *,
-        tags: Optional[List[str]] = None,
-        metadata: Optional[Dict[str, Any]] = None,
-        wikilinks: Optional[List[str]] = None,
-        created_at: Optional[int] = None,
-        modified_at: Optional[int] = None,
+        tags: list[str] | None = None,
+        metadata: dict[str, Any] | None = None,
+        wikilinks: list[str] | None = None,
+        created_at: int | None = None,
+        modified_at: int | None = None,
     ) -> Path:
         """
         Write a markdown note to the vault.
@@ -93,12 +93,8 @@ class MarkdownWriter:
         # Build frontmatter
         fm = {
             "title": title,
-            "created": datetime.fromtimestamp(
-                created_at or int(time.time())
-            ).isoformat(),
-            "modified": datetime.fromtimestamp(
-                modified_at or int(time.time())
-            ).isoformat(),
+            "created": datetime.fromtimestamp(created_at or int(time.time())).isoformat(),
+            "modified": datetime.fromtimestamp(modified_at or int(time.time())).isoformat(),
         }
 
         if tags:
@@ -123,11 +119,11 @@ class MarkdownWriter:
     def update_note(
         self,
         file_path: Path,
-        content: Optional[str] = None,
+        content: str | None = None,
         *,
-        tags: Optional[List[str]] = None,
-        metadata: Optional[Dict[str, Any]] = None,
-        append_content: Optional[str] = None,
+        tags: list[str] | None = None,
+        metadata: dict[str, Any] | None = None,
+        append_content: str | None = None,
     ) -> None:
         """
         Update an existing note.
@@ -146,7 +142,7 @@ class MarkdownWriter:
             raise FileNotFoundError(f"Note not found: {file_path}")
 
         # Load existing note
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             post = frontmatter.load(f)
 
         # Update content
@@ -170,7 +166,7 @@ class MarkdownWriter:
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(frontmatter.dumps(post))
 
-    def read_note(self, file_path: Path) -> tuple[str, Dict[str, Any]]:
+    def read_note(self, file_path: Path) -> tuple[str, dict[str, Any]]:
         """
         Read a markdown note.
 
@@ -186,7 +182,7 @@ class MarkdownWriter:
         if not file_path.exists():
             raise FileNotFoundError(f"Note not found: {file_path}")
 
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             post = frontmatter.load(f)
 
         return post.content, dict(post.metadata)
@@ -206,7 +202,7 @@ class MarkdownWriter:
 
         file_path.unlink()
 
-    def find_note_by_title(self, title: str) -> Optional[Path]:
+    def find_note_by_title(self, title: str) -> Path | None:
         """
         Find a note by its title (from frontmatter).
 
@@ -219,7 +215,7 @@ class MarkdownWriter:
         # Search all markdown files
         for md_file in self.vault_path.rglob("*.md"):
             try:
-                with open(md_file, "r", encoding="utf-8") as f:
+                with open(md_file, encoding="utf-8") as f:
                     post = frontmatter.load(f)
                     if post.get("title") == title:
                         return md_file
@@ -285,7 +281,7 @@ class MarkdownWriter:
             return self.vault_path / folder / filename
         return self.vault_path / filename
 
-    def list_notes(self, folder: Optional[str] = None) -> List[Path]:
+    def list_notes(self, folder: str | None = None) -> list[Path]:
         """
         List all notes in vault or a specific folder.
 
@@ -393,4 +389,5 @@ def main() -> int:
 
 if __name__ == "__main__":
     import sys
+
     sys.exit(main())

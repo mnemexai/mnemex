@@ -1,19 +1,17 @@
 """Promote memory tool - move high-value memories to long-term storage."""
 
 import time
-from typing import Any, Dict, List
+from typing import Any
 
 from mcp.server import Server
-from mcp.types import Tool
 
-from ..config import get_config
 from ..core.scoring import calculate_memory_age, should_promote
 from ..integration.basic_memory import BasicMemoryIntegration
-from ..storage.database import Database
+from ..storage.jsonl_storage import JSONLStorage
 from ..storage.models import MemoryStatus, PromotionCandidate
 
 
-async def promote_handler(db: Database, arguments: Dict[str, Any]) -> Dict[str, Any]:
+async def promote_handler(db: JSONLStorage, arguments: dict[str, Any]) -> dict[str, Any]:
     """
     Handle memory promotion requests.
 
@@ -29,7 +27,7 @@ async def promote_handler(db: Database, arguments: Dict[str, Any]) -> Dict[str, 
     dry_run = arguments.get("dry_run", False)
     target = arguments.get("target", "obsidian")
 
-    config = get_config()
+    # thresholds are read in should_promote; no direct config use here
     now = int(time.time())
 
     promoted_ids = []
@@ -139,17 +137,16 @@ async def promote_handler(db: Database, arguments: Dict[str, Any]) -> Dict[str, 
             for c in candidates[:10]  # Show first 10
         ],
         "message": (
-            f"{'Would promote' if dry_run else 'Promoted'} {len(promoted_ids)} "
-            f"memories to {target}"
+            f"{'Would promote' if dry_run else 'Promoted'} {len(promoted_ids)} memories to {target}"
         ),
     }
 
 
-def register(server: Server, db: Database) -> None:
+def register(server: Server, db: JSONLStorage) -> None:
     """Register the promote memory tool with the MCP server."""
 
     @server.call_tool()
-    async def promote_memory(arguments: Dict[str, Any]) -> List[Any]:
+    async def promote_memory(arguments: dict[str, Any]) -> list[Any]:
         """
         Promote high-value memories to long-term storage.
 

@@ -1,17 +1,16 @@
 """Read graph tool - return entire knowledge graph."""
 
 import time
-from typing import Any, Dict, List
+from typing import Any
 
 from mcp.server import Server
-from mcp.types import Tool
 
 from ..core.decay import calculate_score
-from ..storage.database import Database
+from ..storage.jsonl_storage import JSONLStorage
 from ..storage.models import MemoryStatus
 
 
-async def read_graph_handler(db: Database, arguments: Dict[str, Any]) -> Dict[str, Any]:
+async def read_graph_handler(db: JSONLStorage, arguments: dict[str, Any]) -> dict[str, Any]:
     """
     Handle read graph requests.
 
@@ -95,11 +94,11 @@ async def read_graph_handler(db: Database, arguments: Dict[str, Any]) -> Dict[st
     }
 
 
-def register(server: Server, db: Database) -> None:
+def register(server: Server, db: JSONLStorage) -> None:
     """Register the read graph tool with the MCP server."""
 
     @server.call_tool()
-    async def read_graph(arguments: Dict[str, Any]) -> List[Any]:
+    async def read_graph(arguments: dict[str, Any]) -> list[Any]:
         """
         Read the entire knowledge graph of memories and relations.
 

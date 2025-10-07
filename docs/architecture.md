@@ -80,30 +80,21 @@ This prevents indefinite accumulation of unused memories.
 └─────────────────┬───────────────────┘
                   │
 ┌─────────────────▼───────────────────┐
-│        Storage Layer (SQLite)       │
-│  database, migrations, models       │
+│      Storage Layer (JSONL)          │
+│  human-readable files + models      │
 └─────────────────────────────────────┘
 ```
 
-### Database Schema
+### Storage Format (JSONL)
 
-```sql
-CREATE TABLE memories (
-    id TEXT PRIMARY KEY,
-    content TEXT NOT NULL,
-    meta TEXT NOT NULL,             -- JSON metadata
-    created_at INTEGER NOT NULL,
-    last_used INTEGER NOT NULL,
-    use_count INTEGER NOT NULL DEFAULT 0,
-    strength REAL NOT NULL DEFAULT 1.0,
-    status TEXT NOT NULL DEFAULT 'active',
-    promoted_at INTEGER,
-    promoted_to TEXT,
-    embed BLOB                      -- Optional embeddings
-);
+Each memory is stored as a JSON object, one per line, in `memories.jsonl`. Relations in `relations.jsonl`.
+
+Example line:
+```
+{"id":"...","content":"...","meta":{"tags":["..."]},"created_at":1736275200,"last_used":1736275200,"use_count":0,"strength":1.0,"status":"active"}
 ```
 
-Indexes on: `last_used`, `use_count`, `status`, `created_at`
+In-memory indexes are built at startup for fast queries; periodic compaction rewrites files to remove tombstones and duplicates.
 
 ### Memory States
 
@@ -130,7 +121,7 @@ Generate embedding (optional)
     ↓
 Create Memory object
     ↓
-Store in SQLite
+Append to JSONL storage
     ↓
 Return memory_id
 ```
@@ -242,7 +233,7 @@ For semantic search and clustering:
 
 ### Database
 
-- SQLite is fast for single-machine use
+- JSONL is simple and git-friendly for single-machine use
 - Indexes on frequently queried fields
 - BLOB storage for embeddings (efficient)
 - Typical operations: < 10ms
@@ -262,7 +253,7 @@ Current design targets:
 - Local-first architecture
 
 For larger scales, consider:
-- PostgreSQL instead of SQLite
+- External databases (e.g., PostgreSQL) are out of scope for this project
 - Vector database (e.g., Qdrant, Weaviate)
 - Distributed MCP architecture
 

@@ -2,12 +2,11 @@
 
 import math
 import uuid
-from typing import Dict, List, Tuple
 
 from ..storage.models import Cluster, ClusterConfig, Memory
 
 
-def cosine_similarity(vec1: List[float], vec2: List[float]) -> float:
+def cosine_similarity(vec1: list[float], vec2: list[float]) -> float:
     """
     Calculate cosine similarity between two vectors.
 
@@ -21,7 +20,7 @@ def cosine_similarity(vec1: List[float], vec2: List[float]) -> float:
     if len(vec1) != len(vec2):
         raise ValueError("Vectors must have the same length")
 
-    dot_product = sum(a * b for a, b in zip(vec1, vec2))
+    dot_product = sum(a * b for a, b in zip(vec1, vec2, strict=False))
     mag1 = math.sqrt(sum(a * a for a in vec1))
     mag2 = math.sqrt(sum(b * b for b in vec2))
 
@@ -31,7 +30,7 @@ def cosine_similarity(vec1: List[float], vec2: List[float]) -> float:
     return dot_product / (mag1 * mag2)
 
 
-def calculate_centroid(embeddings: List[List[float]]) -> List[float]:
+def calculate_centroid(embeddings: list[list[float]]) -> list[float]:
     """
     Calculate the centroid (average) of multiple embedding vectors.
 
@@ -57,9 +56,7 @@ def calculate_centroid(embeddings: List[List[float]]) -> List[float]:
     return centroid
 
 
-def cluster_memories_simple(
-    memories: List[Memory], config: ClusterConfig
-) -> List[Cluster]:
+def cluster_memories_simple(memories: list[Memory], config: ClusterConfig) -> list[Cluster]:
     """
     Cluster memories using simple similarity-based grouping.
 
@@ -79,8 +76,8 @@ def cluster_memories_simple(
         return []
 
     # Track which memories are in which cluster
-    memory_to_cluster: Dict[str, int] = {}
-    clusters: List[List[Memory]] = []
+    memory_to_cluster: dict[str, int] = {}
+    clusters: list[list[Memory]] = []
 
     for memory in memories_with_embed:
         if memory.embed is None:
@@ -163,8 +160,8 @@ def cluster_memories_simple(
 
 
 def find_duplicate_candidates(
-    memories: List[Memory], threshold: float = 0.88
-) -> List[Tuple[Memory, Memory, float]]:
+    memories: list[Memory], threshold: float = 0.88
+) -> list[tuple[Memory, Memory, float]]:
     """
     Find pairs of memories that are likely duplicates based on similarity.
 

@@ -1,16 +1,13 @@
 """Consolidate memory tool - LLM-driven memory merging (stub for future implementation)."""
 
-from typing import Any, Dict, List
+from typing import Any
 
 from mcp.server import Server
-from mcp.types import Tool
 
-from ..storage.database import Database
+from ..storage.jsonl_storage import JSONLStorage
 
 
-async def consolidate_handler(
-    db: Database, arguments: Dict[str, Any]
-) -> Dict[str, Any]:
+async def consolidate_handler(db: JSONLStorage, arguments: dict[str, Any]) -> dict[str, Any]:
     """
     Handle memory consolidation requests.
 
@@ -52,11 +49,11 @@ async def consolidate_handler(
     }
 
 
-def register(server: Server, db: Database) -> None:
+def register(server: Server, db: JSONLStorage) -> None:
     """Register the consolidate memory tool with the MCP server."""
 
     @server.call_tool()
-    async def consolidate_memories(arguments: Dict[str, Any]) -> List[Any]:
+    async def consolidate_memories(arguments: dict[str, Any]) -> list[Any]:
         """
         Consolidate similar memories using LLM-driven merging (NOT YET IMPLEMENTED).
 

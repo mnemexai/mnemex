@@ -9,8 +9,8 @@
         "stm-server"
       ],
       "env": {
-        "STM_DB_PATH": "/Users/your-username/.stm/memories.db",
-        "BASIC_MEMORY_PATH": "/Users/your-username/Documents/Obsidian/Vault",
+        "STM_STORAGE_PATH": "/Users/your-username/.stm/jsonl",
+        "LTM_VAULT_PATH": "/Users/your-username/Documents/Obsidian/Vault",
         "STM_DECAY_LAMBDA": "2.673e-6",
         "STM_DECAY_BETA": "0.6",
         "STM_FORGET_THRESHOLD": "0.05",

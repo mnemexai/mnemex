@@ -3,7 +3,6 @@
 import math
 import os
 from pathlib import Path
-from typing import Optional
 
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field, field_validator
@@ -21,10 +20,10 @@ class Config(BaseModel):
         description="Path to JSONL storage directory",
     )
 
-    # Legacy database (Phase 1 - for migration)
-    db_path: Path = Field(
-        default_factory=lambda: Path.home() / ".stm" / "memories.db",
-        description="Path to SQLite database file (legacy)",
+    # Decay model selection
+    decay_model: str = Field(
+        default="power_law",  # options: power_law, exponential, two_component
+        description="Decay model to use: power_law | exponential | two_component",
     )
 
     # Decay parameters
@@ -37,6 +36,36 @@ class Config(BaseModel):
         default=0.6,
         description="Exponent for use_count in scoring function",
         ge=0,
+    )
+
+    # Power-law parameters
+    pl_alpha: float = Field(
+        default=1.1,
+        description="Power-law shape parameter alpha (heavier tail for higher alpha)",
+        gt=0,
+    )
+    pl_halflife_days: float = Field(
+        default=3.0,
+        description="Target half-life in days for power-law used to derive t0",
+        gt=0,
+    )
+
+    # Two-component exponential parameters
+    tc_lambda_fast: float = Field(
+        default=1.603e-5,  # ~12h half-life
+        description="Fast component decay constant",
+        gt=0,
+    )
+    tc_lambda_slow: float = Field(
+        default=1.147e-6,  # ~7d half-life
+        description="Slow component decay constant",
+        gt=0,
+    )
+    tc_weight_fast: float = Field(
+        default=0.7,
+        description="Weight for fast component (0-1)",
+        ge=0,
+        le=1,
     )
 
     # Thresholds
@@ -101,11 +130,11 @@ class Config(BaseModel):
     )
 
     # Long-Term Memory (LTM) Integration
-    ltm_vault_path: Optional[Path] = Field(
+    ltm_vault_path: Path | None = Field(
         default=None,
         description="Path to Obsidian vault for LTM storage and search",
     )
-    ltm_index_path: Optional[Path] = Field(
+    ltm_index_path: Path | None = Field(
         default=None,
         description="Path to LTM index file (default: vault/.stm-index.jsonl)",
     )
@@ -137,11 +166,8 @@ class Config(BaseModel):
         ge=0,
     )
 
-    # Legacy Integration (Phase 1 - deprecated)
-    basic_memory_path: Optional[Path] = Field(
-        default=None,
-        description="Path to Obsidian vault for Basic Memory integration (deprecated, use ltm_vault_path)",
-    )
+    # Legacy Integration (deprecated) — removed
+    basic_memory_path: Path | None | None = None
 
     # Logging
     log_level: str = Field(
@@ -149,16 +175,9 @@ class Config(BaseModel):
         description="Logging level",
     )
 
-    @field_validator(
-        "storage_path",
-        "db_path",
-        "ltm_vault_path",
-        "ltm_index_path",
-        "basic_memory_path",
-        mode="before"
-    )
+    @field_validator("storage_path", "ltm_vault_path", "ltm_index_path", mode="before")
     @classmethod
-    def expand_path(cls, v: Optional[str | Path]) -> Optional[Path]:
+    def expand_path(cls, v: str | Path | None) -> Path | None:
         """Expand home directory and environment variables in paths."""
         if v is None:
             return None
@@ -174,15 +193,27 @@ class Config(BaseModel):
         if storage_path := os.getenv("STM_STORAGE_PATH"):
             config_dict["storage_path"] = storage_path
 
-        # Legacy database
-        if db_path := os.getenv("STM_DB_PATH"):
-            config_dict["db_path"] = db_path
-
         # Decay parameters
+        if decay_model := os.getenv("STM_DECAY_MODEL"):
+            config_dict["decay_model"] = decay_model
         if decay_lambda := os.getenv("STM_DECAY_LAMBDA"):
             config_dict["decay_lambda"] = float(decay_lambda)
         if decay_beta := os.getenv("STM_DECAY_BETA"):
             config_dict["decay_beta"] = float(decay_beta)
+
+        # Power-law
+        if pl_alpha := os.getenv("STM_PL_ALPHA"):
+            config_dict["pl_alpha"] = float(pl_alpha)
+        if pl_halflife_days := os.getenv("STM_PL_HALFLIFE_DAYS"):
+            config_dict["pl_halflife_days"] = float(pl_halflife_days)
+
+        # Two-component
+        if tc_lambda_fast := os.getenv("STM_TC_LAMBDA_FAST"):
+            config_dict["tc_lambda_fast"] = float(tc_lambda_fast)
+        if tc_lambda_slow := os.getenv("STM_TC_LAMBDA_SLOW"):
+            config_dict["tc_lambda_slow"] = float(tc_lambda_slow)
+        if tc_weight_fast := os.getenv("STM_TC_WEIGHT_FAST"):
+            config_dict["tc_weight_fast"] = float(tc_weight_fast)
 
         # Thresholds
         if forget_threshold := os.getenv("STM_FORGET_THRESHOLD"):
@@ -232,12 +263,7 @@ class Config(BaseModel):
         if search_ltm_weight := os.getenv("SEARCH_LTM_WEIGHT"):
             config_dict["search_ltm_weight"] = float(search_ltm_weight)
 
-        # Legacy Integration
-        if basic_memory_path := os.getenv("BASIC_MEMORY_PATH"):
-            config_dict["basic_memory_path"] = basic_memory_path
-            # Auto-migrate to ltm_vault_path if not explicitly set
-            if "ltm_vault_path" not in config_dict:
-                config_dict["ltm_vault_path"] = basic_memory_path
+        # Legacy Integration (ignored)
 
         # Logging
         if log_level := os.getenv("LOG_LEVEL"):
@@ -245,9 +271,7 @@ class Config(BaseModel):
 
         return cls(**config_dict)
 
-    def ensure_db_dir(self) -> None:
-        """Ensure the database directory exists."""
-        self.db_path.parent.mkdir(parents=True, exist_ok=True)
+    # No-op: JSONL storage ensures its own directory
 
 
 def calculate_decay_lambda_from_halflife(halflife_days: float) -> float:
@@ -265,7 +289,7 @@ def calculate_decay_lambda_from_halflife(halflife_days: float) -> float:
 
 
 # Global configuration instance
-_config: Optional[Config] = None
+_config: Config | None = None
 
 
 def get_config() -> Config:

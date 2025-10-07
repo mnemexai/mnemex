@@ -92,6 +92,42 @@ Search for memories with optional filters and scoring.
 
 ---
 
+### search_unified
+
+Search across STM (JSONL) and LTM (Obsidian vault index) with unified ranking and deduplication.
+
+**Parameters:**
+
+| Name | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `query` | string | No | - | Text query to search for |
+| `tags` | array[string] | No | - | Filter by tags |
+| `limit` | integer | No | 10 | Maximum total results |
+| `stm_weight` | number | No | 1.0 | Weight for STM results |
+| `ltm_weight` | number | No | 0.7 | Weight for LTM results |
+| `window_days` | integer | No | - | Only include STM from last N days |
+| `min_score` | number | No | - | Minimum STM decay score |
+| `verbose` | boolean | No | false | Include metadata (IDs, paths) |
+
+**Returns:** formatted text block combining STM and LTM results ordered by score.
+
+**Example:**
+
+```json
+{
+  "query": "typescript preferences",
+  "tags": ["preferences"],
+  "limit": 8,
+  "stm_weight": 1.0,
+  "ltm_weight": 0.7,
+  "window_days": 14,
+  "min_score": 0.1,
+  "verbose": true
+}
+```
+
+---
+
 ### touch_memory
 
 Reinforce a memory by updating its access time and use count.
@@ -382,7 +418,7 @@ Common errors:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `STM_DB_PATH` | `~/.stm/memories.db` | Database file path |
+| `STM_STORAGE_PATH` | `~/.stm/jsonl` | JSONL storage directory |
 | `STM_DECAY_LAMBDA` | `2.673e-6` | Decay constant |
 | `STM_DECAY_BETA` | `0.6` | Use count exponent |
 | `STM_FORGET_THRESHOLD` | `0.05` | Forgetting threshold |
@@ -413,3 +449,14 @@ STM_PROMOTE_USE_COUNT=3
 ```bash
 STM_FORGET_THRESHOLD=0.01
 ```
+
+---
+
+## Maintenance
+
+Use the CLI to manage JSONL storage:
+
+- `stm-maintenance stats` — prints `get_storage_stats()` including active counts and compaction hints
+- `stm-maintenance compact` — compacts JSONL files to remove tombstones and duplicates
+
+Optionally specify a path: `stm-maintenance --storage-path ~/.stm/jsonl stats`

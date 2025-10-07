@@ -1,17 +1,16 @@
 """Cluster memory tool - find similar memories for consolidation."""
 
-from typing import Any, Dict, List
+from typing import Any
 
 from mcp.server import Server
-from mcp.types import Tool
 
 from ..config import get_config
 from ..core.clustering import cluster_memories_simple, find_duplicate_candidates
-from ..storage.database import Database
+from ..storage.jsonl_storage import JSONLStorage
 from ..storage.models import ClusterConfig, MemoryStatus
 
 
-async def cluster_handler(db: Database, arguments: Dict[str, Any]) -> Dict[str, Any]:
+async def cluster_handler(db: JSONLStorage, arguments: dict[str, Any]) -> dict[str, Any]:
     """
     Handle memory clustering requests.
 
@@ -86,11 +85,11 @@ async def cluster_handler(db: Database, arguments: Dict[str, Any]) -> Dict[str, 
     }
 
 
-def register(server: Server, db: Database) -> None:
+def register(server: Server, db: JSONLStorage) -> None:
     """Register the cluster memory tool with the MCP server."""
 
     @server.call_tool()
-    async def cluster_memories(arguments: Dict[str, Any]) -> List[Any]:
+    async def cluster_memories(arguments: dict[str, Any]) -> list[Any]:
         """
         Cluster similar memories for potential consolidation.
 

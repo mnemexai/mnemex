@@ -2,13 +2,13 @@
 
 import logging
 import sys
-from typing import Any
 
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
 
 from .config import get_config
-from .storage.database import Database
+from .core.decay import calculate_halflife
+from .storage.jsonl_storage import JSONLStorage
 from .tools import (
     cluster_tool,
     consolidate_tool,
@@ -19,18 +19,21 @@ from .tools import (
     read_graph_tool,
     save_tool,
     search_tool,
+    search_unified_tool,
     touch_tool,
 )
 
 # Initialize logging
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 
 def create_server() -> Server:
     """Create and configure the MCP server instance."""
     config = get_config()
-    config.ensure_db_dir()
+    # Ensure storage directory exists is handled by JSONLStorage
 
     # Set logging level from config
     logging.getLogger().setLevel(config.log_level)
@@ -39,14 +42,37 @@ def create_server() -> Server:
     server = Server("stm-server")
 
     logger.info("Initializing STM server")
-    logger.info(f"Database: {config.db_path}")
-    logger.info(f"Decay lambda: {config.decay_lambda} (halflife ~{0.693/config.decay_lambda/86400:.1f} days)")
+    logger.info(f"Storage (JSONL): {get_config().storage_path}")
+    # Log decay model details
+    model = getattr(config, "decay_model", "power_law")
+    if model == "power_law":
+        logger.info(
+            "Decay model: power_law (alpha=%.3f, halflife=%.1f days)",
+            config.pl_alpha,
+            config.pl_halflife_days,
+        )
+    elif model == "two_component":
+        hl_fast = calculate_halflife(config.tc_lambda_fast)
+        hl_slow = calculate_halflife(config.tc_lambda_slow)
+        logger.info(
+            "Decay model: two_component (w_fast=%.2f, hl_fast=%.1f d, hl_slow=%.1f d)",
+            config.tc_weight_fast,
+            hl_fast,
+            hl_slow,
+        )
+    else:  # exponential
+        hl = calculate_halflife(config.decay_lambda)
+        logger.info(
+            "Decay model: exponential (lambda=%.3e, halflife=%.1f days)",
+            config.decay_lambda,
+            hl,
+        )
     logger.info(f"Embeddings: {'enabled' if config.enable_embeddings else 'disabled'}")
 
-    # Initialize database connection
-    db = Database()
+    # Initialize JSONL storage
+    db = JSONLStorage()
     db.connect()
-    logger.info(f"Database initialized with {db.count_memories()} memories")
+    logger.info(f"Storage initialized with {db.count_memories()} memories")
 
     # Register tools
     save_tool.register(server, db)
@@ -59,8 +85,9 @@ def create_server() -> Server:
     read_graph_tool.register(server, db)
     open_memories_tool.register(server, db)
     create_relation_tool.register(server, db)
+    search_unified_tool.register(server, db)
 
-    logger.info("All tools registered (10 tools)")
+    logger.info("All tools registered (11 tools including unified search)")
 
     return server
 
@@ -73,11 +100,7 @@ async def main() -> None:
         # Run server with stdio transport
         async with stdio_server() as (read_stream, write_stream):
             logger.info("STM server started, awaiting connections...")
-            await server.run(
-                read_stream,
-                write_stream,
-                server.create_initialization_options()
-            )
+            await server.run(read_stream, write_stream, server.create_initialization_options())
     except Exception as e:
         logger.error(f"Server error: {e}", exc_info=True)
         sys.exit(1)
@@ -85,4 +108,5 @@ async def main() -> None:
 
 if __name__ == "__main__":
     import asyncio
+
     asyncio.run(main())

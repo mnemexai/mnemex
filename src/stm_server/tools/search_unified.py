@@ -6,13 +6,12 @@ with temporal ranking and result merging.
 
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from ..config import get_config
 from ..core.decay import calculate_score
 from ..storage.jsonl_storage import JSONLStorage
 from ..storage.ltm_index import LTMIndex
-from ..storage.models import Memory, SearchResult
 
 
 class UnifiedSearchResult:
@@ -24,11 +23,11 @@ class UnifiedSearchResult:
         title: str,
         source: str,  # "stm" or "ltm"
         score: float,
-        path: Optional[str] = None,
-        memory_id: Optional[str] = None,
-        tags: Optional[List[str]] = None,
-        created_at: Optional[int] = None,
-        last_used: Optional[int] = None,
+        path: str | None = None,
+        memory_id: str | None = None,
+        tags: list[str] | None = None,
+        created_at: int | None = None,
+        last_used: int | None = None,
     ):
         self.content = content
         self.title = title
@@ -40,7 +39,7 @@ class UnifiedSearchResult:
         self.created_at = created_at
         self.last_used = last_used
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary."""
         return {
             "content": self.content,
@@ -56,15 +55,15 @@ class UnifiedSearchResult:
 
 
 def search_unified(
-    query: Optional[str] = None,
-    tags: Optional[List[str]] = None,
+    query: str | None = None,
+    tags: list[str] | None = None,
     limit: int = 10,
     *,
     stm_weight: float = 1.0,
     ltm_weight: float = 0.7,
-    window_days: Optional[int] = None,
-    min_score: Optional[float] = None,
-) -> List[UnifiedSearchResult]:
+    window_days: int | None = None,
+    min_score: float | None = None,
+) -> list[UnifiedSearchResult]:
     """
     Search across both STM and LTM with unified ranking.
 
@@ -88,7 +87,7 @@ def search_unified(
         - Sort by combined score
     """
     config = get_config()
-    results: List[UnifiedSearchResult] = []
+    results: list[UnifiedSearchResult] = []
 
     # Search STM
     try:
@@ -104,10 +103,7 @@ def search_unified(
         # Apply text query filter if provided
         if query:
             query_lower = query.lower()
-            stm_memories = [
-                m for m in stm_memories
-                if query_lower in m.content.lower()
-            ]
+            stm_memories = [m for m in stm_memories if query_lower in m.content.lower()]
 
         # Convert to unified results with decay scores
         now = int(time.time())
@@ -126,16 +122,18 @@ def search_unified(
             # Apply STM weight
             weighted_score = score * stm_weight
 
-            results.append(UnifiedSearchResult(
-                content=memory.content,
-                title=f"Memory {memory.id[:8]}",
-                source="stm",
-                score=weighted_score,
-                memory_id=memory.id,
-                tags=memory.meta.tags,
-                created_at=memory.created_at,
-                last_used=memory.last_used,
-            ))
+            results.append(
+                UnifiedSearchResult(
+                    content=memory.content,
+                    title=f"Memory {memory.id[:8]}",
+                    source="stm",
+                    score=weighted_score,
+                    memory_id=memory.id,
+                    tags=memory.meta.tags,
+                    created_at=memory.created_at,
+                    last_used=memory.last_used,
+                )
+            )
 
         storage.close()
 
@@ -145,7 +143,7 @@ def search_unified(
     # Search LTM
     try:
         # Check if vault path is configured
-        vault_path = getattr(config, 'ltm_vault_path', None)
+        vault_path = getattr(config, "ltm_vault_path", None)
         if vault_path:
             vault_path = Path(vault_path).expanduser()
 
@@ -177,14 +175,16 @@ def search_unified(
                     # Apply LTM weight
                     weighted_score = relevance_score * ltm_weight
 
-                    results.append(UnifiedSearchResult(
-                        content=doc.content[:500],  # Truncate long content
-                        title=doc.title,
-                        source="ltm",
-                        score=weighted_score,
-                        path=doc.path,
-                        tags=doc.tags,
-                    ))
+                    results.append(
+                        UnifiedSearchResult(
+                            content=doc.content[:500],  # Truncate long content
+                            title=doc.title,
+                            source="ltm",
+                            score=weighted_score,
+                            path=doc.path,
+                            tags=doc.tags,
+                        )
+                    )
 
     except Exception as e:
         print(f"Warning: LTM search failed: {e}")
@@ -210,7 +210,7 @@ def search_unified(
     return deduplicated
 
 
-def format_results(results: List[UnifiedSearchResult], *, verbose: bool = False) -> str:
+def format_results(results: list[UnifiedSearchResult], *, verbose: bool = False) -> str:
     """
     Format unified search results for display.
 
@@ -328,4 +328,5 @@ def main() -> int:
 
 if __name__ == "__main__":
     import sys
+
     sys.exit(main())

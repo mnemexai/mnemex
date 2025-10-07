@@ -6,10 +6,10 @@ Provides automatic commits, snapshots, and restore functionality.
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from git import Repo
-from git.exc import GitCommandError, InvalidGitRepositoryError
+from git.exc import InvalidGitRepositoryError
 
 
 class GitBackup:
@@ -25,7 +25,7 @@ class GitBackup:
         """
         self.storage_dir = storage_dir
         self.auto_commit = auto_commit
-        self.repo: Optional[Repo] = None
+        self.repo: Repo | None = None
 
         # Tracking for auto-commit
         self._last_commit_time = 0
@@ -104,7 +104,7 @@ class GitBackup:
 
         return commit.hexsha
 
-    def create_snapshot(self, message: Optional[str] = None) -> str:
+    def create_snapshot(self, message: str | None = None) -> str:
         """
         Create a snapshot (commit) of current storage state.
 
@@ -123,7 +123,7 @@ class GitBackup:
 
         return self._create_commit(message)
 
-    def auto_commit_if_needed(self) -> Optional[str]:
+    def auto_commit_if_needed(self) -> str | None:
         """
         Perform automatic commit if interval has elapsed and there are changes.
 
@@ -146,7 +146,7 @@ class GitBackup:
 
         return self._create_commit(message)
 
-    def get_history(self, limit: int = 20) -> List[Dict[str, Any]]:
+    def get_history(self, limit: int = 20) -> list[dict[str, Any]]:
         """
         Get commit history.
 
@@ -161,14 +161,16 @@ class GitBackup:
 
         commits = []
         for commit in list(self.repo.iter_commits())[:limit]:
-            commits.append({
-                "sha": commit.hexsha,
-                "short_sha": commit.hexsha[:7],
-                "message": commit.message.strip(),
-                "author": str(commit.author),
-                "timestamp": commit.committed_date,
-                "datetime": datetime.fromtimestamp(commit.committed_date).isoformat(),
-            })
+            commits.append(
+                {
+                    "sha": commit.hexsha,
+                    "short_sha": commit.hexsha[:7],
+                    "message": commit.message.strip(),
+                    "author": str(commit.author),
+                    "timestamp": commit.committed_date,
+                    "datetime": datetime.fromtimestamp(commit.committed_date).isoformat(),
+                }
+            )
 
         return commits
 
@@ -192,7 +194,7 @@ class GitBackup:
         # Reset to the specified commit
         self.repo.git.reset("--hard", commit_sha)
 
-    def get_status(self) -> Dict[str, Any]:
+    def get_status(self) -> dict[str, Any]:
         """
         Get repository status.
 
@@ -216,13 +218,16 @@ class GitBackup:
                     "sha": self.repo.head.commit.hexsha[:7],
                     "message": self.repo.head.commit.message.strip(),
                     "timestamp": self.repo.head.commit.committed_date,
-                } if self.repo.head.is_valid() else None,
+                }
+                if self.repo.head.is_valid()
+                else None,
                 "auto_commit_enabled": self.auto_commit,
                 "pending_changes": self._pending_changes,
                 "time_until_next_commit": max(
-                    0,
-                    self._commit_interval - (int(time.time()) - self._last_commit_time)
-                ) if self.auto_commit else None,
+                    0, self._commit_interval - (int(time.time()) - self._last_commit_time)
+                )
+                if self.auto_commit
+                else None,
             }
         except Exception as e:
             return {
@@ -273,7 +278,7 @@ class GitBackup:
 
         return self.repo.git.diff(commit_sha_a, commit_sha_b)
 
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """
         Get repository statistics.
 
@@ -303,7 +308,8 @@ class GitBackup:
                 "current_branch": self.repo.active_branch.name,
                 "repo_size_mb": sum(
                     f.stat().st_size for f in Path(self.repo.git_dir).rglob("*") if f.is_file()
-                ) / (1024 * 1024),
+                )
+                / (1024 * 1024),
             }
         except Exception as e:
             return {"error": str(e)}
@@ -398,4 +404,5 @@ def main() -> int:
 
 if __name__ == "__main__":
     import sys
+
     sys.exit(main())

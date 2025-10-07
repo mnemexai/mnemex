@@ -1,4 +1,10 @@
-"""Temporal decay functions for memory scoring."""
+"""Temporal decay functions for memory scoring.
+
+Supports multiple decay models:
+- power_law (default): (1 + dt/t0)^(-alpha)
+- exponential: exp(-lambda * dt)
+- two_component: w * exp(-lambda_fast*dt) + (1-w) * exp(-lambda_slow*dt)
+"""
 
 import math
 import time
@@ -12,29 +18,11 @@ def calculate_score(
     lambda_: float | None = None,
     beta: float | None = None,
 ) -> float:
-    """
-    Calculate the current score of a memory using exponential decay.
+    """Calculate current score using the configured decay model.
 
-    The formula is:
-        score = (use_count ^ beta) * exp(-lambda * time_delta) * strength
-
-    Where:
-        - use_count: Number of times the memory has been accessed
-        - beta: Exponent that weights the importance of use_count
-        - lambda: Decay constant (higher = faster decay)
-        - time_delta: Time since last use (in seconds)
-        - strength: Base strength of the memory
-
-    Args:
-        use_count: Number of times memory has been accessed
-        last_used: Unix timestamp when memory was last used
-        strength: Base strength multiplier
-        now: Current timestamp (defaults to current time)
-        lambda_: Decay constant (defaults to config value)
-        beta: Use count exponent (defaults to config value)
-
-    Returns:
-        Current score of the memory (0 to ~infinity, typically 0-100)
+    If `lambda_` is provided, uses exponential decay explicitly
+    (for backward compatibility and tests). Otherwise, branches
+    by `config.decay_model`.
     """
     from ..config import get_config
 
@@ -51,7 +39,26 @@ def calculate_score(
 
     # Calculate components
     use_component = math.pow(use_count, beta) if use_count > 0 else 0
-    decay_component = math.exp(-lambda_ * time_delta)
+    # If lambda_ explicitly provided, force exponential path
+    if lambda_ is not None and (getattr(config, "decay_model", "power_law") != "exponential"):
+        decay_component = math.exp(-lambda_ * time_delta)
+    else:
+        model = getattr(config, "decay_model", "power_law")
+        if model == "power_law":
+            # Derive t0 from alpha and target half-life
+            alpha = config.pl_alpha
+            t_half = config.pl_halflife_days * 86400.0
+            # t0 = H / (2^(1/alpha) - 1)
+            denom = math.pow(2.0, 1.0 / alpha) - 1.0
+            t0 = t_half / denom if denom > 0 else t_half
+            decay_component = math.pow(1.0 + (time_delta / t0), -alpha)
+        elif model == "two_component":
+            w = config.tc_weight_fast
+            decay_component = w * math.exp(-config.tc_lambda_fast * time_delta) + (
+                1.0 - w
+            ) * math.exp(-config.tc_lambda_slow * time_delta)
+        else:  # exponential
+            decay_component = math.exp(-lambda_ * time_delta)
 
     return use_component * decay_component * strength
 
@@ -92,35 +99,76 @@ def time_until_threshold(
     last_used: int,
     lambda_: float | None = None,
 ) -> float | None:
-    """
-    Calculate how many seconds until the memory score drops below a threshold.
+    """Calculate seconds until score drops below threshold.
 
-    Args:
-        current_score: Current memory score
-        threshold: Threshold score
-        last_used: Unix timestamp when memory was last used
-        lambda_: Decay constant (defaults to config value)
-
-    Returns:
-        Seconds until threshold, or None if already below threshold
+    If `lambda_` is provided, uses exponential closed-form.
+    Otherwise, branches by configured decay model. For two-component
+    decay, uses numeric bisection.
     """
     from ..config import get_config
 
     if current_score <= threshold:
         return None
 
-    if lambda_ is None:
-        lambda_ = get_config().decay_lambda
-
-    # From: threshold = current_score * exp(-lambda * t)
-    # Solve for t: t = -ln(threshold / current_score) / lambda
-    time_delta = -math.log(threshold / current_score) / lambda_
-
+    config = get_config()
     now = int(time.time())
-    elapsed = now - last_used
-    remaining = time_delta - elapsed
 
-    return max(0, remaining)
+    if lambda_ is not None or getattr(config, "decay_model", "power_law") == "exponential":
+        if lambda_ is None:
+            lambda_ = config.decay_lambda
+        # threshold = current_score * exp(-lambda * t) -> t = -ln(threshold/current)/lambda
+        time_delta = -math.log(threshold / current_score) / lambda_
+        elapsed = now - last_used
+        remaining = time_delta - elapsed
+        return max(0, remaining)
+
+    # Factor out K * f(dt). Let f be decay function; current_score = K * f(elapsed).
+    elapsed = now - last_used
+
+    def f(dt: float) -> float:
+        model = getattr(config, "decay_model", "power_law")
+        if model == "power_law":
+            alpha = config.pl_alpha
+            t_half = config.pl_halflife_days * 86400.0
+            denom = math.pow(2.0, 1.0 / alpha) - 1.0
+            t0 = t_half / denom if denom > 0 else t_half
+            return math.pow(1.0 + (dt / t0), -alpha)
+        elif model == "two_component":
+            return config.tc_weight_fast * math.exp(-config.tc_lambda_fast * dt) + (
+                1.0 - config.tc_weight_fast
+            ) * math.exp(-config.tc_lambda_slow * dt)
+        else:
+            return math.exp(-config.decay_lambda * dt)
+
+    # We want t such that K*f(elapsed + t) = threshold; K = current_score / f(elapsed)
+    # => f(elapsed + t) = threshold * f(elapsed) / current_score
+    f_elapsed = f(float(elapsed))
+    target = (threshold * f_elapsed) / current_score
+    # If target >= f_elapsed, then threshold already reached or below (shouldn't happen due to early return)
+
+    # Bisection search for t >= 0 with upper bound expansion
+    lo = 0.0
+    hi = 3600.0  # start with 1 hour
+    # Expand until f(elapsed + hi) <= target or cap
+    for _ in range(32):
+        if f(elapsed + hi) <= target:
+            break
+        hi *= 2.0
+        if hi > 3650 * 86400:  # cap ~10 years
+            break
+
+    # If even at very large hi we haven't crossed, return None (effectively never)
+    if f(elapsed + hi) > target:
+        return None
+
+    for _ in range(60):  # high-precision bisection
+        mid = (lo + hi) / 2.0
+        if f(elapsed + mid) <= target:
+            hi = mid
+        else:
+            lo = mid
+    remaining = hi
+    return max(0.0, remaining)
 
 
 def project_score_at_time(

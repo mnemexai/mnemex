@@ -7,7 +7,7 @@ import json
 import re
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set
+from typing import Any
 
 import frontmatter
 
@@ -20,9 +20,9 @@ class LTMDocument:
         path: str,
         title: str,
         content: str,
-        frontmatter: Dict[str, Any],
-        wikilinks: List[str],
-        tags: List[str],
+        frontmatter: dict[str, Any],
+        wikilinks: list[str],
+        tags: list[str],
         mtime: float,
         size: int,
     ):
@@ -35,7 +35,7 @@ class LTMDocument:
         self.mtime = mtime
         self.size = size
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for JSON serialization."""
         return {
             "path": self.path,
@@ -49,7 +49,7 @@ class LTMDocument:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "LTMDocument":
+    def from_dict(cls, data: dict[str, Any]) -> "LTMDocument":
         """Create from dictionary."""
         return cls(
             path=data["path"],
@@ -72,7 +72,7 @@ class LTMIndex:
     # Pattern for extracting hashtags: #tag
     HASHTAG_PATTERN = re.compile(r"#([a-zA-Z0-9_/-]+)")
 
-    def __init__(self, vault_path: Path, index_path: Optional[Path] = None):
+    def __init__(self, vault_path: Path, index_path: Path | None = None):
         """
         Initialize LTM index.
 
@@ -84,7 +84,7 @@ class LTMIndex:
         self.index_path = index_path or (vault_path / ".stm-index.jsonl")
 
         # In-memory index
-        self._documents: Dict[str, LTMDocument] = {}
+        self._documents: dict[str, LTMDocument] = {}
 
         # Statistics
         self.stats = {
@@ -94,7 +94,7 @@ class LTMIndex:
             "index_time_ms": 0,
         }
 
-    def extract_wikilinks(self, content: str) -> List[str]:
+    def extract_wikilinks(self, content: str) -> list[str]:
         """
         Extract wikilinks from markdown content.
 
@@ -107,7 +107,7 @@ class LTMIndex:
         matches = self.WIKILINK_PATTERN.findall(content)
         return list(set(matches))  # Deduplicate
 
-    def extract_hashtags(self, content: str) -> List[str]:
+    def extract_hashtags(self, content: str) -> list[str]:
         """
         Extract hashtags from markdown content.
 
@@ -120,7 +120,7 @@ class LTMIndex:
         matches = self.HASHTAG_PATTERN.findall(content)
         return list(set(matches))  # Deduplicate
 
-    def parse_markdown_file(self, file_path: Path) -> Optional[LTMDocument]:
+    def parse_markdown_file(self, file_path: Path) -> LTMDocument | None:
         """
         Parse a markdown file and extract metadata.
 
@@ -132,7 +132,7 @@ class LTMIndex:
         """
         try:
             # Read file with frontmatter parsing
-            with open(file_path, "r", encoding="utf-8") as f:
+            with open(file_path, encoding="utf-8") as f:
                 post = frontmatter.load(f)
 
             # Extract title (from frontmatter or filename)
@@ -200,7 +200,7 @@ class LTMIndex:
             print(f"Found {len(markdown_files)} markdown files in vault")
 
         # Track which files we've seen (for detecting deletions)
-        seen_paths: Set[str] = set()
+        seen_paths: set[str] = set()
 
         # Index each file
         updated_count = 0
@@ -242,7 +242,7 @@ class LTMIndex:
         }
 
         if verbose:
-            print(f"\nIndex built:")
+            print("\nIndex built:")
             print(f"  Updated: {updated_count}")
             print(f"  Skipped: {skipped_count}")
             print(f"  Deleted: {deleted_count}")
@@ -269,7 +269,7 @@ class LTMIndex:
 
         self._documents.clear()
 
-        with open(self.index_path, "r") as f:
+        with open(self.index_path) as f:
             for line in f:
                 line = line.strip()
                 if not line:
@@ -286,10 +286,10 @@ class LTMIndex:
 
     def search(
         self,
-        query: Optional[str] = None,
-        tags: Optional[List[str]] = None,
+        query: str | None = None,
+        tags: list[str] | None = None,
         limit: int = 10,
-    ) -> List[LTMDocument]:
+    ) -> list[LTMDocument]:
         """
         Search index for documents.
 
@@ -305,21 +305,20 @@ class LTMIndex:
 
         # Filter by tags
         if tags:
-            results = [
-                doc for doc in results
-                if any(tag in doc.tags for tag in tags)
-            ]
+            results = [doc for doc in results if any(tag in doc.tags for tag in tags)]
 
         # Filter by query (simple substring match)
         if query:
             query_lower = query.lower()
             results = [
-                doc for doc in results
+                doc
+                for doc in results
                 if query_lower in doc.title.lower() or query_lower in doc.content.lower()
             ]
 
         # Sort by relevance (for now, just by title match then content length)
         if query:
+
             def score_doc(doc: LTMDocument) -> tuple:
                 title_match = 1 if query.lower() in doc.title.lower() else 0
                 return (title_match, -len(doc.content))  # Negative for descending
@@ -328,7 +327,7 @@ class LTMIndex:
 
         return results[:limit]
 
-    def get_document(self, path: str) -> Optional[LTMDocument]:
+    def get_document(self, path: str) -> LTMDocument | None:
         """
         Get a document by path.
 
@@ -340,7 +339,7 @@ class LTMIndex:
         """
         return self._documents.get(path)
 
-    def get_documents_by_tag(self, tag: str) -> List[LTMDocument]:
+    def get_documents_by_tag(self, tag: str) -> list[LTMDocument]:
         """
         Get all documents with a specific tag.
 
@@ -352,7 +351,7 @@ class LTMIndex:
         """
         return [doc for doc in self._documents.values() if tag in doc.tags]
 
-    def get_backlinks(self, title: str) -> List[LTMDocument]:
+    def get_backlinks(self, title: str) -> list[LTMDocument]:
         """
         Get all documents that link to a given note.
 
@@ -362,12 +361,9 @@ class LTMIndex:
         Returns:
             List of documents containing wikilinks to this title
         """
-        return [
-            doc for doc in self._documents.values()
-            if title in doc.wikilinks
-        ]
+        return [doc for doc in self._documents.values() if title in doc.wikilinks]
 
-    def get_forward_links(self, path: str) -> List[LTMDocument]:
+    def get_forward_links(self, path: str) -> list[LTMDocument]:
         """
         Get all documents linked from a given note.
 
@@ -392,7 +388,7 @@ class LTMIndex:
 
         return linked_docs
 
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """
         Get index statistics.
 
@@ -461,4 +457,5 @@ def main() -> int:
 
 if __name__ == "__main__":
     import sys
+
     sys.exit(main())

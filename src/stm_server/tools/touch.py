@@ -1,18 +1,15 @@
 """Touch memory tool - reinforce a memory by updating its access time."""
 
 import time
-from typing import Any, Dict, List
+from typing import Any
 
 from mcp.server import Server
-from mcp.types import Tool
 
 from ..core.decay import calculate_score
-from ..storage.database import Database
+from ..storage.jsonl_storage import JSONLStorage
 
 
-async def touch_memory_handler(
-    db: Database, arguments: Dict[str, Any]
-) -> Dict[str, Any]:
+async def touch_memory_handler(db: JSONLStorage, arguments: dict[str, Any]) -> dict[str, Any]:
     """
     Handle touch memory requests.
 
@@ -77,11 +74,11 @@ async def touch_memory_handler(
     }
 
 
-def register(server: Server, db: Database) -> None:
+def register(server: Server, db: JSONLStorage) -> None:
     """Register the touch memory tool with the MCP server."""
 
     @server.call_tool()
-    async def touch_memory(arguments: Dict[str, Any]) -> List[Any]:
+    async def touch_memory(arguments: dict[str, Any]) -> list[Any]:
         """
         Reinforce a memory by updating its last accessed time and use count.
 

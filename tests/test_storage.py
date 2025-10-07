@@ -1,4 +1,4 @@
-"""Tests for storage layer."""
+"""Tests for JSONL storage layer."""
 
 import tempfile
 import time
@@ -6,29 +6,28 @@ from pathlib import Path
 
 import pytest
 
-from stm_server.storage.database import Database
+from stm_server.storage.jsonl_storage import JSONLStorage
 from stm_server.storage.models import Memory, MemoryMetadata, MemoryStatus
 
 
 @pytest.fixture
-def temp_db():
-    """Create a temporary database for testing."""
+def temp_storage():
+    """Create a temporary JSONL storage for testing."""
     with tempfile.TemporaryDirectory() as tmpdir:
-        db_path = Path(tmpdir) / "test.db"
-        db = Database(db_path)
-        db.connect()
-        yield db
-        db.close()
+        storage_dir = Path(tmpdir)
+        storage = JSONLStorage(storage_path=storage_dir)
+        storage.connect()
+        yield storage
+        storage.close()
 
 
-def test_database_init(temp_db):
-    """Test database initialization."""
-    assert temp_db.conn is not None
-    count = temp_db.count_memories()
+def test_storage_init(temp_storage):
+    """Test storage initialization."""
+    count = temp_storage.count_memories()
     assert count == 0
 
 
-def test_save_and_get_memory(temp_db):
+def test_save_and_get_memory(temp_storage):
     """Test saving and retrieving a memory."""
     memory = Memory(
         id="test-123",
@@ -36,16 +35,16 @@ def test_save_and_get_memory(temp_db):
         meta=MemoryMetadata(tags=["test"]),
     )
 
-    temp_db.save_memory(memory)
+    temp_storage.save_memory(memory)
 
-    retrieved = temp_db.get_memory("test-123")
+    retrieved = temp_storage.get_memory("test-123")
     assert retrieved is not None
     assert retrieved.id == "test-123"
     assert retrieved.content == "Test memory content"
     assert "test" in retrieved.meta.tags
 
 
-def test_update_memory(temp_db):
+def test_update_memory(temp_storage):
     """Test updating memory fields."""
     memory = Memory(
         id="test-456",
@@ -53,11 +52,11 @@ def test_update_memory(temp_db):
         use_count=0,
     )
 
-    temp_db.save_memory(memory)
+    temp_storage.save_memory(memory)
 
     # Update use count and last_used
     now = int(time.time())
-    success = temp_db.update_memory(
+    success = temp_storage.update_memory(
         memory_id="test-456",
         last_used=now,
         use_count=5,
@@ -65,25 +64,25 @@ def test_update_memory(temp_db):
 
     assert success
 
-    updated = temp_db.get_memory("test-456")
+    updated = temp_storage.get_memory("test-456")
     assert updated is not None
     assert updated.use_count == 5
     assert updated.last_used == now
 
 
-def test_delete_memory(temp_db):
+def test_delete_memory(temp_storage):
     """Test deleting a memory."""
     memory = Memory(id="test-789", content="To be deleted")
 
-    temp_db.save_memory(memory)
-    assert temp_db.get_memory("test-789") is not None
+    temp_storage.save_memory(memory)
+    assert temp_storage.get_memory("test-789") is not None
 
-    success = temp_db.delete_memory("test-789")
+    success = temp_storage.delete_memory("test-789")
     assert success
-    assert temp_db.get_memory("test-789") is None
+    assert temp_storage.get_memory("test-789") is None
 
 
-def test_list_memories(temp_db):
+def test_list_memories(temp_storage):
     """Test listing memories with filters."""
     # Create some test memories
     for i in range(5):
@@ -92,18 +91,18 @@ def test_list_memories(temp_db):
             content=f"Memory {i}",
             status=MemoryStatus.ACTIVE if i < 3 else MemoryStatus.PROMOTED,
         )
-        temp_db.save_memory(memory)
+        temp_storage.save_memory(memory)
 
     # List all active memories
-    active = temp_db.list_memories(status=MemoryStatus.ACTIVE)
+    active = temp_storage.list_memories(status=MemoryStatus.ACTIVE)
     assert len(active) == 3
 
     # List all memories
-    all_mems = temp_db.list_memories()
+    all_mems = temp_storage.list_memories()
     assert len(all_mems) == 5
 
 
-def test_search_memories_by_tags(temp_db):
+def test_search_memories_by_tags(temp_storage):
     """Test searching memories by tags."""
     mem1 = Memory(
         id="mem-1",
@@ -121,24 +120,24 @@ def test_search_memories_by_tags(temp_db):
         meta=MemoryMetadata(tags=["python", "guide"]),
     )
 
-    temp_db.save_memory(mem1)
-    temp_db.save_memory(mem2)
-    temp_db.save_memory(mem3)
+    temp_storage.save_memory(mem1)
+    temp_storage.save_memory(mem2)
+    temp_storage.save_memory(mem3)
 
     # Search for python tag
-    results = temp_db.search_memories(tags=["python"])
+    results = temp_storage.search_memories(tags=["python"])
     assert len(results) == 2
     assert all("python" in m.meta.tags for m in results)
 
 
-def test_count_memories(temp_db):
+def test_count_memories(temp_storage):
     """Test counting memories."""
     for i in range(3):
         memory = Memory(id=f"mem-{i}", content=f"Memory {i}")
-        temp_db.save_memory(memory)
+        temp_storage.save_memory(memory)
 
-    count = temp_db.count_memories()
+    count = temp_storage.count_memories()
     assert count == 3
 
-    count_active = temp_db.count_memories(status=MemoryStatus.ACTIVE)
+    count_active = temp_storage.count_memories(status=MemoryStatus.ACTIVE)
     assert count_active == 3

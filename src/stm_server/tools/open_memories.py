@@ -1,16 +1,15 @@
 """Open memories tool - retrieve specific memories by ID."""
 
 import time
-from typing import Any, Dict, List
+from typing import Any
 
 from mcp.server import Server
-from mcp.types import Tool
 
 from ..core.decay import calculate_score
-from ..storage.database import Database
+from ..storage.jsonl_storage import JSONLStorage
 
 
-async def open_memories_handler(db: Database, arguments: Dict[str, Any]) -> Dict[str, Any]:
+async def open_memories_handler(db: JSONLStorage, arguments: dict[str, Any]) -> dict[str, Any]:
     """
     Handle open memories requests.
 
@@ -101,11 +100,11 @@ async def open_memories_handler(db: Database, arguments: Dict[str, Any]) -> Dict
     }
 
 
-def register(server: Server, db: Database) -> None:
+def register(server: Server, db: JSONLStorage) -> None:
     """Register the open memories tool with the MCP server."""
 
     @server.call_tool()
-    async def open_memories(arguments: Dict[str, Any]) -> List[Any]:
+    async def open_memories(arguments: dict[str, Any]) -> list[Any]:
         """
         Retrieve specific memories by their IDs.
 

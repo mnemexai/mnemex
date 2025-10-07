@@ -34,11 +34,11 @@ dev = [
 
 [project.scripts]
 stm-server = "stm_server.server:main"
-stm-migrate = "stm_server.storage.migrate:main"
 stm-index-ltm = "stm_server.storage.ltm_index:main"
 stm-backup = "stm_server.backup.git_backup:main"
 stm-vault = "stm_server.vault.markdown_writer:main"
 stm-search = "stm_server.tools.search_unified:main"
+stm-maintenance = "stm_server.storage.maintenance:main"
 
 [build-system]
 requires = ["hatchling"]

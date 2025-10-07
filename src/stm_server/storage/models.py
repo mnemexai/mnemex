@@ -2,7 +2,7 @@
 
 import time
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -18,12 +18,10 @@ class MemoryStatus(str, Enum):
 class MemoryMetadata(BaseModel):
     """Flexible metadata for memories."""
 
-    tags: List[str] = Field(default_factory=list, description="Tags for categorization")
-    source: Optional[str] = Field(default=None, description="Source of the memory")
-    context: Optional[str] = Field(default=None, description="Context when memory was created")
-    extra: Dict[str, Any] = Field(
-        default_factory=dict, description="Additional custom metadata"
-    )
+    tags: list[str] = Field(default_factory=list, description="Tags for categorization")
+    source: str | None = Field(default=None, description="Source of the memory")
+    context: str | None = Field(default=None, description="Context when memory was created")
+    extra: dict[str, Any] = Field(default_factory=dict, description="Additional custom metadata")
 
 
 class Memory(BaseModel):
@@ -49,21 +47,21 @@ class Memory(BaseModel):
     status: MemoryStatus = Field(
         default=MemoryStatus.ACTIVE, description="Current status of the memory"
     )
-    promoted_at: Optional[int] = Field(
+    promoted_at: int | None = Field(
         default=None, description="Timestamp when memory was promoted (if applicable)"
     )
-    promoted_to: Optional[str] = Field(
+    promoted_to: str | None = Field(
         default=None,
         description="Location where memory was promoted (e.g., vault path)",
     )
-    embed: Optional[List[float]] = Field(
+    embed: list[float] | None = Field(
         default=None, description="Embedding vector for semantic search"
     )
-    entities: List[str] = Field(
+    entities: list[str] = Field(
         default_factory=list, description="Named entities extracted from or tagged in this memory"
     )
 
-    def to_db_dict(self) -> Dict[str, Any]:
+    def to_db_dict(self) -> dict[str, Any]:
         """Convert memory to dictionary for database storage."""
         import json
 
@@ -83,7 +81,7 @@ class Memory(BaseModel):
         }
 
     @classmethod
-    def from_db_row(cls, row: Dict[str, Any]) -> "Memory":
+    def from_db_row(cls, row: dict[str, Any]) -> "Memory":
         """Create Memory instance from database row."""
         import json
 
@@ -112,21 +110,19 @@ class Memory(BaseModel):
 class SearchQuery(BaseModel):
     """Query parameters for memory search."""
 
-    query: Optional[str] = Field(default=None, description="Text query for search")
-    tags: Optional[List[str]] = Field(default=None, description="Filter by tags")
+    query: str | None = Field(default=None, description="Text query for search")
+    tags: list[str] | None = Field(default=None, description="Filter by tags")
     top_k: int = Field(default=10, description="Number of results to return", ge=1, le=100)
-    window_days: Optional[int] = Field(
+    window_days: int | None = Field(
         default=None, description="Only search memories from last N days", ge=1
     )
-    min_score: Optional[float] = Field(
+    min_score: float | None = Field(
         default=None, description="Minimum decay score threshold", ge=0, le=1
     )
-    status: Optional[MemoryStatus] = Field(
+    status: MemoryStatus | None = Field(
         default=MemoryStatus.ACTIVE, description="Filter by memory status"
     )
-    use_embeddings: bool = Field(
-        default=False, description="Use semantic search with embeddings"
-    )
+    use_embeddings: bool = Field(default=False, description="Use semantic search with embeddings")
 
 
 class SearchResult(BaseModel):
@@ -134,7 +130,7 @@ class SearchResult(BaseModel):
 
     memory: Memory = Field(description="The memory that matched")
     score: float = Field(description="Relevance/decay score")
-    similarity: Optional[float] = Field(
+    similarity: float | None = Field(
         default=None, description="Semantic similarity score (if using embeddings)"
     )
 
@@ -148,9 +144,7 @@ class ClusterConfig(BaseModel):
     threshold: float = Field(
         default=0.83, description="Similarity threshold for linking", ge=0, le=1
     )
-    max_cluster_size: int = Field(
-        default=12, description="Maximum memories per cluster", ge=1
-    )
+    max_cluster_size: int = Field(default=12, description="Maximum memories per cluster", ge=1)
     min_cluster_size: int = Field(default=2, description="Minimum memories per cluster", ge=2)
     use_embeddings: bool = Field(default=True, description="Use embeddings for clustering")
 
@@ -159,8 +153,8 @@ class Cluster(BaseModel):
     """A cluster of similar memories."""
 
     id: str = Field(description="Cluster identifier")
-    memories: List[Memory] = Field(description="Memories in this cluster")
-    centroid: Optional[List[float]] = Field(
+    memories: list[Memory] = Field(description="Memories in this cluster")
+    centroid: list[float] | None = Field(
         default=None, description="Cluster centroid (if using embeddings)"
     )
     cohesion: float = Field(description="Cluster cohesion score", ge=0, le=1)
@@ -185,7 +179,7 @@ class GarbageCollectionResult(BaseModel):
     removed_count: int = Field(description="Number of memories removed")
     archived_count: int = Field(description="Number of memories archived")
     freed_score_sum: float = Field(description="Sum of scores of removed memories")
-    memory_ids: List[str] = Field(description="IDs of affected memories")
+    memory_ids: list[str] = Field(description="IDs of affected memories")
 
 
 class Relation(BaseModel):
@@ -194,17 +188,19 @@ class Relation(BaseModel):
     id: str = Field(description="Unique identifier for the relation")
     from_memory_id: str = Field(description="Source memory ID")
     to_memory_id: str = Field(description="Target memory ID")
-    relation_type: str = Field(description="Type of relation (e.g., 'references', 'similar_to', 'follows_from')")
+    relation_type: str = Field(
+        description="Type of relation (e.g., 'references', 'similar_to', 'follows_from')"
+    )
     strength: float = Field(default=1.0, description="Strength of the relation", ge=0, le=1)
     created_at: int = Field(
         default_factory=lambda: int(time.time()),
         description="Timestamp when relation was created",
     )
-    metadata: Dict[str, Any] = Field(
+    metadata: dict[str, Any] = Field(
         default_factory=dict, description="Additional metadata about the relation"
     )
 
-    def to_db_dict(self) -> Dict[str, Any]:
+    def to_db_dict(self) -> dict[str, Any]:
         """Convert relation to dictionary for database storage."""
         import json
 
@@ -219,11 +215,15 @@ class Relation(BaseModel):
         }
 
     @classmethod
-    def from_db_row(cls, row: Dict[str, Any]) -> "Relation":
+    def from_db_row(cls, row: dict[str, Any]) -> "Relation":
         """Create Relation instance from database row."""
         import json
 
-        metadata = json.loads(row["metadata"]) if isinstance(row["metadata"], str) else row.get("metadata", {})
+        metadata = (
+            json.loads(row["metadata"])
+            if isinstance(row["metadata"], str)
+            else row.get("metadata", {})
+        )
 
         return cls(
             id=row["id"],
@@ -239,8 +239,6 @@ class Relation(BaseModel):
 class KnowledgeGraph(BaseModel):
     """Complete knowledge graph of memories and relations."""
 
-    memories: List[Memory] = Field(description="All memories in the graph")
-    relations: List[Relation] = Field(description="All relations between memories")
-    stats: Dict[str, Any] = Field(
-        default_factory=dict, description="Statistics about the graph"
-    )
+    memories: list[Memory] = Field(description="All memories in the graph")
+    relations: list[Relation] = Field(description="All relations between memories")
+    stats: dict[str, Any] = Field(default_factory=dict, description="Statistics about the graph")

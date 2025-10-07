@@ -1,25 +1,24 @@
 """Search memory tool."""
 
 import time
-from typing import Any, Dict, List
+from typing import Any
 
 from mcp.server import Server
-from mcp.types import Tool
 
 from ..config import get_config
 from ..core.decay import calculate_score
-from ..storage.database import Database
+from ..storage.jsonl_storage import JSONLStorage
 from ..storage.models import MemoryStatus, SearchResult
 
 
-def _calculate_semantic_similarity(query_embed: List[float], memory_embed: List[float]) -> float:
+def _calculate_semantic_similarity(query_embed: list[float], memory_embed: list[float]) -> float:
     """Calculate cosine similarity between query and memory embeddings."""
     from ..core.clustering import cosine_similarity
 
     return cosine_similarity(query_embed, memory_embed)
 
 
-def _generate_query_embedding(query: str) -> List[float] | None:
+def _generate_query_embedding(query: str) -> list[float] | None:
     """Generate embedding for search query."""
     config = get_config()
 
@@ -36,9 +35,7 @@ def _generate_query_embedding(query: str) -> List[float] | None:
         return None
 
 
-async def search_memory_handler(
-    db: Database, arguments: Dict[str, Any]
-) -> Dict[str, Any]:
+async def search_memory_handler(db: JSONLStorage, arguments: dict[str, Any]) -> dict[str, Any]:
     """
     Handle search memory requests.
 
@@ -73,7 +70,7 @@ async def search_memory_handler(
         query_embed = _generate_query_embedding(query)
 
     # Score and filter memories
-    results: List[SearchResult] = []
+    results: list[SearchResult] = []
 
     for memory in memories:
         # Calculate decay score
@@ -108,9 +105,7 @@ async def search_memory_handler(
         if similarity is not None:
             final_score = score * similarity
 
-        results.append(
-            SearchResult(memory=memory, score=final_score, similarity=similarity)
-        )
+        results.append(SearchResult(memory=memory, score=final_score, similarity=similarity))
 
     # Sort by final score descending
     results.sort(key=lambda r: r.score, reverse=True)
@@ -140,11 +135,11 @@ async def search_memory_handler(
     return response
 
 
-def register(server: Server, db: Database) -> None:
+def register(server: Server, db: JSONLStorage) -> None:
     """Register the search memory tool with the MCP server."""
 
     @server.call_tool()
-    async def search_memory(arguments: Dict[str, Any]) -> List[Any]:
+    async def search_memory(arguments: dict[str, Any]) -> list[Any]:
         """
         Search for memories with optional filters and scoring.
 

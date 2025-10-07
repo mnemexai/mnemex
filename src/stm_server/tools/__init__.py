@@ -9,6 +9,7 @@ from . import promote as promote_tool
 from . import read_graph as read_graph_tool
 from . import save as save_tool
 from . import search as search_tool
+from . import search_unified_tool as search_unified_tool
 from . import touch as touch_tool
 
 __all__ = [
@@ -22,4 +23,5 @@ __all__ = [
     "read_graph_tool",
     "open_memories_tool",
     "create_relation_tool",
+    "search_unified_tool",
 ]

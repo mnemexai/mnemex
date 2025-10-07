@@ -1,8 +1,7 @@
 """Integration with Basic Memory MCP for long-term storage."""
 
 import time
-from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
 
 from ..config import get_config
 from ..storage.models import Memory
@@ -27,9 +26,7 @@ class BasicMemoryIntegration:
         # Take first 50 chars, remove special characters
         filename = content[:50].strip()
         # Replace spaces and special chars with hyphens
-        filename = "".join(
-            c if c.isalnum() or c in (" ", "-", "_") else "-" for c in filename
-        )
+        filename = "".join(c if c.isalnum() or c in (" ", "-", "_") else "-" for c in filename)
         # Collapse multiple hyphens
         while "--" in filename:
             filename = filename.replace("--", "-")
@@ -75,38 +72,44 @@ class BasicMemoryIntegration:
         ]
 
         if memory.meta.context:
-            content_lines.extend([
-                "## Context",
-                "",
-                memory.meta.context,
-                "",
-            ])
+            content_lines.extend(
+                [
+                    "## Context",
+                    "",
+                    memory.meta.context,
+                    "",
+                ]
+            )
 
         # Add metadata section
-        content_lines.extend([
-            "## Metadata",
-            "",
-            f"- **Created**: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(memory.created_at))}",
-            f"- **Last Used**: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(memory.last_used))}",
-            f"- **Use Count**: {memory.use_count}",
-            f"- **Strength**: {memory.strength}",
-            "",
-        ])
+        content_lines.extend(
+            [
+                "## Metadata",
+                "",
+                f"- **Created**: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(memory.created_at))}",
+                f"- **Last Used**: {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(memory.last_used))}",
+                f"- **Use Count**: {memory.use_count}",
+                f"- **Strength**: {memory.strength}",
+                "",
+            ]
+        )
 
         if memory.meta.tags:
             content_lines.append(f"**Tags**: #{' #'.join(memory.meta.tags)}")
             content_lines.append("")
 
         # Footer
-        content_lines.extend([
-            "---",
-            "",
-            "*Promoted from STM (Short-Term Memory) server*",
-        ])
+        content_lines.extend(
+            [
+                "---",
+                "",
+                "*Promoted from STM (Short-Term Memory) server*",
+            ]
+        )
 
         return "\n".join(frontmatter_lines + content_lines)
 
-    def promote_to_obsidian(self, memory: Memory) -> Dict[str, Any]:
+    def promote_to_obsidian(self, memory: Memory) -> dict[str, Any]:
         """
         Promote a memory to the Obsidian vault.
 
@@ -147,7 +150,7 @@ class BasicMemoryIntegration:
 
             return {
                 "success": True,
-                "message": f"Memory promoted to Obsidian vault",
+                "message": "Memory promoted to Obsidian vault",
                 "path": str(file_path.relative_to(self.vault_path)),
                 "full_path": str(file_path),
             }
@@ -158,7 +161,7 @@ class BasicMemoryIntegration:
                 "path": str(file_path),
             }
 
-    def get_vault_stats(self) -> Dict[str, Any]:
+    def get_vault_stats(self) -> dict[str, Any]:
         """Get statistics about the vault."""
         if not self.is_available():
             return {

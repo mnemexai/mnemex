@@ -69,8 +69,8 @@ Add STM server:
         "stm-server"
       ],
       "env": {
-        "STM_DB_PATH": "/Users/your-username/.stm/memories.db",
-        "BASIC_MEMORY_PATH": "/Users/your-username/Documents/Obsidian/Vault",
+        "STM_STORAGE_PATH": "/Users/your-username/.stm/jsonl",
+        "LTM_VAULT_PATH": "/Users/your-username/Documents/Obsidian/Vault",
         "STM_ENABLE_EMBEDDINGS": "false"
       }
     }
@@ -101,8 +101,8 @@ Configuration (adjust paths):
         "stm-server"
       ],
       "env": {
-        "STM_DB_PATH": "C:\\Users\\YourName\\.stm\\memories.db",
-        "BASIC_MEMORY_PATH": "C:\\Users\\YourName\\Documents\\Obsidian\\Vault"
+        "STM_STORAGE_PATH": "C:\\Users\\YourName\\.stm\\jsonl",
+        "LTM_VAULT_PATH": "C:\\Users\\YourName\\Documents\\Obsidian\\Vault"
       }
     }
   }
@@ -120,7 +120,7 @@ Configuration in `.vscode/settings.json`:
       "command": "uv",
       "args": ["--directory", "${workspaceFolder}/stm-server", "run", "stm-server"],
       "env": {
-        "STM_DB_PATH": "${env:HOME}/.stm/memories.db"
+        "STM_STORAGE_PATH": "${env:HOME}/.stm/jsonl"
       }
     }
   }
@@ -184,49 +184,74 @@ STM_CLUSTER_LINK_THRESHOLD=0.83
 
 ---
 
-## Database Management
+## Decay Model Configuration
+
+Select decay behavior via `STM_DECAY_MODEL`:
+
+```bash
+# 1) Power-Law (default; heavier tail, most human)
+STM_DECAY_MODEL=power_law
+STM_PL_ALPHA=1.1              # shape (typical 1.0–1.2)
+STM_PL_HALFLIFE_DAYS=3.0      # target half-life used to derive t0
+
+# 2) Exponential (lighter tail, forgets sooner)
+STM_DECAY_MODEL=exponential
+STM_DECAY_LAMBDA=2.673e-6     # ~3-day half-life (ln(2)/(3*86400))
+
+# 3) Two-Component (fast early forgetting + heavier tail)
+STM_DECAY_MODEL=two_component
+STM_TC_LAMBDA_FAST=1.603e-5   # ~12-hour half-life
+STM_TC_LAMBDA_SLOW=1.147e-6   # ~7-day half-life
+STM_TC_WEIGHT_FAST=0.7        # weight of fast component (0–1)
+
+# Shared parameters
+STM_DECAY_BETA=0.6            # sub-linear use count weight
+STM_FORGET_THRESHOLD=0.05     # GC threshold
+STM_PROMOTE_THRESHOLD=0.65    # promotion threshold
+STM_PROMOTE_USE_COUNT=5
+STM_PROMOTE_TIME_WINDOW=14
+```
+
+Tuning tips:
+- Power-Law has a heavier tail; consider a slightly higher `STM_FORGET_THRESHOLD` (e.g., 0.06–0.08) or reduce `STM_PL_HALFLIFE_DAYS` to maintain GC budget.
+- Two-Component forgets very recent items faster; validate promotion and GC rates and adjust thresholds as needed.
+
+---
+
+## Storage Management
 
 ### Location
 
-Default: `~/.stm/memories.db`
+Default directory: `~/.stm/jsonl/`
 
-Custom location via `STM_DB_PATH` environment variable.
+Custom location via `STM_STORAGE_PATH` environment variable.
 
 ### Backup
 
 ```bash
 # Simple backup
-cp ~/.stm/memories.db ~/.stm/memories.db.backup
+cp ~/.stm/jsonl/memories.jsonl ~/.stm/backups/memories.jsonl.backup
+cp ~/.stm/jsonl/relations.jsonl ~/.stm/backups/relations.jsonl.backup
 
 # Timestamped backup
-cp ~/.stm/memories.db ~/.stm/memories.db.$(date +%Y%m%d)
+cp ~/.stm/jsonl/memories.jsonl ~/.stm/backups/memories.jsonl.$(date +%Y%m%d)
+cp ~/.stm/jsonl/relations.jsonl ~/.stm/backups/relations.jsonl.$(date +%Y%m%d)
 
 # Automated daily backup (cron)
-0 2 * * * cp ~/.stm/memories.db ~/.stm/backups/memories.db.$(date +\%Y\%m\%d)
+0 2 * * * cp ~/.stm/jsonl/memories.jsonl ~/.stm/backups/memories.jsonl.$(date +\%Y\%m\%d) && cp ~/.stm/jsonl/relations.jsonl ~/.stm/backups/relations.jsonl.$(date +\%Y\%m\%d)
 ```
 
 ### Migration
 
-Schema migrations are handled automatically on startup.
+Not applicable. JSONL storage requires no schema migrations.
 
-To force a specific version:
-
-```python
-from stm_server.storage.database import Database
-from stm_server.storage.migrations import apply_migrations
-
-db = Database()
-db.connect()
-apply_migrations(db.conn, backup_path="backup.db")
-```
-
-### Reset Database
+### Reset Storage
 
 ```bash
 # WARNING: This deletes all memories
-rm ~/.stm/memories.db
+rm -rf ~/.stm/jsonl
 
-# Next run will create fresh database
+# Next run will create fresh storage files
 stm-server
 ```
 
@@ -277,6 +302,21 @@ ls ~/Documents/Obsidian/Vault/STM/
 
 ## Maintenance Tasks
 
+### Maintenance CLI
+
+Use the built-in CLI for storage housekeeping:
+
+```bash
+# Show JSONL storage stats (active counts, file sizes, compaction hints)
+stm-maintenance stats
+
+# Compact JSONL (rewrite files without tombstones/duplicates)
+stm-maintenance compact
+
+# With explicit path
+stm-maintenance --storage-path ~/.stm/jsonl stats
+```
+
 ### Daily Maintenance (Automated)
 
 Create a maintenance script `~/.stm/maintenance.sh`:
@@ -288,12 +328,12 @@ Create a maintenance script `~/.stm/maintenance.sh`:
 LOG_FILE="$HOME/.stm/maintenance.log"
 echo "=== Maintenance run at $(date) ===" >> "$LOG_FILE"
 
-# Backup database
-cp "$HOME/.stm/memories.db" "$HOME/.stm/backups/memories.db.$(date +%Y%m%d)"
+# Backup storage
+cp "$HOME/.stm/jsonl/memories.jsonl" "$HOME/.stm/backups/memories.jsonl.$(date +%Y%m%d)"
+cp "$HOME/.stm/jsonl/relations.jsonl" "$HOME/.stm/backups/relations.jsonl.$(date +%Y%m%d)"
 
 # Log stats
-echo "Total memories: $(sqlite3 ~/.stm/memories.db 'SELECT COUNT(*) FROM memories')" >> "$LOG_FILE"
-echo "Active memories: $(sqlite3 ~/.stm/memories.db "SELECT COUNT(*) FROM memories WHERE status='active'")" >> "$LOG_FILE"
+echo "Storage files: $(ls -l $HOME/.stm/jsonl | wc -l)" >> "$LOG_FILE"
 ```
 
 Schedule with cron:
@@ -324,18 +364,9 @@ Run garbage collection weekly:
 
 ## Monitoring
 
-### Database Stats
+### Storage Stats
 
-```bash
-# Count memories
-sqlite3 ~/.stm/memories.db "SELECT COUNT(*) FROM memories"
-
-# Count by status
-sqlite3 ~/.stm/memories.db "SELECT status, COUNT(*) FROM memories GROUP BY status"
-
-# Recent memories
-sqlite3 ~/.stm/memories.db "SELECT id, content, use_count FROM memories ORDER BY created_at DESC LIMIT 10"
-```
+Use `stm-search --verbose` or write a small script that uses `JSONLStorage.get_storage_stats()` for counts and compaction hints.
 
 ### Logs
 
@@ -355,8 +386,8 @@ Or configure in MCP settings with log file output.
 
 1. Check Python version: `python --version` (need 3.10+)
 2. Check dependencies: `pip list | grep mcp`
-3. Check database path exists: `ls -la ~/.stm/`
-4. Check permissions on database file
+3. Check storage path exists: `ls -la ~/.stm/jsonl`
+4. Check permissions on storage files
 
 ### Embeddings not working
 
@@ -372,34 +403,19 @@ Or configure in MCP settings with log file output.
 3. Verify Obsidian vault path is correct
 4. Check for file permission errors
 
-### Database corruption
+### Storage issues
 
-1. Restore from backup:
-   ```bash
-   cp ~/.stm/backups/memories.db.YYYYMMDD ~/.stm/memories.db
-   ```
-
-2. Or rebuild:
-   ```bash
-   rm ~/.stm/memories.db
-   # Next startup creates fresh database
-   ```
+1. Restore from `~/.stm/backups/memories.jsonl.*` and `relations.jsonl.*`.
+2. To rebuild fresh storage, remove `~/.stm/jsonl` and restart.
 
 ---
 
 ## Performance Tuning
 
-### For Large Databases (> 5000 memories)
+### For Large Stores (> 5000 memories)
 
 ```bash
-# Increase SQLite cache
-export STM_SQLITE_CACHE_SIZE=10000
-
-# Regular VACUUM
-sqlite3 ~/.stm/memories.db "VACUUM"
-
-# More aggressive GC
-STM_FORGET_THRESHOLD=0.08
+Use `JSONLStorage.compact()` periodically to reclaim space from tombstones and duplicates. Consider a higher `STM_FORGET_THRESHOLD` for aggressive GC.
 ```
 
 ### For Semantic Search
@@ -417,7 +433,7 @@ STM_EMBED_MODEL=paraphrase-MiniLM-L3-v2
 Typical memory footprint:
 - Base server: ~20-30MB
 - With embeddings model: ~70-100MB
-- Database in memory: ~1KB per memory (typical)
+- Storage index in memory: ~1KB per memory (typical)
 
 ---
 

@@ -6,7 +6,7 @@ Human-readable, git-friendly storage with in-memory indexing for fast queries.
 import json
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set
+from typing import Any
 
 from ..config import get_config
 from .models import KnowledgeGraph, Memory, MemoryStatus, Relation
@@ -26,10 +26,12 @@ class JSONLStorage:
 
         # Storage directory (contains memories.jsonl and relations.jsonl)
         if storage_path is None:
-            # Use db_path but change extension to directory
-            self.storage_dir = config.db_path.parent / "jsonl"
+            # Default to configured storage_path (human-readable JSONL)
+            self.storage_dir = config.storage_path
         else:
-            self.storage_dir = storage_path if isinstance(storage_path, Path) else Path(storage_path)
+            self.storage_dir = (
+                storage_path if isinstance(storage_path, Path) else Path(storage_path)
+            )
 
         self.storage_dir.mkdir(parents=True, exist_ok=True)
 
@@ -37,10 +39,10 @@ class JSONLStorage:
         self.relations_path = self.storage_dir / "relations.jsonl"
 
         # In-memory indexes
-        self._memories: Dict[str, Memory] = {}
-        self._relations: Dict[str, Relation] = {}
-        self._deleted_memory_ids: Set[str] = set()
-        self._deleted_relation_ids: Set[str] = set()
+        self._memories: dict[str, Memory] = {}
+        self._relations: dict[str, Relation] = {}
+        self._deleted_memory_ids: set[str] = set()
+        self._deleted_relation_ids: set[str] = set()
 
         # Track if connected
         self._connected = False
@@ -52,7 +54,7 @@ class JSONLStorage:
 
         # Load memories
         if self.memories_path.exists():
-            with open(self.memories_path, "r") as f:
+            with open(self.memories_path) as f:
                 for line in f:
                     line = line.strip()
                     if not line:
@@ -70,7 +72,7 @@ class JSONLStorage:
 
         # Load relations
         if self.relations_path.exists():
-            with open(self.relations_path, "r") as f:
+            with open(self.relations_path) as f:
                 for line in f:
                     line = line.strip()
                     if not line:
@@ -141,7 +143,7 @@ class JSONLStorage:
         # Append to JSONL file
         self._append_memory(memory)
 
-    def get_memory(self, memory_id: str) -> Optional[Memory]:
+    def get_memory(self, memory_id: str) -> Memory | None:
         """
         Retrieve a memory by ID.
 
@@ -159,12 +161,12 @@ class JSONLStorage:
     def update_memory(
         self,
         memory_id: str,
-        last_used: Optional[int] = None,
-        use_count: Optional[int] = None,
-        strength: Optional[float] = None,
-        status: Optional[MemoryStatus] = None,
-        promoted_at: Optional[int] = None,
-        promoted_to: Optional[str] = None,
+        last_used: int | None = None,
+        use_count: int | None = None,
+        strength: float | None = None,
+        status: MemoryStatus | None = None,
+        promoted_at: int | None = None,
+        promoted_to: str | None = None,
     ) -> bool:
         """
         Update specific fields of a memory.
@@ -234,10 +236,10 @@ class JSONLStorage:
 
     def list_memories(
         self,
-        status: Optional[MemoryStatus] = None,
-        limit: Optional[int] = None,
+        status: MemoryStatus | None = None,
+        limit: int | None = None,
         offset: int = 0,
-    ) -> List[Memory]:
+    ) -> list[Memory]:
         """
         List memories with optional filtering.
 
@@ -272,11 +274,11 @@ class JSONLStorage:
 
     def search_memories(
         self,
-        tags: Optional[List[str]] = None,
-        status: Optional[MemoryStatus] = MemoryStatus.ACTIVE,
-        window_days: Optional[int] = None,
+        tags: list[str] | None = None,
+        status: MemoryStatus | None = MemoryStatus.ACTIVE,
+        window_days: int | None = None,
         limit: int = 10,
-    ) -> List[Memory]:
+    ) -> list[Memory]:
         """
         Search memories with filters.
 
@@ -305,17 +307,14 @@ class JSONLStorage:
 
         # Filter by tags (any match)
         if tags:
-            memories = [
-                m for m in memories
-                if any(tag in m.meta.tags for tag in tags)
-            ]
+            memories = [m for m in memories if any(tag in m.meta.tags for tag in tags)]
 
         # Sort by last_used DESC
         memories.sort(key=lambda m: m.last_used, reverse=True)
 
         return memories[:limit]
 
-    def count_memories(self, status: Optional[MemoryStatus] = None) -> int:
+    def count_memories(self, status: MemoryStatus | None = None) -> int:
         """
         Count memories with optional status filter.
 
@@ -333,7 +332,7 @@ class JSONLStorage:
 
         return sum(1 for m in self._memories.values() if m.status == status)
 
-    def get_all_embeddings(self) -> Dict[str, List[float]]:
+    def get_all_embeddings(self) -> dict[str, list[float]]:
         """
         Get all memory embeddings for clustering/similarity search.
 
@@ -370,10 +369,10 @@ class JSONLStorage:
 
     def get_relations(
         self,
-        from_memory_id: Optional[str] = None,
-        to_memory_id: Optional[str] = None,
-        relation_type: Optional[str] = None,
-    ) -> List[Relation]:
+        from_memory_id: str | None = None,
+        to_memory_id: str | None = None,
+        relation_type: str | None = None,
+    ) -> list[Relation]:
         """
         Get relations with optional filtering.
 
@@ -401,9 +400,9 @@ class JSONLStorage:
 
         return relations
 
-    def get_all_relations(self) -> List[Relation]:
+    def get_all_relations(self) -> list[Relation]:
         """
-        Get all relations in the database.
+        Get all relations in storage.
 
         Returns:
             List of all Relation objects
@@ -439,7 +438,7 @@ class JSONLStorage:
         return True
 
     def get_knowledge_graph(
-        self, status: Optional[MemoryStatus] = MemoryStatus.ACTIVE
+        self, status: MemoryStatus | None = MemoryStatus.ACTIVE
     ) -> KnowledgeGraph:
         """
         Get the complete knowledge graph of memories and relations.
@@ -483,7 +482,7 @@ class JSONLStorage:
 
     # Maintenance operations
 
-    def compact(self) -> Dict[str, int]:
+    def compact(self) -> dict[str, int]:
         """
         Compact JSONL files by removing deletion markers and duplicates.
 
@@ -505,11 +504,11 @@ class JSONLStorage:
 
         # Count lines before compaction
         if self.memories_path.exists():
-            with open(self.memories_path, "r") as f:
+            with open(self.memories_path) as f:
                 stats["memories_before"] = sum(1 for line in f if line.strip())
 
         if self.relations_path.exists():
-            with open(self.relations_path, "r") as f:
+            with open(self.relations_path) as f:
                 stats["relations_before"] = sum(1 for line in f if line.strip())
 
         # Rewrite memories file
@@ -536,7 +535,7 @@ class JSONLStorage:
 
         return stats
 
-    def get_storage_stats(self) -> Dict[str, Any]:
+    def get_storage_stats(self) -> dict[str, Any]:
         """
         Get statistics about storage usage and efficiency.
 
@@ -553,12 +552,12 @@ class JSONLStorage:
 
         if self.memories_path.exists():
             mem_bytes = self.memories_path.stat().st_size
-            with open(self.memories_path, "r") as f:
+            with open(self.memories_path) as f:
                 mem_lines = sum(1 for line in f if line.strip())
 
         if self.relations_path.exists():
             rel_bytes = self.relations_path.stat().st_size
-            with open(self.relations_path, "r") as f:
+            with open(self.relations_path) as f:
                 rel_lines = sum(1 for line in f if line.strip())
 
         # Calculate compaction potential

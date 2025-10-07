@@ -1,14 +1,13 @@
 """Scoring and decision logic for memory management."""
 
 import time
-from typing import List, Tuple
 
 from ..config import get_config
 from ..storage.models import Memory
 from .decay import calculate_score
 
 
-def should_forget(memory: Memory, now: int | None = None) -> Tuple[bool, float]:
+def should_forget(memory: Memory, now: int | None = None) -> tuple[bool, float]:
     """
     Determine if a memory should be forgotten (deleted).
 
@@ -34,7 +33,7 @@ def should_forget(memory: Memory, now: int | None = None) -> Tuple[bool, float]:
     return score < config.forget_threshold, score
 
 
-def should_promote(memory: Memory, now: int | None = None) -> Tuple[bool, str, float]:
+def should_promote(memory: Memory, now: int | None = None) -> tuple[bool, str, float]:
     """
     Determine if a memory should be promoted to long-term storage.
 
@@ -67,10 +66,7 @@ def should_promote(memory: Memory, now: int | None = None) -> Tuple[bool, str, f
 
     # Check use count-based promotion
     age_days = (now - memory.created_at) / 86400
-    if (
-        memory.use_count >= config.promote_use_count
-        and age_days <= config.promote_time_window
-    ):
+    if memory.use_count >= config.promote_use_count and age_days <= config.promote_time_window:
         return (
             True,
             f"High use count ({memory.use_count} >= {config.promote_use_count}) "
@@ -82,8 +78,8 @@ def should_promote(memory: Memory, now: int | None = None) -> Tuple[bool, str, f
 
 
 def rank_memories_by_score(
-    memories: List[Memory], now: int | None = None
-) -> List[Tuple[Memory, float]]:
+    memories: list[Memory], now: int | None = None
+) -> list[tuple[Memory, float]]:
     """
     Rank memories by their current decay score.
 
@@ -114,8 +110,8 @@ def rank_memories_by_score(
 
 
 def filter_by_score(
-    memories: List[Memory], min_score: float, now: int | None = None
-) -> List[Tuple[Memory, float]]:
+    memories: list[Memory], min_score: float, now: int | None = None
+) -> list[tuple[Memory, float]]:
     """
     Filter memories by minimum score threshold.
 

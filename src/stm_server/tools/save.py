@@ -2,17 +2,17 @@
 
 import time
 import uuid
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from mcp.server import Server
 from mcp.types import Tool
 
 from ..config import get_config
-from ..storage.database import Database
+from ..storage.jsonl_storage import JSONLStorage
 from ..storage.models import Memory, MemoryMetadata
 
 
-def _generate_embedding(content: str) -> Optional[List[float]]:
+def _generate_embedding(content: str) -> list[float] | None:
     """Generate embedding for content if embeddings are enabled."""
     config = get_config()
 
@@ -33,9 +33,7 @@ def _generate_embedding(content: str) -> Optional[List[float]]:
         return None
 
 
-async def save_memory_handler(
-    db: Database, arguments: Dict[str, Any]
-) -> Dict[str, Any]:
+async def save_memory_handler(db: JSONLStorage, arguments: dict[str, Any]) -> dict[str, Any]:
     """
     Handle save memory requests.
 
@@ -91,11 +89,11 @@ async def save_memory_handler(
     }
 
 
-def register(server: Server, db: Database) -> None:
+def register(server: Server, db: JSONLStorage) -> None:
     """Register the save memory tool with the MCP server."""
 
     @server.call_tool()
-    async def save_memory(arguments: Dict[str, Any]) -> List[Any]:
+    async def save_memory(arguments: dict[str, Any]) -> list[Any]:
         """
         Save a new memory to short-term storage.
 

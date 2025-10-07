@@ -7,6 +7,30 @@
 
 The STM server uses a novel temporal decay algorithm that mimics human memory dynamics. Memories naturally fade over time unless reinforced through use. This document explains the mathematical model, parameter tuning, and design rationale.
 
+## Model Selection
+
+STM supports three decay models. Choose per use case via `STM_DECAY_MODEL`:
+
+1. Power‑Law (default):
+   $$ f(\Delta t) = \left(1 + \frac{\Delta t}{t_0}\right)^{-\alpha} $$
+   - Heavier tail; retains older-but-important memories better.
+   - Parameters: $\alpha$ (shape), $t_0$ (characteristic time). We derive $t_0$ from a chosen half‑life $H$ via $t_0 = H / (2^{1/\alpha} - 1)$.
+
+2. Exponential:
+   $$ f(\Delta t) = e^{-\lambda\,\Delta t} $$
+   - Lighter tail; simpler and forgets sooner.
+   - Parameter: $\lambda$ (from half‑life).
+
+3. Two‑Component Exponential:
+   $$ f(\Delta t) = w\,e^{-\lambda_f\,\Delta t} + (1-w)\,e^{-\lambda_s\,\Delta t} $$
+   - Forgets very recent items faster (fast component) but keeps a heavier tail (slow component).
+   - Parameters: $\lambda_f, \lambda_s, w$.
+
+Combined score (all models):
+$$
+\text{score} = (n_{\text{use}})^\beta \cdot f(\Delta t) \cdot s
+$$
+
 ## Core Formula
 
 $$
@@ -19,6 +43,25 @@ Where:
 - $\lambda$ (lambda): Decay constant (default: $2.673 \times 10^{-6}$ for 3-day half-life)
 - $\Delta t$: Time delta in seconds since last access ($t_{\text{now}} - t_{\text{last used}}$)
 - $s$: Base multiplier (range: 0.0-2.0, default: 1.0)
+
+## Parameter Reference (at a glance)
+
+- $\beta$ (beta): Sub-linear exponent for use count.
+  - Default: 0.6; Range: 0.0–1.0
+  - Higher → frequent memories gain more; Lower → emphasize recency
+- $\lambda$ (lambda): Exponential decay constant.
+  - Computed from half-life: $\lambda = \ln(2) / t_{1/2}$
+  - Example values: 1-day = $8.02\times 10^{-6}$, 3-day = $2.67\times 10^{-6}$, 7-day = $1.15\times 10^{-6}$
+- $\Delta t$: Seconds since last use.
+  - Larger $\Delta t$ → lower score via $e^{-\lambda\Delta t}$
+- $s$ (strength): Importance multiplier.
+  - Default: 1.0; Range: 0.0–2.0; Can be nudged by touch with boost
+- $\tau_{\text{forget}}$: Forget threshold.
+  - Default: 0.05; If score < $\tau_{\text{forget}}$ → forget
+- $\tau_{\text{promote}}$: Promote threshold.
+  - Default: 0.65; If score ≥ $\tau_{\text{promote}}$ → promote
+- Usage promotion rule: $n_{\text{use}} \ge 5$ within 14 days (configurable)
+  - Captures frequently referenced info even if not extremely recent
 
 ## Components Explained
 
@@ -126,6 +169,12 @@ strength = 0.5
 **Rationale:**
 - Below 5% of original score → likely irrelevant
 - Prevents database bloat
+
+### Threshold Summary
+
+- Forget if $\text{score} < \tau_{\text{forget}}$ (default 0.05)
+- Promote if $\text{score} \ge \tau_{\text{promote}}$ (default 0.65)
+- Or promote if $n_{\text{use}}\ge 5$ within 14 days (usage-based)
 - User can override by touching memory
 
 **Example:**
@@ -242,6 +291,44 @@ $$
 
 **Effect:** Important memories resist decay longer.
 **Use Case:** Critical information (credentials, decisions) in normal workflow.
+
+## Worked Examples
+
+### Example A: Low-use, recent, normal strength
+
+Given: $n_{\text{use}}=1$, $\beta=0.6$, $\lambda=2.673\times10^{-6}$ (3-day), $\Delta t=6$ hours, $s=1.0$.
+
+1) Use factor: $(1)^{0.6}=1.00$  
+2) Decay: $e^{-2.673\times10^{-6}\cdot 21600} = e^{-0.0578}=0.9439$  
+3) Strength: $1.0$  
+Score: $1.00\times 0.9439\times 1.0=0.944$ → Keep (between thresholds)
+
+### Example B: Frequent-use, mildly stale, normal strength
+
+Given: $n_{\text{use}}=6$, $\beta=0.6$, $\lambda=2.673\times10^{-6}$ (3-day), $\Delta t=2$ days, $s=1.0$.
+
+1) Use factor: $(6)^{0.6}\approx 2.93$  
+2) Decay: $e^{-2.673\times10^{-6}\cdot 172800} = e^{-0.462} = 0.629$  
+3) Strength: $1.0$  
+Score: $2.93\times 0.629 \approx 1.84$ → $\ge 0.65$ ⇒ Promote (score-based)
+
+### Example C: High strength, older, modest use
+
+Given: $n_{\text{use}}=3$, $\beta=0.6$, $\lambda=2.673\times10^{-6}$ (3-day), $\Delta t=5$ days, $s=1.5$.
+
+1) Use factor: $(3)^{0.6}\approx 1.93$  
+2) Decay: $e^{-2.673\times10^{-6}\cdot 432000} = e^{-1.156} = 0.315$  
+3) Strength: $1.5$  
+Score: $1.93\times 0.315 \times 1.5 \approx 0.91$ → $\ge 0.65$ ⇒ Promote (score-based)
+
+### Example D: Rarely used, very old
+
+Given: $n_{\text{use}}=1$, $\beta=0.6$, $\lambda=2.673\times10^{-6}$ (3-day), $\Delta t=21$ days, $s=1.0$.
+
+1) Use factor: $1.00$  
+2) Decay: $e^{-2.673\times10^{-6}\cdot 1,814,400} = e^{-4.85} = 0.0078$  
+3) Strength: $1.0$  
+Score: $\approx 0.0078$ → $< 0.05$ ⇒ Forget
 
 ## Visualizations
 

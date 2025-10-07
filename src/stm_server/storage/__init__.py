@@ -1,6 +1,6 @@
-"""Storage layer for STM server."""
+"""Storage layer for STM server (JSONL-only)."""
 
-from .database import Database
+from .jsonl_storage import JSONLStorage
 from .models import Memory, MemoryMetadata, MemoryStatus
 
-__all__ = ["Database", "Memory", "MemoryMetadata", "MemoryStatus"]
+__all__ = ["JSONLStorage", "Memory", "MemoryMetadata", "MemoryStatus"]

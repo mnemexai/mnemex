@@ -2,18 +2,15 @@
 
 import time
 import uuid
-from typing import Any, Dict, List
+from typing import Any
 
 from mcp.server import Server
-from mcp.types import Tool
 
-from ..storage.database import Database
+from ..storage.jsonl_storage import JSONLStorage
 from ..storage.models import Relation
 
 
-async def create_relation_handler(
-    db: Database, arguments: Dict[str, Any]
-) -> Dict[str, Any]:
+async def create_relation_handler(db: JSONLStorage, arguments: dict[str, Any]) -> dict[str, Any]:
     """
     Handle create relation requests.
 
@@ -85,11 +82,11 @@ async def create_relation_handler(
     }
 
 
-def register(server: Server, db: Database) -> None:
+def register(server: Server, db: JSONLStorage) -> None:
     """Register the create relation tool with the MCP server."""
 
     @server.call_tool()
-    async def create_relation(arguments: Dict[str, Any]) -> List[Any]:
+    async def create_relation(arguments: dict[str, Any]) -> list[Any]:
         """
         Create an explicit relation between two memories.
 

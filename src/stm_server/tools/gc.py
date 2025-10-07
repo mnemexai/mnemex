@@ -1,18 +1,17 @@
 """Garbage collection tool - remove or archive low-scoring memories."""
 
 import time
-from typing import Any, Dict, List
+from typing import Any
 
 from mcp.server import Server
-from mcp.types import Tool
 
 from ..config import get_config
 from ..core.scoring import should_forget
-from ..storage.database import Database
+from ..storage.jsonl_storage import JSONLStorage
 from ..storage.models import GarbageCollectionResult, MemoryStatus
 
 
-async def gc_handler(db: Database, arguments: Dict[str, Any]) -> Dict[str, Any]:
+async def gc_handler(db: JSONLStorage, arguments: dict[str, Any]) -> dict[str, Any]:
     """
     Handle garbage collection requests.
 
@@ -57,7 +56,7 @@ async def gc_handler(db: Database, arguments: Dict[str, Any]) -> Dict[str, Any]:
 
     # Perform removal/archival if not dry run
     if not dry_run:
-        for memory, score in to_remove:
+        for memory, _score in to_remove:
             memory_ids.append(memory.id)
             if archive_instead:
                 # Archive instead of delete
@@ -100,11 +99,11 @@ async def gc_handler(db: Database, arguments: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-def register(server: Server, db: Database) -> None:
+def register(server: Server, db: JSONLStorage) -> None:
     """Register the garbage collection tool with the MCP server."""
 
     @server.call_tool()
-    async def gc(arguments: Dict[str, Any]) -> List[Any]:
+    async def gc(arguments: dict[str, Any]) -> list[Any]:
         """
         Perform garbage collection on low-scoring memories.
 
