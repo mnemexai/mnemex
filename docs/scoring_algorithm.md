@@ -10,19 +10,19 @@ The STM server uses a novel temporal decay algorithm that mimics human memory dy
 ## Core Formula
 
 $$
-\text{score} = (\text{use\_count})^\beta \cdot e^{-\lambda \cdot \Delta t} \cdot \text{strength}
+\text{score} = (n_{\text{use}})^\beta \cdot e^{-\lambda \cdot \Delta t} \cdot s
 $$
 
 Where:
-- $\text{use\_count}$: Number of times the memory has been accessed (touches)
+- $n_{\text{use}}$: Number of times the memory has been accessed (touches)
 - $\beta$ (beta): Use count weight exponent (default: 0.6)
 - $\lambda$ (lambda): Decay constant (default: $2.673 \times 10^{-6}$ for 3-day half-life)
-- $\Delta t$: Time delta in seconds since last access ($t_{\text{now}} - t_{\text{last\_used}}$)
-- $\text{strength}$: Base multiplier (range: 0.0-2.0, default: 1.0)
+- $\Delta t$: Time delta in seconds since last access ($t_{\text{now}} - t_{\text{last used}}$)
+- $s$: Base multiplier (range: 0.0-2.0, default: 1.0)
 
 ## Components Explained
 
-### 1. Use Count Component: $(\text{use\_count})^\beta$
+### 1. Use Count Component: $(n_{\text{use}})^\beta$
 
 **Purpose:** Reward frequently accessed memories.
 
@@ -130,7 +130,7 @@ strength = 0.5
 
 **Example:**
 
-For a memory with $\text{use\_count}=1$, $\text{strength}=1.0$, $\beta=0.6$, $\lambda=2.673 \times 10^{-6}$ (3-day half-life), and $\Delta t = 30$ days:
+For a memory with $n_{\text{use}}=1$, $s=1.0$, $\beta=0.6$, $\lambda=2.673 \times 10^{-6}$ (3-day half-life), and $\Delta t = 30$ days:
 
 $$
 \begin{align*}
@@ -148,7 +148,7 @@ Since $0.001 < 0.05$ → **FORGET**
 
 **Dual Criteria (OR logic):**
 1. **Score-based:** $\text{score} \geq 0.65$
-2. **Usage-based:** $\text{use\_count} \geq 5$ within 14 days
+2. **Usage-based:** $n_{\text{use}} \geq 5$ within 14 days
 
 **Rationale:**
 - Score-based: Catches quickly-important info (e.g., high strength + recent)
@@ -158,9 +158,9 @@ Since $0.001 < 0.05$ → **FORGET**
 
 $$
 \begin{align*}
-\text{use\_count} &= 3 \\
+n_{\text{use}} &= 3 \\
 \Delta t &= 1 \text{ hour} = 3600 \text{ seconds} \\
-\text{strength} &= 2.0 \\
+s &= 2.0 \\
 \\
 \text{score} &= (3)^{0.6} \cdot e^{-2.673 \times 10^{-6} \cdot 3600} \cdot 2.0 \\
 &= 1.93 \cdot 0.99 \cdot 2.0 \\
@@ -172,11 +172,11 @@ Since $3.82 > 0.65$ → **PROMOTE**
 
 **Example Scenario 2:** High use count (frequently accessed)
 
-- $\text{use\_count} = 5$
+- $n_{\text{use}} = 5$
 - $\Delta t = 7$ days
 - Memory created 10 days ago
 
-Within 14-day window **AND** $\text{use\_count} \geq 5$ → **PROMOTE**
+Within 14-day window **AND** $n_{\text{use}} \geq 5$ → **PROMOTE**
 
 ## Complete Decision Logic
 
@@ -237,7 +237,7 @@ $$
 ### High Strength + Normal Decay
 
 $$
-\text{strength} = 2.0, \quad \beta = 0.6, \quad \lambda = 2.67 \times 10^{-6} \text{ (3-day half-life)}
+s = 2.0, \quad \beta = 0.6, \quad \lambda = 2.67 \times 10^{-6} \text{ (3-day half-life)}
 $$
 
 **Effect:** Important memories resist decay longer.
@@ -245,7 +245,7 @@ $$
 
 ## Visualizations
 
-### Decay Curves (use_count=1, strength=1.0)
+### Decay Curves ($n_{\text{use}}=1$, $s=1.0$)
 
 ```
 Score
@@ -268,7 +268,7 @@ Horizontal line at 0.65 = promotion threshold
 Horizontal line at 0.05 = forget threshold
 ```
 
-### Use Count Impact (time_delta=1 day, strength=1.0, β=0.6)
+### Use Count Impact ($\Delta t=1$ day, $s=1.0$, $\beta=0.6$)
 
 ```
 Score
@@ -283,14 +283,14 @@ Score
     0    5    10   15   20   use_count
 ```
 
-### Strength Modulation (use_count=1, time_delta=1 day)
+### Strength Modulation ($n_{\text{use}}=1$, $\Delta t=1$ day)
 
 ```
 Score
-2.0 |                          ●  (strength=2.0)
-    |                     ●       (strength=1.5)
-1.0 |●                           (strength=1.0)
-    |  ●                         (strength=0.5)
+2.0 |                          ●  (s=2.0)
+    |                     ●       (s=1.5)
+1.0 |●                           (s=1.0)
+    |  ●                         (s=0.5)
 0.0 |_________________________________
 ```
 
@@ -430,7 +430,7 @@ $$
 For stable memories with high use counts:
 
 $$
-t_{\text{next\_review}} = t_{\text{now}} + \Delta t_{\text{interval}}
+t_{\text{next review}} = t_{\text{now}} + \Delta t_{\text{interval}}
 $$
 
 Where $\Delta t_{\text{interval}}$ increases with each successful review.
@@ -440,10 +440,10 @@ Where $\Delta t_{\text{interval}}$ increases with each successful review.
 Boost strength based on conversation context:
 
 $$
-\text{strength} = \begin{cases}
-2.0 & \text{if is\_security\_critical(content)} \\
-1.5 & \text{if is\_decision(content)} \\
-1.3 & \text{if is\_preference(content)} \\
+s = \begin{cases}
+2.0 & \text{if is security critical(content)} \\
+1.5 & \text{if is decision(content)} \\
+1.3 & \text{if is preference(content)} \\
 1.0 & \text{otherwise}
 \end{cases}
 $$

@@ -13,7 +13,7 @@ This repository contains:
 
 ## Current Implementation (v0.1 - Phase 1 Complete)
 
-The `stm-server/` directory contains a fully functional MCP server with:
+This repository contains a fully functional MCP server with:
 
 ### 10 MCP Tools Implemented
 
@@ -208,10 +208,10 @@ a human would.
 ### File Organization
 
 ```
-stm-server/
+stm-research/
 ├── src/stm_server/
 │   ├── core/              # Decay, scoring, clustering
-│   │   ├── decay.py       # Temporal decay algorithm (CORE IP)
+│   │   ├── decay.py       # Temporal decay algorithm
 │   │   ├── scoring.py     # Forget/promote decisions
 │   │   └── cluster.py     # Similarity detection
 │   ├── storage/           # Data persistence
@@ -233,6 +233,7 @@ stm-server/
 │   └── prompts/          # Smart prompting (planned, v0.2)
 ├── pyproject.toml         # Project config
 ├── .env.example           # Config template
+├── CLAUDE.md              # Guide for AI assistants
 └── README.md              # Quick start
 ```
 

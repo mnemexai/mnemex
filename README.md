@@ -95,20 +95,20 @@ No explicit memory commands needed - just natural conversation.
 stm-research/
 ├── README.md                          # This file
 ├── CLAUDE.md                          # Guide for AI assistants
-├── stm-server-research.md            # Original research notes
-└── stm-server/                        # Implementation
-    ├── src/stm_server/
-    │   ├── core/                      # Decay, scoring, clustering
-    │   ├── storage/                   # JSONL, SQLite, LTM index
-    │   ├── tools/                     # 10 MCP tools
-    │   ├── backup/                    # Git integration
-    │   └── vault/                     # Obsidian integration
-    ├── docs/
-    │   ├── scoring_algorithm.md       # Mathematical details
-    │   ├── prompts/                   # Smart prompting patterns
-    │   ├── architecture.md            # System design
-    │   └── api.md                     # Tool reference
-    └── tests/                         # Test suite
+├── src/stm_server/
+│   ├── core/                          # Decay, scoring, clustering
+│   ├── storage/                       # JSONL, SQLite, LTM index
+│   ├── tools/                         # 10 MCP tools
+│   ├── backup/                        # Git integration
+│   └── vault/                         # Obsidian integration
+├── docs/
+│   ├── scoring_algorithm.md           # Mathematical details
+│   ├── prompts/                       # Smart prompting patterns
+│   ├── architecture.md                # System design
+│   └── api.md                         # Tool reference
+├── tests/                             # Test suite
+├── examples/                          # Usage examples
+└── pyproject.toml                     # Project configuration
 ```
 
 ## Quick Start
@@ -116,8 +116,6 @@ stm-research/
 ### Installation
 
 ```bash
-cd stm-server
-
 # Install with uv (recommended)
 uv pip install -e .
 
@@ -156,7 +154,7 @@ Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_
       "command": "uv",
       "args": [
         "--directory",
-        "/path/to/stm-research/stm-server",
+        "/path/to/stm-research",
         "run",
         "stm-server"
       ],
@@ -230,11 +228,11 @@ Frequent access significantly extends retention.
 
 ## Documentation
 
-- **[Scoring Algorithm](stm-server/docs/scoring_algorithm.md)** - Complete mathematical model with LaTeX formulas
-- **[Smart Prompting](stm-server/docs/prompts/memory_system_prompt.md)** - Patterns for natural LLM integration
-- **[Architecture](stm-server/docs/architecture.md)** - System design and implementation
-- **[API Reference](stm-server/docs/api.md)** - MCP tool documentation
-- **[Graph Features](stm-server/docs/graph_features.md)** - Knowledge graph usage
+- **[Scoring Algorithm](docs/scoring_algorithm.md)** - Complete mathematical model with LaTeX formulas
+- **[Smart Prompting](docs/prompts/memory_system_prompt.md)** - Patterns for natural LLM integration
+- **[Architecture](docs/architecture.md)** - System design and implementation
+- **[API Reference](docs/api.md)** - MCP tool documentation
+- **[Graph Features](docs/graph_features.md)** - Knowledge graph usage
 
 ## Use Cases
 
@@ -283,8 +281,8 @@ If you use this work in research, please cite:
 
 This is a research project. Contributions welcome! Please:
 
-1. Read the [Architecture docs](stm-server/docs/architecture.md)
-2. Understand the [Scoring Algorithm](stm-server/docs/scoring_algorithm.md)
+1. Read the [Architecture docs](docs/architecture.md)
+2. Understand the [Scoring Algorithm](docs/scoring_algorithm.md)
 3. Follow existing code patterns
 4. Add tests for new features
 5. Update documentation
