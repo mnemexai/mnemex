@@ -1,0 +1,396 @@
+"""Markdown writer for Obsidian vault integration.
+
+Clean-room implementation for writing markdown files with YAML frontmatter
+and wikilinks. Does NOT use Basic Memory MCP code (AGPL license).
+"""
+
+import time
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+import frontmatter
+
+
+class MarkdownWriter:
+    """Write markdown files to Obsidian vault with proper formatting."""
+
+    def __init__(self, vault_path: Path):
+        """
+        Initialize markdown writer.
+
+        Args:
+            vault_path: Path to Obsidian vault root directory
+        """
+        self.vault_path = vault_path
+        self.vault_path.mkdir(parents=True, exist_ok=True)
+
+    def create_wikilink(self, target: str, alias: Optional[str] = None) -> str:
+        """
+        Create a wikilink string.
+
+        Args:
+            target: Target note title
+            alias: Optional display alias
+
+        Returns:
+            Formatted wikilink string
+
+        Examples:
+            >>> create_wikilink("Note Title")
+            '[[Note Title]]'
+            >>> create_wikilink("Note Title", "Display Text")
+            '[[Note Title|Display Text]]'
+        """
+        if alias:
+            return f"[[{target}|{alias}]]"
+        return f"[[{target}]]"
+
+    def write_note(
+        self,
+        title: str,
+        content: str,
+        folder: str = "",
+        *,
+        tags: Optional[List[str]] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+        wikilinks: Optional[List[str]] = None,
+        created_at: Optional[int] = None,
+        modified_at: Optional[int] = None,
+    ) -> Path:
+        """
+        Write a markdown note to the vault.
+
+        Args:
+            title: Note title (used for filename)
+            content: Note content (markdown)
+            folder: Subfolder within vault (default: root)
+            tags: List of tags
+            metadata: Additional YAML frontmatter metadata
+            wikilinks: List of wikilink targets to include in frontmatter
+            created_at: Creation timestamp (Unix epoch)
+            modified_at: Modification timestamp (Unix epoch)
+
+        Returns:
+            Path to created file
+
+        Note:
+            - Filename is sanitized from title (spaces to hyphens, lowercase)
+            - YAML frontmatter is added automatically
+            - Relations stored in frontmatter for backlink compatibility
+        """
+        # Sanitize filename
+        filename = self._sanitize_filename(title) + ".md"
+
+        # Determine full path
+        if folder:
+            folder_path = self.vault_path / folder
+            folder_path.mkdir(parents=True, exist_ok=True)
+            file_path = folder_path / filename
+        else:
+            file_path = self.vault_path / filename
+
+        # Build frontmatter
+        fm = {
+            "title": title,
+            "created": datetime.fromtimestamp(
+                created_at or int(time.time())
+            ).isoformat(),
+            "modified": datetime.fromtimestamp(
+                modified_at or int(time.time())
+            ).isoformat(),
+        }
+
+        if tags:
+            fm["tags"] = tags
+
+        if wikilinks:
+            fm["links"] = wikilinks
+
+        # Add custom metadata
+        if metadata:
+            fm.update(metadata)
+
+        # Create frontmatter post
+        post = frontmatter.Post(content, **fm)
+
+        # Write to file
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write(frontmatter.dumps(post))
+
+        return file_path
+
+    def update_note(
+        self,
+        file_path: Path,
+        content: Optional[str] = None,
+        *,
+        tags: Optional[List[str]] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+        append_content: Optional[str] = None,
+    ) -> None:
+        """
+        Update an existing note.
+
+        Args:
+            file_path: Path to note file
+            content: New content (replaces existing if provided)
+            tags: New tags (replaces existing if provided)
+            metadata: Metadata to update (merged with existing)
+            append_content: Content to append to existing content
+
+        Raises:
+            FileNotFoundError: If note doesn't exist
+        """
+        if not file_path.exists():
+            raise FileNotFoundError(f"Note not found: {file_path}")
+
+        # Load existing note
+        with open(file_path, "r", encoding="utf-8") as f:
+            post = frontmatter.load(f)
+
+        # Update content
+        if content is not None:
+            post.content = content
+        elif append_content is not None:
+            post.content += "\n\n" + append_content
+
+        # Update metadata
+        if tags is not None:
+            post["tags"] = tags
+
+        if metadata:
+            for key, value in metadata.items():
+                post[key] = value
+
+        # Update modified timestamp
+        post["modified"] = datetime.now().isoformat()
+
+        # Write updated note
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write(frontmatter.dumps(post))
+
+    def read_note(self, file_path: Path) -> tuple[str, Dict[str, Any]]:
+        """
+        Read a markdown note.
+
+        Args:
+            file_path: Path to note file
+
+        Returns:
+            Tuple of (content, frontmatter_dict)
+
+        Raises:
+            FileNotFoundError: If note doesn't exist
+        """
+        if not file_path.exists():
+            raise FileNotFoundError(f"Note not found: {file_path}")
+
+        with open(file_path, "r", encoding="utf-8") as f:
+            post = frontmatter.load(f)
+
+        return post.content, dict(post.metadata)
+
+    def delete_note(self, file_path: Path) -> None:
+        """
+        Delete a note.
+
+        Args:
+            file_path: Path to note file
+
+        Raises:
+            FileNotFoundError: If note doesn't exist
+        """
+        if not file_path.exists():
+            raise FileNotFoundError(f"Note not found: {file_path}")
+
+        file_path.unlink()
+
+    def find_note_by_title(self, title: str) -> Optional[Path]:
+        """
+        Find a note by its title (from frontmatter).
+
+        Args:
+            title: Title to search for
+
+        Returns:
+            Path to note if found, None otherwise
+        """
+        # Search all markdown files
+        for md_file in self.vault_path.rglob("*.md"):
+            try:
+                with open(md_file, "r", encoding="utf-8") as f:
+                    post = frontmatter.load(f)
+                    if post.get("title") == title:
+                        return md_file
+            except Exception:
+                # Skip files that can't be parsed
+                continue
+
+        return None
+
+    def _sanitize_filename(self, title: str) -> str:
+        """
+        Sanitize a title for use as filename.
+
+        Args:
+            title: Title to sanitize
+
+        Returns:
+            Sanitized filename (without extension)
+
+        Examples:
+            >>> _sanitize_filename("My Note Title")
+            'my-note-title'
+            >>> _sanitize_filename("Invalid/Name?")
+            'invalid-name'
+        """
+        import re
+
+        # Convert to lowercase
+        filename = title.lower()
+
+        # Replace spaces with hyphens
+        filename = filename.replace(" ", "-")
+
+        # Remove invalid characters
+        filename = re.sub(r"[^\w\-]", "", filename)
+
+        # Remove duplicate hyphens
+        filename = re.sub(r"-+", "-", filename)
+
+        # Remove leading/trailing hyphens
+        filename = filename.strip("-")
+
+        # Ensure not empty
+        if not filename:
+            filename = "untitled"
+
+        return filename
+
+    def get_note_path(self, title: str, folder: str = "") -> Path:
+        """
+        Get the expected path for a note given its title and folder.
+
+        Args:
+            title: Note title
+            folder: Subfolder within vault
+
+        Returns:
+            Expected path to note file
+        """
+        filename = self._sanitize_filename(title) + ".md"
+
+        if folder:
+            return self.vault_path / folder / filename
+        return self.vault_path / filename
+
+    def list_notes(self, folder: Optional[str] = None) -> List[Path]:
+        """
+        List all notes in vault or a specific folder.
+
+        Args:
+            folder: Optional folder to filter by
+
+        Returns:
+            List of paths to markdown files
+        """
+        if folder:
+            search_path = self.vault_path / folder
+        else:
+            search_path = self.vault_path
+
+        if not search_path.exists():
+            return []
+
+        return list(search_path.rglob("*.md"))
+
+    def create_folder(self, folder_name: str) -> Path:
+        """
+        Create a folder in the vault.
+
+        Args:
+            folder_name: Name of folder to create
+
+        Returns:
+            Path to created folder
+        """
+        folder_path = self.vault_path / folder_name
+        folder_path.mkdir(parents=True, exist_ok=True)
+        return folder_path
+
+
+def main() -> int:
+    """CLI entry point for markdown writer operations."""
+    import argparse
+    import sys
+
+    parser = argparse.ArgumentParser(description="Write markdown notes to Obsidian vault")
+    parser.add_argument(
+        "vault_path",
+        type=Path,
+        help="Path to Obsidian vault",
+    )
+
+    subparsers = parser.add_subparsers(dest="command", help="Command to execute")
+
+    # Create command
+    create_parser = subparsers.add_parser("create", help="Create a new note")
+    create_parser.add_argument("title", help="Note title")
+    create_parser.add_argument("content", help="Note content")
+    create_parser.add_argument("--folder", default="", help="Folder within vault")
+    create_parser.add_argument("--tags", nargs="+", help="Tags for the note")
+
+    # List command
+    list_parser = subparsers.add_parser("list", help="List notes")
+    list_parser.add_argument("--folder", help="Folder to list")
+
+    # Read command
+    read_parser = subparsers.add_parser("read", help="Read a note")
+    read_parser.add_argument("title", help="Note title to read")
+
+    args = parser.parse_args()
+
+    if not args.command:
+        parser.print_help()
+        return 1
+
+    try:
+        writer = MarkdownWriter(vault_path=args.vault_path)
+
+        if args.command == "create":
+            file_path = writer.write_note(
+                title=args.title,
+                content=args.content,
+                folder=args.folder,
+                tags=args.tags,
+            )
+            print(f"✓ Note created: {file_path}")
+
+        elif args.command == "list":
+            notes = writer.list_notes(folder=args.folder)
+            print(f"\nNotes ({len(notes)}):\n")
+            for note_path in notes:
+                print(f"  - {note_path.relative_to(writer.vault_path)}")
+
+        elif args.command == "read":
+            note_path = writer.find_note_by_title(args.title)
+            if not note_path:
+                print(f"Note not found: {args.title}", file=sys.stderr)
+                return 1
+
+            content, metadata = writer.read_note(note_path)
+            print(f"\n{note_path}:")
+            print(f"\nMetadata: {metadata}")
+            print(f"\nContent:\n{content}")
+
+        return 0
+
+    except Exception as e:
+        print(f"Error: {e}", file=sys.stderr)
+        return 1
+
+
+if __name__ == "__main__":
+    import sys
+    sys.exit(main())
