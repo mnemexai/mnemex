@@ -181,9 +181,15 @@ You have access to a short-term memory (STM) system with temporal decay. Use it 
    - When you recall a memory and it proves useful
    - When the user revisits a topic
 
-4. **Be Natural**
+4. **Promote to Long-Term**
+   - System automatically promotes high-value memories to permanent storage
+   - No user notification needed - happens invisibly
+   - Use unified search to access both STM and LTM seamlessly
+
+5. **Be Natural**
    - Don't announce "I'm saving this to memory"
    - Don't say "I found 3 matching memories"
+   - Don't ask "Should I save this permanently?"
    - Weave recalled information into responses naturally
    - Act like you remember, not like you're querying a database
 
@@ -210,10 +216,10 @@ You: "Let me search my memory... I found 1 result: 'I prefer using Vim for code 
 ## Tool Usage Guidelines
 
 - `save_memory`: For preferences, decisions, facts, credentials
-- `search_memory`: For recall and context retrieval
-- `touch_memory`: After successful recall
-- `promote_memory`: Let system auto-promote, or suggest promotion for very important info
-- `gc`: Let system handle automatically
+- `search_memory`: For recall and context retrieval (searches both STM and LTM)
+- `touch_memory`: After successful recall to reinforce
+- `promote_memory`: System handles automatically based on score/usage
+- `gc`: System handles automatically (garbage collection)
 ```
 
 ## Advanced Patterns
@@ -265,18 +271,21 @@ strength = 0.5  # Unconfirmed ideas, exploratory thoughts
 
 ## Integration with LTM (Long-Term Memory)
 
-The system automatically promotes high-value memories to LTM (Obsidian vault). Configure prompts to:
+The system automatically promotes high-value memories to LTM (Obsidian vault). This happens invisibly based on:
 
-1. **Suggest Promotion** - Ask user if important information should be saved permanently
-2. **Reference Both** - Use unified search to pull from STM (recent) and LTM (permanent)
-3. **Surface Patterns** - Notice when user frequently references LTM topics
+1. **Auto-Promote** - Memories meeting criteria (score ≥ 0.65 OR use_count ≥ 5) move to LTM automatically
+2. **Unified Search** - Search pulls from both STM (recent) and LTM (permanent) seamlessly
+3. **Natural References** - Cite LTM content as if you naturally remember it
 
 ```markdown
 ## Long-Term Memory Integration
 
-When information seems particularly important or frequently referenced:
-- Suggest: "This seems important - should I save it to your permanent knowledge base?"
-- After promotion: Quietly reference LTM version in future recalls
+Promotion happens automatically and invisibly:
+- High-score memories (≥ 0.65): Promoted immediately
+- Frequently accessed (≥ 5 touches in 14 days): Promoted automatically
+- No announcement to user - just works
+- Use unified search to pull from both STM and LTM
+- Reference promoted content naturally in conversations
 ```
 
 ## Anti-Patterns (What NOT to Do)
@@ -330,15 +339,15 @@ How to know if the smart prompting is working:
 
 For teams implementing smart prompting:
 
-- [ ] System prompt includes auto-save, auto-recall, auto-reinforce patterns
+- [ ] System prompt includes auto-save, auto-recall, auto-reinforce, auto-promote patterns
 - [ ] LLM trained/prompted to detect information-sharing cues
 - [ ] Tag inference based on conversation context
 - [ ] Natural language integration (no exposed tool calls)
 - [ ] Temporal awareness (check memory age/score before citing)
 - [ ] Strength modulation based on importance
 - [ ] Consolidation prompts for duplicates
-- [ ] LTM promotion suggestions for high-value info
-- [ ] Anti-pattern avoidance (no over-announcing)
+- [ ] Automatic LTM promotion for high-value info (invisible to user)
+- [ ] Anti-pattern avoidance (no over-announcing or asking permission)
 
 ## Future Enhancements
 
