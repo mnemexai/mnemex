@@ -21,18 +21,19 @@ This repository contains research, design, and a complete implementation of a sh
 The temporal decay scoring function:
 
 $$
-\text{score}(t) = (\text{use\_count})^\beta \cdot e^{-\lambda \cdot \Delta t} \cdot \text{strength}
+\text{score}(t) = (n_{\text{use}})^\beta \cdot e^{-\lambda \cdot \Delta t} \cdot s
 $$
 
 Where:
+- $n_{\text{use}}$ - Use count (number of accesses)
 - $\beta = 0.6$ - Sub-linear use count weighting (diminishing returns)
 - $\lambda = \frac{\ln(2)}{t_{1/2}}$ - Decay constant (default: 3-day half-life)
-- $\Delta t$ - Time since last access
-- $\text{strength} \in [0, 2]$ - Importance multiplier
+- $\Delta t$ - Time since last access (seconds)
+- $s$ - Strength parameter $\in [0, 2]$ (importance multiplier)
 
 **Decision thresholds:**
 - Forget: $\text{score} < 0.05$ → delete memory
-- Promote: $\text{score} \geq 0.65$ OR $\text{use\_count} \geq 5$ within 14 days → move to LTM
+- Promote: $\text{score} \geq 0.65$ OR $n_{\text{use}} \geq 5$ within 14 days → move to LTM
 
 ## Key Innovations
 
@@ -202,7 +203,7 @@ stm-search           # Unified STM+LTM search
 
 ### Decay Curves
 
-For a memory with $\text{use\_count}=1$, $\text{strength}=1.0$, and $\lambda = 2.673 \times 10^{-6}$ (3-day half-life):
+For a memory with $n_{\text{use}}=1$, $s=1.0$, and $\lambda = 2.673 \times 10^{-6}$ (3-day half-life):
 
 | Time | Score | Status |
 |------|-------|--------|
