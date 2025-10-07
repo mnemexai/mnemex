@@ -416,7 +416,7 @@ This is a research project. Contributions welcome! Please:
 
 ## Status
 
-**Version:** 0.2.0
+**Version:** 0.3.0
 **Status:** Research implementation - functional but evolving
 
 ### Phase 1 (Complete) ✅
