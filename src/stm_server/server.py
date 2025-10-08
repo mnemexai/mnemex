@@ -53,14 +53,14 @@ def initialize_server():
 
     db.connect()
     logger.info(f"Storage initialized with {db.count_memories()} memories")
-    logger.info(f"Tools registered: {', '.join(mcp.tools.keys())}")
+    logger.info("MCP server tools registered (11 tools)")
 
 
 def main_sync() -> None:
     """Synchronous entry point for the server."""
     try:
         initialize_server()
-        mcp.run_forever()
+        mcp.run()
     except Exception as e:
         logger.error(f"Server error: {e}", exc_info=True)
         sys.exit(1)
