@@ -1,14 +1,14 @@
 [project]
-name = "stm-server"
-version = "0.3.0"
-description = "Short-Term Memory Server with temporal decay and reinforcement for AI systems"
+name = "mnemex"
+version = "1.0.0"
+description = "Mnemex: Temporal memory management for AI assistants with human-like dynamics"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
 authors = [
-    {name = "STM Research"}
+    {name = "Mnemex"}
 ]
-keywords = ["mcp", "memory", "ai", "llm", "temporal-decay"]
+keywords = ["mcp", "memory", "ai", "llm", "temporal-decay", "mnemonic", "memex"]
 
 dependencies = [
     "mcp>=1.2.0",
@@ -33,19 +33,19 @@ dev = [
 ]
 
 [project.scripts]
-stm-server = "stm_server.server:main_sync"
-stm-index-ltm = "stm_server.storage.ltm_index:main"
-stm-backup = "stm_server.backup.git_backup:main"
-stm-vault = "stm_server.vault.markdown_writer:main"
-stm-search = "stm_server.tools.search_unified:main"
-stm-maintenance = "stm_server.storage.maintenance:main"
+mnemex = "mnemex.server:main_sync"
+mnemex-index-ltm = "mnemex.storage.ltm_index:main"
+mnemex-backup = "mnemex.backup.git_backup:main"
+mnemex-vault = "mnemex.vault.markdown_writer:main"
+mnemex-search = "mnemex.tools.search_unified:main"
+mnemex-maintenance = "mnemex.storage.maintenance:main"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/stm_server"]
+packages = ["src/mnemex"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -55,7 +55,7 @@ python_functions = ["test_*"]
 asyncio_mode = "auto"
 addopts = [
     "--verbose",
-    "--cov=stm_server",
+    "--cov=mnemex",
     "--cov-report=term-missing",
     "--cov-report=html",
 ]
@@ -110,4 +110,4 @@ ignore = [
 ]
 
 [tool.ruff.lint.isort]
-known-first-party = ["stm_server"]
+known-first-party = ["mnemex"]

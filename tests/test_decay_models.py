@@ -6,8 +6,8 @@ import time
 
 import pytest
 
-from stm_server.config import Config, set_config
-from stm_server.core.decay import (
+from mnemex.config import Config, set_config
+from mnemex.core.decay import (
     calculate_decay_lambda,
     calculate_score,
     time_until_threshold,

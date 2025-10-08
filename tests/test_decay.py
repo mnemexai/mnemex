@@ -4,7 +4,7 @@ import time
 
 import pytest
 
-from stm_server.core.decay import (
+from mnemex.core.decay import (
     calculate_decay_lambda,
     calculate_halflife,
     calculate_score,

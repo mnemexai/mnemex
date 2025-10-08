@@ -2,7 +2,7 @@
 
 import pytest
 
-from stm_server.config import Config, set_config
+from mnemex.config import Config, set_config
 
 
 @pytest.fixture(autouse=True)

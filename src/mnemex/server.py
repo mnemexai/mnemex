@@ -1,4 +1,4 @@
-"""MCP Server entry point for STM server."""
+"""MCP Server entry point for Mnemex."""
 
 import logging
 import sys
@@ -22,7 +22,7 @@ def initialize_server():
     config = get_config()
     logging.getLogger().setLevel(config.log_level)
 
-    logger.info("Initializing STM server")
+    logger.info("Initializing Mnemex")
     logger.info(f"Storage (JSONL): {config.storage_path}")
 
     model = config.decay_model

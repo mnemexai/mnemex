@@ -1,4 +1,4 @@
-"""Configuration management for STM server."""
+"""Configuration management for Mnemex."""
 
 import math
 import os
@@ -7,16 +7,34 @@ from pathlib import Path
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field, field_validator
 
-# Load environment variables from .env file
-load_dotenv()
+
+def _get_config_dir() -> Path:
+    """Get XDG-compliant config directory."""
+    xdg_config = os.getenv("XDG_CONFIG_HOME")
+    if xdg_config:
+        return Path(xdg_config) / "mnemex"
+    return Path.home() / ".config" / "mnemex"
+
+
+# Load environment variables from .env file (XDG paths first, then local)
+_config_dir = _get_config_dir()
+_env_paths = [
+    _config_dir / ".env",  # Primary: ~/.config/mnemex/.env
+    Path(".env"),  # Fallback: ./env (for development)
+]
+
+for env_path in _env_paths:
+    if env_path.exists():
+        load_dotenv(env_path)
+        break
 
 
 class Config(BaseModel):
-    """Configuration for STM server."""
+    """Configuration for Mnemex."""
 
-    # Storage (Phase 2 - JSONL)
+    # Storage (JSONL)
     storage_path: Path = Field(
-        default_factory=lambda: Path.home() / ".stm" / "jsonl",
+        default_factory=lambda: _get_config_dir() / "jsonl",
         description="Path to JSONL storage directory",
     )
 
@@ -190,57 +208,57 @@ class Config(BaseModel):
         config_dict = {}
 
         # Storage
-        if storage_path := os.getenv("STM_STORAGE_PATH"):
+        if storage_path := os.getenv("MNEMEX_STORAGE_PATH"):
             config_dict["storage_path"] = storage_path
 
         # Decay parameters
-        if decay_model := os.getenv("STM_DECAY_MODEL"):
+        if decay_model := os.getenv("MNEMEX_DECAY_MODEL"):
             config_dict["decay_model"] = decay_model
-        if decay_lambda := os.getenv("STM_DECAY_LAMBDA"):
+        if decay_lambda := os.getenv("MNEMEX_DECAY_LAMBDA"):
             config_dict["decay_lambda"] = float(decay_lambda)
-        if decay_beta := os.getenv("STM_DECAY_BETA"):
+        if decay_beta := os.getenv("MNEMEX_DECAY_BETA"):
             config_dict["decay_beta"] = float(decay_beta)
 
         # Power-law
-        if pl_alpha := os.getenv("STM_PL_ALPHA"):
+        if pl_alpha := os.getenv("MNEMEX_PL_ALPHA"):
             config_dict["pl_alpha"] = float(pl_alpha)
-        if pl_halflife_days := os.getenv("STM_PL_HALFLIFE_DAYS"):
+        if pl_halflife_days := os.getenv("MNEMEX_PL_HALFLIFE_DAYS"):
             config_dict["pl_halflife_days"] = float(pl_halflife_days)
 
         # Two-component
-        if tc_lambda_fast := os.getenv("STM_TC_LAMBDA_FAST"):
+        if tc_lambda_fast := os.getenv("MNEMEX_TC_LAMBDA_FAST"):
             config_dict["tc_lambda_fast"] = float(tc_lambda_fast)
-        if tc_lambda_slow := os.getenv("STM_TC_LAMBDA_SLOW"):
+        if tc_lambda_slow := os.getenv("MNEMEX_TC_LAMBDA_SLOW"):
             config_dict["tc_lambda_slow"] = float(tc_lambda_slow)
-        if tc_weight_fast := os.getenv("STM_TC_WEIGHT_FAST"):
+        if tc_weight_fast := os.getenv("MNEMEX_TC_WEIGHT_FAST"):
             config_dict["tc_weight_fast"] = float(tc_weight_fast)
 
         # Thresholds
-        if forget_threshold := os.getenv("STM_FORGET_THRESHOLD"):
+        if forget_threshold := os.getenv("MNEMEX_FORGET_THRESHOLD"):
             config_dict["forget_threshold"] = float(forget_threshold)
-        if promote_threshold := os.getenv("STM_PROMOTE_THRESHOLD"):
+        if promote_threshold := os.getenv("MNEMEX_PROMOTE_THRESHOLD"):
             config_dict["promote_threshold"] = float(promote_threshold)
-        if promote_use_count := os.getenv("STM_PROMOTE_USE_COUNT"):
+        if promote_use_count := os.getenv("MNEMEX_PROMOTE_USE_COUNT"):
             config_dict["promote_use_count"] = int(promote_use_count)
-        if promote_time_window := os.getenv("STM_PROMOTE_TIME_WINDOW"):
+        if promote_time_window := os.getenv("MNEMEX_PROMOTE_TIME_WINDOW"):
             config_dict["promote_time_window"] = int(promote_time_window)
 
         # Embeddings
-        if embed_model := os.getenv("STM_EMBED_MODEL"):
+        if embed_model := os.getenv("MNEMEX_EMBED_MODEL"):
             config_dict["embed_model"] = embed_model
-        if enable_embeddings := os.getenv("STM_ENABLE_EMBEDDINGS"):
+        if enable_embeddings := os.getenv("MNEMEX_ENABLE_EMBEDDINGS"):
             config_dict["enable_embeddings"] = enable_embeddings.lower() in ("true", "1", "yes")
 
         # Semantic search
-        if semantic_hi := os.getenv("STM_SEMANTIC_HI"):
+        if semantic_hi := os.getenv("MNEMEX_SEMANTIC_HI"):
             config_dict["semantic_hi"] = float(semantic_hi)
-        if semantic_lo := os.getenv("STM_SEMANTIC_LO"):
+        if semantic_lo := os.getenv("MNEMEX_SEMANTIC_LO"):
             config_dict["semantic_lo"] = float(semantic_lo)
 
         # Clustering
-        if cluster_link_threshold := os.getenv("STM_CLUSTER_LINK_THRESHOLD"):
+        if cluster_link_threshold := os.getenv("MNEMEX_CLUSTER_LINK_THRESHOLD"):
             config_dict["cluster_link_threshold"] = float(cluster_link_threshold)
-        if cluster_max_size := os.getenv("STM_CLUSTER_MAX_SIZE"):
+        if cluster_max_size := os.getenv("MNEMEX_CLUSTER_MAX_SIZE"):
             config_dict["cluster_max_size"] = int(cluster_max_size)
 
         # Long-Term Memory

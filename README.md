@@ -1,4 +1,4 @@
-# STM Research: Short-Term Memory with Temporal Decay
+# Mnemex: Temporal Memory for AI
 
 A Model Context Protocol (MCP) server providing **human-like memory dynamics** for AI assistants. Memories naturally fade over time unless reinforced through use, mimicking the [Ebbinghaus forgetting curve](https://en.wikipedia.org/wiki/Forgetting_curve).
 
@@ -76,9 +76,9 @@ See detailed parameter reference, model selection, and worked examples in docs/s
 - Aggressive space control
   - Raise τ_forget to 0.08–0.12 and/or shorten half-life; schedule weekly GC
 - Environment template
-  - STM_DECAY_LAMBDA=2.673e-6, STM_DECAY_BETA=0.6
-  - STM_FORGET_THRESHOLD=0.05, STM_PROMOTE_THRESHOLD=0.65
-  - STM_PROMOTE_USE_COUNT=5, STM_PROMOTE_TIME_WINDOW=14
+  - MNEMEX_DECAY_LAMBDA=2.673e-6, MNEMEX_DECAY_BETA=0.6
+  - MNEMEX_FORGET_THRESHOLD=0.05, MNEMEX_PROMOTE_THRESHOLD=0.65
+  - MNEMEX_PROMOTE_USE_COUNT=5, MNEMEX_PROMOTE_TIME_WINDOW=14
 
 **Decision thresholds:**
 
@@ -128,7 +128,7 @@ No explicit memory commands needed - just natural conversation.
 
 ```
 ┌─────────────────────────────────────┐
-│   STM (Short-Term Memory)           │
+│   Short-term memory           │
 │   - JSONL storage                   │
 │   - Temporal decay                  │
 │   - Hours to weeks retention        │
@@ -146,7 +146,7 @@ No explicit memory commands needed - just natural conversation.
 ## Project Structure
 
 ```
-stm-research/
+mnemex/
 ├── README.md                          # This file
 ├── CLAUDE.md                          # Guide for AI assistants
 ├── src/stm_server/
@@ -183,30 +183,30 @@ Copy `.env.example` to `.env` and configure:
 
 ```bash
 # Storage
-STM_STORAGE_PATH=~/.stm/jsonl
+MNEMEX_STORAGE_PATH=~/.config/mnemex/jsonl
 
 # Decay model (power_law | exponential | two_component)
-STM_DECAY_MODEL=power_law
+MNEMEX_DECAY_MODEL=power_law
 
 # Power-law parameters (default model)
-STM_PL_ALPHA=1.1
-STM_PL_HALFLIFE_DAYS=3.0
+MNEMEX_PL_ALPHA=1.1
+MNEMEX_PL_HALFLIFE_DAYS=3.0
 
 # Exponential (if selected)
-# STM_DECAY_LAMBDA=2.673e-6  # 3-day half-life
+# MNEMEX_DECAY_LAMBDA=2.673e-6  # 3-day half-life
 
 # Two-component (if selected)
-# STM_TC_LAMBDA_FAST=1.603e-5  # ~12h
-# STM_TC_LAMBDA_SLOW=1.147e-6  # ~7d
-# STM_TC_WEIGHT_FAST=0.7
+# MNEMEX_TC_LAMBDA_FAST=1.603e-5  # ~12h
+# MNEMEX_TC_LAMBDA_SLOW=1.147e-6  # ~7d
+# MNEMEX_TC_WEIGHT_FAST=0.7
 
 # Common parameters
-STM_DECAY_LAMBDA=2.673e-6
-STM_DECAY_BETA=0.6
+MNEMEX_DECAY_LAMBDA=2.673e-6
+MNEMEX_DECAY_BETA=0.6
 
 # Thresholds
-STM_FORGET_THRESHOLD=0.05
-STM_PROMOTE_THRESHOLD=0.65
+MNEMEX_FORGET_THRESHOLD=0.05
+MNEMEX_PROMOTE_THRESHOLD=0.65
 
 # Long-term memory (optional)
 LTM_VAULT_PATH=~/Documents/Obsidian/Vault
@@ -219,16 +219,16 @@ Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_
 ```json
 {
   "mcpServers": {
-    "stm": {
+    "mnemex": {
       "command": "uv",
       "args": [
         "--directory",
-        "/path/to/stm-research",
+        "/path/to/mnemex",
         "run",
-        "stm-server"
+        "mnemex"
       ],
       "env": {
-        "PYTHONPATH": "/path/to/stm-research/src"
+        "PYTHONPATH": "/path/to/mnemex/src"
       }
     }
   }
@@ -236,7 +236,7 @@ Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_
 ```
 
 **Important:**
-- Replace `/path/to/stm-research` with your actual repository path
+- Replace `/path/to/mnemex` with your actual repository path
 - The `PYTHONPATH` environment variable is required for editable installs
 - Storage paths are configured in your `.env` file, not in the MCP config
 
@@ -246,10 +246,10 @@ Use the maintenance CLI to inspect and compact JSONL storage:
 
 ```bash
 # Show storage stats (active counts, file sizes, compaction hints)
-stm-maintenance stats
+mnemex-maintenance stats
 
 # Compact JSONL (rewrite without tombstones/duplicates)
-stm-maintenance compact
+mnemex-maintenance compact
 ```
 
 ## CLI Commands
@@ -257,12 +257,12 @@ stm-maintenance compact
 The server includes 7 command-line tools:
 
 ```bash
-stm-server           # Run MCP server
-stm-index-ltm        # Index Obsidian vault
-stm-backup           # Git backup operations
-stm-vault            # Vault markdown operations
-stm-search           # Unified STM+LTM search
-stm-maintenance      # JSONL storage stats and compaction
+mnemex           # Run MCP server
+mnemex-index-ltm        # Index Obsidian vault
+mnemex-backup           # Git backup operations
+mnemex-vault            # Vault markdown operations
+mnemex-search           # Unified STM+LTM search
+mnemex-maintenance      # JSONL storage stats and compaction
 ```
 
 ## MCP Tools
@@ -288,7 +288,7 @@ stm-maintenance      # JSONL storage stats and compaction
 Search across STM and LTM with the CLI:
 
 ```bash
-stm-search "typescript preferences" --tags preferences --limit 5 --verbose
+mnemex-search "typescript preferences" --tags preferences --limit 5 --verbose
 ```
 
 ### Example: Reinforce (Touch) Memory
@@ -427,7 +427,7 @@ If you use this work in research, please cite:
   title = {STM Research: Short-Term Memory with Temporal Decay},
   author = {simplemindedbot},
   year = {2025},
-  url = {https://github.com/simplemindedbot/stm-research},
+  url = {https://github.com/simplemindedbot/mnemex},
   version = {0.2.0}
 }
 ```

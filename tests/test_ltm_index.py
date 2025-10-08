@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from stm_server.storage.ltm_index import LTMIndex
+from mnemex.storage.ltm_index import LTMIndex
 
 
 def write_md(p: Path, text: str) -> None:

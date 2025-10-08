@@ -6,8 +6,8 @@ from pathlib import Path
 
 import pytest
 
-from stm_server.storage.jsonl_storage import JSONLStorage
-from stm_server.storage.models import Memory, MemoryMetadata, MemoryStatus
+from mnemex.storage.jsonl_storage import JSONLStorage
+from mnemex.storage.models import Memory, MemoryMetadata, MemoryStatus
 
 
 @pytest.fixture

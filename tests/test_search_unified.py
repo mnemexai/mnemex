@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from stm_server.config import Config, set_config
-from stm_server.storage.jsonl_storage import JSONLStorage
-from stm_server.storage.models import Memory, MemoryMetadata
-from stm_server.tools.search_unified import search_unified
+from mnemex.config import Config, set_config
+from mnemex.storage.jsonl_storage import JSONLStorage
+from mnemex.storage.models import Memory, MemoryMetadata
+from mnemex.tools.search_unified import search_unified
 
 
 def test_search_unified_merges_sources(tmp_path: Path) -> None:
