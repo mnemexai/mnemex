@@ -34,6 +34,7 @@ dev = [
 
 [project.scripts]
 mnemex = "mnemex.server:main_sync"
+mnemex-migrate = "mnemex.cli.migrate:main"
 mnemex-index-ltm = "mnemex.storage.ltm_index:main"
 mnemex-backup = "mnemex.backup.git_backup:main"
 mnemex-vault = "mnemex.vault.markdown_writer:main"
