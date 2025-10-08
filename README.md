@@ -252,12 +252,36 @@ mnemex-maintenance stats
 mnemex-maintenance compact
 ```
 
+### Migrating from STM Server
+
+If you previously used this project as "STM Server", use the migration tool:
+
+```bash
+# Preview what will be migrated
+mnemex-migrate --dry-run
+
+# Migrate data files from ~/.stm/ to ~/.config/mnemex/
+mnemex-migrate --data-only
+
+# Also migrate .env file (rename STM_* variables to MNEMEX_*)
+mnemex-migrate --migrate-env --env-path ./.env
+```
+
+The migration tool will:
+- Copy JSONL files from `~/.stm/jsonl/` to `~/.config/mnemex/jsonl/`
+- Optionally rename environment variables (STM_* → MNEMEX_*)
+- Create backups before making changes
+- Provide clear next-step instructions
+
+After migration, update your Claude Desktop config to use `mnemex` instead of `stm`.
+
 ## CLI Commands
 
 The server includes 7 command-line tools:
 
 ```bash
-mnemex           # Run MCP server
+mnemex                  # Run MCP server
+mnemex-migrate          # Migrate from old STM setup
 mnemex-index-ltm        # Index Obsidian vault
 mnemex-backup           # Git backup operations
 mnemex-vault            # Vault markdown operations
