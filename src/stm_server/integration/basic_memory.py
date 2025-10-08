@@ -13,7 +13,7 @@ class BasicMemoryIntegration:
     def __init__(self) -> None:
         """Initialize the Basic Memory integration."""
         self.config = get_config()
-        self.vault_path = self.config.basic_memory_path
+        self.vault_path = self.config.ltm_vault_path
 
     def is_available(self) -> bool:
         """Check if Basic Memory vault is configured and accessible."""
