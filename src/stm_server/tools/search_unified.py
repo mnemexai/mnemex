@@ -1,16 +1,12 @@
-"""Unified search across STM and LTM.
-
-Search both short-term memory (JSONL storage) and long-term memory (Obsidian vault)
-with temporal ranking and result merging.
-"""
+"""Unified search across STM and LTM."""
 
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, List, Optional
 
 from ..config import get_config
+from ..context import db, mcp
 from ..core.decay import calculate_score
-from ..storage.jsonl_storage import JSONLStorage
 from ..storage.ltm_index import LTMIndex
 
 
@@ -23,11 +19,11 @@ class UnifiedSearchResult:
         title: str,
         source: str,  # "stm" or "ltm"
         score: float,
-        path: str | None = None,
-        memory_id: str | None = None,
-        tags: list[str] | None = None,
-        created_at: int | None = None,
-        last_used: int | None = None,
+        path: Optional[str] = None,
+        memory_id: Optional[str] = None,
+        tags: Optional[List[str]] = None,
+        created_at: Optional[int] = None,
+        last_used: Optional[int] = None,
     ):
         self.content = content
         self.title = title
@@ -54,58 +50,44 @@ class UnifiedSearchResult:
         }
 
 
+@mcp.tool()
 def search_unified(
-    query: str | None = None,
-    tags: list[str] | None = None,
+    query: Optional[str] = None,
+    tags: Optional[List[str]] = None,
     limit: int = 10,
-    *,
     stm_weight: float = 1.0,
     ltm_weight: float = 0.7,
-    window_days: int | None = None,
-    min_score: float | None = None,
-) -> list[UnifiedSearchResult]:
+    window_days: Optional[int] = None,
+    min_score: Optional[float] = None,
+) -> dict[str, Any]:
     """
     Search across both STM and LTM with unified ranking.
 
     Args:
-        query: Text query to search for
-        tags: Filter by tags
-        limit: Maximum total results
-        stm_weight: Weight multiplier for STM results (default: 1.0)
-        ltm_weight: Weight multiplier for LTM results (default: 0.7)
-        window_days: Only include STM memories from last N days
-        min_score: Minimum score threshold for STM memories
+        query: Text query to search for.
+        tags: Filter by tags.
+        limit: Maximum total results.
+        stm_weight: Weight multiplier for STM results.
+        ltm_weight: Weight multiplier for LTM results.
+        window_days: Only include STM memories from last N days.
+        min_score: Minimum score threshold for STM memories.
 
     Returns:
-        List of UnifiedSearchResult objects, sorted by weighted score
-
-    Strategy:
-        - Query STM (recent context, temporal decay scores)
-        - Query LTM index (permanent knowledge base)
-        - Apply weights based on source
-        - Merge and deduplicate results
-        - Sort by combined score
+        A dictionary containing the search results.
     """
     config = get_config()
-    results: list[UnifiedSearchResult] = []
+    results: List[UnifiedSearchResult] = []
 
     # Search STM
     try:
-        storage = JSONLStorage()
-        storage.connect()
-
-        stm_memories = storage.search_memories(
-            tags=tags,
-            window_days=window_days,
-            limit=limit * 2,  # Get more candidates for merging
+        stm_memories = db.search_memories(
+            tags=tags, window_days=window_days, limit=limit * 2
         )
-
-        # Apply text query filter if provided
         if query:
-            query_lower = query.lower()
-            stm_memories = [m for m in stm_memories if query_lower in m.content.lower()]
+            stm_memories = [
+                m for m in stm_memories if query.lower() in m.content.lower()
+            ]
 
-        # Convert to unified results with decay scores
         now = int(time.time())
         for memory in stm_memories:
             score = calculate_score(
@@ -114,123 +96,84 @@ def search_unified(
                 strength=memory.strength,
                 now=now,
             )
-
-            # Apply minimum score filter
             if min_score is not None and score < min_score:
                 continue
-
-            # Apply STM weight
-            weighted_score = score * stm_weight
 
             results.append(
                 UnifiedSearchResult(
                     content=memory.content,
                     title=f"Memory {memory.id[:8]}",
                     source="stm",
-                    score=weighted_score,
+                    score=score * stm_weight,
                     memory_id=memory.id,
                     tags=memory.meta.tags,
                     created_at=memory.created_at,
                     last_used=memory.last_used,
                 )
             )
-
-        storage.close()
-
     except Exception as e:
         print(f"Warning: STM search failed: {e}")
 
     # Search LTM
     try:
-        # Check if vault path is configured
-        vault_path = getattr(config, "ltm_vault_path", None)
-        if vault_path:
-            vault_path = Path(vault_path).expanduser()
+        if config.ltm_vault_path and config.ltm_vault_path.exists():
+            ltm_index = LTMIndex(vault_path=config.ltm_vault_path)
+            if ltm_index.index_path.exists():
+                ltm_index.load_index()
+            else:
+                ltm_index.build_index(verbose=False)
 
-            if vault_path.exists():
-                # Load LTM index
-                ltm_index = LTMIndex(vault_path=vault_path)
+            ltm_docs = ltm_index.search(query=query, tags=tags, limit=limit * 2)
+            for doc in ltm_docs:
+                relevance_score = 0.5
+                if query:
+                    title_match = 2.0 if query.lower() in doc.title.lower() else 0.0
+                    content_match = 1.0 if query.lower() in doc.content.lower() else 0.0
+                    relevance_score = min(1.0, (title_match + content_match) / 3.0)
 
-                # Try to load existing index
-                if ltm_index.index_path.exists():
-                    ltm_index.load_index()
-                else:
-                    # Build index if it doesn't exist
-                    ltm_index.build_index(verbose=False)
-
-                # Search LTM
-                ltm_docs = ltm_index.search(query=query, tags=tags, limit=limit * 2)
-
-                # Convert to unified results
-                for doc in ltm_docs:
-                    # Simple relevance score based on query match
-                    if query:
-                        query_lower = query.lower()
-                        title_match = 2.0 if query_lower in doc.title.lower() else 0.0
-                        content_match = 1.0 if query_lower in doc.content.lower() else 0.0
-                        relevance_score = min(1.0, (title_match + content_match) / 3.0)
-                    else:
-                        relevance_score = 0.5  # Default relevance for tag-only search
-
-                    # Apply LTM weight
-                    weighted_score = relevance_score * ltm_weight
-
-                    results.append(
-                        UnifiedSearchResult(
-                            content=doc.content[:500],  # Truncate long content
-                            title=doc.title,
-                            source="ltm",
-                            score=weighted_score,
-                            path=doc.path,
-                            tags=doc.tags,
-                        )
+                results.append(
+                    UnifiedSearchResult(
+                        content=doc.content[:500],
+                        title=doc.title,
+                        source="ltm",
+                        score=relevance_score * ltm_weight,
+                        path=doc.path,
+                        tags=doc.tags,
                     )
-
+                )
     except Exception as e:
         print(f"Warning: LTM search failed: {e}")
 
-    # Sort by weighted score (descending)
     results.sort(key=lambda r: r.score, reverse=True)
 
-    # Deduplicate based on content similarity (simple approach: exact match)
     seen_content = set()
-    deduplicated = []
-
+    deduplicated: List[UnifiedSearchResult] = []
     for result in results:
-        # Use first 100 chars as dedup key
         dedup_key = result.content[:100].lower().strip()
-
         if dedup_key not in seen_content:
             seen_content.add(dedup_key)
             deduplicated.append(result)
-
             if len(deduplicated) >= limit:
                 break
 
-    return deduplicated
+    return {
+        "success": True,
+        "count": len(deduplicated),
+        "results": [r.to_dict() for r in deduplicated],
+    }
 
 
-def format_results(results: list[UnifiedSearchResult], *, verbose: bool = False) -> str:
-    """
-    Format unified search results for display.
-
-    Args:
-        results: List of search results
-        verbose: If True, include full metadata
-
-    Returns:
-        Formatted string
-    """
+def format_results(
+    results: list[UnifiedSearchResult], *, verbose: bool = False
+) -> str:
+    """Formats unified search results for display."""
     if not results:
         return "No results found."
 
     lines = [f"Found {len(results)} results:\n"]
-
     for i, result in enumerate(results, 1):
         source_label = "🧠 STM" if result.source == "stm" else "📚 LTM"
-
         lines.append(f"{i}. [{source_label}] {result.title} (score: {result.score:.3f})")
-
         if verbose:
             if result.tags:
                 lines.append(f"   Tags: {', '.join(result.tags)}")
@@ -238,14 +181,10 @@ def format_results(results: list[UnifiedSearchResult], *, verbose: bool = False)
                 lines.append(f"   Path: {result.path}")
             if result.memory_id:
                 lines.append(f"   ID: {result.memory_id}")
-
-        # Show content preview
         preview = result.content[:150]
         if len(result.content) > 150:
             preview += "..."
-        lines.append(f"   {preview}")
-        lines.append("")
-
+        lines.append(f"   {preview}\n")
     return "\n".join(lines)
 
 
@@ -255,58 +194,31 @@ def main() -> int:
     import sys
 
     parser = argparse.ArgumentParser(description="Search across STM and LTM")
+    parser.add_argument("query", nargs="?", help="Search query")
+    parser.add_argument("--tags", nargs="+", help="Filter by tags")
+    parser.add_argument("--limit", type=int, default=10, help="Maximum results")
     parser.add_argument(
-        "query",
-        nargs="?",
-        help="Search query",
+        "--stm-weight", type=float, default=1.0, help="Weight for STM results"
     )
     parser.add_argument(
-        "--tags",
-        nargs="+",
-        help="Filter by tags",
+        "--ltm-weight", type=float, default=0.7, help="Weight for LTM results"
     )
     parser.add_argument(
-        "--limit",
-        type=int,
-        default=10,
-        help="Maximum results",
+        "--window-days", type=int, help="Only search STM memories from last N days"
     )
     parser.add_argument(
-        "--stm-weight",
-        type=float,
-        default=1.0,
-        help="Weight for STM results",
+        "--min-score", type=float, help="Minimum score for STM results"
     )
-    parser.add_argument(
-        "--ltm-weight",
-        type=float,
-        default=0.7,
-        help="Weight for LTM results",
-    )
-    parser.add_argument(
-        "--window-days",
-        type=int,
-        help="Only search STM memories from last N days",
-    )
-    parser.add_argument(
-        "--min-score",
-        type=float,
-        help="Minimum score for STM results",
-    )
-    parser.add_argument(
-        "--verbose",
-        action="store_true",
-        help="Show detailed metadata",
-    )
+    parser.add_argument("--verbose", action="store_true", help="Show detailed metadata")
 
     args = parser.parse_args()
-
     if not args.query and not args.tags:
         parser.print_help()
         return 1
 
     try:
-        results = search_unified(
+        # This is a simplified call for the CLI, so we pass a dict
+        result_dict = search_unified(
             query=args.query,
             tags=args.tags,
             limit=args.limit,
@@ -315,12 +227,11 @@ def main() -> int:
             window_days=args.window_days,
             min_score=args.min_score,
         )
-
-        output = format_results(results, verbose=args.verbose)
+        # Reconstruct objects for formatting
+        results_obj = [UnifiedSearchResult(**r) for r in result_dict["results"]]
+        output = format_results(results_obj, verbose=args.verbose)
         print(output)
-
         return 0
-
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
         return 1

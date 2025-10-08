@@ -1,30 +1,20 @@
 """Search memory tool."""
 
 import time
-from typing import Any
-
-from mcp.server import Server
+from typing import Any, List, Optional
 
 from ..config import get_config
+from ..context import db, mcp
+from ..core.clustering import cosine_similarity
 from ..core.decay import calculate_score
-from ..storage.jsonl_storage import JSONLStorage
 from ..storage.models import MemoryStatus, SearchResult
 
 
-def _calculate_semantic_similarity(query_embed: list[float], memory_embed: list[float]) -> float:
-    """Calculate cosine similarity between query and memory embeddings."""
-    from ..core.clustering import cosine_similarity
-
-    return cosine_similarity(query_embed, memory_embed)
-
-
-def _generate_query_embedding(query: str) -> list[float] | None:
+def _generate_query_embedding(query: str) -> Optional[List[float]]:
     """Generate embedding for search query."""
     config = get_config()
-
     if not config.enable_embeddings:
         return None
-
     try:
         from sentence_transformers import SentenceTransformer
 
@@ -35,45 +25,45 @@ def _generate_query_embedding(query: str) -> list[float] | None:
         return None
 
 
-async def search_memory_handler(db: JSONLStorage, arguments: dict[str, Any]) -> dict[str, Any]:
+@mcp.tool()
+def search_memory(
+    query: Optional[str] = None,
+    tags: Optional[List[str]] = None,
+    top_k: int = 10,
+    window_days: Optional[int] = None,
+    min_score: Optional[float] = None,
+    use_embeddings: bool = False,
+) -> dict[str, Any]:
     """
-    Handle search memory requests.
+    Search for memories with optional filters and scoring.
 
     Args:
-        db: Database instance
-        arguments: Tool arguments
+        query: Text query to search for.
+        tags: Filter by tags.
+        top_k: Maximum number of results.
+        window_days: Only search memories from last N days.
+        min_score: Minimum decay score threshold.
+        use_embeddings: Use semantic search with embeddings.
 
     Returns:
-        Response dictionary
+        List of matching memories with scores.
     """
-    query = arguments.get("query")
-    tags = arguments.get("tags")
-    top_k = arguments.get("top_k", 10)
-    window_days = arguments.get("window_days")
-    min_score = arguments.get("min_score")
-    use_embeddings = arguments.get("use_embeddings", False)
-
     config = get_config()
     now = int(time.time())
 
-    # Get candidate memories from database
     memories = db.search_memories(
         tags=tags,
         status=MemoryStatus.ACTIVE,
         window_days=window_days,
-        limit=top_k * 3,  # Get more candidates for scoring/filtering
+        limit=top_k * 3,
     )
 
-    # Generate query embedding if needed
     query_embed = None
     if use_embeddings and query and config.enable_embeddings:
         query_embed = _generate_query_embedding(query)
 
-    # Score and filter memories
     results: list[SearchResult] = []
-
     for memory in memories:
-        # Calculate decay score
         score = calculate_score(
             use_count=memory.use_count,
             last_used=memory.last_used,
@@ -81,40 +71,30 @@ async def search_memory_handler(db: JSONLStorage, arguments: dict[str, Any]) -> 
             now=now,
         )
 
-        # Apply minimum score filter
         if min_score is not None and score < min_score:
             continue
 
-        # Calculate semantic similarity if using embeddings
         similarity = None
         if query_embed and memory.embed:
-            similarity = _calculate_semantic_similarity(query_embed, memory.embed)
+            similarity = cosine_similarity(query_embed, memory.embed)
 
-        # Simple text matching if query provided and not using embeddings
         relevance = 1.0
         if query and not use_embeddings:
-            query_lower = query.lower()
-            content_lower = memory.content.lower()
-            if query_lower in content_lower:
-                relevance = 2.0  # Boost exact matches
-            elif any(word in content_lower for word in query_lower.split()):
-                relevance = 1.5  # Boost partial matches
+            if query.lower() in memory.content.lower():
+                relevance = 2.0
+            elif any(word in memory.content.lower() for word in query.lower().split()):
+                relevance = 1.5
 
-        # Combine scores (semantic similarity takes precedence if available)
         final_score = score * relevance
         if similarity is not None:
             final_score = score * similarity
 
         results.append(SearchResult(memory=memory, score=final_score, similarity=similarity))
 
-    # Sort by final score descending
     results.sort(key=lambda r: r.score, reverse=True)
-
-    # Limit to top_k
     results = results[:top_k]
 
-    # Format response
-    response = {
+    return {
         "success": True,
         "count": len(results),
         "results": [
@@ -131,30 +111,3 @@ async def search_memory_handler(db: JSONLStorage, arguments: dict[str, Any]) -> 
             for r in results
         ],
     }
-
-    return response
-
-
-def register(server: Server, db: JSONLStorage) -> None:
-    """Register the search memory tool with the MCP server."""
-
-    @server.call_tool()
-    async def search_memory(arguments: dict[str, Any]) -> list[Any]:
-        """
-        Search for memories with optional filters and scoring.
-
-        Args:
-            query: Text query to search for (optional)
-            tags: Filter by tags (optional)
-            top_k: Maximum number of results (default: 10)
-            window_days: Only search memories from last N days (optional)
-            min_score: Minimum decay score threshold (optional)
-            use_embeddings: Use semantic search with embeddings (default: false)
-
-        Returns:
-            List of matching memories with scores
-        """
-        result = await search_memory_handler(db, arguments)
-        return [{"type": "text", "text": str(result)}]
-
-    # Register tool metadata (this would normally be part of the server's tool list)

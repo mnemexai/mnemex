@@ -2,67 +2,62 @@
 
 import time
 import uuid
-from typing import Any
-
-from mcp.server import Server
-from mcp.types import Tool
+from typing import Any, List, Optional
 
 from ..config import get_config
-from ..storage.jsonl_storage import JSONLStorage
+from ..context import db, mcp
 from ..storage.models import Memory, MemoryMetadata
 
 
 def _generate_embedding(content: str) -> list[float] | None:
     """Generate embedding for content if embeddings are enabled."""
     config = get_config()
-
     if not config.enable_embeddings:
         return None
-
     try:
         from sentence_transformers import SentenceTransformer
 
         model = SentenceTransformer(config.embed_model)
         embedding = model.encode(content, convert_to_numpy=True)
         return embedding.tolist()
-    except ImportError:
-        # sentence-transformers not installed
-        return None
-    except Exception:
-        # Error generating embedding
+    except (ImportError, Exception):
         return None
 
 
-async def save_memory_handler(db: JSONLStorage, arguments: dict[str, Any]) -> dict[str, Any]:
+@mcp.tool()
+def save_memory(
+    content: str,
+    tags: Optional[List[str]] = None,
+    entities: Optional[List[str]] = None,
+    source: Optional[str] = None,
+    context: Optional[str] = None,
+    meta: Optional[dict[str, Any]] = None,
+) -> dict[str, Any]:
     """
-    Handle save memory requests.
+    Save a new memory to short-term storage.
+
+    The memory will have temporal decay applied and will be forgotten if not used
+    regularly. Frequently accessed memories may be promoted to long-term storage
+    automatically.
 
     Args:
-        db: Database instance
-        arguments: Tool arguments
-
-    Returns:
-        Response dictionary
+        content: The content to remember.
+        tags: Tags for categorization.
+        entities: Named entities in this memory.
+        source: Source of the memory.
+        context: Context when memory was created.
+        meta: Additional custom metadata.
     """
-    content = arguments["content"]
-    tags = arguments.get("tags", [])
-    entities = arguments.get("entities", [])
-    source = arguments.get("source")
-    context = arguments.get("context")
-    extra_meta = arguments.get("meta", {})
-
     # Create metadata
-    meta = MemoryMetadata(
-        tags=tags,
+    metadata = MemoryMetadata(
+        tags=tags or [],
         source=source,
         context=context,
-        extra=extra_meta,
+        extra=meta or {},
     )
 
-    # Generate ID
+    # Generate ID and embedding
     memory_id = str(uuid.uuid4())
-
-    # Generate embedding if enabled
     embed = _generate_embedding(content)
 
     # Create memory
@@ -70,12 +65,12 @@ async def save_memory_handler(db: JSONLStorage, arguments: dict[str, Any]) -> di
     memory = Memory(
         id=memory_id,
         content=content,
-        meta=meta,
+        meta=metadata,
         created_at=now,
         last_used=now,
         use_count=0,
         embed=embed,
-        entities=entities,
+        entities=entities or [],
     )
 
     # Save to database
@@ -87,65 +82,3 @@ async def save_memory_handler(db: JSONLStorage, arguments: dict[str, Any]) -> di
         "message": f"Memory saved with ID: {memory_id}",
         "has_embedding": embed is not None,
     }
-
-
-def register(server: Server, db: JSONLStorage) -> None:
-    """Register the save memory tool with the MCP server."""
-
-    @server.call_tool()
-    async def save_memory(arguments: dict[str, Any]) -> list[Any]:
-        """
-        Save a new memory to short-term storage.
-
-        Args:
-            content: The content to remember (required)
-            tags: List of tags for categorization (optional)
-            entities: List of named entities in this memory (optional)
-            source: Source of the memory (optional)
-            context: Context when memory was created (optional)
-            meta: Additional custom metadata as key-value pairs (optional)
-
-        Returns:
-            Success status, memory ID, and confirmation message
-        """
-        result = await save_memory_handler(db, arguments)
-        return [{"type": "text", "text": str(result)}]
-
-    # Register tool metadata
-    server.list_tools = lambda: [
-        Tool(
-            name="save_memory",
-            description=(
-                "Save a new memory to short-term storage. The memory will have temporal "
-                "decay applied and will be forgotten if not used regularly. Frequently "
-                "accessed memories may be promoted to long-term storage automatically."
-            ),
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "content": {
-                        "type": "string",
-                        "description": "The content to remember",
-                    },
-                    "tags": {
-                        "type": "array",
-                        "items": {"type": "string"},
-                        "description": "Tags for categorization",
-                    },
-                    "source": {
-                        "type": "string",
-                        "description": "Source of the memory",
-                    },
-                    "context": {
-                        "type": "string",
-                        "description": "Context when memory was created",
-                    },
-                    "meta": {
-                        "type": "object",
-                        "description": "Additional custom metadata",
-                    },
-                },
-                "required": ["content"],
-            },
-        )
-    ]

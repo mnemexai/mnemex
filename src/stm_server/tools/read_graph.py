@@ -1,48 +1,40 @@
 """Read graph tool - return entire knowledge graph."""
 
 import time
-from typing import Any
+from typing import Any, Optional
 
-from mcp.server import Server
-
+from ..context import db, mcp
 from ..core.decay import calculate_score
-from ..storage.jsonl_storage import JSONLStorage
 from ..storage.models import MemoryStatus
 
 
-async def read_graph_handler(db: JSONLStorage, arguments: dict[str, Any]) -> dict[str, Any]:
+@mcp.tool()
+def read_graph(
+    status: str = "active", include_scores: bool = True, limit: Optional[int] = None
+) -> dict[str, Any]:
     """
-    Handle read graph requests.
+    Read the entire knowledge graph of memories and relations.
+
+    Returns the complete graph structure including all memories (with decay scores),
+    all relations between memories, and statistics about the graph.
 
     Args:
-        db: Database instance
-        arguments: Tool arguments
+        status: Filter memories by status - "active", "promoted", "archived", or "all".
+        include_scores: Include decay scores and age in results.
+        limit: Maximum number of memories to return.
 
     Returns:
-        Response dictionary with complete knowledge graph
+        Complete knowledge graph with memories, relations, and statistics.
     """
-    status_filter = arguments.get("status", "active")
-    include_scores = arguments.get("include_scores", True)
-    limit = arguments.get("limit")
+    status_filter = None if status == "all" else MemoryStatus(status)
+    graph = db.get_knowledge_graph(status=status_filter)
 
-    # Parse status filter
-    if status_filter == "all":
-        status = None
-    else:
-        status = MemoryStatus(status_filter)
-
-    # Get knowledge graph
-    graph = db.get_knowledge_graph(status=status)
-
-    # Apply limit if specified
     if limit and limit > 0:
         graph.memories = graph.memories[:limit]
         graph.stats["limited_to"] = limit
 
-    # Build response
     now = int(time.time())
     memories_data = []
-
     for memory in graph.memories:
         mem_data = {
             "id": memory.id,
@@ -55,7 +47,6 @@ async def read_graph_handler(db: JSONLStorage, arguments: dict[str, Any]) -> dic
             "strength": memory.strength,
             "status": memory.status.value,
         }
-
         if include_scores:
             score = calculate_score(
                 use_count=memory.use_count,
@@ -65,7 +56,6 @@ async def read_graph_handler(db: JSONLStorage, arguments: dict[str, Any]) -> dic
             )
             mem_data["score"] = round(score, 4)
             mem_data["age_days"] = round((now - memory.created_at) / 86400, 1)
-
         memories_data.append(mem_data)
 
     relations_data = [
@@ -92,27 +82,3 @@ async def read_graph_handler(db: JSONLStorage, arguments: dict[str, Any]) -> dic
             "status_filter": graph.stats["status_filter"],
         },
     }
-
-
-def register(server: Server, db: JSONLStorage) -> None:
-    """Register the read graph tool with the MCP server."""
-
-    @server.call_tool()
-    async def read_graph(arguments: dict[str, Any]) -> list[Any]:
-        """
-        Read the entire knowledge graph of memories and relations.
-
-        Returns the complete graph structure including all memories (with decay scores),
-        all relations between memories, and statistics about the graph. This is similar
-        to the reference MCP memory server's read_graph functionality.
-
-        Args:
-            status: Filter memories by status - "active", "promoted", "archived", or "all" (default: "active")
-            include_scores: Include decay scores and age in results (default: true)
-            limit: Maximum number of memories to return (optional)
-
-        Returns:
-            Complete knowledge graph with memories, relations, and statistics
-        """
-        result = await read_graph_handler(db, arguments)
-        return [{"type": "text", "text": str(result)}]

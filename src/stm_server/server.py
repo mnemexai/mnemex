@@ -3,25 +3,12 @@
 import logging
 import sys
 
-from mcp.server import Server
-from mcp.server.stdio import stdio_server
-
 from .config import get_config
+from .context import db, mcp
 from .core.decay import calculate_halflife
-from .storage.jsonl_storage import JSONLStorage
-from .tools import (
-    cluster_tool,
-    consolidate_tool,
-    create_relation_tool,
-    gc_tool,
-    open_memories_tool,
-    promote_tool,
-    read_graph_tool,
-    save_tool,
-    search_tool,
-    search_unified_tool,
-    touch_tool,
-)
+
+# Import tools to register them with the decorator
+from .tools import save, search, touch, gc, promote, cluster, consolidate, read_graph, open_memories, create_relation, search_unified  # noqa: F401
 
 # Initialize logging
 logging.basicConfig(
@@ -30,21 +17,15 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def create_server() -> Server:
-    """Create and configure the MCP server instance."""
+def initialize_server():
+    """Initialize logging and database connections."""
     config = get_config()
-    # Ensure storage directory exists is handled by JSONLStorage
-
-    # Set logging level from config
     logging.getLogger().setLevel(config.log_level)
 
-    # Create server instance
-    server = Server("stm-server")
-
     logger.info("Initializing STM server")
-    logger.info(f"Storage (JSONL): {get_config().storage_path}")
-    # Log decay model details
-    model = getattr(config, "decay_model", "power_law")
+    logger.info(f"Storage (JSONL): {config.storage_path}")
+
+    model = config.decay_model
     if model == "power_law":
         logger.info(
             "Decay model: power_law (alpha=%.3f, halflife=%.1f days)",
@@ -67,46 +48,23 @@ def create_server() -> Server:
             config.decay_lambda,
             hl,
         )
+
     logger.info(f"Embeddings: {'enabled' if config.enable_embeddings else 'disabled'}")
 
-    # Initialize JSONL storage
-    db = JSONLStorage()
     db.connect()
     logger.info(f"Storage initialized with {db.count_memories()} memories")
-
-    # Register tools
-    save_tool.register(server, db)
-    search_tool.register(server, db)
-    touch_tool.register(server, db)
-    gc_tool.register(server, db)
-    promote_tool.register(server, db)
-    cluster_tool.register(server, db)
-    consolidate_tool.register(server, db)
-    read_graph_tool.register(server, db)
-    open_memories_tool.register(server, db)
-    create_relation_tool.register(server, db)
-    search_unified_tool.register(server, db)
-
-    logger.info("All tools registered (11 tools including unified search)")
-
-    return server
+    logger.info(f"Tools registered: {', '.join(mcp.tools.keys())}")
 
 
-async def main() -> None:
-    """Main entry point for the STM server."""
+def main_sync() -> None:
+    """Synchronous entry point for the server."""
     try:
-        server = create_server()
-
-        # Run server with stdio transport
-        async with stdio_server() as (read_stream, write_stream):
-            logger.info("STM server started, awaiting connections...")
-            await server.run(read_stream, write_stream, server.create_initialization_options())
+        initialize_server()
+        mcp.run_forever()
     except Exception as e:
         logger.error(f"Server error: {e}", exc_info=True)
         sys.exit(1)
 
 
 if __name__ == "__main__":
-    import asyncio
-
-    asyncio.run(main())
+    main_sync()

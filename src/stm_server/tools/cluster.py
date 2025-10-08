@@ -1,34 +1,39 @@
 """Cluster memory tool - find similar memories for consolidation."""
 
-from typing import Any
-
-from mcp.server import Server
+from typing import Any, Optional
 
 from ..config import get_config
+from ..context import db, mcp
 from ..core.clustering import cluster_memories_simple, find_duplicate_candidates
-from ..storage.jsonl_storage import JSONLStorage
 from ..storage.models import ClusterConfig, MemoryStatus
 
 
-async def cluster_handler(db: JSONLStorage, arguments: dict[str, Any]) -> dict[str, Any]:
+@mcp.tool()
+def cluster_memories(
+    strategy: str = "similarity",
+    threshold: Optional[float] = None,
+    max_cluster_size: Optional[int] = None,
+    find_duplicates: bool = False,
+    duplicate_threshold: Optional[float] = None,
+) -> dict[str, Any]:
     """
-    Handle memory clustering requests.
+    Cluster similar memories for potential consolidation or find duplicates.
+
+    Groups similar memories based on semantic similarity (if embeddings are
+    enabled) or other strategies. Useful for identifying redundant memories.
 
     Args:
-        db: Database instance
-        arguments: Tool arguments
+        strategy: Clustering strategy (default: "similarity").
+        threshold: Similarity threshold for linking (uses config default).
+        max_cluster_size: Maximum memories per cluster (uses config default).
+        find_duplicates: Find likely duplicate pairs instead of clustering.
+        duplicate_threshold: Similarity threshold for duplicates (uses config default).
 
     Returns:
-        Response dictionary
+        List of clusters or duplicate pairs with scores and suggested actions.
     """
-    strategy = arguments.get("strategy", "similarity")
-    threshold = arguments.get("threshold")
-    max_cluster_size = arguments.get("max_cluster_size")
-    find_duplicates = arguments.get("find_duplicates", False)
-
     config = get_config()
 
-    # Build cluster configuration
     cluster_config = ClusterConfig(
         strategy=strategy,
         threshold=threshold or config.cluster_link_threshold,
@@ -36,14 +41,11 @@ async def cluster_handler(db: JSONLStorage, arguments: dict[str, Any]) -> dict[s
         use_embeddings=config.enable_embeddings,
     )
 
-    # Get active memories
     memories = db.list_memories(status=MemoryStatus.ACTIVE)
 
     if find_duplicates:
-        # Find likely duplicate pairs
-        duplicate_threshold = arguments.get("duplicate_threshold", config.semantic_hi)
-        duplicates = find_duplicate_candidates(memories, duplicate_threshold)
-
+        dup_threshold = duplicate_threshold or config.semantic_hi
+        duplicates = find_duplicate_candidates(memories, dup_threshold)
         return {
             "success": True,
             "mode": "duplicate_detection",
@@ -56,12 +58,11 @@ async def cluster_handler(db: JSONLStorage, arguments: dict[str, Any]) -> dict[s
                     "content2_preview": d[1].content[:100],
                     "similarity": round(d[2], 4),
                 }
-                for d in duplicates[:20]  # Show first 20
+                for d in duplicates[:20]
             ],
             "message": f"Found {len(duplicates)} potential duplicate pairs",
         }
 
-    # Perform clustering
     clusters = cluster_memories_simple(memories, cluster_config)
 
     return {
@@ -79,33 +80,7 @@ async def cluster_handler(db: JSONLStorage, arguments: dict[str, Any]) -> dict[s
                 "memory_ids": [m.id for m in cluster.memories],
                 "content_previews": [m.content[:80] for m in cluster.memories[:3]],
             }
-            for cluster in clusters[:20]  # Show first 20
+            for cluster in clusters[:20]
         ],
         "message": f"Found {len(clusters)} clusters using {strategy} strategy",
     }
-
-
-def register(server: Server, db: JSONLStorage) -> None:
-    """Register the cluster memory tool with the MCP server."""
-
-    @server.call_tool()
-    async def cluster_memories(arguments: dict[str, Any]) -> list[Any]:
-        """
-        Cluster similar memories for potential consolidation.
-
-        Groups similar memories together based on semantic similarity (if embeddings
-        are enabled) or other clustering strategies. Useful for identifying
-        redundant or related memories that could be merged.
-
-        Args:
-            strategy: Clustering strategy (default: "similarity")
-            threshold: Similarity threshold for linking (optional, uses config default)
-            max_cluster_size: Maximum memories per cluster (optional, uses config default)
-            find_duplicates: Find likely duplicate pairs instead of clustering (default: false)
-            duplicate_threshold: Similarity threshold for duplicates (optional, uses semantic_hi)
-
-        Returns:
-            List of clusters with cohesion scores and suggested actions
-        """
-        result = await cluster_handler(db, arguments)
-        return [{"type": "text", "text": str(result)}]

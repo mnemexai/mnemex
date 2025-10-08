@@ -2,33 +2,25 @@
 
 from typing import Any
 
-from mcp.server import Server
-
-from ..storage.jsonl_storage import JSONLStorage
+from ..context import mcp
 
 
-async def consolidate_handler(db: JSONLStorage, arguments: dict[str, Any]) -> dict[str, Any]:
+@mcp.tool()
+def consolidate_memories(cluster_id: str, mode: str = "dry_run") -> dict[str, Any]:
     """
-    Handle memory consolidation requests.
+    Consolidate similar memories using LLM-driven merging (NOT YET IMPLEMENTED).
 
-    NOTE: This is a stub for future LLM-driven consolidation.
-    The actual implementation will involve:
-    1. Clustering memories
-    2. Generating consolidation prompts
-    3. Calling LLM to merge/deduplicate
-    4. Validating and applying changes
+    This tool will use an LLM to intelligently merge similar memories,
+    resolve conflicts, and create consolidated notes. Currently returns
+    a placeholder message.
 
     Args:
-        db: Database instance
-        arguments: Tool arguments
+        cluster_id: Cluster ID to consolidate.
+        mode: Operation mode - "dry_run" or "apply".
 
     Returns:
-        Response dictionary
+        Consolidation results (when implemented).
     """
-    cluster_id = arguments.get("cluster_id")
-    mode = arguments.get("mode", "dry_run")
-
-    # This is a placeholder implementation
     return {
         "success": False,
         "message": (
@@ -47,26 +39,3 @@ async def consolidate_handler(db: JSONLStorage, arguments: dict[str, Any]) -> di
             "Integration with clustering results",
         ],
     }
-
-
-def register(server: Server, db: JSONLStorage) -> None:
-    """Register the consolidate memory tool with the MCP server."""
-
-    @server.call_tool()
-    async def consolidate_memories(arguments: dict[str, Any]) -> list[Any]:
-        """
-        Consolidate similar memories using LLM-driven merging (NOT YET IMPLEMENTED).
-
-        This tool will use an LLM to intelligently merge similar memories,
-        resolve conflicts, and create consolidated notes. Currently returns
-        a placeholder message.
-
-        Args:
-            cluster_id: Cluster ID to consolidate (required)
-            mode: Operation mode - "dry_run" or "apply" (default: "dry_run")
-
-        Returns:
-            Consolidation results (when implemented)
-        """
-        result = await consolidate_handler(db, arguments)
-        return [{"type": "text", "text": str(result)}]
