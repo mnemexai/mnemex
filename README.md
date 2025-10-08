@@ -203,8 +203,6 @@ Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_
     "stm": {
       "command": "uv",
       "args": [
-        "--directory",
-        "/path/to/stm-research",
         "run",
         "stm-server"
       ]
