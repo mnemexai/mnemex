@@ -27,6 +27,7 @@ $$
 $$
 
 Where:
+
 - $n_{\text{use}}$ - Use count (number of accesses)
 - $\beta$ (beta) - Sub-linear use count weighting (default: 0.6)
 - $\lambda = \frac{\ln(2)}{t_{1/2}}$ (lambda) - Decay constant; set via half-life (default: 3-day)
@@ -34,10 +35,12 @@ Where:
 - $s$ - Strength parameter $\in [0, 2]$ (importance multiplier)
 
 Thresholds:
+
 - $\tau_{\text{forget}}$ (default 0.05) — if score < this, forget
 - $\tau_{\text{promote}}$ (default 0.65) — if score ≥ this, promote (or if $n_{\text{use}}\ge5$ in 14 days)
 
 Decay Models:
+
 - Power‑Law (default): heavier tail; most human‑like retention
 - Exponential: lighter tail; forgets sooner
 - Two‑Component: fast early forgetting + heavier tail
@@ -67,6 +70,7 @@ See detailed parameter reference, model selection, and worked examples in docs/s
   - STM_PROMOTE_USE_COUNT=5, STM_PROMOTE_TIME_WINDOW=14
 
 **Decision thresholds:**
+
 - Forget: $\text{score} < 0.05$ → delete memory
 - Promote: $\text{score} \geq 0.65$ OR $n_{\text{use}} \geq 5$ within 14 days → move to LTM
 
@@ -75,6 +79,7 @@ See detailed parameter reference, model selection, and worked examples in docs/s
 ### 1. Temporal Decay with Reinforcement
 
 Unlike traditional caching (TTL, LRU), memories are scored continuously based on:
+
 - **Recency** - Exponential decay over time
 - **Frequency** - Use count with sub-linear weighting
 - **Importance** - Adjustable strength parameter
@@ -86,18 +91,21 @@ This creates memory dynamics that closely mimic human cognition.
 Patterns for making AI assistants use memory naturally:
 
 **Auto-Save**
+
 ```
 User: "I prefer TypeScript over JavaScript"
 → Automatically saved with tags: [preferences, typescript, programming]
 ```
 
 **Auto-Recall**
+
 ```
 User: "Can you help with another TypeScript project?"
 → Automatically retrieves preferences and conventions
 ```
 
 **Auto-Reinforce**
+
 ```
 User: "Yes, still using TypeScript"
 → Memory strength increased, decay slowed
@@ -362,16 +370,19 @@ Frequent access significantly extends retention.
 ## Use Cases
 
 ### Personal Assistant (Balanced)
+
 - 3-day half-life
 - Remember preferences and decisions
 - Auto-promote frequently referenced information
 
 ### Development Environment (Aggressive)
+
 - 1-day half-life
 - Fast context switching
 - Aggressive forgetting of old context
 
 ### Research / Archival (Conservative)
+
 - 14-day half-life
 - Long retention
 - Comprehensive knowledge preservation
@@ -418,12 +429,14 @@ This is a research project. Contributions welcome! Please:
 **Status:** Research implementation - functional but evolving
 
 ### Phase 1 (Complete) ✅
+
 - 10 MCP tools
 - Temporal decay algorithm
- 
+
 - Knowledge graph
 
 ### Phase 2 (Complete) ✅
+
 - JSONL storage
 - LTM index
 - Git integration
@@ -431,6 +444,7 @@ This is a research project. Contributions welcome! Please:
 - Maintenance CLI
 
 ### Future Work
+
 - Spaced repetition optimization
 - Adaptive decay parameters
 - Enhanced clustering algorithms
