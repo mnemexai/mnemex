@@ -124,13 +124,19 @@ Add this to your Claude Desktop config file:
         "/Users/yourname/path/to/stm-research",
         "run",
         "stm-server"
-      ]
+      ],
+      "env": {
+        "PYTHONPATH": "/Users/yourname/path/to/stm-research/src"
+      }
     }
   }
 }
 ```
 
-**That's it!** The server reads paths from your `.env` file automatically.
+**Important**:
+- Replace `/Users/yourname/path/to/stm-research` with your actual path
+- The `PYTHONPATH` is required for the server to find the Python modules
+- Storage paths go in your `.env` file, not here
 
 ### Step 5: Restart Claude Desktop
 

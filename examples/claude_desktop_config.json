@@ -4,20 +4,12 @@
       "command": "uv",
       "args": [
         "--directory",
-        "/Users/your-username/path/to/stm-server",
+        "/Users/your-username/path/to/stm-research",
         "run",
         "stm-server"
       ],
       "env": {
-        "STM_STORAGE_PATH": "/Users/your-username/.stm/jsonl",
-        "LTM_VAULT_PATH": "/Users/your-username/Documents/Obsidian/Vault",
-        "STM_DECAY_LAMBDA": "2.673e-6",
-        "STM_DECAY_BETA": "0.6",
-        "STM_FORGET_THRESHOLD": "0.05",
-        "STM_PROMOTE_THRESHOLD": "0.65",
-        "STM_PROMOTE_USE_COUNT": "5",
-        "STM_ENABLE_EMBEDDINGS": "false",
-        "LOG_LEVEL": "INFO"
+        "PYTHONPATH": "/Users/your-username/path/to/stm-research/src"
       }
     }
   }

@@ -211,15 +211,23 @@ Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_
     "stm": {
       "command": "uv",
       "args": [
+        "--directory",
+        "/path/to/stm-research",
         "run",
         "stm-server"
-      ]
+      ],
+      "env": {
+        "PYTHONPATH": "/path/to/stm-research/src"
+      }
     }
   }
 }
 ```
 
-**Note:** Storage paths are configured in your `.env` file, not in the MCP config. The server reads all configuration from `.env` automatically.
+**Important:**
+- Replace `/path/to/stm-research` with your actual repository path
+- The `PYTHONPATH` environment variable is required for editable installs
+- Storage paths are configured in your `.env` file, not in the MCP config
 
 ### Maintenance
 
