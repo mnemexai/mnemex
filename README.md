@@ -5,6 +5,17 @@ A Model Context Protocol (MCP) server providing **human-like memory dynamics** f
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 
+> [!WARNING]
+> **🚧 ACTIVE DEVELOPMENT - EXPECT BUGS 🚧**
+>
+> This project is under active development and should be considered **experimental**. You will likely encounter bugs, breaking changes, and incomplete features. Use at your own risk. Please report issues on GitHub, but understand that this is research code, not production-ready software.
+>
+> **Known issues:**
+> - Editable installs require `PYTHONPATH` workaround in Claude config
+> - API may change without notice between versions
+> - Documentation may be out of sync with latest changes
+> - Test coverage is incomplete
+
 > **📖 New to this project?** Start with the [ELI5 Guide](ELI5.md) for a simple explanation of what this does and how to use it.
 
 ## Overview
@@ -23,21 +34,21 @@ This repository contains research, design, and a complete implementation of a sh
 The temporal decay scoring function:
 
 $$
-\text{score}(t) = (n_{\text{use}})^\beta \cdot e^{-\lambda \cdot \Delta t} \cdot s
+\Large \text{score}(t) = (n_{\text{use}})^\beta \cdot e^{-\lambda \cdot \Delta t} \cdot s
 $$
 
 Where:
 
-- $n_{\text{use}}$ - Use count (number of accesses)
-- $\beta$ (beta) - Sub-linear use count weighting (default: 0.6)
-- $\lambda = \frac{\ln(2)}{t_{1/2}}$ (lambda) - Decay constant; set via half-life (default: 3-day)
-- $\Delta t$ - Time since last access (seconds)
-- $s$ - Strength parameter $\in [0, 2]$ (importance multiplier)
+- $\large n_{\text{use}}$ - Use count (number of accesses)
+- $\large \beta$ (beta) - Sub-linear use count weighting (default: 0.6)
+- $\large \lambda = \frac{\ln(2)}{t_{1/2}}$ (lambda) - Decay constant; set via half-life (default: 3-day)
+- $\large \Delta t$ - Time since last access (seconds)
+- $\large s$ - Strength parameter $\in [0, 2]$ (importance multiplier)
 
 Thresholds:
 
-- $\tau_{\text{forget}}$ (default 0.05) — if score < this, forget
-- $\tau_{\text{promote}}$ (default 0.65) — if score ≥ this, promote (or if $n_{\text{use}}\ge5$ in 14 days)
+- $\large \tau_{\text{forget}}$ (default 0.05) — if score < this, forget
+- $\large \tau_{\text{promote}}$ (default 0.65) — if score ≥ this, promote (or if $\large n_{\text{use}}\ge5$ in 14 days)
 
 Decay Models:
 
