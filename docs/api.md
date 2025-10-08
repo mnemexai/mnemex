@@ -1,6 +1,6 @@
-# STM Server API Reference
+# Mnemex API Reference
 
-Complete reference for all MCP tools provided by STM Server.
+Complete reference for all MCP tools provided by Mnemex.
 
 ## Core Memory Tools
 
@@ -418,36 +418,40 @@ Common errors:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `STM_STORAGE_PATH` | `~/.stm/jsonl` | JSONL storage directory |
-| `STM_DECAY_LAMBDA` | `2.673e-6` | Decay constant |
-| `STM_DECAY_BETA` | `0.6` | Use count exponent |
-| `STM_FORGET_THRESHOLD` | `0.05` | Forgetting threshold |
-| `STM_PROMOTE_THRESHOLD` | `0.65` | Promotion threshold |
-| `STM_PROMOTE_USE_COUNT` | `5` | Use count for promotion |
-| `STM_ENABLE_EMBEDDINGS` | `false` | Enable semantic search |
-| `BASIC_MEMORY_PATH` | - | Obsidian vault path |
+| `MNEMEX_STORAGE_PATH` | `~/.config/mnemex/jsonl` | JSONL storage directory |
+| `MNEMEX_DECAY_MODEL` | `power_law` | Decay model (power_law\|exponential\|two_component) |
+| `MNEMEX_PL_HALFLIFE_DAYS` | `3.0` | Power-law half-life in days |
+| `MNEMEX_DECAY_LAMBDA` | `2.673e-6` | Exponential decay constant |
+| `MNEMEX_DECAY_BETA` | `0.6` | Use count exponent |
+| `MNEMEX_FORGET_THRESHOLD` | `0.05` | Forgetting threshold |
+| `MNEMEX_PROMOTE_THRESHOLD` | `0.65` | Promotion threshold |
+| `MNEMEX_PROMOTE_USE_COUNT` | `5` | Use count for promotion |
+| `MNEMEX_ENABLE_EMBEDDINGS` | `false` | Enable semantic search |
+| `LTM_VAULT_PATH` | - | Obsidian vault path |
 
 ### Tuning Recommendations
 
 **Fast Decay** (1-day half-life):
 ```bash
-STM_DECAY_LAMBDA=8.02e-6
+MNEMEX_PL_HALFLIFE_DAYS=1.0
+# Or exponential: MNEMEX_DECAY_LAMBDA=8.02e-6
 ```
 
 **Slow Decay** (7-day half-life):
 ```bash
-STM_DECAY_LAMBDA=1.145e-6
+MNEMEX_PL_HALFLIFE_DAYS=7.0
+# Or exponential: MNEMEX_DECAY_LAMBDA=1.145e-6
 ```
 
 **Aggressive Promotion**:
 ```bash
-STM_PROMOTE_THRESHOLD=0.5
-STM_PROMOTE_USE_COUNT=3
+MNEMEX_PROMOTE_THRESHOLD=0.5
+MNEMEX_PROMOTE_USE_COUNT=3
 ```
 
 **Conservative Forgetting**:
 ```bash
-STM_FORGET_THRESHOLD=0.01
+MNEMEX_FORGET_THRESHOLD=0.01
 ```
 
 ---
@@ -456,7 +460,7 @@ STM_FORGET_THRESHOLD=0.01
 
 Use the CLI to manage JSONL storage:
 
-- `stm-maintenance stats` — prints `get_storage_stats()` including active counts and compaction hints
-- `stm-maintenance compact` — compacts JSONL files to remove tombstones and duplicates
+- `mnemex-maintenance stats` — prints `get_storage_stats()` including active counts and compaction hints
+- `mnemex-maintenance compact` — compacts JSONL files to remove tombstones and duplicates
 
-Optionally specify a path: `stm-maintenance --storage-path ~/.stm/jsonl stats`
+Optionally specify a path: `mnemex-maintenance --storage-path ~/.config/mnemex/jsonl stats`

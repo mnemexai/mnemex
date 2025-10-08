@@ -13,7 +13,7 @@
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd stm-server
+cd stm-research
 
 # Install with uv (recommended)
 uv pip install -e ".[dev]"
@@ -35,7 +35,7 @@ vim .env
 pytest
 
 # With coverage
-pytest --cov=stm_server --cov-report=html
+pytest --cov=mnemex --cov-report=html
 
 # Run specific test file
 pytest tests/test_decay.py
@@ -64,14 +64,14 @@ Add STM server:
       "command": "uv",
       "args": [
         "--directory",
-        "/Users/your-username/path/to/stm-server",
+        "/Users/your-username/path/to/mnemex",
         "run",
-        "stm-server"
+        "mnemex"
       ],
       "env": {
-        "STM_STORAGE_PATH": "/Users/your-username/.stm/jsonl",
+        "MNEMEX_STORAGE_PATH": "/Users/your-username/.stm/jsonl",
         "LTM_VAULT_PATH": "/Users/your-username/Documents/Obsidian/Vault",
-        "STM_ENABLE_EMBEDDINGS": "false"
+        "MNEMEX_ENABLE_EMBEDDINGS": "false"
       }
     }
   }
@@ -96,12 +96,12 @@ Configuration (adjust paths):
       "command": "uv",
       "args": [
         "--directory",
-        "C:\\Users\\YourName\\stm-server",
+        "C:\\Users\\YourName\\mnemex",
         "run",
-        "stm-server"
+        "mnemex"
       ],
       "env": {
-        "STM_STORAGE_PATH": "C:\\Users\\YourName\\.stm\\jsonl",
+        "MNEMEX_STORAGE_PATH": "C:\\Users\\YourName\\.stm\\jsonl",
         "LTM_VAULT_PATH": "C:\\Users\\YourName\\Documents\\Obsidian\\Vault"
       }
     }
@@ -118,9 +118,9 @@ Configuration in `.vscode/settings.json`:
   "mcp.servers": {
     "stm": {
       "command": "uv",
-      "args": ["--directory", "${workspaceFolder}/stm-server", "run", "stm-server"],
+      "args": ["--directory", "${workspaceFolder}/mnemex", "run", "mnemex"],
       "env": {
-        "STM_STORAGE_PATH": "${env:HOME}/.stm/jsonl"
+        "MNEMEX_STORAGE_PATH": "${env:HOME}/.stm/jsonl"
       }
     }
   }
@@ -137,10 +137,10 @@ Use for information that's only relevant for a day or two.
 
 ```bash
 # .env
-STM_DECAY_LAMBDA=8.02e-6  # 1-day half-life
-STM_FORGET_THRESHOLD=0.03
-STM_PROMOTE_THRESHOLD=0.7
-STM_PROMOTE_USE_COUNT=3
+MNEMEX_DECAY_LAMBDA=8.02e-6  # 1-day half-life
+MNEMEX_FORGET_THRESHOLD=0.03
+MNEMEX_PROMOTE_THRESHOLD=0.7
+MNEMEX_PROMOTE_USE_COUNT=3
 ```
 
 ### Profile 2: Standard (Default)
@@ -149,10 +149,10 @@ Balanced for general use.
 
 ```bash
 # .env
-STM_DECAY_LAMBDA=2.673e-6  # 3-day half-life
-STM_FORGET_THRESHOLD=0.05
-STM_PROMOTE_THRESHOLD=0.65
-STM_PROMOTE_USE_COUNT=5
+MNEMEX_DECAY_LAMBDA=2.673e-6  # 3-day half-life
+MNEMEX_FORGET_THRESHOLD=0.05
+MNEMEX_PROMOTE_THRESHOLD=0.65
+MNEMEX_PROMOTE_USE_COUNT=5
 ```
 
 ### Profile 3: Long-Term STM (Weekly)
@@ -161,10 +161,10 @@ For information that should persist longer.
 
 ```bash
 # .env
-STM_DECAY_LAMBDA=1.145e-6  # 7-day half-life
-STM_FORGET_THRESHOLD=0.08
-STM_PROMOTE_THRESHOLD=0.6
-STM_PROMOTE_USE_COUNT=7
+MNEMEX_DECAY_LAMBDA=1.145e-6  # 7-day half-life
+MNEMEX_FORGET_THRESHOLD=0.08
+MNEMEX_PROMOTE_THRESHOLD=0.6
+MNEMEX_PROMOTE_USE_COUNT=7
 ```
 
 ### Profile 4: With Embeddings
@@ -173,11 +173,11 @@ Enable semantic search and clustering.
 
 ```bash
 # .env
-STM_ENABLE_EMBEDDINGS=true
-STM_EMBED_MODEL=all-MiniLM-L6-v2
-STM_SEMANTIC_HI=0.88
-STM_SEMANTIC_LO=0.78
-STM_CLUSTER_LINK_THRESHOLD=0.83
+MNEMEX_ENABLE_EMBEDDINGS=true
+MNEMEX_EMBED_MODEL=all-MiniLM-L6-v2
+MNEMEX_SEMANTIC_HI=0.88
+MNEMEX_SEMANTIC_LO=0.78
+MNEMEX_CLUSTER_LINK_THRESHOLD=0.83
 ```
 
 **Note**: First run will download the model (~50MB).
@@ -186,34 +186,34 @@ STM_CLUSTER_LINK_THRESHOLD=0.83
 
 ## Decay Model Configuration
 
-Select decay behavior via `STM_DECAY_MODEL`:
+Select decay behavior via `MNEMEX_DECAY_MODEL`:
 
 ```bash
 # 1) Power-Law (default; heavier tail, most human)
-STM_DECAY_MODEL=power_law
-STM_PL_ALPHA=1.1              # shape (typical 1.0–1.2)
-STM_PL_HALFLIFE_DAYS=3.0      # target half-life used to derive t0
+MNEMEX_DECAY_MODEL=power_law
+MNEMEX_PL_ALPHA=1.1              # shape (typical 1.0–1.2)
+MNEMEX_PL_HALFLIFE_DAYS=3.0      # target half-life used to derive t0
 
 # 2) Exponential (lighter tail, forgets sooner)
-STM_DECAY_MODEL=exponential
-STM_DECAY_LAMBDA=2.673e-6     # ~3-day half-life (ln(2)/(3*86400))
+MNEMEX_DECAY_MODEL=exponential
+MNEMEX_DECAY_LAMBDA=2.673e-6     # ~3-day half-life (ln(2)/(3*86400))
 
 # 3) Two-Component (fast early forgetting + heavier tail)
-STM_DECAY_MODEL=two_component
-STM_TC_LAMBDA_FAST=1.603e-5   # ~12-hour half-life
-STM_TC_LAMBDA_SLOW=1.147e-6   # ~7-day half-life
-STM_TC_WEIGHT_FAST=0.7        # weight of fast component (0–1)
+MNEMEX_DECAY_MODEL=two_component
+MNEMEX_TC_LAMBDA_FAST=1.603e-5   # ~12-hour half-life
+MNEMEX_TC_LAMBDA_SLOW=1.147e-6   # ~7-day half-life
+MNEMEX_TC_WEIGHT_FAST=0.7        # weight of fast component (0–1)
 
 # Shared parameters
-STM_DECAY_BETA=0.6            # sub-linear use count weight
-STM_FORGET_THRESHOLD=0.05     # GC threshold
-STM_PROMOTE_THRESHOLD=0.65    # promotion threshold
-STM_PROMOTE_USE_COUNT=5
-STM_PROMOTE_TIME_WINDOW=14
+MNEMEX_DECAY_BETA=0.6            # sub-linear use count weight
+MNEMEX_FORGET_THRESHOLD=0.05     # GC threshold
+MNEMEX_PROMOTE_THRESHOLD=0.65    # promotion threshold
+MNEMEX_PROMOTE_USE_COUNT=5
+MNEMEX_PROMOTE_TIME_WINDOW=14
 ```
 
 Tuning tips:
-- Power-Law has a heavier tail; consider a slightly higher `STM_FORGET_THRESHOLD` (e.g., 0.06–0.08) or reduce `STM_PL_HALFLIFE_DAYS` to maintain GC budget.
+- Power-Law has a heavier tail; consider a slightly higher `MNEMEX_FORGET_THRESHOLD` (e.g., 0.06–0.08) or reduce `MNEMEX_PL_HALFLIFE_DAYS` to maintain GC budget.
 - Two-Component forgets very recent items faster; validate promotion and GC rates and adjust thresholds as needed.
 
 ---
@@ -222,23 +222,23 @@ Tuning tips:
 
 ### Location
 
-Default directory: `~/.stm/jsonl/`
+Default directory: `~/.config/mnemex/jsonl/`
 
-Custom location via `STM_STORAGE_PATH` environment variable.
+Custom location via `MNEMEX_STORAGE_PATH` environment variable.
 
 ### Backup
 
 ```bash
 # Simple backup
-cp ~/.stm/jsonl/memories.jsonl ~/.stm/backups/memories.jsonl.backup
-cp ~/.stm/jsonl/relations.jsonl ~/.stm/backups/relations.jsonl.backup
+cp ~/.config/mnemex/jsonl/memories.jsonl ~/.config/mnemex/backups/memories.jsonl.backup
+cp ~/.config/mnemex/jsonl/relations.jsonl ~/.config/mnemex/backups/relations.jsonl.backup
 
 # Timestamped backup
-cp ~/.stm/jsonl/memories.jsonl ~/.stm/backups/memories.jsonl.$(date +%Y%m%d)
-cp ~/.stm/jsonl/relations.jsonl ~/.stm/backups/relations.jsonl.$(date +%Y%m%d)
+cp ~/.config/mnemex/jsonl/memories.jsonl ~/.config/mnemex/backups/memories.jsonl.$(date +%Y%m%d)
+cp ~/.config/mnemex/jsonl/relations.jsonl ~/.config/mnemex/backups/relations.jsonl.$(date +%Y%m%d)
 
 # Automated daily backup (cron)
-0 2 * * * cp ~/.stm/jsonl/memories.jsonl ~/.stm/backups/memories.jsonl.$(date +\%Y\%m\%d) && cp ~/.stm/jsonl/relations.jsonl ~/.stm/backups/relations.jsonl.$(date +\%Y\%m\%d)
+0 2 * * * cp ~/.config/mnemex/jsonl/memories.jsonl ~/.config/mnemex/backups/memories.jsonl.$(date +\%Y\%m\%d) && cp ~/.config/mnemex/jsonl/relations.jsonl ~/.config/mnemex/backups/relations.jsonl.$(date +\%Y\%m\%d)
 ```
 
 ### Migration
@@ -249,10 +249,10 @@ Not applicable. JSONL storage requires no schema migrations.
 
 ```bash
 # WARNING: This deletes all memories
-rm -rf ~/.stm/jsonl
+rm -rf ~/.config/mnemex/jsonl
 
 # Next run will create fresh storage files
-stm-server
+mnemex
 ```
 
 ---
@@ -308,18 +308,18 @@ Use the built-in CLI for storage housekeeping:
 
 ```bash
 # Show JSONL storage stats (active counts, file sizes, compaction hints)
-stm-maintenance stats
+mnemex-maintenance stats
 
 # Compact JSONL (rewrite files without tombstones/duplicates)
-stm-maintenance compact
+mnemex-maintenance compact
 
 # With explicit path
-stm-maintenance --storage-path ~/.stm/jsonl stats
+mnemex-maintenance --storage-path ~/.config/mnemex/jsonl stats
 ```
 
 ### Daily Maintenance (Automated)
 
-Create a maintenance script `~/.stm/maintenance.sh`:
+Create a maintenance script `~/.config/mnemex/maintenance.sh`:
 
 ```bash
 #!/bin/bash
@@ -339,7 +339,7 @@ echo "Storage files: $(ls -l $HOME/.stm/jsonl | wc -l)" >> "$LOG_FILE"
 Schedule with cron:
 ```bash
 # Run daily at 2 AM
-0 2 * * * ~/.stm/maintenance.sh
+0 2 * * * ~/.config/mnemex/maintenance.sh
 ```
 
 ### Weekly GC
@@ -373,7 +373,7 @@ Use `stm-search --verbose` or write a small script that uses `JSONLStorage.get_s
 Server logs are written to stderr. Capture with:
 
 ```bash
-stm-server 2>&1 | tee ~/.stm/server.log
+mnemex 2>&1 | tee ~/.config/mnemex/server.log
 ```
 
 Or configure in MCP settings with log file output.
@@ -386,14 +386,14 @@ Or configure in MCP settings with log file output.
 
 1. Check Python version: `python --version` (need 3.10+)
 2. Check dependencies: `pip list | grep mcp`
-3. Check storage path exists: `ls -la ~/.stm/jsonl`
+3. Check storage path exists: `ls -la ~/.config/mnemex/jsonl`
 4. Check permissions on storage files
 
 ### Embeddings not working
 
 1. Install embeddings support: `pip install sentence-transformers`
 2. Check model downloads: `~/.cache/torch/sentence_transformers/`
-3. Verify `STM_ENABLE_EMBEDDINGS=true` in config
+3. Verify `MNEMEX_ENABLE_EMBEDDINGS=true` in config
 4. Check logs for model loading errors
 
 ### Promotion fails
@@ -405,8 +405,8 @@ Or configure in MCP settings with log file output.
 
 ### Storage issues
 
-1. Restore from `~/.stm/backups/memories.jsonl.*` and `relations.jsonl.*`.
-2. To rebuild fresh storage, remove `~/.stm/jsonl` and restart.
+1. Restore from `~/.config/mnemex/backups/memories.jsonl.*` and `relations.jsonl.*`.
+2. To rebuild fresh storage, remove `~/.config/mnemex/jsonl` and restart.
 
 ---
 
@@ -415,17 +415,17 @@ Or configure in MCP settings with log file output.
 ### For Large Stores (> 5000 memories)
 
 ```bash
-Use `JSONLStorage.compact()` periodically to reclaim space from tombstones and duplicates. Consider a higher `STM_FORGET_THRESHOLD` for aggressive GC.
+Use `JSONLStorage.compact()` periodically to reclaim space from tombstones and duplicates. Consider a higher `MNEMEX_FORGET_THRESHOLD` for aggressive GC.
 ```
 
 ### For Semantic Search
 
 ```bash
 # Use lighter model
-STM_EMBED_MODEL=all-MiniLM-L6-v2
+MNEMEX_EMBED_MODEL=all-MiniLM-L6-v2
 
 # Or faster model (less accurate)
-STM_EMBED_MODEL=paraphrase-MiniLM-L3-v2
+MNEMEX_EMBED_MODEL=paraphrase-MiniLM-L3-v2
 ```
 
 ### Memory Usage
@@ -440,7 +440,7 @@ Typical memory footprint:
 ## Security Considerations
 
 1. **Database**: Contains all short-term memories in plaintext
-   - Store in user-only directory (`chmod 700 ~/.stm`)
+   - Store in user-only directory (`chmod 700 ~/.config/mnemex`)
    - Don't commit database to version control
 
 2. **Obsidian Vault**: Promoted memories written to vault

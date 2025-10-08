@@ -1,8 +1,8 @@
-# STM Server Architecture
+# Mnemex Architecture
 
 ## Overview
 
-STM Server implements a biologically-inspired memory system with temporal decay and reinforcement, designed to give AI assistants human-like memory dynamics.
+Mnemex implements a biologically-inspired memory system with temporal decay and reinforcement, designed to give AI assistants human-like memory dynamics.
 
 ## Core Concepts
 

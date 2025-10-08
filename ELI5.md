@@ -8,7 +8,7 @@ You're chatting with Claude. You tell it "I prefer TypeScript over JavaScript" o
 
 ## What This Repo Does
 
-This is a **memory system for AI assistants like Claude**. It makes Claude remember things you tell it, but in a smart, human-like way:
+This is **Mnemex** - a **memory system for AI assistants like Claude**. It makes Claude remember things you tell it, but in a smart, human-like way:
 
 - 🧠 **Remembers important stuff** - Preferences, decisions, facts about you
 - ⏰ **Forgets naturally** - Old, unused memories fade away (just like human memory)
@@ -19,8 +19,8 @@ This is a **memory system for AI assistants like Claude**. It makes Claude remem
 
 Think of it like your own memory:
 
-- **Short-term memory (STM)** is like remembering what you had for breakfast this morning. If it's not important, you'll forget it in a few days.
-- **Long-term memory (LTM)** is like remembering your best friend's name. You use it all the time, so it never fades.
+- **Short-term memory** is like remembering what you had for breakfast this morning. If it's not important, you'll forget it in a few days.
+- **Long-term memory** is like remembering your best friend's name. You use it all the time, so it never fades.
 
 This system works the same way:
 - New memories start in **short-term storage** with a 3-day "half-life"
@@ -93,14 +93,14 @@ uv pip install -e .
 
 ### Step 3: Configure
 
-Copy `.env.example` to `.env`:
+Copy `.env.example` to `.env` and configure:
 
 ```bash
-# Where to store memories
-STM_STORAGE_PATH=~/.stm/jsonl
+# Where to store memories (default: ~/.config/mnemex/jsonl)
+MNEMEX_STORAGE_PATH=~/.config/mnemex/jsonl
 
 # How fast memories fade (3 days = default)
-STM_PL_HALFLIFE_DAYS=3.0
+MNEMEX_PL_HALFLIFE_DAYS=3.0
 
 # Where to save important memories permanently (optional)
 LTM_VAULT_PATH=~/Documents/Obsidian/MyVault
@@ -117,13 +117,13 @@ Add this to your Claude Desktop config file:
 ```json
 {
   "mcpServers": {
-    "stm": {
+    "mnemex": {
       "command": "uv",
       "args": [
         "--directory",
         "/Users/yourname/path/to/stm-research",
         "run",
-        "stm-server"
+        "mnemex"
       ],
       "env": {
         "PYTHONPATH": "/Users/yourname/path/to/stm-research/src"
@@ -209,7 +209,7 @@ After use #5, the score is way above 0.65, so it gets **promoted to your Obsidia
 ## Storage: Where Are My Memories?
 
 ### Short-term (JSONL files)
-- **Location**: `~/.stm/jsonl/` (or whatever you set in `.env`)
+- **Location**: `~/.config/mnemex/jsonl/` (or whatever you set in `.env`)
 - **Files**: `memories.jsonl`, `relations.jsonl`
 - **Format**: Human-readable JSON, one memory per line
 - **Git-friendly**: You can version control these files!
@@ -245,36 +245,36 @@ I prefer TypeScript over JavaScript for all new projects.
 
 ```bash
 # Run the memory server for Claude
-stm-server
+mnemex
 
 # Search your memories from command line
-stm-search "typescript preferences" --tags preferences
+mnemex-search "typescript preferences" --tags preferences
 
 # Index your Obsidian vault for search
-stm-index-ltm
+mnemex-index-ltm
 
 # Check storage stats
-stm-maintenance stats
+mnemex-maintenance stats
 
 # Clean up old memories (compact storage)
-stm-maintenance compact
+mnemex-maintenance compact
 
 # Backup memories to git
-stm-backup snapshot
+mnemex-backup snapshot
 ```
 
 ## Tuning: Make It Work Your Way
 
 ### Fast-paced work (forget quickly)
 ```bash
-STM_PL_HALFLIFE_DAYS=1.0  # 1-day half-life
-STM_FORGET_THRESHOLD=0.10  # More aggressive forgetting
+MNEMEX_PL_HALFLIFE_DAYS=1.0  # 1-day half-life
+MNEMEX_FORGET_THRESHOLD=0.10  # More aggressive forgetting
 ```
 
 ### Research/archival (remember longer)
 ```bash
-STM_PL_HALFLIFE_DAYS=7.0  # 7-day half-life
-STM_FORGET_THRESHOLD=0.02  # Keep things longer
+MNEMEX_PL_HALFLIFE_DAYS=7.0  # 7-day half-life
+MNEMEX_FORGET_THRESHOLD=0.02  # Keep things longer
 ```
 
 ### Preference-heavy assistant
@@ -338,7 +338,7 @@ Read the examples in the `examples/` directory or check out:
 
 ## TL;DR
 
-**One sentence**: This makes Claude remember things you tell it, with memories that fade naturally over time unless you use them frequently, just like human memory.
+**One sentence**: Mnemex makes Claude remember things you tell it, with memories that fade naturally over time unless you use them frequently, just like human memory.
 
 **Quick start**:
 ```bash
@@ -346,7 +346,7 @@ git clone https://github.com/simplemindedbot/stm-research.git
 cd stm-research
 uv pip install -e .
 # Edit .env file with your paths
-stm-server
+mnemex
 ```
 
 Then add it to Claude Desktop's config and restart. Done.

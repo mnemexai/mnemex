@@ -5,11 +5,11 @@
 
 ## Overview
 
-The STM server uses a novel temporal decay algorithm that mimics human memory dynamics. Memories naturally fade over time unless reinforced through use. This document explains the mathematical model, parameter tuning, and design rationale.
+Mnemex uses a novel temporal decay algorithm that mimics human memory dynamics. Memories naturally fade over time unless reinforced through use. This document explains the mathematical model, parameter tuning, and design rationale.
 
 ## Model Selection
 
-STM supports three decay models. Choose per use case via `STM_DECAY_MODEL`:
+Mnemex supports three decay models. Choose per use case via `MNEMEX_DECAY_MODEL`:
 
 1. Power‑Law (default):
    $$ f(\Delta t) = \left(1 + \frac{\Delta t}{t_0}\right)^{-\alpha} $$
@@ -385,34 +385,34 @@ Score
 
 ### Personal Assistant (Balanced)
 ```env
-STM_DECAY_LAMBDA=2.673e-6  # 3-day half-life
-STM_DECAY_BETA=0.6
-STM_FORGET_THRESHOLD=0.05
-STM_PROMOTE_THRESHOLD=0.65
+MNEMEX_DECAY_LAMBDA=2.673e-6  # 3-day half-life
+MNEMEX_DECAY_BETA=0.6
+MNEMEX_FORGET_THRESHOLD=0.05
+MNEMEX_PROMOTE_THRESHOLD=0.65
 ```
 
 ### Development Environment (Aggressive)
 ```env
-STM_DECAY_LAMBDA=8.02e-6   # 1-day half-life
-STM_DECAY_BETA=0.8
-STM_FORGET_THRESHOLD=0.10
-STM_PROMOTE_THRESHOLD=0.70
+MNEMEX_DECAY_LAMBDA=8.02e-6   # 1-day half-life
+MNEMEX_DECAY_BETA=0.8
+MNEMEX_FORGET_THRESHOLD=0.10
+MNEMEX_PROMOTE_THRESHOLD=0.70
 ```
 
 ### Research / Archival (Conservative)
 ```env
-STM_DECAY_LAMBDA=5.73e-7   # 14-day half-life
-STM_DECAY_BETA=0.4
-STM_FORGET_THRESHOLD=0.03
-STM_PROMOTE_THRESHOLD=0.50
+MNEMEX_DECAY_LAMBDA=5.73e-7   # 14-day half-life
+MNEMEX_DECAY_BETA=0.4
+MNEMEX_FORGET_THRESHOLD=0.03
+MNEMEX_PROMOTE_THRESHOLD=0.50
 ```
 
 ### Meeting Notes (High Velocity)
 ```env
-STM_DECAY_LAMBDA=1.60e-5   # 12-hour half-life
-STM_DECAY_BETA=0.9
-STM_FORGET_THRESHOLD=0.15
-STM_PROMOTE_THRESHOLD=0.75
+MNEMEX_DECAY_LAMBDA=1.60e-5   # 12-hour half-life
+MNEMEX_DECAY_BETA=0.9
+MNEMEX_FORGET_THRESHOLD=0.15
+MNEMEX_PROMOTE_THRESHOLD=0.75
 ```
 
 ## Implementation Notes

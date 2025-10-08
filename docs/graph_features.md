@@ -1,6 +1,6 @@
 # Knowledge Graph Features
 
-STM Server now includes comprehensive knowledge graph capabilities inspired by the reference MCP memory server, adapted for temporal memory management.
+Mnemex now includes comprehensive knowledge graph capabilities inspired by the reference MCP memory server, adapted for temporal memory management.
 
 ## Overview
 
@@ -423,7 +423,7 @@ def get_neighbors(memory_id, graph, hops=2):
 
 ## Comparison to Reference Memory Server
 
-| Feature | Reference Memory | STM Server |
+| Feature | Reference Memory | Mnemex |
 |---------|-----------------|------------|
 | **Primary Unit** | Entity (person, org) | Memory (time-bound info) |
 | **Observations** | Attached to entities | N/A (content is primary) |
