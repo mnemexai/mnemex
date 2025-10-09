@@ -79,13 +79,9 @@ def search_unified(
 
     # Search STM
     try:
-        stm_memories = db.search_memories(
-            tags=tags, window_days=window_days, limit=limit * 2
-        )
+        stm_memories = db.search_memories(tags=tags, window_days=window_days, limit=limit * 2)
         if query:
-            stm_memories = [
-                m for m in stm_memories if query.lower() in m.content.lower()
-            ]
+            stm_memories = [m for m in stm_memories if query.lower() in m.content.lower()]
 
         now = int(time.time())
         for memory in stm_memories:
@@ -162,9 +158,7 @@ def search_unified(
     }
 
 
-def format_results(
-    results: list[UnifiedSearchResult], *, verbose: bool = False
-) -> str:
+def format_results(results: list[UnifiedSearchResult], *, verbose: bool = False) -> str:
     """Formats unified search results for display."""
     if not results:
         return "No results found."
@@ -196,18 +190,10 @@ def main() -> int:
     parser.add_argument("query", nargs="?", help="Search query")
     parser.add_argument("--tags", nargs="+", help="Filter by tags")
     parser.add_argument("--limit", type=int, default=10, help="Maximum results")
-    parser.add_argument(
-        "--stm-weight", type=float, default=1.0, help="Weight for STM results"
-    )
-    parser.add_argument(
-        "--ltm-weight", type=float, default=0.7, help="Weight for LTM results"
-    )
-    parser.add_argument(
-        "--window-days", type=int, help="Only search STM memories from last N days"
-    )
-    parser.add_argument(
-        "--min-score", type=float, help="Minimum score for STM results"
-    )
+    parser.add_argument("--stm-weight", type=float, default=1.0, help="Weight for STM results")
+    parser.add_argument("--ltm-weight", type=float, default=0.7, help="Weight for LTM results")
+    parser.add_argument("--window-days", type=int, help="Only search STM memories from last N days")
+    parser.add_argument("--min-score", type=float, help="Minimum score for STM results")
     parser.add_argument("--verbose", action="store_true", help="Show detailed metadata")
 
     args = parser.parse_args()

@@ -83,7 +83,7 @@ def migrate_env_file(env_path: Path, dry_run: bool = False) -> bool:
         content = f.read()
 
     # Find all STM_* variables
-    pattern = r'\bSTM_([A-Z_]+)\b'
+    pattern = r"\bSTM_([A-Z_]+)\b"
     matches = re.findall(pattern, content)
 
     if not matches:
@@ -104,7 +104,7 @@ def migrate_env_file(env_path: Path, dry_run: bool = False) -> bool:
     print(f"   💾 Backup created: {backup_path}")
 
     # Replace all STM_* with MNEMEX_*
-    new_content = re.sub(pattern, r'MNEMEX_\1', content)
+    new_content = re.sub(pattern, r"MNEMEX_\1", content)
 
     with open(env_path, "w") as f:
         f.write(new_content)

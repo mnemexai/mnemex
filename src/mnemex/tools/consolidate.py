@@ -74,9 +74,7 @@ def consolidate_memories(
             # Apply consolidation to all candidates
             results = []
             for cluster in candidates:
-                result = execute_consolidation(
-                    cluster, db, centroid_embedding=cluster.centroid
-                )
+                result = execute_consolidation(cluster, db, centroid_embedding=cluster.centroid)
                 results.append(result)
 
             total_saved = sum(r.get("space_saved", 0) for r in results)
