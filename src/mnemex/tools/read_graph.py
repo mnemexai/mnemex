@@ -5,6 +5,7 @@ from typing import Any
 
 from ..context import db, mcp
 from ..core.decay import calculate_score
+from ..security.validators import validate_positive_int
 from ..storage.models import MemoryStatus
 
 
@@ -21,11 +22,22 @@ def read_graph(
     Args:
         status: Filter memories by status - "active", "promoted", "archived", or "all".
         include_scores: Include decay scores and age in results.
-        limit: Maximum number of memories to return.
+        limit: Maximum number of memories to return (1-10,000).
 
     Returns:
         Complete knowledge graph with memories, relations, and statistics.
+
+    Raises:
+        ValueError: If status is invalid or limit is out of range.
     """
+    # Input validation
+    valid_statuses = {"active", "promoted", "archived", "all"}
+    if status not in valid_statuses:
+        raise ValueError(f"status must be one of {valid_statuses}, got: {status}")
+
+    if limit is not None:
+        limit = validate_positive_int(limit, "limit", min_value=1, max_value=10000)
+
     status_filter = None if status == "all" else MemoryStatus(status)
     graph = db.get_knowledge_graph(status=status_filter)
 

@@ -5,6 +5,7 @@ from typing import Any
 from ..config import get_config
 from ..context import db, mcp
 from ..core.clustering import cluster_memories_simple, find_duplicate_candidates
+from ..security.validators import validate_positive_int, validate_score
 from ..storage.models import ClusterConfig, MemoryStatus
 
 
@@ -24,14 +25,29 @@ def cluster_memories(
 
     Args:
         strategy: Clustering strategy (default: "similarity").
-        threshold: Similarity threshold for linking (uses config default).
-        max_cluster_size: Maximum memories per cluster (uses config default).
+        threshold: Similarity threshold for linking (0.0-1.0, uses config default if not specified).
+        max_cluster_size: Maximum memories per cluster (1-100, uses config default if not specified).
         find_duplicates: Find likely duplicate pairs instead of clustering.
-        duplicate_threshold: Similarity threshold for duplicates (uses config default).
+        duplicate_threshold: Similarity threshold for duplicates (0.0-1.0, uses config default).
 
     Returns:
         List of clusters or duplicate pairs with scores and suggested actions.
+
+    Raises:
+        ValueError: If any input fails validation.
     """
+    # Input validation
+    if threshold is not None:
+        threshold = validate_score(threshold, "threshold")
+
+    if max_cluster_size is not None:
+        max_cluster_size = validate_positive_int(
+            max_cluster_size, "max_cluster_size", min_value=1, max_value=100
+        )
+
+    if duplicate_threshold is not None:
+        duplicate_threshold = validate_score(duplicate_threshold, "duplicate_threshold")
+
     config = get_config()
 
     cluster_config = ClusterConfig(

@@ -6,6 +6,15 @@ from typing import Any
 from ..config import get_config
 from ..context import db, mcp
 from ..core.decay import calculate_score
+from ..security.validators import (
+    MAX_CONTENT_LENGTH,
+    MAX_TAGS_COUNT,
+    validate_list_length,
+    validate_positive_int,
+    validate_score,
+    validate_string_length,
+    validate_tag,
+)
 from ..storage.ltm_index import LTMIndex
 
 
@@ -63,17 +72,44 @@ def search_unified(
     Search across both STM and LTM with unified ranking.
 
     Args:
-        query: Text query to search for.
-        tags: Filter by tags.
-        limit: Maximum total results.
-        stm_weight: Weight multiplier for STM results.
-        ltm_weight: Weight multiplier for LTM results.
-        window_days: Only include STM memories from last N days.
-        min_score: Minimum score threshold for STM memories.
+        query: Text query to search for (max 50,000 chars).
+        tags: Filter by tags (max 50 tags).
+        limit: Maximum total results (1-100).
+        stm_weight: Weight multiplier for STM results (0.0-2.0).
+        ltm_weight: Weight multiplier for LTM results (0.0-2.0).
+        window_days: Only include STM memories from last N days (1-3650).
+        min_score: Minimum score threshold for STM memories (0.0-1.0).
 
     Returns:
         A dictionary containing the search results.
+
+    Raises:
+        ValueError: If any input fails validation.
     """
+    # Input validation
+    if query is not None:
+        query = validate_string_length(query, MAX_CONTENT_LENGTH, "query", allow_none=True)
+
+    if tags is not None:
+        tags = validate_list_length(tags, MAX_TAGS_COUNT, "tags")
+        tags = [validate_tag(tag, f"tags[{i}]") for i, tag in enumerate(tags)]
+
+    limit = validate_positive_int(limit, "limit", min_value=1, max_value=100)
+
+    # Weights can be higher than 1.0 to boost importance
+    if not 0.0 <= stm_weight <= 2.0:
+        raise ValueError(f"stm_weight must be between 0.0 and 2.0, got {stm_weight}")
+    if not 0.0 <= ltm_weight <= 2.0:
+        raise ValueError(f"ltm_weight must be between 0.0 and 2.0, got {ltm_weight}")
+
+    if window_days is not None:
+        window_days = validate_positive_int(
+            window_days, "window_days", min_value=1, max_value=3650
+        )
+
+    if min_score is not None:
+        min_score = validate_score(min_score, "min_score")
+
     config = get_config()
     results: list[UnifiedSearchResult] = []
 
