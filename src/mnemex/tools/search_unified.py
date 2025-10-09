@@ -1,8 +1,7 @@
 """Unified search across STM and LTM."""
 
 import time
-from pathlib import Path
-from typing import Any, List, Optional
+from typing import Any
 
 from ..config import get_config
 from ..context import db, mcp
@@ -19,11 +18,11 @@ class UnifiedSearchResult:
         title: str,
         source: str,  # "stm" or "ltm"
         score: float,
-        path: Optional[str] = None,
-        memory_id: Optional[str] = None,
-        tags: Optional[List[str]] = None,
-        created_at: Optional[int] = None,
-        last_used: Optional[int] = None,
+        path: str | None = None,
+        memory_id: str | None = None,
+        tags: list[str] | None = None,
+        created_at: int | None = None,
+        last_used: int | None = None,
     ):
         self.content = content
         self.title = title
@@ -52,13 +51,13 @@ class UnifiedSearchResult:
 
 @mcp.tool()
 def search_unified(
-    query: Optional[str] = None,
-    tags: Optional[List[str]] = None,
+    query: str | None = None,
+    tags: list[str] | None = None,
     limit: int = 10,
     stm_weight: float = 1.0,
     ltm_weight: float = 0.7,
-    window_days: Optional[int] = None,
-    min_score: Optional[float] = None,
+    window_days: int | None = None,
+    min_score: float | None = None,
 ) -> dict[str, Any]:
     """
     Search across both STM and LTM with unified ranking.
@@ -76,7 +75,7 @@ def search_unified(
         A dictionary containing the search results.
     """
     config = get_config()
-    results: List[UnifiedSearchResult] = []
+    results: list[UnifiedSearchResult] = []
 
     # Search STM
     try:
@@ -147,7 +146,7 @@ def search_unified(
     results.sort(key=lambda r: r.score, reverse=True)
 
     seen_content = set()
-    deduplicated: List[UnifiedSearchResult] = []
+    deduplicated: list[UnifiedSearchResult] = []
     for result in results:
         dedup_key = result.content[:100].lower().strip()
         if dedup_key not in seen_content:

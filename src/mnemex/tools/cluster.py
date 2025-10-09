@@ -1,6 +1,6 @@
 """Cluster memory tool - find similar memories for consolidation."""
 
-from typing import Any, Optional
+from typing import Any
 
 from ..config import get_config
 from ..context import db, mcp
@@ -11,10 +11,10 @@ from ..storage.models import ClusterConfig, MemoryStatus
 @mcp.tool()
 def cluster_memories(
     strategy: str = "similarity",
-    threshold: Optional[float] = None,
-    max_cluster_size: Optional[int] = None,
+    threshold: float | None = None,
+    max_cluster_size: int | None = None,
     find_duplicates: bool = False,
-    duplicate_threshold: Optional[float] = None,
+    duplicate_threshold: float | None = None,
 ) -> dict[str, Any]:
     """
     Cluster similar memories for potential consolidation or find duplicates.

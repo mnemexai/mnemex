@@ -6,7 +6,6 @@ from pathlib import Path
 
 import pytest
 
-from mnemex.core.clustering import cluster_memories_simple
 from mnemex.core.consolidation import (
     calculate_merged_strength,
     execute_consolidation,
@@ -17,7 +16,7 @@ from mnemex.core.consolidation import (
     merge_tags,
 )
 from mnemex.storage.jsonl_storage import JSONLStorage
-from mnemex.storage.models import Cluster, ClusterConfig, Memory, MemoryMetadata, MemoryStatus
+from mnemex.storage.models import Cluster, Memory, MemoryMetadata
 
 
 @pytest.fixture

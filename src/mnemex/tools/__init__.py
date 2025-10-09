@@ -1,16 +1,18 @@
 """MCP tools for STM server."""
 
-from . import cluster
-from . import consolidate
-from . import create_relation
-from . import gc
-from . import open_memories
-from . import promote
-from . import read_graph
-from . import save
-from . import search
-from . import search_unified
-from . import touch
+from . import (
+    cluster,
+    consolidate,
+    create_relation,
+    gc,
+    open_memories,
+    promote,
+    read_graph,
+    save,
+    search,
+    search_unified,
+    touch,
+)
 
 __all__ = [
     "save",

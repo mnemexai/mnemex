@@ -2,7 +2,7 @@
 
 import time
 import uuid
-from typing import Any, List, Optional
+from typing import Any
 
 from ..config import get_config
 from ..context import db, mcp
@@ -27,11 +27,11 @@ def _generate_embedding(content: str) -> list[float] | None:
 @mcp.tool()
 def save_memory(
     content: str,
-    tags: Optional[List[str]] = None,
-    entities: Optional[List[str]] = None,
-    source: Optional[str] = None,
-    context: Optional[str] = None,
-    meta: Optional[dict[str, Any]] = None,
+    tags: list[str] | None = None,
+    entities: list[str] | None = None,
+    source: str | None = None,
+    context: str | None = None,
+    meta: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """
     Save a new memory to short-term storage.

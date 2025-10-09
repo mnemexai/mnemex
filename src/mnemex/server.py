@@ -8,7 +8,19 @@ from .context import db, mcp
 from .core.decay import calculate_halflife
 
 # Import tools to register them with the decorator
-from .tools import save, search, touch, gc, promote, cluster, consolidate, read_graph, open_memories, create_relation, search_unified  # noqa: F401
+from .tools import (  # noqa: F401
+    cluster,
+    consolidate,
+    create_relation,
+    gc,
+    open_memories,
+    promote,
+    read_graph,
+    save,
+    search,
+    search_unified,
+    touch,
+)
 
 # Initialize logging
 logging.basicConfig(

@@ -1,7 +1,7 @@
 """Search memory tool."""
 
 import time
-from typing import Any, List, Optional
+from typing import Any
 
 from ..config import get_config
 from ..context import db, mcp
@@ -10,7 +10,7 @@ from ..core.decay import calculate_score
 from ..storage.models import MemoryStatus, SearchResult
 
 
-def _generate_query_embedding(query: str) -> Optional[List[float]]:
+def _generate_query_embedding(query: str) -> list[float] | None:
     """Generate embedding for search query."""
     config = get_config()
     if not config.enable_embeddings:
@@ -27,11 +27,11 @@ def _generate_query_embedding(query: str) -> Optional[List[float]]:
 
 @mcp.tool()
 def search_memory(
-    query: Optional[str] = None,
-    tags: Optional[List[str]] = None,
+    query: str | None = None,
+    tags: list[str] | None = None,
     top_k: int = 10,
-    window_days: Optional[int] = None,
-    min_score: Optional[float] = None,
+    window_days: int | None = None,
+    min_score: float | None = None,
     use_embeddings: bool = False,
 ) -> dict[str, Any]:
     """

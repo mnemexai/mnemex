@@ -1,7 +1,7 @@
 """Promote memory tool - move high-value memories to long-term storage."""
 
 import time
-from typing import Any, Optional
+from typing import Any
 
 from ..context import db, mcp
 from ..core.scoring import calculate_memory_age, should_promote
@@ -11,7 +11,7 @@ from ..storage.models import MemoryStatus, PromotionCandidate
 
 @mcp.tool()
 def promote_memory(
-    memory_id: Optional[str] = None,
+    memory_id: str | None = None,
     auto_detect: bool = False,
     dry_run: bool = False,
     target: str = "obsidian",

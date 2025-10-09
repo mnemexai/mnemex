@@ -30,7 +30,7 @@ def get_new_mnemex_path() -> Path:
 
 def migrate_data(old_path: Path, new_path: Path, dry_run: bool = False) -> bool:
     """Migrate JSONL data files from old to new location."""
-    print(f"📦 Migrating data:")
+    print("📦 Migrating data:")
     print(f"   From: {old_path}")
     print(f"   To:   {new_path}")
 
@@ -79,7 +79,7 @@ def migrate_env_file(env_path: Path, dry_run: bool = False) -> bool:
     if dry_run:
         print("   [DRY RUN - file will not be modified]")
 
-    with open(env_path, "r") as f:
+    with open(env_path) as f:
         content = f.read()
 
     # Find all STM_* variables
@@ -109,7 +109,7 @@ def migrate_env_file(env_path: Path, dry_run: bool = False) -> bool:
     with open(env_path, "w") as f:
         f.write(new_content)
 
-    print(f"   ✅ .env file updated")
+    print("   ✅ .env file updated")
     return True
 
 

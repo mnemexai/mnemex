@@ -1,6 +1,7 @@
 """Shared context for Mnemex."""
 
 from mcp.server.fastmcp import FastMCP
+
 from .storage.jsonl_storage import JSONLStorage
 
 # Create the FastMCP server instance

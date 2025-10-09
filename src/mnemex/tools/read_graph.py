@@ -1,7 +1,7 @@
 """Read graph tool - return entire knowledge graph."""
 
 import time
-from typing import Any, Optional
+from typing import Any
 
 from ..context import db, mcp
 from ..core.decay import calculate_score
@@ -10,7 +10,7 @@ from ..storage.models import MemoryStatus
 
 @mcp.tool()
 def read_graph(
-    status: str = "active", include_scores: bool = True, limit: Optional[int] = None
+    status: str = "active", include_scores: bool = True, limit: int | None = None
 ) -> dict[str, Any]:
     """
     Read the entire knowledge graph of memories and relations.

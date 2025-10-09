@@ -1,7 +1,7 @@
 """Open memories tool - retrieve specific memories by ID."""
 
 import time
-from typing import Any, List, Union
+from typing import Any
 
 from ..context import db, mcp
 from ..core.decay import calculate_score
@@ -9,7 +9,7 @@ from ..core.decay import calculate_score
 
 @mcp.tool()
 def open_memories(
-    memory_ids: Union[str, List[str]],
+    memory_ids: str | list[str],
     include_relations: bool = True,
     include_scores: bool = True,
 ) -> dict[str, Any]:

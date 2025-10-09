@@ -2,7 +2,7 @@
 
 import time
 import uuid
-from typing import Any, Optional
+from typing import Any
 
 from ..context import db, mcp
 from ..storage.models import Relation
@@ -14,7 +14,7 @@ def create_relation(
     to_memory_id: str,
     relation_type: str,
     strength: float = 1.0,
-    metadata: Optional[dict[str, Any]] = None,
+    metadata: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """
     Create an explicit relation between two memories.

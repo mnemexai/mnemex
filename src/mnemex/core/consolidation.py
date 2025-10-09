@@ -104,11 +104,11 @@ def merge_metadata(memories: list[Memory]) -> MemoryMetadata:
     tags = merge_tags(memories)
 
     # Combine sources (if different)
-    sources = set(mem.meta.source for mem in memories if mem.meta.source)
+    sources = {mem.meta.source for mem in memories if mem.meta.source}
     source = "; ".join(sorted(sources)) if sources else None
 
     # Combine contexts (if different)
-    contexts = set(mem.meta.context for mem in memories if mem.meta.context)
+    contexts = {mem.meta.context for mem in memories if mem.meta.context}
     context = "; ".join(sorted(contexts)) if contexts else None
 
     # Merge extra metadata

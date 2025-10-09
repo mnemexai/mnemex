@@ -5,7 +5,7 @@ from typing import Any
 from ..context import db, mcp
 from ..core.clustering import cluster_memories_simple
 from ..core.consolidation import execute_consolidation, generate_consolidation_preview
-from ..storage.models import Cluster, ClusterConfig, MemoryStatus
+from ..storage.models import ClusterConfig, MemoryStatus
 
 
 @mcp.tool()

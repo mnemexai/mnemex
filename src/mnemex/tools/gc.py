@@ -1,7 +1,7 @@
 """Garbage collection tool - remove or archive low-scoring memories."""
 
 import time
-from typing import Any, Optional
+from typing import Any
 
 from ..config import get_config
 from ..context import db, mcp
@@ -13,7 +13,7 @@ from ..storage.models import GarbageCollectionResult, MemoryStatus
 def gc(
     dry_run: bool = True,
     archive_instead: bool = False,
-    limit: Optional[int] = None,
+    limit: int | None = None,
 ) -> dict[str, Any]:
     """
     Perform garbage collection on low-scoring memories.
