@@ -71,15 +71,14 @@ def validate_folder_path(
     # Check for absolute paths
     if ABSOLUTE_PATH_PATTERN.match(folder):
         raise ValueError(
-            f"{field_name} must be a relative path, not an absolute path. "
-            f"Got: {folder!r}"
+            f"{field_name} must be a relative path, not an absolute path. Got: {folder!r}"
         )
 
     # Check for path traversal patterns
     if PATH_TRAVERSAL_PATTERN.search(folder):
         raise ValueError(
             f"{field_name} contains forbidden characters or path traversal patterns. "
-            f"Paths must not contain: .., control characters, or <>:\"|?* "
+            f'Paths must not contain: .., control characters, or <>:"|?* '
             f"Got: {folder!r}"
         )
 
@@ -92,8 +91,7 @@ def validate_folder_path(
     # Check for empty path components (e.g., "a//b")
     if "//" in folder:
         raise ValueError(
-            f"{field_name} contains empty path components (consecutive slashes). "
-            f"Got: {folder!r}"
+            f"{field_name} contains empty path components (consecutive slashes). Got: {folder!r}"
         )
 
     # Additional check: split and validate each component
@@ -111,8 +109,7 @@ def validate_folder_path(
             )
         if not component:
             raise ValueError(
-                f"{field_name} has empty path component at position {i}. "
-                f"Got: {folder!r}"
+                f"{field_name} has empty path component at position {i}. Got: {folder!r}"
             )
 
     return folder
@@ -183,9 +180,28 @@ def sanitize_filename(
     # Check Windows reserved names (CON, PRN, AUX, NUL, COM1-COM9, LPT1-LPT9)
     # These are reserved on Windows regardless of extension
     reserved_names = {
-        "CON", "PRN", "AUX", "NUL",
-        "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
-        "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9",
+        "CON",
+        "PRN",
+        "AUX",
+        "NUL",
+        "COM1",
+        "COM2",
+        "COM3",
+        "COM4",
+        "COM5",
+        "COM6",
+        "COM7",
+        "COM8",
+        "COM9",
+        "LPT1",
+        "LPT2",
+        "LPT3",
+        "LPT4",
+        "LPT5",
+        "LPT6",
+        "LPT7",
+        "LPT8",
+        "LPT9",
     }
     name_without_ext = filename.rsplit(".", 1)[0].upper()
     if name_without_ext in reserved_names:
@@ -258,9 +274,7 @@ def ensure_within_directory(
         try:
             resolved_path = path.resolve(strict=False)  # Don't require existence
         except (OSError, RuntimeError) as e:
-            raise ValueError(
-                f"{field_name} cannot be resolved: {path}. Error: {e}"
-            ) from e
+            raise ValueError(f"{field_name} cannot be resolved: {path}. Error: {e}") from e
     else:
         resolved_path = path.absolute()
 
@@ -314,17 +328,12 @@ def validate_vault_path(
 
     # Ensure absolute path
     if not vault_path.is_absolute():
-        raise ValueError(
-            f"{field_name} must be an absolute path. "
-            f"Got relative path: {vault_path}"
-        )
+        raise ValueError(f"{field_name} must be an absolute path. Got relative path: {vault_path}")
 
     # Resolve to canonical form (resolve symlinks)
     try:
         vault_path = vault_path.resolve()
     except (OSError, RuntimeError) as e:
-        raise ValueError(
-            f"{field_name} cannot be resolved: {vault_path}. Error: {e}"
-        ) from e
+        raise ValueError(f"{field_name} cannot be resolved: {vault_path}. Error: {e}") from e
 
     return vault_path
