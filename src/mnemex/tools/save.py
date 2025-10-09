@@ -2,7 +2,7 @@
 
 import time
 import uuid
-from typing import Any
+from typing import Any, cast
 
 from ..config import get_config
 from ..context import db, mcp
@@ -28,7 +28,7 @@ def _generate_embedding(content: str) -> list[float] | None:
 
         model = SentenceTransformer(config.embed_model)
         embedding = model.encode(content, convert_to_numpy=True)
-        return embedding.tolist()
+        return cast(list[float], embedding.tolist())
     except (ImportError, Exception):
         return None
 
@@ -61,7 +61,7 @@ def save_memory(
         ValueError: If any input fails validation.
     """
     # Input validation
-    content = validate_string_length(content, MAX_CONTENT_LENGTH, "content")
+    content = cast(str, validate_string_length(content, MAX_CONTENT_LENGTH, "content"))
 
     if tags is not None:
         tags = validate_list_length(tags, MAX_TAGS_COUNT, "tags")
@@ -72,10 +72,10 @@ def save_memory(
         entities = [validate_entity(entity, f"entities[{i}]") for i, entity in enumerate(entities)]
 
     if source is not None:
-        source = validate_string_length(source, 500, "source", allow_none=True)
+        source = cast(str, validate_string_length(source, 500, "source", allow_none=True))
 
     if context is not None:
-        context = validate_string_length(context, 1000, "context", allow_none=True)
+        context = cast(str, validate_string_length(context, 1000, "context", allow_none=True))
 
     # Create metadata
     metadata = MemoryMetadata(

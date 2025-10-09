@@ -50,7 +50,7 @@ def open_memories(
             not_found.append(memory_id)
             continue
 
-        mem_data = {
+        mem_data: dict[str, Any] = {
             "id": memory.id,
             "content": memory.content,
             "entities": memory.entities,

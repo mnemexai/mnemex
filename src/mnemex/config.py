@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
+from typing import Any, cast
 from pydantic import BaseModel, Field, field_validator
 
 
@@ -205,7 +206,7 @@ class Config(BaseModel):
     @classmethod
     def from_env(cls) -> "Config":
         """Load configuration from environment variables."""
-        config_dict = {}
+        config_dict: dict[str, object] = {}
 
         # Storage
         if storage_path := os.getenv("MNEMEX_STORAGE_PATH"):
@@ -287,7 +288,7 @@ class Config(BaseModel):
         if log_level := os.getenv("LOG_LEVEL"):
             config_dict["log_level"] = log_level
 
-        return cls(**config_dict)
+        return cls(**cast(dict[str, Any], config_dict))
 
     # No-op: JSONL storage ensures its own directory
 

@@ -132,6 +132,7 @@ class BasicMemoryIntegration:
             filename = f"memory-{memory.id[:8]}"
 
         # Ensure uniqueness
+        assert self.vault_path is not None
         base_path = self.vault_path / "STM"
         base_path.mkdir(exist_ok=True)
 
@@ -169,6 +170,7 @@ class BasicMemoryIntegration:
                 "vault_path": str(self.vault_path) if self.vault_path else None,
             }
 
+        assert self.vault_path is not None
         stm_folder = self.vault_path / "STM"
         if not stm_folder.exists():
             note_count = 0

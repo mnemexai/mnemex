@@ -112,7 +112,7 @@ class MarkdownWriter:
         file_path = ensure_within_directory(file_path, self.vault_path, "file_path")
 
         # Build frontmatter
-        fm = {
+        fm: dict[str, Any] = {
             "title": title,
             "created": datetime.fromtimestamp(created_at or int(time.time())).isoformat(),
             "modified": datetime.fromtimestamp(modified_at or int(time.time())).isoformat(),
@@ -406,8 +406,8 @@ def main() -> int:
         elif args.command == "list":
             notes = writer.list_notes(folder=args.folder)
             print(f"\nNotes ({len(notes)}):\n")
-            for note_path in notes:
-                print(f"  - {note_path.relative_to(writer.vault_path)}")
+            for note_file in notes:
+                print(f"  - {note_file.relative_to(writer.vault_path)}")
 
         elif args.command == "read":
             note_path = writer.find_note_by_title(args.title)

@@ -1,7 +1,7 @@
 """Search memory tool."""
 
 import time
-from typing import Any
+from typing import Any, cast
 
 from ..config import get_config
 from ..context import db, mcp
@@ -29,7 +29,7 @@ def _generate_query_embedding(query: str) -> list[float] | None:
 
         model = SentenceTransformer(config.embed_model)
         embedding = model.encode(query, convert_to_numpy=True)
-        return embedding.tolist()
+        return cast(list[float], embedding.tolist())
     except (ImportError, Exception):
         return None
 

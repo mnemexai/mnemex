@@ -113,7 +113,7 @@ def migrate_env_file(env_path: Path, dry_run: bool = False) -> bool:
     return True
 
 
-def main():
+def main() -> None:
     """Main migration entry point."""
     parser = argparse.ArgumentParser(
         description="Migrate from STM to Mnemex",

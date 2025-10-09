@@ -46,7 +46,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def initialize_server():
+def initialize_server() -> None:
     """Initialize logging and database connections."""
     config = get_config()
     logging.getLogger().setLevel(config.log_level)

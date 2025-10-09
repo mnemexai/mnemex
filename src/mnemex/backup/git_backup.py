@@ -276,7 +276,8 @@ class GitBackup:
         if self.repo is None:
             raise RuntimeError("Git repository not initialized")
 
-        return self.repo.git.diff(commit_sha_a, commit_sha_b)
+        # GitPython returns a Git object response; ensure string type for API contract
+        return str(self.repo.git.diff(commit_sha_a, commit_sha_b))
 
     def get_stats(self) -> dict[str, Any]:
         """

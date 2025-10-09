@@ -68,6 +68,5 @@ jobs:
     - name: Run ruff format check
       run: uv run ruff format --check src/mnemex tests
 
-    # TODO: Re-enable mypy after fixing type issues
-    # - name: Run mypy
-    #   run: uv run mypy src/mnemex
+    - name: Run mypy
+      run: uv run mypy src/mnemex

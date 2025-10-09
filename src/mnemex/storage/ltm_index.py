@@ -319,7 +319,7 @@ class LTMIndex:
         # Sort by relevance (for now, just by title match then content length)
         if query:
 
-            def score_doc(doc: LTMDocument) -> tuple:
+            def score_doc(doc: LTMDocument) -> tuple[int, int]:
                 title_match = 1 if query.lower() in doc.title.lower() else 0
                 return (title_match, -len(doc.content))  # Negative for descending
 
