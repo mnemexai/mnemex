@@ -519,6 +519,11 @@ uv run python -m pytest tests/test_consolidation.py -v
 
 ## Development Workflow
 
+### Note on documentation publishing
+
+- Do not merge `gh-pages` into `main`. The `gh-pages` branch is a deployment branch containing built site artifacts only. Documentation is built from `main` by CI and force‑pushed to `gh-pages`.
+- Any pull request that adds top‑level `index.html`, `assets/`, or `search/` to `main` will be rejected. If you need to preview docs locally, run `mkdocs serve` instead of committing built files.
+
 ### Making Changes
 
 1. **Create a new branch:**

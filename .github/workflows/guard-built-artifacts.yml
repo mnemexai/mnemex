@@ -1,0 +1,33 @@
+name: Prevent Built Site Artifacts in Main
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect disallowed built-site changes
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          echo "Checking changes from $BASE_SHA to $HEAD_SHA"
+          CHANGED_FILES=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA")
+          echo "$CHANGED_FILES" | sed 's/^/  - /'
+
+          # Disallow adding built site artifacts to main
+          # Block top-level index.html, assets/*, search/*, sitemap.* at repo root
+          if echo "$CHANGED_FILES" | grep -E '^(index\.html|assets/|search/|sitemap\.xml(\.gz)?$)' >/dev/null; then
+            echo "\n❌ Built site artifacts detected in PR targeting main."
+            echo "Do not commit generated documentation to main. CI publishes docs to gh-pages."
+            exit 1
+          fi
+
+          echo "✅ No disallowed built-site artifacts detected."
