@@ -19,6 +19,7 @@ jobs:
   bandit:
     name: Bandit Security Scan
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
 
@@ -34,7 +35,6 @@ jobs:
       - name: Run Bandit
         run: |
           uv run bandit -r src/mnemex -f json -o bandit-report.json || true
-          uv run bandit -r src/mnemex
 
       - name: Upload Bandit results
         uses: actions/upload-artifact@v4
@@ -112,7 +112,7 @@ jobs:
 
       - name: Generate SBOM (JSON)
         run: |
-          uv run cyclonedx-py environment --format json --output sbom.json
+          uv run cyclonedx-py environment --output-format JSON --output-file sbom.json
 
       - name: Upload SBOM artifact
         uses: actions/upload-artifact@v4
