@@ -127,8 +127,8 @@ MIT License - Full user control and transparency
 ### Added
 - **ELI5.md** - Simple, beginner-friendly guide explaining what this project does and how to use it.
 - Decay models: power-law (default), exponential, and two-component with configurable parameters.
-- Unified search surfaced as an MCP tool (`search_unified`) alongside the CLI (`stm-search`).
-- Maintenance CLI (`stm-maintenance`) to show JSONL storage stats and compact files.
+- Unified search surfaced as an MCP tool (`search_unified`) alongside the CLI (`mnemex-search`).
+- Maintenance CLI (`mnemex-maintenance`) to show JSONL storage stats and compact files.
 - Tests for decay models, LTM index parsing/search, and unified search merging.
 - Deployment docs for decay model configuration and tuning tips.
 - Tuning cheat sheet and model selection guidance in README and scoring docs.
@@ -144,4 +144,3 @@ MIT License - Full user control and transparency
 ## [0.2.0] - 2025-01-07
 
 - JSONL storage, LTM index, Git integration, and smart prompting docs.
-

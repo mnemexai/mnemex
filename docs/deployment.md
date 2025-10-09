@@ -410,7 +410,7 @@ Run garbage collection weekly:
 
 ### Storage Stats
 
-Use `stm-search --verbose` or write a small script that uses `JSONLStorage.get_storage_stats()` for counts and compaction hints.
+Use `mnemex-search --verbose` or write a small script that uses `JSONLStorage.get_storage_stats()` for counts and compaction hints.
 
 ### Logs
 
