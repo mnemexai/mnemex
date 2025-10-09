@@ -715,6 +715,26 @@ uv run ruff check --fix src/mnemex tests
 uv run ruff format src/mnemex tests
 ```
 
+### Pre-commit Hook
+
+Install pre-commit (one time):
+
+```bash
+pipx install pre-commit  # or: pip install pre-commit
+```
+
+Enable hooks in this repo:
+
+```bash
+pre-commit install
+```
+
+Run on all files locally:
+
+```bash
+pre-commit run --all-files
+```
+
 ### Type Hints
 
 All functions must have type hints:
