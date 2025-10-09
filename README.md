@@ -146,7 +146,7 @@ No explicit memory commands needed - just natural conversation.
 
 ```
 ┌─────────────────────────────────────┐
-│   Short-term memory           │
+│   Short-term memory                 │
 │   - JSONL storage                   │
 │   - Temporal decay                  │
 │   - Hours to weeks retention        │
