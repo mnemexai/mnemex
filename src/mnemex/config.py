@@ -194,6 +194,12 @@ class Config(BaseModel):
         description="Logging level",
     )
 
+    # Security
+    detect_secrets: bool = Field(
+        default=True,
+        description="Enable secrets detection (warns about API keys, tokens, etc.)",
+    )
+
     @field_validator("storage_path", "ltm_vault_path", "ltm_index_path", mode="before")
     @classmethod
     def expand_path(cls, v: str | Path | None) -> Path | None:
@@ -287,6 +293,10 @@ class Config(BaseModel):
         # Logging
         if log_level := os.getenv("LOG_LEVEL"):
             config_dict["log_level"] = log_level
+
+        # Security
+        if detect_secrets := os.getenv("MNEMEX_DETECT_SECRETS"):
+            config_dict["detect_secrets"] = detect_secrets.lower() in ("true", "1", "yes")
 
         return cls(**cast(dict[str, Any], config_dict))
 

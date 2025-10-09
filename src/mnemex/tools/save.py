@@ -1,11 +1,13 @@
 """Save memory tool."""
 
+import logging
 import time
 import uuid
 from typing import Any, cast
 
 from ..config import get_config
 from ..context import db, mcp
+from ..security.secrets import detect_secrets, format_secret_warning, should_warn_about_secrets
 from ..security.validators import (
     MAX_CONTENT_LENGTH,
     MAX_ENTITIES_COUNT,
@@ -16,6 +18,8 @@ from ..security.validators import (
     validate_tag,
 )
 from ..storage.models import Memory, MemoryMetadata
+
+logger = logging.getLogger(__name__)
 
 
 def _generate_embedding(content: str) -> list[float] | None:
@@ -76,6 +80,15 @@ def save_memory(
 
     if context is not None:
         context = cast(str, validate_string_length(context, 1000, "context", allow_none=True))
+
+    # Secrets detection (if enabled)
+    config = get_config()
+    if config.detect_secrets:
+        matches = detect_secrets(content)
+        if should_warn_about_secrets(matches):
+            warning = format_secret_warning(matches)
+            logger.warning(f"Secrets detected in memory content:\n{warning}")
+            # Note: We still save the memory but warn the user
 
     # Create metadata
     metadata = MemoryMetadata(

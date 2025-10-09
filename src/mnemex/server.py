@@ -8,6 +8,7 @@ from .config import get_config
 from .context import db, mcp
 from .core.decay import calculate_halflife
 from .security.permissions import ensure_secure_storage, secure_config_file
+from .security.secrets import scan_file_for_secrets, should_warn_about_secrets
 
 # Import tools to register them with the decorator
 from .tools import (
@@ -109,6 +110,27 @@ def initialize_server() -> None:
             logger.info(f"Secured XDG config file: {xdg_env}")
         except Exception as e:
             logger.warning(f"Unable to secure {xdg_env}: {e}")
+
+    # Check .env files for secrets (if detection enabled)
+    if config.detect_secrets:
+        env_files_to_check = []
+        if env_path.exists():
+            env_files_to_check.append(env_path)
+        if xdg_env.exists() and xdg_env != env_path.resolve():
+            env_files_to_check.append(xdg_env)
+
+        for env_file in env_files_to_check:
+            try:
+                matches = scan_file_for_secrets(str(env_file))
+                if should_warn_about_secrets(matches):
+                    logger.warning(
+                        f"⚠️  Potential secrets detected in {env_file}! "
+                        f"Found {len(matches)} pattern matches. "
+                        f"Ensure .env files contain only YOUR secrets, not example values."
+                    )
+            except Exception:
+                # Ignore errors scanning .env (might be locked, etc.)
+                pass
 
     logger.info("MCP server tools registered (11 tools)")
 

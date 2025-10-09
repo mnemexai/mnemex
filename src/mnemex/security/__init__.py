@@ -13,6 +13,14 @@ from .permissions import (
     secure_directory,
     secure_file,
 )
+from .secrets import (
+    SecretMatch,
+    detect_secrets,
+    format_secret_warning,
+    redact_secrets,
+    scan_file_for_secrets,
+    should_warn_about_secrets,
+)
 from .validators import (
     MAX_CONTENT_LENGTH,
     MAX_ENTITIES_COUNT,
@@ -56,4 +64,11 @@ __all__ = [
     "secure_config_file",
     "ensure_secure_storage",
     "check_permissions",
+    # Secrets Detection
+    "SecretMatch",
+    "detect_secrets",
+    "scan_file_for_secrets",
+    "format_secret_warning",
+    "should_warn_about_secrets",
+    "redact_secrets",
 ]
