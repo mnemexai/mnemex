@@ -1,0 +1,20 @@
+# Code owners for Mnemex
+# These owners will be automatically requested for review when someone opens a PR
+
+# Default owner for everything
+* @simplemindedbot
+
+# Core algorithms and decay logic
+/src/mnemex/core/ @simplemindedbot
+
+# Security-sensitive files
+SECURITY.md @simplemindedbot
+/src/mnemex/storage/ @simplemindedbot
+
+# CI/CD and workflows
+/.github/workflows/ @simplemindedbot
+/.github/dependabot.yml @simplemindedbot
+
+# Documentation
+/docs/ @simplemindedbot
+*.md @simplemindedbot
