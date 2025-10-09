@@ -1,0 +1,70 @@
+name: Stale Issues and PRs
+
+on:
+  schedule:
+    # Run daily at 00:00 UTC
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v9
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+          # Issue settings
+          days-before-issue-stale: 60
+          days-before-issue-close: 7
+          stale-issue-message: |
+            This issue has been automatically marked as stale because it has not had
+            recent activity in the last 60 days. It will be closed in 7 days if no
+            further activity occurs.
+
+            If this issue is still relevant, please:
+            - Add a comment to keep it open
+            - Provide additional context or updates
+            - Link to related work or discussions
+
+            Thank you for your contributions to Mnemex!
+          close-issue-message: |
+            This issue was automatically closed due to inactivity. If you believe this
+            issue is still relevant, please reopen it or create a new issue with updated
+            context.
+          stale-issue-label: 'stale'
+          exempt-issue-labels: 'pinned,security,roadmap,v1.1.0,v1.2.0'
+
+          # PR settings
+          days-before-pr-stale: 30
+          days-before-pr-close: 7
+          stale-pr-message: |
+            This pull request has been automatically marked as stale because it has not
+            had recent activity in the last 30 days. It will be closed in 7 days if no
+            further activity occurs.
+
+            If this PR is still in progress, please:
+            - Push new commits
+            - Add a comment with status update
+            - Request a review
+
+            Thank you for your contributions to Mnemex!
+          close-pr-message: |
+            This pull request was automatically closed due to inactivity. If you'd like
+            to continue this work, please reopen the PR or create a new one.
+          stale-pr-label: 'stale'
+          exempt-pr-labels: 'pinned,security,work-in-progress'
+
+          # Behavior
+          ascending: true
+          remove-stale-when-updated: true
+          operations-per-run: 30
+
+          # Exempt specific criteria
+          exempt-all-milestones: false
+          exempt-all-assignees: false
+          exempt-draft-pr: true
