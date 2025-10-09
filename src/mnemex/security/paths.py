@@ -15,10 +15,8 @@ References:
 - OWASP: https://owasp.org/www-community/attacks/Path_Traversal
 """
 
-import os
 import re
 from pathlib import Path
-
 
 # Dangerous path patterns
 PATH_TRAVERSAL_PATTERN = re.compile(r"\.\.|[\x00-\x1f\x7f]|[<>:\"|?*]")

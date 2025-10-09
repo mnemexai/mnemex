@@ -75,7 +75,7 @@ def validate_uuid(value: str, field_name: str = "value") -> str:
     try:
         uuid_module.UUID(value)
     except ValueError as e:
-        raise ValueError(f"{field_name} is not a valid UUID: {e}")
+        raise ValueError(f"{field_name} is not a valid UUID: {e}") from e
 
     return value.lower()
 
