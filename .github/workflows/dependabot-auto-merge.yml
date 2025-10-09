@@ -23,7 +23,8 @@ jobs:
         if: |
           (steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
            steps.metadata.outputs.update-type == 'version-update:semver-minor') &&
-          steps.metadata.outputs.dependency-type == 'direct:development'
+          (steps.metadata.outputs.dependency-type == 'direct:development' ||
+           steps.metadata.outputs.package-ecosystem == 'github_actions')
         run: |
           gh pr review "$PR_URL" --approve --body "Auto-approved: patch/minor update to dev dependency"
           gh pr merge "$PR_URL" --auto --squash
