@@ -13,8 +13,6 @@ We release patches for security vulnerabilities in the following versions:
 
 **Please do NOT open a public issue for security vulnerabilities.**
 
-### Private Reporting (Recommended)
-
 Use GitHub's **Private Vulnerability Reporting** feature:
 
 1. Go to the [Security tab](https://github.com/simplemindedbot/mnemex/security)
@@ -23,12 +21,6 @@ Use GitHub's **Private Vulnerability Reporting** feature:
 4. Submit privately to the maintainers
 
 This keeps the vulnerability confidential until a fix is released.
-
-### Alternative: Security Advisory
-
-If private reporting is unavailable, you can:
-- Email the maintainer via their GitHub profile (click [@simplemindedbot](https://github.com/simplemindedbot) → use the contact option)
-- Open a [draft security advisory](https://github.com/simplemindedbot/mnemex/security/advisories/new)
 
 ### What to Include
 
@@ -105,5 +97,5 @@ Subscribe to releases: https://github.com/simplemindedbot/mnemex/releases
 
 ## Contact
 
-For security issues: Use GitHub's private reporting (see above)
-For general issues: https://github.com/simplemindedbot/mnemex/issues
+- **Security issues**: Use GitHub's private vulnerability reporting (see above)
+- **General issues**: https://github.com/simplemindedbot/mnemex/issues
