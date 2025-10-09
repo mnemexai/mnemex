@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2025-10-09
+
+⚙️ Maintenance & CI Hardening; SBOM; Type Checking
+
+This release focuses on build quality, supply-chain visibility, and developer experience.
+
+### Added
+- Security workflow now generates a CycloneDX SBOM (JSON artifact) for every push/PR
+- Security Scanning and SBOM badges in README
+- Pre-commit hooks for Ruff (lint + format) and mypy (src-only)
+
+### Changed
+- CI: Re-enabled mypy in tests workflow; type errors resolved across codebase
+- CI: Bandit runs made non-blocking; results displayed in Security Summary
+- CI: Guard workflow blocks built site artifacts (index.html, assets/, search/) on main
+- CI: GitHub Actions updated (actions/checkout v5, codecov-action v5, setup-uv v7)
+- Docs: CONTRIBUTING adds pre-commit instructions; SECURITY documents SBOM
+
+### Fixed
+- Security workflow SBOM flags corrected to use cyclonedx-py with `--output-format` and `--output-file`
+- Ruff formatting and import order across modules; exception chaining (B904) applied
+
+### Notes
+- No breaking API changes
+- Versioning adjusted to pre-1.0 scheme (0.4.0)
+
 ## [1.0.0] - 2025-10-09
 
 🎉 **Production Release: Mnemex v1.0.0**
@@ -144,4 +170,3 @@ MIT License - Full user control and transparency
 ## [0.2.0] - 2025-01-07
 
 - JSONL storage, LTM index, Git integration, and smart prompting docs.
-
