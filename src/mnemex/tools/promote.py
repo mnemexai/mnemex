@@ -6,6 +6,7 @@ from typing import Any
 from ..context import db, mcp
 from ..core.scoring import calculate_memory_age, should_promote
 from ..integration.basic_memory import BasicMemoryIntegration
+from ..security.validators import validate_target, validate_uuid
 from ..storage.models import MemoryStatus, PromotionCandidate
 
 
@@ -24,15 +25,25 @@ def promote_memory(
     vault (or other long-term storage) where they become permanent.
 
     Args:
-        memory_id: Specific memory ID to promote.
+        memory_id: Specific memory ID to promote (valid UUID).
         auto_detect: Automatically detect promotion candidates.
         dry_run: Preview what would be promoted without promoting.
-        target: Target for promotion (default: "obsidian").
+        target: Storage backend for promotion. Default: "obsidian" (Obsidian-compatible markdown).
+                Note: This is a storage format, not a file path. Path configured via LTM_VAULT_PATH.
         force: Force promotion even if criteria not met.
 
     Returns:
         List of promoted memories and promotion statistics.
+
+    Raises:
+        ValueError: If memory_id is invalid or target is not supported.
     """
+    # Input validation
+    if memory_id is not None:
+        memory_id = validate_uuid(memory_id, "memory_id")
+
+    target = validate_target(target, "target")
+
     now = int(time.time())
     promoted_ids = []
     candidates = []

@@ -5,6 +5,7 @@ from typing import Any
 
 from ..context import db, mcp
 from ..core.decay import calculate_score
+from ..security.validators import MAX_LIST_LENGTH, validate_list_length, validate_uuid
 
 
 @mcp.tool()
@@ -21,14 +22,24 @@ def open_memories(
     their relations to other memories.
 
     Args:
-        memory_ids: Single memory ID or list of memory IDs to retrieve.
+        memory_ids: Single memory ID or list of memory IDs to retrieve (max 100 IDs).
         include_relations: Include relations from/to these memories.
         include_scores: Include decay scores and age.
 
     Returns:
         Detailed information about the requested memories with relations.
+
+    Raises:
+        ValueError: If any memory ID is invalid or list exceeds maximum length.
     """
+    # Input validation
     ids = [memory_ids] if isinstance(memory_ids, str) else memory_ids
+
+    if not isinstance(ids, list):
+        raise ValueError(f"memory_ids must be a string or list, got {type(ids).__name__}")
+
+    ids = validate_list_length(ids, MAX_LIST_LENGTH, "memory_ids")
+    ids = [validate_uuid(mid, f"memory_ids[{i}]") for i, mid in enumerate(ids)]
     memories = []
     not_found = []
     now = int(time.time())

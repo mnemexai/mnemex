@@ -7,6 +7,15 @@ from ..config import get_config
 from ..context import db, mcp
 from ..core.clustering import cosine_similarity
 from ..core.decay import calculate_score
+from ..security.validators import (
+    MAX_CONTENT_LENGTH,
+    MAX_TAGS_COUNT,
+    validate_list_length,
+    validate_positive_int,
+    validate_score,
+    validate_string_length,
+    validate_tag,
+)
 from ..storage.models import MemoryStatus, SearchResult
 
 
@@ -38,16 +47,37 @@ def search_memory(
     Search for memories with optional filters and scoring.
 
     Args:
-        query: Text query to search for.
-        tags: Filter by tags.
-        top_k: Maximum number of results.
-        window_days: Only search memories from last N days.
-        min_score: Minimum decay score threshold.
+        query: Text query to search for (max 50,000 chars).
+        tags: Filter by tags (max 50 tags).
+        top_k: Maximum number of results (1-100).
+        window_days: Only search memories from last N days (1-3650).
+        min_score: Minimum decay score threshold (0.0-1.0).
         use_embeddings: Use semantic search with embeddings.
 
     Returns:
         List of matching memories with scores.
+
+    Raises:
+        ValueError: If any input fails validation.
     """
+    # Input validation
+    if query is not None:
+        query = validate_string_length(query, MAX_CONTENT_LENGTH, "query", allow_none=True)
+
+    if tags is not None:
+        tags = validate_list_length(tags, MAX_TAGS_COUNT, "tags")
+        tags = [validate_tag(tag, f"tags[{i}]") for i, tag in enumerate(tags)]
+
+    top_k = validate_positive_int(top_k, "top_k", min_value=1, max_value=100)
+
+    if window_days is not None:
+        window_days = validate_positive_int(
+            window_days, "window_days", min_value=1, max_value=3650  # Max 10 years
+        )
+
+    if min_score is not None:
+        min_score = validate_score(min_score, "min_score")
+
     config = get_config()
     now = int(time.time())
 

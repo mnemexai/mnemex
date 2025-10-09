@@ -6,6 +6,15 @@ from typing import Any
 
 from ..config import get_config
 from ..context import db, mcp
+from ..security.validators import (
+    MAX_CONTENT_LENGTH,
+    MAX_ENTITIES_COUNT,
+    MAX_TAGS_COUNT,
+    validate_entity,
+    validate_list_length,
+    validate_string_length,
+    validate_tag,
+)
 from ..storage.models import Memory, MemoryMetadata
 
 
@@ -41,13 +50,33 @@ def save_memory(
     automatically.
 
     Args:
-        content: The content to remember.
-        tags: Tags for categorization.
-        entities: Named entities in this memory.
-        source: Source of the memory.
-        context: Context when memory was created.
+        content: The content to remember (max 50,000 chars).
+        tags: Tags for categorization (max 50 tags, each max 100 chars).
+        entities: Named entities in this memory (max 100 entities).
+        source: Source of the memory (max 500 chars).
+        context: Context when memory was created (max 1,000 chars).
         meta: Additional custom metadata.
+
+    Raises:
+        ValueError: If any input fails validation.
     """
+    # Input validation
+    content = validate_string_length(content, MAX_CONTENT_LENGTH, "content")
+
+    if tags is not None:
+        tags = validate_list_length(tags, MAX_TAGS_COUNT, "tags")
+        tags = [validate_tag(tag, f"tags[{i}]") for i, tag in enumerate(tags)]
+
+    if entities is not None:
+        entities = validate_list_length(entities, MAX_ENTITIES_COUNT, "entities")
+        entities = [validate_entity(entity, f"entities[{i}]") for i, entity in enumerate(entities)]
+
+    if source is not None:
+        source = validate_string_length(source, 500, "source", allow_none=True)
+
+    if context is not None:
+        context = validate_string_length(context, 1000, "context", allow_none=True)
+
     # Create metadata
     metadata = MemoryMetadata(
         tags=tags or [],

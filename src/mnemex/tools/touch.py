@@ -5,6 +5,7 @@ from typing import Any
 
 from ..context import db, mcp
 from ..core.decay import calculate_score
+from ..security.validators import validate_uuid
 
 
 @mcp.tool()
@@ -16,12 +17,18 @@ def touch_memory(memory_id: str, boost_strength: bool = False) -> dict[str, Any]
     being forgotten. Optionally can boost the memory's base strength.
 
     Args:
-        memory_id: ID of the memory to reinforce.
+        memory_id: ID of the memory to reinforce (valid UUID).
         boost_strength: Whether to boost the base strength.
 
     Returns:
         Updated memory statistics including old and new scores.
+
+    Raises:
+        ValueError: If memory_id is invalid.
     """
+    # Input validation
+    memory_id = validate_uuid(memory_id, "memory_id")
+
     memory = db.get_memory(memory_id)
     if memory is None:
         return {"success": False, "message": f"Memory not found: {memory_id}"}
