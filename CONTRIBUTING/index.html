@@ -1245,6 +1245,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#note-on-documentation-publishing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Note on documentation publishing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#making-changes" class="md-nav__link">
     <span class="md-ellipsis">
       Making Changes
@@ -2028,6 +2037,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#note-on-documentation-publishing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Note on documentation publishing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#making-changes" class="md-nav__link">
     <span class="md-ellipsis">
       Making Changes
@@ -2734,6 +2752,11 @@
 </code></pre></div>
 <hr />
 <h2 id="development-workflow">Development Workflow<a class="headerlink" href="#development-workflow" title="Permanent link">&para;</a></h2>
+<h3 id="note-on-documentation-publishing">Note on documentation publishing<a class="headerlink" href="#note-on-documentation-publishing" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Do not merge <code>gh-pages</code> into <code>main</code>. The <code>gh-pages</code> branch is a deployment branch containing built site artifacts only. Documentation is built from <code>main</code> by CI and force‑pushed to <code>gh-pages</code>.</li>
+<li>Any pull request that adds top‑level <code>index.html</code>, <code>assets/</code>, or <code>search/</code> to <code>main</code> will be rejected. If you need to preview docs locally, run <code>mkdocs serve</code> instead of committing built files.</li>
+</ul>
 <h3 id="making-changes">Making Changes<a class="headerlink" href="#making-changes" title="Permanent link">&para;</a></h3>
 <ol>
 <li><strong>Create a new branch:</strong></li>
