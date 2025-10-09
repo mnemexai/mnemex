@@ -72,7 +72,10 @@ def search_memory(
 
     if window_days is not None:
         window_days = validate_positive_int(
-            window_days, "window_days", min_value=1, max_value=3650  # Max 10 years
+            window_days,
+            "window_days",
+            min_value=1,
+            max_value=3650,  # Max 10 years
         )
 
     if min_score is not None:

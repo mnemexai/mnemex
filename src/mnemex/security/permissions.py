@@ -311,9 +311,7 @@ def main() -> int:
     import argparse
     import sys
 
-    parser = argparse.ArgumentParser(
-        description="Secure file permissions for Mnemex storage"
-    )
+    parser = argparse.ArgumentParser(description="Secure file permissions for Mnemex storage")
     parser.add_argument("path", type=Path, help="Path to secure")
     parser.add_argument(
         "--check",
