@@ -11,6 +11,13 @@ from typing import Any
 
 import frontmatter
 
+from ..security.paths import (
+    ensure_within_directory,
+    sanitize_filename,
+    validate_folder_path,
+    validate_vault_path,
+)
+
 
 class MarkdownWriter:
     """Write markdown files to Obsidian vault with proper formatting."""
@@ -21,8 +28,12 @@ class MarkdownWriter:
 
         Args:
             vault_path: Path to Obsidian vault root directory
+
+        Raises:
+            ValueError: If vault_path is invalid or contains path traversal
         """
-        self.vault_path = vault_path
+        # Validate and normalize vault path (prevents path traversal)
+        self.vault_path = validate_vault_path(vault_path, "vault_path")
         self.vault_path.mkdir(parents=True, exist_ok=True)
 
     def create_wikilink(self, target: str, alias: str | None = None) -> str:
@@ -74,13 +85,20 @@ class MarkdownWriter:
         Returns:
             Path to created file
 
+        Raises:
+            ValueError: If folder contains path traversal or file path escapes vault
+
         Note:
             - Filename is sanitized from title (spaces to hyphens, lowercase)
             - YAML frontmatter is added automatically
             - Relations stored in frontmatter for backlink compatibility
         """
-        # Sanitize filename
-        filename = self._sanitize_filename(title) + ".md"
+        # Validate folder path (prevents path traversal)
+        if folder:
+            folder = validate_folder_path(folder, "folder")
+
+        # Sanitize filename (prevents path traversal via filename)
+        filename = sanitize_filename(title, "title") + ".md"
 
         # Determine full path
         if folder:
@@ -89,6 +107,9 @@ class MarkdownWriter:
             file_path = folder_path / filename
         else:
             file_path = self.vault_path / filename
+
+        # Final safeguard: ensure path is within vault (prevents symlink attacks)
+        file_path = ensure_within_directory(file_path, self.vault_path, "file_path")
 
         # Build frontmatter
         fm = {
@@ -229,11 +250,17 @@ class MarkdownWriter:
         """
         Sanitize a title for use as filename.
 
+        This method is deprecated and maintained for backwards compatibility.
+        New code should use sanitize_filename() from security.paths directly.
+
         Args:
             title: Title to sanitize
 
         Returns:
             Sanitized filename (without extension)
+
+        Raises:
+            ValueError: If title is invalid
 
         Examples:
             >>> _sanitize_filename("My Note Title")
@@ -241,28 +268,13 @@ class MarkdownWriter:
             >>> _sanitize_filename("Invalid/Name?")
             'invalid-name'
         """
-        import re
-
-        # Convert to lowercase
-        filename = title.lower()
-
-        # Replace spaces with hyphens
-        filename = filename.replace(" ", "-")
-
-        # Remove invalid characters
-        filename = re.sub(r"[^\w\-]", "", filename)
-
-        # Remove duplicate hyphens
-        filename = re.sub(r"-+", "-", filename)
-
-        # Remove leading/trailing hyphens
-        filename = filename.strip("-")
-
-        # Ensure not empty
-        if not filename:
-            filename = "untitled"
-
-        return filename
+        # Use the security module's sanitize_filename function
+        # Note: The old implementation was less strict; this might reject some edge cases
+        try:
+            return sanitize_filename(title, "title")
+        except ValueError:
+            # Fallback for backward compatibility: return "untitled"
+            return "untitled"
 
     def get_note_path(self, title: str, folder: str = "") -> Path:
         """
@@ -274,12 +286,23 @@ class MarkdownWriter:
 
         Returns:
             Expected path to note file
+
+        Raises:
+            ValueError: If folder contains path traversal
         """
-        filename = self._sanitize_filename(title) + ".md"
+        # Validate folder path
+        if folder:
+            folder = validate_folder_path(folder, "folder")
+
+        filename = sanitize_filename(title, "title") + ".md"
 
         if folder:
-            return self.vault_path / folder / filename
-        return self.vault_path / filename
+            file_path = self.vault_path / folder / filename
+        else:
+            file_path = self.vault_path / filename
+
+        # Ensure within vault
+        return ensure_within_directory(file_path, self.vault_path, "file_path")
 
     def list_notes(self, folder: str | None = None) -> list[Path]:
         """
@@ -290,9 +313,16 @@ class MarkdownWriter:
 
         Returns:
             List of paths to markdown files
+
+        Raises:
+            ValueError: If folder contains path traversal
         """
+        # Validate folder path
         if folder:
+            folder = validate_folder_path(folder, "folder")
             search_path = self.vault_path / folder
+            # Ensure search path is within vault
+            search_path = ensure_within_directory(search_path, self.vault_path, "search_path")
         else:
             search_path = self.vault_path
 
@@ -310,8 +340,18 @@ class MarkdownWriter:
 
         Returns:
             Path to created folder
+
+        Raises:
+            ValueError: If folder_name contains path traversal
         """
+        # Validate folder path
+        folder_name = validate_folder_path(folder_name, "folder_name")
+
         folder_path = self.vault_path / folder_name
+
+        # Ensure folder is within vault
+        folder_path = ensure_within_directory(folder_path, self.vault_path, "folder_path")
+
         folder_path.mkdir(parents=True, exist_ok=True)
         return folder_path
 

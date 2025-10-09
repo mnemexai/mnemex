@@ -1,5 +1,11 @@
 """Security utilities for Mnemex."""
 
+from .paths import (
+    ensure_within_directory,
+    sanitize_filename,
+    validate_folder_path,
+    validate_vault_path,
+)
 from .validators import (
     MAX_CONTENT_LENGTH,
     MAX_ENTITIES_COUNT,
@@ -22,7 +28,7 @@ __all__ = [
     "MAX_TAG_LENGTH",
     "MAX_TAGS_COUNT",
     "MAX_ENTITIES_COUNT",
-    # Validators
+    # Input Validators
     "validate_uuid",
     "validate_string_length",
     "validate_score",
@@ -32,4 +38,9 @@ __all__ = [
     "validate_entity",
     "validate_relation_type",
     "validate_target",
+    # Path Validators
+    "validate_folder_path",
+    "validate_vault_path",
+    "sanitize_filename",
+    "ensure_within_directory",
 ]
