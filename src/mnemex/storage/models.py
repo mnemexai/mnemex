@@ -1,4 +1,4 @@
-"""Data models for STM server."""
+"""Data models for Mnemex short‑term memory (STM)."""
 
 import time
 from enum import Enum

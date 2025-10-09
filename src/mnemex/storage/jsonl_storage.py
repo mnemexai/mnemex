@@ -1,4 +1,4 @@
-"""JSONL-based storage interface for STM server.
+"""JSONL-based storage interface for Mnemex.
 
 Human-readable, git-friendly storage with in-memory indexing for fast queries.
 """

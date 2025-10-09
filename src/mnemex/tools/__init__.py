@@ -1,4 +1,4 @@
-"""MCP tools for STM server."""
+"""MCP tools for Mnemex."""
 
 from . import (
     cluster,

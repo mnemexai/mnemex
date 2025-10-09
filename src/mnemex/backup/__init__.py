@@ -1,4 +1,4 @@
-"""Backup module for STM server."""
+"""Backup module for Mnemex."""
 
 from .git_backup import GitBackup
 

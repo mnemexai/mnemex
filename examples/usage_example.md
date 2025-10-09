@@ -1,4 +1,4 @@
-# STM Server Usage Examples
+# Mnemex Usage Examples
 
 ## Basic Workflow
 

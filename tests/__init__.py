@@ -1,1 +1,1 @@
-"""Tests for STM server."""
+"""Tests for Mnemex."""

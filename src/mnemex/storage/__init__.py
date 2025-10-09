@@ -1,4 +1,4 @@
-"""Storage layer for STM server (JSONL-only)."""
+"""Storage layer for Mnemex (JSONL-only)."""
 
 from .jsonl_storage import JSONLStorage
 from .models import Memory, MemoryMetadata, MemoryStatus
