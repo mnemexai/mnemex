@@ -93,10 +93,37 @@ jobs:
         with:
           category: "/language:python"
 
+  sbom:
+    name: Generate SBOM (CycloneDX)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Create virtual environment
+        run: uv venv
+
+      - name: Install dependencies
+        run: |
+          uv pip install -e ".[dev]"
+          uv pip install cyclonedx-bom
+
+      - name: Generate SBOM (JSON)
+        run: |
+          uv run cyclonedx-py environment --format json --output sbom.json
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cyclonedx-sbom
+          path: sbom.json
+
   security-summary:
     name: Security Summary
     runs-on: ubuntu-latest
-    needs: [bandit, pip-audit, codeql]
+    needs: [bandit, pip-audit, codeql, sbom]
     if: always()
     steps:
       - name: Check scan results
@@ -108,5 +135,6 @@ jobs:
           echo "- Bandit: ${{ needs.bandit.result }}" >> $GITHUB_STEP_SUMMARY
           echo "- pip-audit: ${{ needs.pip-audit.result }}" >> $GITHUB_STEP_SUMMARY
           echo "- CodeQL: ${{ needs.codeql.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- SBOM (CycloneDX): ${{ needs.sbom.result }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Review detailed results in the workflow artifacts and Security tab." >> $GITHUB_STEP_SUMMARY
