@@ -19,6 +19,13 @@ jobs:
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
 
+      - name: Debug metadata
+        run: |
+          echo "Update type: ${{ steps.metadata.outputs.update-type }}"
+          echo "Dependency type: ${{ steps.metadata.outputs.dependency-type }}"
+          echo "Package ecosystem: ${{ steps.metadata.outputs.package-ecosystem }}"
+          echo "Dependency name: ${{ steps.metadata.outputs.dependency-names }}"
+
       - name: Auto-approve and enable auto-merge for safe updates
         if: |
           (steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
