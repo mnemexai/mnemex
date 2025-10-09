@@ -8,7 +8,22 @@ from .context import db, mcp
 from .core.decay import calculate_halflife
 
 # Import tools to register them with the decorator
-from .tools import (  # noqa: F401
+from .tools import (
+    cluster,
+    consolidate,
+    create_relation,
+    gc,
+    open_memories,
+    promote,
+    read_graph,
+    save,
+    search,
+    search_unified,
+    touch,
+)
+
+# Explicitly reference imports to satisfy linters (these register MCP tools via decorators)
+_TOOL_MODULES = (
     cluster,
     consolidate,
     create_relation,
