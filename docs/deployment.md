@@ -1,6 +1,29 @@
 # Deployment Guide
 
-## Local Development Setup
+## Production Installation (Recommended)
+
+### Prerequisites
+
+- Python 3.10+
+- `uv` package manager
+
+### UV Tool Install
+
+**This is the recommended method for end users:**
+
+```bash
+# Install from GitHub
+uv tool install git+https://github.com/simplemindedbot/mnemex.git
+
+# Or from local directory
+uv tool install .
+```
+
+This installs `mnemex` and all 7 CLI commands as isolated tools. Configuration goes in `~/.config/mnemex/.env`.
+
+---
+
+## Development Setup
 
 ### Prerequisites
 
@@ -8,11 +31,13 @@
 - `uv` (recommended) or `pip`
 - Git
 
-### Installation
+### Editable Installation
+
+**For development only:**
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/simplemindedbot/mnemex.git
 cd mnemex
 
 # Install with uv (recommended)
@@ -55,28 +80,33 @@ Configuration file location:
 ~/Library/Application Support/Claude/claude_desktop_config.json
 ```
 
-Add STM server:
+**For UV tool install (recommended):**
 
 ```json
 {
   "mcpServers": {
-    "stm": {
-      "command": "uv",
-      "args": [
-        "--directory",
-        "/Users/your-username/path/to/mnemex",
-        "run",
-        "mnemex"
-      ],
-      "env": {
-        "MNEMEX_STORAGE_PATH": "/Users/your-username/.config/mnemex/jsonl",
-        "LTM_VAULT_PATH": "/Users/your-username/Documents/Obsidian/Vault",
-        "MNEMEX_ENABLE_EMBEDDINGS": "false"
-      }
+    "mnemex": {
+      "command": "mnemex"
     }
   }
 }
 ```
+
+**For development (editable install):**
+
+```json
+{
+  "mcpServers": {
+    "mnemex": {
+      "command": "uv",
+      "args": ["--directory", "/path/to/mnemex", "run", "mnemex"],
+      "env": {"PYTHONPATH": "/path/to/mnemex/src"}
+    }
+  }
+}
+```
+
+**Configuration:** All settings go in `~/.config/mnemex/.env`, not in the MCP config. See `.env.example` for options.
 
 Restart Claude Desktop after configuration.
 
@@ -87,23 +117,27 @@ Configuration file location:
 %APPDATA%\Claude\claude_desktop_config.json
 ```
 
-Configuration (adjust paths):
+**For UV tool install:**
 
 ```json
 {
   "mcpServers": {
-    "stm": {
+    "mnemex": {
+      "command": "mnemex"
+    }
+  }
+}
+```
+
+**For development:**
+
+```json
+{
+  "mcpServers": {
+    "mnemex": {
       "command": "uv",
-      "args": [
-        "--directory",
-        "C:\\Users\\YourName\\mnemex",
-        "run",
-        "mnemex"
-      ],
-      "env": {
-        "MNEMEX_STORAGE_PATH": "C:\\Users\\YourName\\.config\\mnemex\\jsonl",
-        "LTM_VAULT_PATH": "C:\\Users\\YourName\\Documents\\Obsidian\\Vault"
-      }
+      "args": ["--directory", "C:\\path\\to\\mnemex", "run", "mnemex"],
+      "env": {"PYTHONPATH": "C:\\path\\to\\mnemex\\src"}
     }
   }
 }
@@ -111,17 +145,27 @@ Configuration (adjust paths):
 
 ### VSCode with MCP Extension
 
-Configuration in `.vscode/settings.json`:
+**For UV tool install:**
 
 ```json
 {
   "mcp.servers": {
-    "stm": {
+    "mnemex": {
+      "command": "mnemex"
+    }
+  }
+}
+```
+
+**For development:**
+
+```json
+{
+  "mcp.servers": {
+    "mnemex": {
       "command": "uv",
-      "args": ["--directory", "${workspaceFolder}/mnemex", "run", "mnemex"],
-      "env": {
-        "MNEMEX_STORAGE_PATH": "${env:HOME}/.config/mnemex/jsonl"
-      }
+      "args": ["--directory", "${workspaceFolder}", "run", "mnemex"],
+      "env": {"PYTHONPATH": "${workspaceFolder}/src"}
     }
   }
 }

@@ -78,22 +78,18 @@ This system is **smart**:
 
 ## How to Use It
 
-### Step 1: Clone the Repo
+### Step 1: Install
 
 ```bash
-git clone https://github.com/simplemindedbot/mnemex.git
-cd mnemex
+# Install Mnemex as a UV tool
+uv tool install git+https://github.com/simplemindedbot/mnemex.git
 ```
 
-### Step 2: Install
+This installs `mnemex` and all 7 CLI commands in one step!
 
-```bash
-uv pip install -e .
-```
+### Step 2: Configure (Optional)
 
-### Step 3: Configure
-
-Copy `.env.example` to `.env` and configure:
+Create `~/.config/mnemex/.env` if you want custom settings:
 
 ```bash
 # Where to store memories (default: ~/.config/mnemex/jsonl)
@@ -106,9 +102,9 @@ MNEMEX_PL_HALFLIFE_DAYS=3.0
 LTM_VAULT_PATH=~/Documents/Obsidian/MyVault
 ```
 
-**Note**: All configuration goes in the `.env` file - you don't need to duplicate paths in the Claude config.
+**Note**: Configuration goes in `~/.config/mnemex/.env` - create it if it doesn't exist!
 
-### Step 4: Connect to Claude
+### Step 3: Connect to Claude
 
 Add this to your Claude Desktop config file:
 
@@ -118,27 +114,15 @@ Add this to your Claude Desktop config file:
 {
   "mcpServers": {
     "mnemex": {
-      "command": "uv",
-      "args": [
-        "--directory",
-        "/Users/yourname/path/to/mnemex",
-        "run",
-        "mnemex"
-      ],
-      "env": {
-        "PYTHONPATH": "/Users/yourname/path/to/mnemex/src"
-      }
+      "command": "mnemex"
     }
   }
 }
 ```
 
-**Important**:
-- Replace `/Users/yourname/path/to/mnemex` with your actual path
-- The `PYTHONPATH` is required for the server to find the Python modules
-- Storage paths go in your `.env` file, not here
+That's it! Just one line - no paths, no environment variables.
 
-### Step 5: Restart Claude Desktop
+### Step 4: Restart Claude Desktop
 
 Now Claude has memory.
 
@@ -342,11 +326,13 @@ Read the examples in the `examples/` directory or check out:
 
 **Quick start**:
 ```bash
-git clone https://github.com/simplemindedbot/mnemex.git
-cd mnemex
-uv pip install -e .
-# Edit .env file with your paths
-mnemex
+# Install
+uv tool install git+https://github.com/simplemindedbot/mnemex.git
+
+# Configure (optional - creates ~/.config/mnemex/.env)
+cp ~/.config/mnemex/.env.example ~/.config/mnemex/.env
+
+# Add to Claude config: {"command": "mnemex"}
 ```
 
-Then add it to Claude Desktop's config and restart. Done.
+Then restart Claude Desktop. Done.

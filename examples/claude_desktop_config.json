@@ -1,16 +1,7 @@
 {
   "mcpServers": {
     "mnemex": {
-      "command": "uv",
-      "args": [
-        "--directory",
-        "/Users/your-username/path/to/mnemex",
-        "run",
-        "mnemex"
-      ],
-      "env": {
-        "PYTHONPATH": "/Users/your-username/path/to/mnemex/src"
-      }
+      "command": "mnemex"
     }
   }
 }

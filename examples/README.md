@@ -1,22 +1,41 @@
-# STM Server Examples
+# Mnemex Examples
+
+## Installation
+
+**Recommended: UV Tool Install**
+```bash
+uv tool install git+https://github.com/simplemindedbot/mnemex.git
+```
+
+This installs `mnemex` and all CLI commands. Configuration goes in `~/.config/mnemex/.env`.
 
 ## Configuration Files
 
 ### `claude_desktop_config.json`
 
-This shows the **minimal** Claude Desktop configuration needed. Copy this to:
+This shows the **minimal** Claude Desktop configuration needed after installing via `uv tool install`. Copy this to:
 ```
 ~/Library/Application Support/Claude/claude_desktop_config.json
 ```
 
-**Important**: Replace `/Users/your-username/path/to/mnemex` with your actual repository path.
+That's it! Just `{"command": "mnemex"}` - no paths, no environment variables.
 
-The only required environment variable in the Claude config is:
-- `PYTHONPATH`: Points to the `src/` directory for module imports
+**For development (editable install)**, use:
+```json
+{
+  "mcpServers": {
+    "mnemex": {
+      "command": "uv",
+      "args": ["--directory", "/path/to/mnemex", "run", "mnemex"],
+      "env": {"PYTHONPATH": "/path/to/mnemex/src"}
+    }
+  }
+}
+```
 
 ### All Other Configuration
 
-**All STM configuration goes in `.env` at the root of the repository**, not in the Claude config:
+**All configuration goes in `~/.config/mnemex/.env`**, not in the Claude config:
 
 ```bash
 # Storage paths

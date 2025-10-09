@@ -11,10 +11,9 @@ A Model Context Protocol (MCP) server providing **human-like memory dynamics** f
 > This project is under active development and should be considered **experimental**. You will likely encounter bugs, breaking changes, and incomplete features. Use at your own risk. Please report issues on GitHub, but understand that this is research code, not production-ready software.
 >
 > **Known issues:**
-> - Editable installs require `PYTHONPATH` workaround in Claude config
 > - API may change without notice between versions
-> - Documentation may be out of sync with latest changes
 > - Test coverage is incomplete
+> - Consolidation tool is still a stub (coming soon)
 
 > **📖 New to this project?** Start with the [ELI5 Guide](ELI5.md) for a simple explanation of what this does and how to use it.
 
@@ -187,12 +186,25 @@ mnemex/
 
 ### Installation
 
-```bash
-# Install with uv (recommended)
-uv pip install -e .
+**Recommended: UV Tool Install**
 
-# Or with pip
-pip install -e .
+```bash
+# Install from GitHub (recommended)
+uv tool install git+https://github.com/simplemindedbot/mnemex.git
+
+# Or install from local directory (for development)
+uv tool install .
+```
+
+This installs `mnemex` and all 7 CLI commands as isolated tools.
+
+**Alternative: Editable Install (for development)**
+
+```bash
+# Clone and install in editable mode
+git clone https://github.com/simplemindedbot/mnemex.git
+cd mnemex
+uv pip install -e ".[dev]"
 ```
 
 ### Configuration
@@ -238,25 +250,31 @@ Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_
 {
   "mcpServers": {
     "mnemex": {
-      "command": "uv",
-      "args": [
-        "--directory",
-        "/path/to/mnemex",
-        "run",
-        "mnemex"
-      ],
-      "env": {
-        "PYTHONPATH": "/path/to/mnemex/src"
-      }
+      "command": "mnemex"
     }
   }
 }
 ```
 
-**Important:**
-- Replace `/path/to/mnemex` with your actual repository path
-- The `PYTHONPATH` environment variable is required for editable installs
-- Storage paths are configured in your `.env` file, not in the MCP config
+That's it! No paths, no environment variables needed.
+
+**For development (editable install):**
+
+```json
+{
+  "mcpServers": {
+    "mnemex": {
+      "command": "uv",
+      "args": ["--directory", "/path/to/mnemex", "run", "mnemex"],
+      "env": {"PYTHONPATH": "/path/to/mnemex/src"}
+    }
+  }
+}
+```
+
+**Configuration:**
+- Storage paths are configured in `~/.config/mnemex/.env` or project `.env`
+- See `.env.example` for all available settings
 
 ### Maintenance
 
@@ -269,6 +287,24 @@ mnemex-maintenance stats
 # Compact JSONL (rewrite without tombstones/duplicates)
 mnemex-maintenance compact
 ```
+
+### Migrating to UV Tool Install
+
+If you're currently using an editable install (`uv pip install -e .`), you can switch to the simpler UV tool install:
+
+```bash
+# 1. Uninstall editable version
+uv pip uninstall mnemex
+
+# 2. Install as UV tool
+uv tool install git+https://github.com/simplemindedbot/mnemex.git
+
+# 3. Update Claude Desktop config to just:
+#    {"command": "mnemex"}
+#    Remove the --directory, run, and PYTHONPATH settings
+```
+
+**Your data is safe!** This only changes how the command is installed. Your memories in `~/.config/mnemex/` are untouched.
 
 ### Migrating from STM Server
 
