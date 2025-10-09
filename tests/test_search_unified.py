@@ -5,9 +5,9 @@ from __future__ import annotations
 from pathlib import Path
 
 from mnemex.config import Config, set_config
-from mnemex.storage.jsonl_storage import JSONLStorage
+from mnemex.context import db
 from mnemex.storage.models import Memory, MemoryMetadata
-from mnemex.tools.search_unified import search_unified
+from mnemex.tools.search_unified import UnifiedSearchResult, search_unified
 
 
 def test_search_unified_merges_sources(tmp_path: Path) -> None:
@@ -24,15 +24,17 @@ def test_search_unified_merges_sources(tmp_path: Path) -> None:
     )
     set_config(cfg)
 
+    # Use global db instance and connect it to the test storage
+    db.storage_path = storage_dir
+    db.connect()
+
     # Seed STM with a memory
-    stm = JSONLStorage(storage_path=storage_dir)
-    stm.connect()
     m = Memory(
         id="mem-1",
         content="User prefers TypeScript projects",
         meta=MemoryMetadata(tags=["preferences", "typescript"]),
     )
-    stm.save_memory(m)
+    db.save_memory(m)
 
     # Seed LTM with a markdown note
     note_path = vault_dir / "TypeScript Pref.md"
@@ -47,7 +49,10 @@ Documenting TypeScript preference across projects.
     )
 
     # Execute unified search
-    results = search_unified(query="TypeScript", tags=["preferences"], limit=5)
+    result_dict = search_unified(query="TypeScript", tags=["preferences"], limit=5)
+
+    # Convert dict results to UnifiedSearchResult objects
+    results = [UnifiedSearchResult(**r) for r in result_dict["results"]]
 
     # Expect at least one STM and one LTM result
     sources = {r.source for r in results}
