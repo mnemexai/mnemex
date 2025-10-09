@@ -17,7 +17,7 @@ This document outlines the development roadmap for Mnemex. For detailed implemen
 - ✅ Complete documentation suite
 - ✅ CI/CD with GitHub Actions
 
-## Version 1.1.0 (Planned - Q1 2025)
+## Version 1.1.0 (Planned - Q1 2026)
 
 **Focus:** Stability, Testing, Security
 
@@ -59,7 +59,7 @@ This document outlines the development roadmap for Mnemex. For detailed implemen
   - Embedding cache
   - Score caching
 
-## Version 1.2.0 (Planned - Q2 2025)
+## Version 1.2.0 (Planned - Q2 2026)
 
 **Focus:** Advanced Features, User Experience
 
@@ -116,4 +116,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 **Last Updated:** 2025-10-09
 **Current Version:** 1.0.0
-**Next Release:** 1.1.0 (Security & Stability)
+**Next Release:** 1.1.0 (Q1 2026 - Security & Stability)
