@@ -29,6 +29,24 @@ This repository contains research, design, and a complete implementation of a sh
 - **Git-friendly storage** with human-readable JSONL
 - **Knowledge graph** with entities and relations
 
+## Why Mnemex?
+
+### 🔒 Privacy & Transparency
+
+**All data stored locally on your machine** - no cloud services, no tracking, no data sharing.
+
+- **Short-term memory**: Human-readable JSONL files (`~/.config/mnemex/jsonl/`)
+  - One JSON object per line
+  - Easy to inspect, version control, and backup
+  - Git-friendly format for tracking changes
+
+- **Long-term memory**: Markdown files optimized for Obsidian
+  - YAML frontmatter with metadata
+  - Wikilinks for connections
+  - Permanent storage you control
+
+You own your data. You can read it, edit it, delete it, or version control it - all without any special tools.
+
 ## Core Algorithm
 
 The temporal decay scoring function:
