@@ -155,10 +155,10 @@ class Config(BaseModel):
     )
     ltm_index_path: Path | None = Field(
         default=None,
-        description="Path to LTM index file (default: vault/.stm-index.jsonl)",
+        description="Path to LTM index file (default: vault/.mnemex-index.jsonl)",
     )
     ltm_promoted_folder: str = Field(
-        default="stm-promoted",
+        default="mnemex-promoted",
         description="Folder within vault for promoted memories",
     )
 

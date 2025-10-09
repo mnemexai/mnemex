@@ -236,7 +236,7 @@ if matches_explicit_recall(message):
 ```
 User: "Never forget that the API key rotation happens on the 1st of each month"
 → Save directly to LTM (Obsidian vault)
-→ Folder: stm-promoted or appropriate category
+→ Folder: mnemex-promoted or appropriate category
 → No STM decay - permanent immediately
 
 User: "Make a note: Sarah prefers she/her pronouns"
@@ -264,7 +264,7 @@ if matches_direct_ltm(message):
     # Skip STM entirely - go straight to vault
     await write_to_vault(
         content=extract_content(message),
-        folder=infer_folder(message),  # e.g., "stm-promoted", "critical-info"
+        folder=infer_folder(message),  # e.g., "mnemex-promoted", "critical-info"
         tags=infer_tags(message),
         frontmatter={
             "source": "direct_user_request",

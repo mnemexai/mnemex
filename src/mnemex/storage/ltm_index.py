@@ -78,10 +78,16 @@ class LTMIndex:
 
         Args:
             vault_path: Path to Obsidian vault directory
-            index_path: Path to index JSONL file (default: vault_path/.stm-index.jsonl)
+            index_path: Path to index JSONL file (default: vault_path/.mnemex-index.jsonl)
         """
         self.vault_path = vault_path
-        self.index_path = index_path or (vault_path / ".stm-index.jsonl")
+        # Prefer new default path; fallback to legacy if it exists
+        if index_path is None:
+            new_path = vault_path / ".mnemex-index.jsonl"
+            legacy_path = vault_path / ".stm-index.jsonl"
+            self.index_path = new_path if new_path.exists() or not legacy_path.exists() else legacy_path
+        else:
+            self.index_path = index_path
 
         # In-memory index
         self._documents: dict[str, LTMDocument] = {}
@@ -412,7 +418,7 @@ def main() -> int:
     parser.add_argument(
         "--index-path",
         type=Path,
-        help="Path to index file (default: vault/.stm-index.jsonl)",
+        help="Path to index file (default: vault/.mnemex-index.jsonl; legacy .stm-index.jsonl supported)",
     )
     parser.add_argument(
         "--force",
