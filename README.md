@@ -6,6 +6,7 @@ A Model Context Protocol (MCP) server providing **human-like memory dynamics** f
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![Tests](https://github.com/simplemindedbot/mnemex/actions/workflows/tests.yml/badge.svg)](https://github.com/simplemindedbot/mnemex/actions/workflows/tests.yml)
 [![codecov](https://codecov.io/gh/simplemindedbot/mnemex/branch/main/graph/badge.svg)](https://codecov.io/gh/simplemindedbot/mnemex)
+[![SBOM: CycloneDX](https://img.shields.io/badge/SBOM-CycloneDX-blue)](https://github.com/simplemindedbot/mnemex/actions/workflows/security.yml)
 
 > [!WARNING]
 > **🚧 ACTIVE DEVELOPMENT - EXPECT BUGS 🚧**
