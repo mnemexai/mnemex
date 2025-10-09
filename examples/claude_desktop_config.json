@@ -1,15 +1,15 @@
 {
   "mcpServers": {
-    "stm": {
+    "mnemex": {
       "command": "uv",
       "args": [
         "--directory",
-        "/Users/your-username/path/to/stm-research",
+        "/Users/your-username/path/to/mnemex",
         "run",
-        "stm-server"
+        "mnemex"
       ],
       "env": {
-        "PYTHONPATH": "/Users/your-username/path/to/stm-research/src"
+        "PYTHONPATH": "/Users/your-username/path/to/mnemex/src"
       }
     }
   }

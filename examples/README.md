@@ -9,7 +9,7 @@ This shows the **minimal** Claude Desktop configuration needed. Copy this to:
 ~/Library/Application Support/Claude/claude_desktop_config.json
 ```
 
-**Important**: Replace `/Users/your-username/path/to/stm-research` with your actual repository path.
+**Important**: Replace `/Users/your-username/path/to/mnemex` with your actual repository path.
 
 The only required environment variable in the Claude config is:
 - `PYTHONPATH`: Points to the `src/` directory for module imports
@@ -20,21 +20,21 @@ The only required environment variable in the Claude config is:
 
 ```bash
 # Storage paths
-STM_STORAGE_PATH=~/.stm/jsonl
+MNEMEX_STORAGE_PATH=~/.config/mnemex/jsonl
 LTM_VAULT_PATH=~/Documents/Obsidian/Vault
 
 # Decay model and parameters
-STM_DECAY_MODEL=power_law
-STM_PL_ALPHA=1.1
-STM_PL_HALFLIFE_DAYS=3.0
-STM_DECAY_BETA=0.6
+MNEMEX_DECAY_MODEL=power_law
+MNEMEX_PL_ALPHA=1.1
+MNEMEX_PL_HALFLIFE_DAYS=3.0
+MNEMEX_DECAY_BETA=0.6
 
 # Thresholds
-STM_FORGET_THRESHOLD=0.05
-STM_PROMOTE_THRESHOLD=0.65
+MNEMEX_FORGET_THRESHOLD=0.05
+MNEMEX_PROMOTE_THRESHOLD=0.65
 
 # Optional
-STM_ENABLE_EMBEDDINGS=false
+MNEMEX_ENABLE_EMBEDDINGS=false
 LOG_LEVEL=INFO
 ```
 

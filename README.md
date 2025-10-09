@@ -149,7 +149,7 @@ No explicit memory commands needed - just natural conversation.
 mnemex/
 ├── README.md                          # This file
 ├── CLAUDE.md                          # Guide for AI assistants
-├── src/stm_server/
+├── src/mnemex/
 │   ├── core/                          # Decay, scoring, clustering
 │   ├── storage/                       # JSONL and LTM index
 │   ├── tools/                         # 10 MCP tools
@@ -447,12 +447,12 @@ Clean-room implementation. No AGPL dependencies.
 If you use this work in research, please cite:
 
 ```bibtex
-@software{stm_research_2025,
-  title = {STM Research: Short-Term Memory with Temporal Decay},
+@software{mnemex_2025,
+  title = {Mnemex: Temporal Memory for AI},
   author = {simplemindedbot},
   year = {2025},
   url = {https://github.com/simplemindedbot/mnemex},
-  version = {0.2.0}
+  version = {1.0.0}
 }
 ```
 
@@ -468,7 +468,7 @@ This is a research project. Contributions welcome! Please:
 
 ## Status
 
-**Version:** 0.3.0
+**Version:** 1.0.0
 **Status:** Research implementation - functional but evolving
 
 ### Phase 1 (Complete) ✅

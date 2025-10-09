@@ -13,7 +13,7 @@
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd stm-research
+cd mnemex
 
 # Install with uv (recommended)
 uv pip install -e ".[dev]"
@@ -69,7 +69,7 @@ Add STM server:
         "mnemex"
       ],
       "env": {
-        "MNEMEX_STORAGE_PATH": "/Users/your-username/.stm/jsonl",
+        "MNEMEX_STORAGE_PATH": "/Users/your-username/.config/mnemex/jsonl",
         "LTM_VAULT_PATH": "/Users/your-username/Documents/Obsidian/Vault",
         "MNEMEX_ENABLE_EMBEDDINGS": "false"
       }
@@ -101,7 +101,7 @@ Configuration (adjust paths):
         "mnemex"
       ],
       "env": {
-        "MNEMEX_STORAGE_PATH": "C:\\Users\\YourName\\.stm\\jsonl",
+        "MNEMEX_STORAGE_PATH": "C:\\Users\\YourName\\.config\\mnemex\\jsonl",
         "LTM_VAULT_PATH": "C:\\Users\\YourName\\Documents\\Obsidian\\Vault"
       }
     }
@@ -120,7 +120,7 @@ Configuration in `.vscode/settings.json`:
       "command": "uv",
       "args": ["--directory", "${workspaceFolder}/mnemex", "run", "mnemex"],
       "env": {
-        "MNEMEX_STORAGE_PATH": "${env:HOME}/.stm/jsonl"
+        "MNEMEX_STORAGE_PATH": "${env:HOME}/.config/mnemex/jsonl"
       }
     }
   }
@@ -323,17 +323,17 @@ Create a maintenance script `~/.config/mnemex/maintenance.sh`:
 
 ```bash
 #!/bin/bash
-# STM Server Daily Maintenance
+# Mnemex Server Daily Maintenance
 
-LOG_FILE="$HOME/.stm/maintenance.log"
+LOG_FILE="$HOME/.config/mnemex/maintenance.log"
 echo "=== Maintenance run at $(date) ===" >> "$LOG_FILE"
 
 # Backup storage
-cp "$HOME/.stm/jsonl/memories.jsonl" "$HOME/.stm/backups/memories.jsonl.$(date +%Y%m%d)"
-cp "$HOME/.stm/jsonl/relations.jsonl" "$HOME/.stm/backups/relations.jsonl.$(date +%Y%m%d)"
+cp "$HOME/.config/mnemex/jsonl/memories.jsonl" "$HOME/.config/mnemex/backups/memories.jsonl.$(date +%Y%m%d)"
+cp "$HOME/.config/mnemex/jsonl/relations.jsonl" "$HOME/.config/mnemex/backups/relations.jsonl.$(date +%Y%m%d)"
 
 # Log stats
-echo "Storage files: $(ls -l $HOME/.stm/jsonl | wc -l)" >> "$LOG_FILE"
+echo "Storage files: $(ls -l $HOME/.config/mnemex/jsonl | wc -l)" >> "$LOG_FILE"
 ```
 
 Schedule with cron:

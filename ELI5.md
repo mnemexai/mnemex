@@ -81,8 +81,8 @@ This system is **smart**:
 ### Step 1: Clone the Repo
 
 ```bash
-git clone https://github.com/simplemindedbot/stm-research.git
-cd stm-research
+git clone https://github.com/simplemindedbot/mnemex.git
+cd mnemex
 ```
 
 ### Step 2: Install
@@ -121,12 +121,12 @@ Add this to your Claude Desktop config file:
       "command": "uv",
       "args": [
         "--directory",
-        "/Users/yourname/path/to/stm-research",
+        "/Users/yourname/path/to/mnemex",
         "run",
         "mnemex"
       ],
       "env": {
-        "PYTHONPATH": "/Users/yourname/path/to/stm-research/src"
+        "PYTHONPATH": "/Users/yourname/path/to/mnemex/src"
       }
     }
   }
@@ -134,7 +134,7 @@ Add this to your Claude Desktop config file:
 ```
 
 **Important**:
-- Replace `/Users/yourname/path/to/stm-research` with your actual path
+- Replace `/Users/yourname/path/to/mnemex` with your actual path
 - The `PYTHONPATH` is required for the server to find the Python modules
 - Storage paths go in your `.env` file, not here
 
@@ -342,8 +342,8 @@ Read the examples in the `examples/` directory or check out:
 
 **Quick start**:
 ```bash
-git clone https://github.com/simplemindedbot/stm-research.git
-cd stm-research
+git clone https://github.com/simplemindedbot/mnemex.git
+cd mnemex
 uv pip install -e .
 # Edit .env file with your paths
 mnemex
