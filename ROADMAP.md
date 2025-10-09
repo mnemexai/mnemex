@@ -115,5 +115,5 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 ---
 
 **Last Updated:** 2025-10-09
-**Current Version:** 1.0.0
-**Next Release:** 1.1.0 (Q1 2026 - Security & Stability)
+**Current Version:** 0.4.0
+**Next Release:** 0.5.0 (Q1 2026 - Security & Stability)
