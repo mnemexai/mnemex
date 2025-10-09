@@ -735,6 +735,16 @@ Run on all files locally:
 pre-commit run --all-files
 ```
 
+You can also run individual hooks:
+
+```bash
+# Run ruff only
+pre-commit run ruff --all-files
+
+# Run mypy on src via pre-commit
+pre-commit run mypy --all-files
+```
+
 ### Type Hints
 
 All functions must have type hints:
