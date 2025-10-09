@@ -377,9 +377,48 @@ uv tool install git+https://github.com/simplemindedbot/mnemex.git
 
 ---
 
+## Completed: Consolidation Tool ✅
+
+### Implementation Summary
+
+**Completed:** Algorithmic consolidation with preview/apply modes
+
+**Files Added:**
+- `src/mnemex/core/consolidation.py` - Core merging logic
+- `tests/test_consolidation.py` - Comprehensive test suite (15 tests, 100% coverage)
+
+**Features:**
+- Smart content merging (preserves unique information, detects duplicates)
+- Tag and entity merging (union of all values)
+- Strength calculation based on cluster cohesion
+- Timestamp preservation (earliest created_at, latest last_used)
+- Relation tracking (consolidated_from relations)
+- Auto-detect mode (finds high-cohesion clusters automatically)
+- Preview mode (dry-run to inspect before applying)
+
+**Usage:**
+```python
+# Auto-detect and preview
+consolidate_memories(auto_detect=True, mode="preview", cohesion_threshold=0.75)
+
+# Apply consolidation
+consolidate_memories(auto_detect=True, mode="apply", cohesion_threshold=0.80)
+```
+
+**Test Results:**
+All 15 tests passing:
+- `test_merge_tags`, `test_merge_entities`, `test_merge_metadata`
+- `test_merge_content_duplicates`, `test_merge_content_distinct`
+- `test_calculate_merged_strength`
+- `test_generate_consolidation_preview`
+- `test_execute_consolidation`
+- `test_consolidation_preserves_timestamps`
+
+---
+
 ## Priority Order
 
-1. **Consolidation Tool** (1-2 days) - Implement algorithmic merge with preview
+1. ~~**Consolidation Tool** (1-2 days) - Implement algorithmic merge with preview~~ ✅ **DONE**
 2. **Spaced Repetition** (2-3 days) - Add review queue and scheduling
 3. **Adaptive Decay** (3-4 days) - Category-based decay profiles
 4. **Performance** (1-2 days) - Benchmarking and optimization

@@ -13,7 +13,6 @@ A Model Context Protocol (MCP) server providing **human-like memory dynamics** f
 > **Known issues:**
 > - API may change without notice between versions
 > - Test coverage is incomplete
-> - Consolidation tool is still a stub (coming soon)
 
 > **📖 New to this project?** Start with the [ELI5 Guide](ELI5.md) for a simple explanation of what this does and how to use it.
 
@@ -356,7 +355,7 @@ mnemex-maintenance      # JSONL storage stats and compaction
 | `gc` | Garbage collect low-scoring memories |
 | `promote_memory` | Move to long-term storage |
 | `cluster_memories` | Find similar memories |
-| `consolidate_memories` | Merge duplicates (LLM-driven) |
+| `consolidate_memories` | Merge similar memories (algorithmic) |
 | `read_graph` | Get entire knowledge graph |
 | `open_memories` | Retrieve specific memories |
 | `create_relation` | Link memories explicitly |
@@ -426,6 +425,37 @@ As an MCP tool (request body):
   "verbose": true
 }
 ```
+
+### Example: Consolidate Similar Memories
+
+Find and merge duplicate or highly similar memories to reduce clutter:
+
+Auto-detect candidates (preview):
+
+```json
+{
+  "auto_detect": true,
+  "mode": "preview",
+  "cohesion_threshold": 0.75
+}
+```
+
+Apply consolidation to detected clusters:
+
+```json
+{
+  "auto_detect": true,
+  "mode": "apply",
+  "cohesion_threshold": 0.80
+}
+```
+
+The tool will:
+- Merge content intelligently (preserving unique information)
+- Combine tags and entities (union)
+- Calculate strength based on cluster cohesion
+- Preserve earliest `created_at` and latest `last_used` timestamps
+- Create tracking relations showing consolidation history
 
 ## Mathematical Details
 
@@ -539,13 +569,14 @@ This is a research project. Contributions welcome! Please:
 - Git integration
 - Smart prompting documentation
 - Maintenance CLI
+- Memory consolidation (algorithmic merging)
 
 ### Future Work
 
 - Spaced repetition optimization
 - Adaptive decay parameters
-- Enhanced clustering algorithms
 - Performance benchmarks
+- LLM-assisted consolidation (optional enhancement)
 
 ---
 
