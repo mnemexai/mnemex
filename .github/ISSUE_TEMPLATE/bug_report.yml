@@ -1,0 +1,133 @@
+name: Bug Report
+description: Report a bug or unexpected behavior in Mnemex
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill out the information below to help us diagnose and fix the issue.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is
+      placeholder: Tell us what went wrong
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this issue?
+      placeholder: |
+        1. Install mnemex with 'uv tool install git+https://github.com/simplemindedbot/mnemex.git'
+        2. Configure with '...'
+        3. Run command '...'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+      placeholder: Describe the expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened? Include error messages and stack traces if applicable.
+      placeholder: Paste error messages here
+      render: shell
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      description: What operating system are you using?
+      options:
+        - macOS
+        - Linux (Ubuntu/Debian)
+        - Linux (Other)
+        - Windows
+        - Other (please specify in additional context)
+    validations:
+      required: true
+
+  - type: input
+    id: python-version
+    attributes:
+      label: Python Version
+      description: Run `python --version` or `python3 --version`
+      placeholder: "e.g., Python 3.11.5"
+    validations:
+      required: true
+
+  - type: input
+    id: mnemex-version
+    attributes:
+      label: Mnemex Version
+      description: Run `mnemex --version` or check your installation
+      placeholder: "e.g., 1.0.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: installation
+    attributes:
+      label: Installation Method
+      description: How did you install Mnemex?
+      options:
+        - UV tool install (recommended)
+        - UV pip install -e . (development)
+        - pip install
+        - Other (please specify)
+    validations:
+      required: true
+
+  - type: textarea
+    id: config
+    attributes:
+      label: Configuration
+      description: Share relevant parts of your `.env` configuration (REDACT any sensitive information)
+      placeholder: |
+        MNEMEX_DECAY_MODEL=power_law
+        MNEMEX_PL_HALFLIFE_DAYS=3.0
+        # ... other relevant settings
+      render: bash
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Include any relevant log output or debug information
+      placeholder: Paste log output here
+      render: shell
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Add any other context about the problem here (screenshots, links to similar issues, etc.)
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Checklist
+      description: Please confirm the following
+      options:
+        - label: I have searched existing issues to ensure this is not a duplicate
+          required: true
+        - label: I have provided all required information above
+          required: true
+        - label: I have redacted any sensitive information from configs/logs
+          required: true

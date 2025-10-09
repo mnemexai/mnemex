@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 GitHub Discussions
+    url: https://github.com/simplemindedbot/mnemex/discussions
+    about: Ask questions, share ideas, and discuss Mnemex with the community
+  - name: 📖 Documentation
+    url: https://github.com/simplemindedbot/mnemex/tree/main/docs
+    about: Read the comprehensive documentation for Mnemex
+  - name: 🔒 Security Vulnerability
+    url: https://github.com/simplemindedbot/mnemex/security/advisories/new
+    about: Report security vulnerabilities privately (do not create public issues)
