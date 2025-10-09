@@ -35,7 +35,6 @@ jobs:
       - name: Run Bandit
         run: |
           uv run bandit -r src/mnemex -f json -o bandit-report.json || true
-          uv run bandit -r src/mnemex
 
       - name: Upload Bandit results
         uses: actions/upload-artifact@v4
