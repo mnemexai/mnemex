@@ -5,6 +5,7 @@ from typing import Any
 from ..context import db, mcp
 from ..core.clustering import cluster_memories_simple
 from ..core.consolidation import execute_consolidation, generate_consolidation_preview
+from ..security.validators import validate_score, validate_uuid
 from ..storage.models import ClusterConfig, MemoryStatus
 
 
@@ -29,14 +30,26 @@ def consolidate_memories(
     - "apply": Execute the consolidation (requires cluster_id)
 
     Args:
-        cluster_id: Specific cluster ID to consolidate (required for apply mode).
+        cluster_id: Specific cluster ID to consolidate (valid UUID, required for apply mode).
         mode: Operation mode - "preview" or "apply".
         auto_detect: If True, automatically find high-cohesion clusters.
-        cohesion_threshold: Minimum cohesion for auto-detection (default: 0.75).
+        cohesion_threshold: Minimum cohesion for auto-detection (0.0-1.0, default: 0.75).
 
     Returns:
         Consolidation preview or execution results.
+
+    Raises:
+        ValueError: If cluster_id is invalid or cohesion_threshold is out of range.
     """
+    # Input validation
+    if cluster_id is not None:
+        cluster_id = validate_uuid(cluster_id, "cluster_id")
+
+    cohesion_threshold = validate_score(cohesion_threshold, "cohesion_threshold")
+
+    if mode not in ("preview", "apply"):
+        raise ValueError(f"mode must be 'preview' or 'apply', got: {mode}")
+
     # Auto-detect mode: find clusters worth consolidating
     if auto_detect:
         memories = db.list_memories(status=MemoryStatus.ACTIVE)

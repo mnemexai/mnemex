@@ -6,6 +6,7 @@ from typing import Any
 from ..config import get_config
 from ..context import db, mcp
 from ..core.scoring import should_forget
+from ..security.validators import validate_positive_int
 from ..storage.models import GarbageCollectionResult, MemoryStatus
 
 
@@ -25,11 +26,18 @@ def gc(
     Args:
         dry_run: Preview what would be removed without actually removing.
         archive_instead: Archive memories instead of deleting.
-        limit: Maximum number of memories to process.
+        limit: Maximum number of memories to process (1-10,000).
 
     Returns:
         Statistics about removed/archived memories.
+
+    Raises:
+        ValueError: If limit is out of valid range.
     """
+    # Input validation
+    if limit is not None:
+        limit = validate_positive_int(limit, "limit", min_value=1, max_value=10000)
+
     config = get_config()
     now = int(time.time())
 
