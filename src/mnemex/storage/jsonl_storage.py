@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from ..config import get_config
+from ..security.permissions import secure_file
 from .models import KnowledgeGraph, Memory, MemoryStatus, Relation
 
 
@@ -104,28 +105,60 @@ class JSONLStorage:
         self.close()
 
     def _append_memory(self, memory: Memory) -> None:
-        """Append memory to JSONL file."""
+        """Append memory to JSONL file and secure permissions."""
+        file_created = not self.memories_path.exists()
+
         with open(self.memories_path, "a") as f:
             # Convert to JSON-serializable dict
             data = memory.model_dump(mode="json")
             f.write(json.dumps(data) + "\n")
 
+        # Secure file permissions if newly created
+        if file_created:
+            try:
+                secure_file(self.memories_path)
+            except Exception:
+                # Don't fail if permissions can't be set (log warning in production)
+                pass
+
     def _append_relation(self, relation: Relation) -> None:
-        """Append relation to JSONL file."""
+        """Append relation to JSONL file and secure permissions."""
+        file_created = not self.relations_path.exists()
+
         with open(self.relations_path, "a") as f:
             data = relation.model_dump(mode="json")
             f.write(json.dumps(data) + "\n")
 
+        # Secure file permissions if newly created
+        if file_created:
+            try:
+                secure_file(self.relations_path)
+            except Exception:
+                # Don't fail if permissions can't be set (log warning in production)
+                pass
+
     def _append_deletion_marker(self, memory_id: str, is_relation: bool = False) -> None:
-        """Append a deletion marker to JSONL file."""
+        """Append a deletion marker to JSONL file and secure permissions."""
         marker = {"id": memory_id, "_deleted": True}
 
         if is_relation:
+            file_created = not self.relations_path.exists()
             with open(self.relations_path, "a") as f:
                 f.write(json.dumps(marker) + "\n")
+            if file_created:
+                try:
+                    secure_file(self.relations_path)
+                except Exception:
+                    pass
         else:
+            file_created = not self.memories_path.exists()
             with open(self.memories_path, "a") as f:
                 f.write(json.dumps(marker) + "\n")
+            if file_created:
+                try:
+                    secure_file(self.memories_path)
+                except Exception:
+                    pass
 
     def save_memory(self, memory: Memory) -> None:
         """
@@ -518,6 +551,12 @@ class JSONLStorage:
                 data = memory.model_dump(mode="json")
                 f.write(json.dumps(data) + "\n")
 
+        # Secure temp file before replacing
+        try:
+            secure_file(temp_memories)
+        except Exception:
+            pass
+
         temp_memories.replace(self.memories_path)
 
         # Rewrite relations file
@@ -526,6 +565,12 @@ class JSONLStorage:
             for relation in self._relations.values():
                 data = relation.model_dump(mode="json")
                 f.write(json.dumps(data) + "\n")
+
+        # Secure temp file before replacing
+        try:
+            secure_file(temp_relations)
+        except Exception:
+            pass
 
         temp_relations.replace(self.relations_path)
 

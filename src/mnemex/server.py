@@ -2,10 +2,12 @@
 
 import logging
 import sys
+from pathlib import Path
 
 from .config import get_config
 from .context import db, mcp
 from .core.decay import calculate_halflife
+from .security.permissions import ensure_secure_storage, secure_config_file
 
 # Import tools to register them with the decorator
 from .tools import (
@@ -80,6 +82,36 @@ def initialize_server():
 
     db.connect()
     logger.info(f"Storage initialized with {db.count_memories()} memories")
+
+    # Apply secure permissions to storage directory
+    try:
+        stats = ensure_secure_storage(config.storage_path)
+        logger.info(
+            f"Secured storage: {stats['files']} files, {stats['directories']} directories"
+        )
+        if stats["errors"] > 0:
+            logger.warning(f"Unable to secure {stats['errors']} items (check permissions)")
+    except Exception as e:
+        logger.warning(f"Unable to secure storage permissions: {e}")
+
+    # Secure .env file if it exists
+    env_path = Path(".env")
+    if env_path.exists():
+        try:
+            secure_config_file(env_path)
+            logger.info("Secured .env configuration file")
+        except Exception as e:
+            logger.warning(f"Unable to secure .env file: {e}")
+
+    # Check XDG config directory .env
+    xdg_env = Path.home() / ".config" / "mnemex" / ".env"
+    if xdg_env.exists() and xdg_env != env_path.resolve():
+        try:
+            secure_config_file(xdg_env)
+            logger.info(f"Secured XDG config file: {xdg_env}")
+        except Exception as e:
+            logger.warning(f"Unable to secure {xdg_env}: {e}")
+
     logger.info("MCP server tools registered (11 tools)")
 
 

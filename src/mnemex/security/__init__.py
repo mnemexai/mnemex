@@ -6,6 +6,13 @@ from .paths import (
     validate_folder_path,
     validate_vault_path,
 )
+from .permissions import (
+    check_permissions,
+    ensure_secure_storage,
+    secure_config_file,
+    secure_directory,
+    secure_file,
+)
 from .validators import (
     MAX_CONTENT_LENGTH,
     MAX_ENTITIES_COUNT,
@@ -43,4 +50,10 @@ __all__ = [
     "validate_vault_path",
     "sanitize_filename",
     "ensure_within_directory",
+    # Permission Security
+    "secure_file",
+    "secure_directory",
+    "secure_config_file",
+    "ensure_secure_storage",
+    "check_permissions",
 ]
