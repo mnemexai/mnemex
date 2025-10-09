@@ -3,9 +3,9 @@
 import math
 import os
 from pathlib import Path
+from typing import Any, cast
 
 from dotenv import load_dotenv
-from typing import Any, cast
 from pydantic import BaseModel, Field, field_validator
 
 

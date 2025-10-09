@@ -73,7 +73,13 @@ Mnemex includes:
 - ✅ No network communication (fully local)
 - ✅ No telemetry or analytics
 - 🚧 Dependency scanning (planned v1.1.0)
-- 🚧 SBOM generation (planned v1.1.0)
+- ✅ SBOM generation (CycloneDX) in CI
+
+## SBOM (Software Bill of Materials)
+
+This repository automatically generates a CycloneDX SBOM in CI for each push/PR via the security workflow. You can find the generated `sbom.json` as an artifact in the “Security Scanning” workflow run.
+
+For more about CycloneDX: https://cyclonedx.org/
 
 ## Known Limitations
 

@@ -19,7 +19,6 @@ import os
 import stat
 from pathlib import Path
 
-
 # Secure permission constants
 FILE_PERMISSIONS = 0o600  # rw------- (owner read/write only)
 DIR_PERMISSIONS = 0o700  # rwx------ (owner read/write/execute only)
@@ -312,9 +311,7 @@ def main() -> int:
     import argparse
     import sys
 
-    parser = argparse.ArgumentParser(
-        description="Secure file permissions for Mnemex storage"
-    )
+    parser = argparse.ArgumentParser(description="Secure file permissions for Mnemex storage")
     parser.add_argument("path", type=Path, help="Path to secure")
     parser.add_argument(
         "--check",

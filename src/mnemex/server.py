@@ -86,9 +86,7 @@ def initialize_server() -> None:
     # Apply secure permissions to storage directory
     try:
         stats = ensure_secure_storage(config.storage_path)
-        logger.info(
-            f"Secured storage: {stats['files']} files, {stats['directories']} directories"
-        )
+        logger.info(f"Secured storage: {stats['files']} files, {stats['directories']} directories")
         if stats["errors"] > 0:
             logger.warning(f"Unable to secure {stats['errors']} items (check permissions)")
     except Exception as e:
