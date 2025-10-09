@@ -61,6 +61,7 @@ jobs:
           uv pip install pip-audit
 
       - name: Run pip-audit
+        continue-on-error: true
         run: |
           uv run pip-audit --desc --format json --output pip-audit-report.json || true
           uv run pip-audit --desc

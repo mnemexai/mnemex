@@ -219,7 +219,7 @@ class MarkdownWriter:
                     post = frontmatter.load(f)
                     if post.get("title") == title:
                         return md_file
-            except Exception:
+            except Exception:  # nosec B112 - intentionally skipping unparseable files
                 # Skip files that can't be parsed
                 continue
 

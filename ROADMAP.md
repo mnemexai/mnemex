@@ -1,6 +1,6 @@
 # Mnemex Roadmap
 
-This document outlines the development roadmap for Mnemex. For detailed implementation notes, see [docs/future_roadmap.md](docs/future_roadmap.md).
+This document outlines the development roadmap for Mnemex. For detailed implementation notes, see [future_roadmap.md](future_roadmap.md).
 
 ## Version 1.0.0 (Released ✅)
 
@@ -108,7 +108,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 ## Links
 
 - [GitHub Issues](https://github.com/simplemindedbot/mnemex/issues)
-- [Detailed Roadmap](docs/future_roadmap.md)
+- [Detailed Roadmap](future_roadmap.md)
 - [Documentation](docs/)
 - [Contributing Guide](CONTRIBUTING.md)
 

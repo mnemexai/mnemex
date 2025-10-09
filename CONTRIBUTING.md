@@ -4,7 +4,7 @@ Thank you for your interest in contributing to Mnemex! This guide will help you 
 
 ## Table of Contents
 
-- [🚨 Help Needed: Windows & Linux Testers](#-help-needed-windows--linux-testers)
+- [🚨 Help Needed: Windows & Linux Testers](#help-needed-windows-linux-testers)
 - [Prerequisites](#prerequisites)
 - [Platform-Specific Setup](#platform-specific-setup)
   - [Windows](#windows)
@@ -918,7 +918,7 @@ Other approaches you've thought about.
 
 - **Documentation:** [docs/](docs/) directory
 - **Issues:** [GitHub Issues](https://github.com/simplemindedbot/mnemex/issues)
-- **Roadmap:** [docs/future_roadmap.md](docs/future_roadmap.md)
+- **Roadmap:** [future_roadmap.md](future_roadmap.md)
 
 ---
 
