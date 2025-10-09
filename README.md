@@ -542,13 +542,22 @@ If you use this work in research, please cite:
 
 ## Contributing
 
-This is a research project. Contributions welcome! Please:
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed instructions on:
 
-1. Read the [Architecture docs](docs/architecture.md)
-2. Understand the [Scoring Algorithm](docs/scoring_algorithm.md)
-3. Follow existing code patterns
-4. Add tests for new features
-5. Update documentation
+- Platform-specific setup (Windows, Linux, macOS)
+- Development workflow
+- Testing guidelines
+- Code style requirements
+- Pull request process
+
+Quick start:
+
+1. Read [CONTRIBUTING.md](CONTRIBUTING.md) for platform-specific setup
+2. Understand the [Architecture docs](docs/architecture.md)
+3. Review the [Scoring Algorithm](docs/scoring_algorithm.md)
+4. Follow existing code patterns
+5. Add tests for new features
+6. Update documentation
 
 ## Status
 
