@@ -4,6 +4,7 @@ Thank you for your interest in contributing to Mnemex! This guide will help you 
 
 ## Table of Contents
 
+- [🚨 Help Needed: Windows & Linux Testers](#-help-needed-windows--linux-testers)
 - [Prerequisites](#prerequisites)
 - [Platform-Specific Setup](#platform-specific-setup)
   - [Windows](#windows)
@@ -14,6 +15,129 @@ Thank you for your interest in contributing to Mnemex! This guide will help you 
 - [Code Style](#code-style)
 - [Submitting Changes](#submitting-changes)
 - [Reporting Issues](#reporting-issues)
+
+---
+
+## 🚨 Help Needed: Windows & Linux Testers
+
+**I develop Mnemex on macOS and need help testing on Windows and Linux!**
+
+### Why This Matters
+
+While I've written platform-specific instructions based on best practices, **I can't personally test**:
+- Windows installation and setup
+- Windows path handling and environment variables
+- Linux distributions (Ubuntu, Fedora, Arch, etc.)
+- Platform-specific edge cases and bugs
+
+### What I Need Help With
+
+#### High Priority 🔥
+
+1. **Installation Testing**
+   - Does `uv tool install` work smoothly?
+   - Are the setup instructions clear and accurate?
+   - Do the paths work correctly (`~/.config/mnemex/` on Linux, `C:/Users/.../` on Windows)?
+
+2. **Running the Server**
+   - Does `mnemex` command work after installation?
+   - Do all 7 CLI commands work (`mnemex-search`, `mnemex-maintenance`, etc.)?
+   - Can you connect via Claude Desktop or other MCP clients?
+
+3. **Testing Suite**
+   - Do all tests pass? (`uv run python -m pytest`)
+   - Does coverage reporting work?
+   - Are there any platform-specific test failures?
+
+4. **File Operations**
+   - Does JSONL storage work correctly?
+   - Do file paths with spaces or special characters work?
+   - Does the maintenance CLI (`mnemex-maintenance`) work?
+
+#### Medium Priority
+
+5. **Development Workflow**
+   - Can you clone and set up for development?
+   - Do `ruff` and `mypy` work correctly?
+   - Can you run tests in your IDE/editor?
+
+6. **Edge Cases**
+   - Long file paths (Windows issue)
+   - Non-ASCII characters in paths
+   - Different filesystem types
+   - Permission issues
+
+### How to Help
+
+**Quick Testing (30 minutes):**
+
+```bash
+# Install and verify
+uv tool install git+https://github.com/simplemindedbot/mnemex.git
+mnemex --version
+
+# Run basic tests
+cd $(mktemp -d)
+mnemex-maintenance stats
+mnemex-search "test" --verbose
+```
+
+Then report:
+- ✅ What worked
+- ❌ What failed (with error messages)
+- ⚠️ Any warnings or unexpected behavior
+- 💡 Suggestions for improving the docs
+
+**Full Testing (1-2 hours):**
+
+Follow the platform-specific setup guide in this file, then:
+
+1. Install from source
+2. Run the full test suite
+3. Try creating memories and searching
+4. Test consolidation feature
+5. Report your findings
+
+### Where to Report
+
+**[Open an issue](https://github.com/simplemindedbot/mnemex/issues/new)** with:
+
+```markdown
+**Platform:** [Windows 11 / Ubuntu 22.04 / etc.]
+**Test Type:** [Quick / Full]
+
+**What I Tested:**
+- [ ] Installation
+- [ ] Running server
+- [ ] CLI commands
+- [ ] Test suite
+- [ ] File operations
+
+**Results:**
+✅ Working: [list what worked]
+❌ Failed: [list failures with errors]
+⚠️ Issues: [list concerns or warnings]
+
+**Logs:**
+```
+[paste relevant error messages or logs]
+```
+
+**Suggestions:**
+[any improvements to docs or setup]
+```
+
+### Current Status
+
+| Platform | Installation | Tests | CLI Tools | File Ops | Status |
+|----------|--------------|-------|-----------|----------|---------|
+| **macOS** | ✅ Tested | ✅ Passing | ✅ Working | ✅ Working | Fully tested |
+| **Windows** | ❓ Untested | ❓ Unknown | ❓ Unknown | ❓ Unknown | **Need testers!** |
+| **Linux (Ubuntu)** | ❓ Untested | ❓ Unknown | ❓ Unknown | ❓ Unknown | **Need testers!** |
+| **Linux (Fedora)** | ❓ Untested | ❓ Unknown | ❓ Unknown | ❓ Unknown | **Need testers!** |
+| **Linux (Arch)** | ❓ Untested | ❓ Unknown | ❓ Unknown | ❓ Unknown | **Need testers!** |
+
+**Thank you for helping make Mnemex work reliably across all platforms!** 🙏
 
 ---
 

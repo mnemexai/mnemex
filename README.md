@@ -542,7 +542,21 @@ If you use this work in research, please cite:
 
 ## Contributing
 
-Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed instructions on:
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed instructions.
+
+### 🚨 **Help Needed: Windows & Linux Testers!**
+
+I develop on macOS and need help testing on Windows and Linux. If you have access to these platforms, please:
+
+- Try the installation instructions
+- Run the test suite
+- Report what works and what doesn't
+
+See the [**Help Needed section**](CONTRIBUTING.md#-help-needed-windows--linux-testers) in CONTRIBUTING.md for details.
+
+### General Contributions
+
+For all contributors, see [CONTRIBUTING.md](CONTRIBUTING.md) for:
 
 - Platform-specific setup (Windows, Linux, macOS)
 - Development workflow
