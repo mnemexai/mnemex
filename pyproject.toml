@@ -9,19 +9,6 @@ authors = [
     {name = "Mnemex"}
 ]
 keywords = ["mcp", "memory", "ai", "llm", "temporal-decay", "mnemonic", "memex"]
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
-    "Topic :: Software Development",
-]
-
-[project.urls]
-Homepage = "https://github.com/simplemindedbot/mnemex"
-Repository = "https://github.com/simplemindedbot/mnemex"
-Documentation = "https://simplemindedbot.github.io/mnemex/"
-Issues = "https://github.com/simplemindedbot/mnemex/issues"
 
 dependencies = [
     "mcp>=1.2.0",
@@ -61,11 +48,6 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/mnemex"]
-
-[tool.hatch.build]
-exclude = [
-  "marketing/**",
-]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

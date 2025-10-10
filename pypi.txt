@@ -1,0 +1,41 @@
+PyPI Packaging & Publishing (Mnemex v0.4.0)
+
+1) Verify and edit metadata (pyproject.toml)
+- [project]
+  - name = "mnemex" (if taken, fallback: "mnemex-ai" or "mnemex-memory")
+  - version = "0.4.0"
+  - description, readme = "README.md", license = MIT
+  - authors, keywords set
+  - classifiers added (Python 3.10, MIT, OS independent)
+  - urls added: Homepage/Repository/Documentation/Issues
+- [tool.hatch.build]
+  - exclude = ["marketing/**"] to keep local notes out of the sdist/wheel
+
+2) Build and validate locally (optional)
+- python -m pip install --upgrade build twine
+- python -m build
+- twine check dist/*
+
+3) Publish via CI (recommended)
+- A workflow is configured at .github/workflows/publish.yml to publish on tags matching v0.*
+- Add a repo secret: PYPI_API_TOKEN (create token on pypi.org, username: __token__, password: pypi-...)
+- Tag main to publish:
+  - git tag v0.4.1
+  - git push origin v0.4.1
+
+4) Manual publish (alternative)
+- twine upload dist/*
+  - export TWINE_USERNAME="__token__"
+  - export TWINE_PASSWORD="pypi-<your-token>"
+
+5) Post-publish checks
+- pip install mnemex==0.4.1 (or the published version) in a fresh venv
+- Verify entry points work:
+  - mnemex --help
+  - mnemex-search --help
+  - mnemex-maintenance --help
+
+Notes
+- Pre-1.0 SemVer: use 0.y.z until cross-platform/perf testing and API stability
+- If "mnemex" name is unavailable on PyPI at publish time, pick "mnemex-ai" and update the pyproject name accordingly before tagging.
+- Marketing directory is excluded; keep private notes there.
