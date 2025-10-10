@@ -814,6 +814,31 @@ def merge_content_smart(memories: list[Memory]) -> str:
 
 ---
 
+### Pre-commit Hooks (Recommended)
+
+Install pre-commit to catch issues locally before CI:
+
+```bash
+uv run pre-commit install
+# or
+pre-commit install
+
+# Run on all files
+pre-commit run --all-files
+```
+
+Hooks configured in `.pre-commit-config.yaml`:
+- `ruff` — lint with autofix (`--fix`)
+- `ruff-format` — enforce formatting
+- `mypy (src)` — type-check `src/mnemex` only
+- `check-toml` — validates `pyproject.toml` parses
+- `fs-sanity-duplicates` — blocks filenames with trailing numbers (e.g., `file 2.md`)
+
+Notes:
+- The filesystem sanity hook prevents committing duplicate/copy artifacts (common on macOS/Windows).
+- If you hit a hook failure, address the message and re-run `pre-commit run --all-files`.
+- CI mirrors these checks via the Gate job (tests, lint/format, types, TOML parse, fs sanity).
+
 ## Submitting Changes
 
 ### Before Submitting
