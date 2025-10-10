@@ -19,7 +19,6 @@ References:
 import re
 from dataclasses import dataclass
 
-
 # Secret detection patterns
 # These patterns are designed to minimize false positives while catching real secrets
 
@@ -48,9 +47,7 @@ PATTERNS = {
     # Generic tokens
     "bearer_token": re.compile(r"(?i)bearer[\s]+([a-zA-Z0-9_\-\.]{20,})"),
     # JWT tokens
-    "jwt_token": re.compile(
-        r"eyJ[a-zA-Z0-9_\-]+\.eyJ[a-zA-Z0-9_\-]+\.[a-zA-Z0-9_\-]+"
-    ),
+    "jwt_token": re.compile(r"eyJ[a-zA-Z0-9_\-]+\.eyJ[a-zA-Z0-9_\-]+\.[a-zA-Z0-9_\-]+"),
     # Private keys (PEM format)
     "private_key": re.compile(
         r"-----BEGIN\s+(RSA\s+)?PRIVATE\s+KEY-----",
@@ -167,10 +164,10 @@ def scan_file_for_secrets(
     try:
         with open(file_path, encoding="utf-8", errors="ignore") as f:
             content = f.read()
-    except FileNotFoundError:
-        raise FileNotFoundError(f"File not found: {file_path}")
-    except PermissionError:
-        raise PermissionError(f"Permission denied reading file: {file_path}")
+    except FileNotFoundError as e:
+        raise FileNotFoundError(f"File not found: {file_path}") from e
+    except PermissionError as e:
+        raise PermissionError(f"Permission denied reading file: {file_path}") from e
 
     return detect_secrets(content, max_matches=max_matches)
 
@@ -207,16 +204,18 @@ def format_secret_warning(matches: list[SecretMatch]) -> str:
     for secret_type, count in sorted(by_type.items()):
         lines.append(f"  - {secret_type}: {count}")
 
-    lines.extend([
-        "",
-        "This content may contain sensitive information that should not be stored.",
-        "Consider:",
-        "  1. Using environment variables for secrets",
-        "  2. Using a secrets manager (AWS Secrets Manager, HashiCorp Vault, etc.)",
-        "  3. Removing secrets from memory content",
-        "",
-        "To disable secrets detection, set MNEMEX_DETECT_SECRETS=false in your .env file.",
-    ])
+    lines.extend(
+        [
+            "",
+            "This content may contain sensitive information that should not be stored.",
+            "Consider:",
+            "  1. Using environment variables for secrets",
+            "  2. Using a secrets manager (AWS Secrets Manager, HashiCorp Vault, etc.)",
+            "  3. Removing secrets from memory content",
+            "",
+            "To disable secrets detection, set MNEMEX_DETECT_SECRETS=false in your .env file.",
+        ]
+    )
 
     return "\n".join(lines)
 
@@ -298,9 +297,7 @@ def main() -> int:
     import argparse
     import sys
 
-    parser = argparse.ArgumentParser(
-        description="Scan text or files for potential secrets"
-    )
+    parser = argparse.ArgumentParser(description="Scan text or files for potential secrets")
     parser.add_argument(
         "input",
         nargs="?",
