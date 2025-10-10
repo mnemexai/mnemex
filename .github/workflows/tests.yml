@@ -69,3 +69,47 @@ jobs:
 
     - name: Run mypy
       run: uv run mypy src/mnemex
+
+  validate:
+    name: Validate Configs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Validate pyproject.toml parses
+        run: |
+          python -m pip install --upgrade pip tomli
+          python - << 'PY'
+          import sys, pathlib
+          import tomli
+          p = pathlib.Path('pyproject.toml')
+          with p.open('rb') as f:
+              tomli.load(f)
+          print('✓ pyproject.toml parses OK')
+          PY
+
+  fs-sanity:
+    name: Filesystem Sanity Checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Detect duplicate filenames with trailing numbers
+        run: |
+          set -euo pipefail
+          dupes=$(git ls-files | grep -E ' [0-9]+(\.|$)' || true)
+          if [ -n "$dupes" ]; then
+            echo "Found suspicious duplicate files:" >&2
+            echo "$dupes" >&2
+            exit 1
+          fi
+          echo "✓ No suspicious duplicate files found"
+
+  gate:
+    name: Gate
+    runs-on: ubuntu-latest
+    needs: [test, lint, validate, fs-sanity]
+    steps:
+      - name: All checks passed
+        run: echo "✓ All checks passed"
