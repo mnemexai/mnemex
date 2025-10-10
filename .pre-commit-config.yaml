@@ -5,6 +5,10 @@ repos:
        - id: ruff
          args: ["--fix"]
        - id: ruff-format
+  -  repo: https://github.com/pre-commit/pre-commit-hooks
+     rev: v4.6.0
+     hooks:
+       - id: check-toml
   -  repo: https://github.com/pre-commit/mirrors-mypy
      # Pin to a stable mypy mirror release
      rev: v1.8.0
@@ -13,4 +17,11 @@ repos:
          name: mypy (src)
          args: ["--config-file=pyproject.toml", "src/mnemex"]
          additional_dependencies: []
+         pass_filenames: false
+  -  repo: local
+     hooks:
+       - id: fs-sanity-duplicates
+         name: Filesystem sanity (no trailing-number duplicates)
+         entry: bash scripts/precommit_fs_sanity.sh
+         language: system
          pass_filenames: false
