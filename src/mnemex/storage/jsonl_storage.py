@@ -48,6 +48,26 @@ class JSONLStorage:
         # Track if connected
         self._connected = False
 
+    @property
+    def storage_path(self) -> Path:
+        """Get current storage directory path.
+
+        Exposed for tests to redirect the global storage instance before connect().
+        """
+        return self.storage_dir
+
+    @storage_path.setter
+    def storage_path(self, value: Path | str) -> None:
+        """Set storage directory path and update file paths.
+
+        Can be used prior to connect() to point the global instance at a temp dir.
+        """
+        path = value if isinstance(value, Path) else Path(value)
+        self.storage_dir = path
+        self.storage_dir.mkdir(parents=True, exist_ok=True)
+        self.memories_path = self.storage_dir / "memories.jsonl"
+        self.relations_path = self.storage_dir / "relations.jsonl"
+
     def connect(self) -> None:
         """Load JSONL files into memory and build indexes."""
         if self._connected:

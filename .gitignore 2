@@ -5,9 +5,6 @@ GEMINI.md
 AGENTS.md
 docs/marketing.md
 docs/marketing-checklist.md
-docs/prompt_injection.md
-marketing/
-pypi.txt
 .claude/
 .gemini/
 .codex/

@@ -1,0 +1,101 @@
+site_name: Mnemex Documentation
+site_description: Memory persistence for AI assistants with temporal decay
+site_author: simplemindedbot
+site_url: https://simplemindedbot.github.io/mnemex/
+
+repo_name: simplemindedbot/mnemex
+repo_url: https://github.com/simplemindedbot/mnemex
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  palette:
+    # Light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - content.action.edit
+
+  icon:
+    repo: fontawesome/brands/github
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - md_in_html
+  - def_list
+  - tables
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+  - autorefs
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/simplemindedbot/mnemex
+    - icon: fontawesome/solid/comments
+      link: https://github.com/simplemindedbot/mnemex/discussions
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Installation: installation.md
+      - Quick Start: quickstart.md
+      - Configuration: configuration.md
+  - Documentation:
+      - Architecture: architecture.md
+      - API Reference: api.md
+      - Knowledge Graph: graph_features.md
+      - Scoring Algorithm: scoring_algorithm.md
+  - Deployment:
+      - Deployment Guide: deployment.md
+      - Security: security.md
+  - Development:
+      - Contributing: CONTRIBUTING.md
+      - Roadmap: ROADMAP.md
+      - Future Plans: future_roadmap.md
+  - About:
+      - License: LICENSE.md
+      - Changelog: CHANGELOG.md

@@ -1,0 +1,16 @@
+repos:
+  -  repo: https://github.com/astral-sh/ruff-pre-commit
+     rev: v0.6.9
+     hooks:
+       - id: ruff
+         args: ["--fix"]
+       - id: ruff-format
+  -  repo: https://github.com/pre-commit/mirrors-mypy
+     # Pin to a stable mypy mirror release
+     rev: v1.8.0
+     hooks:
+       - id: mypy
+         name: mypy (src)
+         args: ["--config-file=pyproject.toml", "src/mnemex"]
+         additional_dependencies: []
+         pass_filenames: false

@@ -1,0 +1,75 @@
+# Mnemex Configuration
+
+# Storage (Phase 2 - JSONL)
+# JSONL storage directory (contains memories.jsonl and relations.jsonl)
+MNEMEX_STORAGE_PATH=~/.config/mnemex/jsonl
+
+# Decay Model Selection
+# Options: power_law | exponential | two_component
+MNEMEX_DECAY_MODEL=power_law
+
+# Power-law parameters (default model)
+MNEMEX_PL_ALPHA=1.1
+MNEMEX_PL_HALFLIFE_DAYS=3.0
+
+# Exponential parameters (if MNEMEX_DECAY_MODEL=exponential)
+# MNEMEX_DECAY_LAMBDA=2.673e-6  # 3-day half-life
+
+# Two-component parameters (if MNEMEX_DECAY_MODEL=two_component)
+# MNEMEX_TC_LAMBDA_FAST=1.603e-5  # ~12h half-life
+# MNEMEX_TC_LAMBDA_SLOW=1.147e-6  # ~7d half-life
+# MNEMEX_TC_WEIGHT_FAST=0.7
+
+# Common decay parameters
+MNEMEX_DECAY_BETA=0.6
+
+# Thresholds
+# Minimum score before forgetting
+MNEMEX_FORGET_THRESHOLD=0.05
+# Score threshold for automatic promotion
+MNEMEX_PROMOTE_THRESHOLD=0.65
+# Use count threshold for promotion
+MNEMEX_PROMOTE_USE_COUNT=5
+# Time window for use count (days)
+MNEMEX_PROMOTE_TIME_WINDOW=14
+
+# Embeddings (optional)
+# Sentence transformer model for semantic search
+MNEMEX_EMBED_MODEL=all-MiniLM-L6-v2
+# Enable embeddings (true/false)
+MNEMEX_ENABLE_EMBEDDINGS=false
+
+# Semantic Search Thresholds
+# High similarity = likely duplicate
+MNEMEX_SEMANTIC_HI=0.88
+# Low similarity = likely distinct
+MNEMEX_SEMANTIC_LO=0.78
+
+# Clustering
+# Cosine similarity threshold for linking in clusters
+MNEMEX_CLUSTER_LINK_THRESHOLD=0.83
+# Maximum cluster size for LLM review
+MNEMEX_CLUSTER_MAX_SIZE=12
+
+# Long-Term Memory (LTM) Integration
+# Path to Obsidian vault for LTM storage and search
+LTM_VAULT_PATH=~/Documents/Obsidian/Vault
+# Path to LTM index file
+LTM_INDEX_PATH=~/.config/mnemex/ltm-index.jsonl
+# Folder within vault for promoted memories
+LTM_PROMOTED_FOLDER=stm-promoted
+
+# Git Backup
+# Enable automatic git commits
+GIT_AUTO_COMMIT=true
+# Auto-commit interval in seconds (3600 = 1 hour)
+GIT_COMMIT_INTERVAL=3600
+
+# Unified Search
+# Weight for STM results in unified search
+SEARCH_STM_WEIGHT=1.0
+# Weight for LTM results in unified search
+SEARCH_LTM_WEIGHT=0.7
+
+# Logging
+LOG_LEVEL=INFO

@@ -8,7 +8,6 @@ A Model Context Protocol (MCP) server providing **human-like memory dynamics** f
 [![Security Scanning](https://github.com/simplemindedbot/mnemex/actions/workflows/security.yml/badge.svg)](https://github.com/simplemindedbot/mnemex/actions/workflows/security.yml)
 [![codecov](https://codecov.io/gh/simplemindedbot/mnemex/branch/main/graph/badge.svg)](https://codecov.io/gh/simplemindedbot/mnemex)
 [![SBOM: CycloneDX](https://img.shields.io/badge/SBOM-CycloneDX-blue)](https://github.com/simplemindedbot/mnemex/actions/workflows/security.yml)
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/simplemindedbot/mnemex)
 
 > [!WARNING]
 > **🚧 ACTIVE DEVELOPMENT - EXPECT BUGS 🚧**
