@@ -1382,6 +1382,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#pre-commit-hooks-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pre-commit Hooks (Recommended)
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2178,6 +2187,15 @@
   <a href="#code-organization" class="md-nav__link">
     <span class="md-ellipsis">
       Code Organization
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pre-commit-hooks-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pre-commit Hooks (Recommended)
     </span>
   </a>
   
@@ -3017,19 +3035,38 @@
 </code></pre></div></li>
 </ul>
 <hr />
+<h3 id="pre-commit-hooks-recommended">Pre-commit Hooks (Recommended)<a class="headerlink" href="#pre-commit-hooks-recommended" title="Permanent link">&para;</a></h3>
+<p>Install pre-commit to catch issues locally before CI:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-55-1" name="__codelineno-55-1" href="#__codelineno-55-1"></a>uv<span class="w"> </span>run<span class="w"> </span>pre-commit<span class="w"> </span>install
+<a id="__codelineno-55-2" name="__codelineno-55-2" href="#__codelineno-55-2"></a><span class="c1"># or</span>
+<a id="__codelineno-55-3" name="__codelineno-55-3" href="#__codelineno-55-3"></a>pre-commit<span class="w"> </span>install
+<a id="__codelineno-55-4" name="__codelineno-55-4" href="#__codelineno-55-4"></a>
+<a id="__codelineno-55-5" name="__codelineno-55-5" href="#__codelineno-55-5"></a><span class="c1"># Run on all files</span>
+<a id="__codelineno-55-6" name="__codelineno-55-6" href="#__codelineno-55-6"></a>pre-commit<span class="w"> </span>run<span class="w"> </span>--all-files
+</code></pre></div>
+<p>Hooks configured in <code>.pre-commit-config.yaml</code>:
+- <code>ruff</code> — lint with autofix (<code>--fix</code>)
+- <code>ruff-format</code> — enforce formatting
+- <code>mypy (src)</code> — type-check <code>src/mnemex</code> only
+- <code>check-toml</code> — validates <code>pyproject.toml</code> parses
+- <code>fs-sanity-duplicates</code> — blocks filenames with trailing numbers (e.g., <code>file 2.md</code>)</p>
+<p>Notes:
+- The filesystem sanity hook prevents committing duplicate/copy artifacts (common on macOS/Windows).
+- If you hit a hook failure, address the message and re-run <code>pre-commit run --all-files</code>.
+- CI mirrors these checks via the Gate job (tests, lint/format, types, TOML parse, fs sanity).</p>
 <h2 id="submitting-changes">Submitting Changes<a class="headerlink" href="#submitting-changes" title="Permanent link">&para;</a></h2>
 <h3 id="before-submitting">Before Submitting<a class="headerlink" href="#before-submitting" title="Permanent link">&para;</a></h3>
 <ol>
 <li>
 <p><strong>Ensure all tests pass:</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-55-1" name="__codelineno-55-1" href="#__codelineno-55-1"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest
+<div class="highlight"><pre><span></span><code><a id="__codelineno-56-1" name="__codelineno-56-1" href="#__codelineno-56-1"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest
 </code></pre></div></p>
 </li>
 <li>
 <p><strong>Check code style:</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-56-1" name="__codelineno-56-1" href="#__codelineno-56-1"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>src/mnemex<span class="w"> </span>tests
-<a id="__codelineno-56-2" name="__codelineno-56-2" href="#__codelineno-56-2"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>format<span class="w"> </span>src/mnemex<span class="w"> </span>tests
-<a id="__codelineno-56-3" name="__codelineno-56-3" href="#__codelineno-56-3"></a>uv<span class="w"> </span>run<span class="w"> </span>mypy<span class="w"> </span>src/mnemex
+<div class="highlight"><pre><span></span><code><a id="__codelineno-57-1" name="__codelineno-57-1" href="#__codelineno-57-1"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>src/mnemex<span class="w"> </span>tests
+<a id="__codelineno-57-2" name="__codelineno-57-2" href="#__codelineno-57-2"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>format<span class="w"> </span>src/mnemex<span class="w"> </span>tests
+<a id="__codelineno-57-3" name="__codelineno-57-3" href="#__codelineno-57-3"></a>uv<span class="w"> </span>run<span class="w"> </span>mypy<span class="w"> </span>src/mnemex
 </code></pre></div></p>
 </li>
 <li>
@@ -3048,7 +3085,7 @@
 <ol>
 <li>
 <p><strong>Push your branch:</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-57-1" name="__codelineno-57-1" href="#__codelineno-57-1"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>feature/your-feature-name
+<div class="highlight"><pre><span></span><code><a id="__codelineno-58-1" name="__codelineno-58-1" href="#__codelineno-58-1"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>feature/your-feature-name
 </code></pre></div></p>
 </li>
 <li>
@@ -3063,26 +3100,26 @@
 <li>Any <strong>breaking changes</strong></li>
 </ol>
 <p><strong>Example PR template:</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-58-1" name="__codelineno-58-1" href="#__codelineno-58-1"></a><span class="gu">## Description</span>
-<a id="__codelineno-58-2" name="__codelineno-58-2" href="#__codelineno-58-2"></a>Implement spaced repetition scheduling for memory review.
-<a id="__codelineno-58-3" name="__codelineno-58-3" href="#__codelineno-58-3"></a>
-<a id="__codelineno-58-4" name="__codelineno-58-4" href="#__codelineno-58-4"></a><span class="gu">## Motivation</span>
-<a id="__codelineno-58-5" name="__codelineno-58-5" href="#__codelineno-58-5"></a>Users requested a way to get reminders for reviewing important memories
-<a id="__codelineno-58-6" name="__codelineno-58-6" href="#__codelineno-58-6"></a>before they decay too much.
-<a id="__codelineno-58-7" name="__codelineno-58-7" href="#__codelineno-58-7"></a>
-<a id="__codelineno-58-8" name="__codelineno-58-8" href="#__codelineno-58-8"></a><span class="gu">## Changes</span>
-<a id="__codelineno-58-9" name="__codelineno-58-9" href="#__codelineno-58-9"></a><span class="k">-</span><span class="w"> </span>Add <span class="sb">`calculate_next_review()`</span> function to core/scheduling.py
-<a id="__codelineno-58-10" name="__codelineno-58-10" href="#__codelineno-58-10"></a><span class="k">-</span><span class="w"> </span>Add <span class="sb">`get_review_queue()`</span> MCP tool
-<a id="__codelineno-58-11" name="__codelineno-58-11" href="#__codelineno-58-11"></a><span class="k">-</span><span class="w"> </span>Add tests in tests/test_scheduling.py (100% coverage)
-<a id="__codelineno-58-12" name="__codelineno-58-12" href="#__codelineno-58-12"></a><span class="k">-</span><span class="w"> </span>Update README.md with usage examples
-<a id="__codelineno-58-13" name="__codelineno-58-13" href="#__codelineno-58-13"></a>
-<a id="__codelineno-58-14" name="__codelineno-58-14" href="#__codelineno-58-14"></a><span class="gu">## Testing</span>
-<a id="__codelineno-58-15" name="__codelineno-58-15" href="#__codelineno-58-15"></a><span class="k">-</span><span class="w"> </span>All existing tests pass
-<a id="__codelineno-58-16" name="__codelineno-58-16" href="#__codelineno-58-16"></a><span class="k">-</span><span class="w"> </span>Added 12 new tests for scheduling logic
-<a id="__codelineno-58-17" name="__codelineno-58-17" href="#__codelineno-58-17"></a><span class="k">-</span><span class="w"> </span>Tested manually with 100+ memories
-<a id="__codelineno-58-18" name="__codelineno-58-18" href="#__codelineno-58-18"></a>
-<a id="__codelineno-58-19" name="__codelineno-58-19" href="#__codelineno-58-19"></a><span class="gu">## Breaking Changes</span>
-<a id="__codelineno-58-20" name="__codelineno-58-20" href="#__codelineno-58-20"></a>None - this is a new feature with no API changes.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-59-1" name="__codelineno-59-1" href="#__codelineno-59-1"></a><span class="gu">## Description</span>
+<a id="__codelineno-59-2" name="__codelineno-59-2" href="#__codelineno-59-2"></a>Implement spaced repetition scheduling for memory review.
+<a id="__codelineno-59-3" name="__codelineno-59-3" href="#__codelineno-59-3"></a>
+<a id="__codelineno-59-4" name="__codelineno-59-4" href="#__codelineno-59-4"></a><span class="gu">## Motivation</span>
+<a id="__codelineno-59-5" name="__codelineno-59-5" href="#__codelineno-59-5"></a>Users requested a way to get reminders for reviewing important memories
+<a id="__codelineno-59-6" name="__codelineno-59-6" href="#__codelineno-59-6"></a>before they decay too much.
+<a id="__codelineno-59-7" name="__codelineno-59-7" href="#__codelineno-59-7"></a>
+<a id="__codelineno-59-8" name="__codelineno-59-8" href="#__codelineno-59-8"></a><span class="gu">## Changes</span>
+<a id="__codelineno-59-9" name="__codelineno-59-9" href="#__codelineno-59-9"></a><span class="k">-</span><span class="w"> </span>Add <span class="sb">`calculate_next_review()`</span> function to core/scheduling.py
+<a id="__codelineno-59-10" name="__codelineno-59-10" href="#__codelineno-59-10"></a><span class="k">-</span><span class="w"> </span>Add <span class="sb">`get_review_queue()`</span> MCP tool
+<a id="__codelineno-59-11" name="__codelineno-59-11" href="#__codelineno-59-11"></a><span class="k">-</span><span class="w"> </span>Add tests in tests/test_scheduling.py (100% coverage)
+<a id="__codelineno-59-12" name="__codelineno-59-12" href="#__codelineno-59-12"></a><span class="k">-</span><span class="w"> </span>Update README.md with usage examples
+<a id="__codelineno-59-13" name="__codelineno-59-13" href="#__codelineno-59-13"></a>
+<a id="__codelineno-59-14" name="__codelineno-59-14" href="#__codelineno-59-14"></a><span class="gu">## Testing</span>
+<a id="__codelineno-59-15" name="__codelineno-59-15" href="#__codelineno-59-15"></a><span class="k">-</span><span class="w"> </span>All existing tests pass
+<a id="__codelineno-59-16" name="__codelineno-59-16" href="#__codelineno-59-16"></a><span class="k">-</span><span class="w"> </span>Added 12 new tests for scheduling logic
+<a id="__codelineno-59-17" name="__codelineno-59-17" href="#__codelineno-59-17"></a><span class="k">-</span><span class="w"> </span>Tested manually with 100+ memories
+<a id="__codelineno-59-18" name="__codelineno-59-18" href="#__codelineno-59-18"></a>
+<a id="__codelineno-59-19" name="__codelineno-59-19" href="#__codelineno-59-19"></a><span class="gu">## Breaking Changes</span>
+<a id="__codelineno-59-20" name="__codelineno-59-20" href="#__codelineno-59-20"></a>None - this is a new feature with no API changes.
 </code></pre></div>
 <h3 id="code-review-process">Code Review Process<a class="headerlink" href="#code-review-process" title="Permanent link">&para;</a></h3>
 <ul>
@@ -3103,46 +3140,46 @@
 <li>Steps to reproduce</li>
 </ol>
 <h3 id="bug-report-template">Bug Report Template<a class="headerlink" href="#bug-report-template" title="Permanent link">&para;</a></h3>
-<p><div class="highlight"><pre><span></span><code><a id="__codelineno-59-1" name="__codelineno-59-1" href="#__codelineno-59-1"></a><span class="gs">**Describe the bug**</span>
-<a id="__codelineno-59-2" name="__codelineno-59-2" href="#__codelineno-59-2"></a>A clear description of what the bug is.
-<a id="__codelineno-59-3" name="__codelineno-59-3" href="#__codelineno-59-3"></a>
-<a id="__codelineno-59-4" name="__codelineno-59-4" href="#__codelineno-59-4"></a><span class="gs">**To Reproduce**</span>
-<a id="__codelineno-59-5" name="__codelineno-59-5" href="#__codelineno-59-5"></a>Steps to reproduce:
-<a id="__codelineno-59-6" name="__codelineno-59-6" href="#__codelineno-59-6"></a><span class="k">1.</span> Install Mnemex with <span class="sb">`uv tool install...`</span>
-<a id="__codelineno-59-7" name="__codelineno-59-7" href="#__codelineno-59-7"></a><span class="k">2.</span> Configure with these settings: ...
-<a id="__codelineno-59-8" name="__codelineno-59-8" href="#__codelineno-59-8"></a><span class="k">3.</span> Run command <span class="sb">`...`</span>
-<a id="__codelineno-59-9" name="__codelineno-59-9" href="#__codelineno-59-9"></a><span class="k">4.</span> See error
-<a id="__codelineno-59-10" name="__codelineno-59-10" href="#__codelineno-59-10"></a>
-<a id="__codelineno-59-11" name="__codelineno-59-11" href="#__codelineno-59-11"></a><span class="gs">**Expected behavior**</span>
-<a id="__codelineno-59-12" name="__codelineno-59-12" href="#__codelineno-59-12"></a>What you expected to happen.
-<a id="__codelineno-59-13" name="__codelineno-59-13" href="#__codelineno-59-13"></a>
-<a id="__codelineno-59-14" name="__codelineno-59-14" href="#__codelineno-59-14"></a><span class="gs">**Actual behavior**</span>
-<a id="__codelineno-59-15" name="__codelineno-59-15" href="#__codelineno-59-15"></a>What actually happened.
-<a id="__codelineno-59-16" name="__codelineno-59-16" href="#__codelineno-59-16"></a>
-<a id="__codelineno-59-17" name="__codelineno-59-17" href="#__codelineno-59-17"></a><span class="gs">**Environment:**</span>
-<a id="__codelineno-59-18" name="__codelineno-59-18" href="#__codelineno-59-18"></a><span class="k">-</span><span class="w"> </span>OS: [e.g., Windows 11, Ubuntu 22.04, macOS 14]
-<a id="__codelineno-59-19" name="__codelineno-59-19" href="#__codelineno-59-19"></a><span class="k">-</span><span class="w"> </span>Python version: [e.g., 3.10.13]
-<a id="__codelineno-59-20" name="__codelineno-59-20" href="#__codelineno-59-20"></a><span class="k">-</span><span class="w"> </span>Mnemex version: [e.g., 1.0.0]
-<a id="__codelineno-59-21" name="__codelineno-59-21" href="#__codelineno-59-21"></a><span class="k">-</span><span class="w"> </span>Installation method: [uv tool install / editable]
-<a id="__codelineno-59-22" name="__codelineno-59-22" href="#__codelineno-59-22"></a>
-<a id="__codelineno-59-23" name="__codelineno-59-23" href="#__codelineno-59-23"></a><span class="gs">**Logs/Screenshots**</span>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-60-1" name="__codelineno-60-1" href="#__codelineno-60-1"></a><span class="gs">**Describe the bug**</span>
+<a id="__codelineno-60-2" name="__codelineno-60-2" href="#__codelineno-60-2"></a>A clear description of what the bug is.
+<a id="__codelineno-60-3" name="__codelineno-60-3" href="#__codelineno-60-3"></a>
+<a id="__codelineno-60-4" name="__codelineno-60-4" href="#__codelineno-60-4"></a><span class="gs">**To Reproduce**</span>
+<a id="__codelineno-60-5" name="__codelineno-60-5" href="#__codelineno-60-5"></a>Steps to reproduce:
+<a id="__codelineno-60-6" name="__codelineno-60-6" href="#__codelineno-60-6"></a><span class="k">1.</span> Install Mnemex with <span class="sb">`uv tool install...`</span>
+<a id="__codelineno-60-7" name="__codelineno-60-7" href="#__codelineno-60-7"></a><span class="k">2.</span> Configure with these settings: ...
+<a id="__codelineno-60-8" name="__codelineno-60-8" href="#__codelineno-60-8"></a><span class="k">3.</span> Run command <span class="sb">`...`</span>
+<a id="__codelineno-60-9" name="__codelineno-60-9" href="#__codelineno-60-9"></a><span class="k">4.</span> See error
+<a id="__codelineno-60-10" name="__codelineno-60-10" href="#__codelineno-60-10"></a>
+<a id="__codelineno-60-11" name="__codelineno-60-11" href="#__codelineno-60-11"></a><span class="gs">**Expected behavior**</span>
+<a id="__codelineno-60-12" name="__codelineno-60-12" href="#__codelineno-60-12"></a>What you expected to happen.
+<a id="__codelineno-60-13" name="__codelineno-60-13" href="#__codelineno-60-13"></a>
+<a id="__codelineno-60-14" name="__codelineno-60-14" href="#__codelineno-60-14"></a><span class="gs">**Actual behavior**</span>
+<a id="__codelineno-60-15" name="__codelineno-60-15" href="#__codelineno-60-15"></a>What actually happened.
+<a id="__codelineno-60-16" name="__codelineno-60-16" href="#__codelineno-60-16"></a>
+<a id="__codelineno-60-17" name="__codelineno-60-17" href="#__codelineno-60-17"></a><span class="gs">**Environment:**</span>
+<a id="__codelineno-60-18" name="__codelineno-60-18" href="#__codelineno-60-18"></a><span class="k">-</span><span class="w"> </span>OS: [e.g., Windows 11, Ubuntu 22.04, macOS 14]
+<a id="__codelineno-60-19" name="__codelineno-60-19" href="#__codelineno-60-19"></a><span class="k">-</span><span class="w"> </span>Python version: [e.g., 3.10.13]
+<a id="__codelineno-60-20" name="__codelineno-60-20" href="#__codelineno-60-20"></a><span class="k">-</span><span class="w"> </span>Mnemex version: [e.g., 1.0.0]
+<a id="__codelineno-60-21" name="__codelineno-60-21" href="#__codelineno-60-21"></a><span class="k">-</span><span class="w"> </span>Installation method: [uv tool install / editable]
+<a id="__codelineno-60-22" name="__codelineno-60-22" href="#__codelineno-60-22"></a>
+<a id="__codelineno-60-23" name="__codelineno-60-23" href="#__codelineno-60-23"></a><span class="gs">**Logs/Screenshots**</span>
 </code></pre></div>
 [Paste any error messages or logs here]
-<div class="highlight"><pre><span></span><code><a id="__codelineno-60-1" name="__codelineno-60-1" href="#__codelineno-60-1"></a>**Additional context**
-<a id="__codelineno-60-2" name="__codelineno-60-2" href="#__codelineno-60-2"></a>Any other information that might help.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-61-1" name="__codelineno-61-1" href="#__codelineno-61-1"></a>**Additional context**
+<a id="__codelineno-61-2" name="__codelineno-61-2" href="#__codelineno-61-2"></a>Any other information that might help.
 </code></pre></div></p>
 <h3 id="feature-requests">Feature Requests<a class="headerlink" href="#feature-requests" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-61-1" name="__codelineno-61-1" href="#__codelineno-61-1"></a><span class="gs">**Feature description**</span>
-<a id="__codelineno-61-2" name="__codelineno-61-2" href="#__codelineno-61-2"></a>A clear description of the feature you&#39;d like.
-<a id="__codelineno-61-3" name="__codelineno-61-3" href="#__codelineno-61-3"></a>
-<a id="__codelineno-61-4" name="__codelineno-61-4" href="#__codelineno-61-4"></a><span class="gs">**Use case**</span>
-<a id="__codelineno-61-5" name="__codelineno-61-5" href="#__codelineno-61-5"></a>Why would this feature be useful? What problem does it solve?
-<a id="__codelineno-61-6" name="__codelineno-61-6" href="#__codelineno-61-6"></a>
-<a id="__codelineno-61-7" name="__codelineno-61-7" href="#__codelineno-61-7"></a><span class="gs">**Proposed solution**</span>
-<a id="__codelineno-61-8" name="__codelineno-61-8" href="#__codelineno-61-8"></a>If you have ideas on how to implement it.
-<a id="__codelineno-61-9" name="__codelineno-61-9" href="#__codelineno-61-9"></a>
-<a id="__codelineno-61-10" name="__codelineno-61-10" href="#__codelineno-61-10"></a><span class="gs">**Alternatives considered**</span>
-<a id="__codelineno-61-11" name="__codelineno-61-11" href="#__codelineno-61-11"></a>Other approaches you&#39;ve thought about.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-62-1" name="__codelineno-62-1" href="#__codelineno-62-1"></a><span class="gs">**Feature description**</span>
+<a id="__codelineno-62-2" name="__codelineno-62-2" href="#__codelineno-62-2"></a>A clear description of the feature you&#39;d like.
+<a id="__codelineno-62-3" name="__codelineno-62-3" href="#__codelineno-62-3"></a>
+<a id="__codelineno-62-4" name="__codelineno-62-4" href="#__codelineno-62-4"></a><span class="gs">**Use case**</span>
+<a id="__codelineno-62-5" name="__codelineno-62-5" href="#__codelineno-62-5"></a>Why would this feature be useful? What problem does it solve?
+<a id="__codelineno-62-6" name="__codelineno-62-6" href="#__codelineno-62-6"></a>
+<a id="__codelineno-62-7" name="__codelineno-62-7" href="#__codelineno-62-7"></a><span class="gs">**Proposed solution**</span>
+<a id="__codelineno-62-8" name="__codelineno-62-8" href="#__codelineno-62-8"></a>If you have ideas on how to implement it.
+<a id="__codelineno-62-9" name="__codelineno-62-9" href="#__codelineno-62-9"></a>
+<a id="__codelineno-62-10" name="__codelineno-62-10" href="#__codelineno-62-10"></a><span class="gs">**Alternatives considered**</span>
+<a id="__codelineno-62-11" name="__codelineno-62-11" href="#__codelineno-62-11"></a>Other approaches you&#39;ve thought about.
 </code></pre></div>
 <hr />
 <h2 id="getting-help">Getting Help<a class="headerlink" href="#getting-help" title="Permanent link">&para;</a></h2>
