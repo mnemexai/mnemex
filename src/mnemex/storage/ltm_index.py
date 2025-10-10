@@ -85,7 +85,10 @@ class LTMIndex:
         if index_path is None:
             new_path = vault_path / ".mnemex-index.jsonl"
             legacy_path = vault_path / ".stm-index.jsonl"
-            self.index_path = new_path if new_path.exists() or not legacy_path.exists() else legacy_path
+            if new_path.exists() or not legacy_path.exists():
+                self.index_path = new_path
+            else:
+                self.index_path = legacy_path
         else:
             self.index_path = index_path
 
