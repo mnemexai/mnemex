@@ -43,6 +43,59 @@ jobs:
           name: bandit-results
           path: bandit-report.json
 
+      - name: Create issues for HIGH Bandit findings
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = 'bandit-report.json';
+            if (!fs.existsSync(path)) {
+              core.info('No bandit-report.json found');
+              return;
+            }
+            const data = JSON.parse(fs.readFileSync(path, 'utf8'));
+            const results = Array.isArray(data.results) ? data.results : [];
+            const highs = results.filter(r => (r.issue_severity || '').toUpperCase() === 'HIGH');
+            core.info(`Found ${highs.length} HIGH severity findings`);
+            for (const r of highs) {
+              const testId = r.test_id || 'UNKNOWN';
+              const file = r.filename || 'unknown-file';
+              const line = r.line_number || 0;
+              const title = `[Bandit:${testId}] ${file}:${line}`;
+              const body = [
+                `Bandit detected a HIGH severity issue.`,
+                '',
+                `- Rule: ${testId}`,
+                `- File: ${file}`,
+                `- Line: ${line}`,
+                `- Severity: ${r.issue_severity}`,
+                `- Confidence: ${r.issue_confidence}`,
+                `- More info: ${r.more_info || 'n/a'}`,
+                '',
+                'Issue text:',
+                '```',
+                (r.issue_text || '').trim(),
+                '```'
+              ].join('\n');
+              // Check if an open issue with same title already exists
+              const { data: existing } = await github.rest.search.issuesAndPullRequests({
+                q: `repo:${context.repo.owner}/${context.repo.repo} is:issue is:open in:title "${title.replace(/"/g, '\\"')}"`
+              });
+              if (existing.total_count > 0) {
+                core.info(`Issue already exists for ${title}`);
+                continue;
+              }
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: ['security', 'bandit']
+              });
+              core.info(`Created issue: ${title}`);
+            }
+
   pip-audit:
     name: Dependency Vulnerability Scan
     runs-on: ubuntu-latest
