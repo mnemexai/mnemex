@@ -1,71 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://simplemindedbot.github.io/mnemex/</loc>
-         <lastmod>2025-10-10</lastmod>
+         <loc>https://mnemex.dev/</loc>
+         <lastmod>2025-10-11</lastmod>
     </url>
     <url>
-         <loc>https://simplemindedbot.github.io/mnemex/CHANGELOG/</loc>
-         <lastmod>2025-10-10</lastmod>
+         <loc>https://mnemex.dev/CHANGELOG/</loc>
+         <lastmod>2025-10-11</lastmod>
     </url>
     <url>
-         <loc>https://simplemindedbot.github.io/mnemex/CONTRIBUTING/</loc>
-         <lastmod>2025-10-10</lastmod>
+         <loc>https://mnemex.dev/CONTRIBUTING/</loc>
+         <lastmod>2025-10-11</lastmod>
     </url>
     <url>
-         <loc>https://simplemindedbot.github.io/mnemex/LICENSE/</loc>
-         <lastmod>2025-10-10</lastmod>
+         <loc>https://mnemex.dev/LICENSE/</loc>
+         <lastmod>2025-10-11</lastmod>
     </url>
     <url>
-         <loc>https://simplemindedbot.github.io/mnemex/ROADMAP/</loc>
-         <lastmod>2025-10-10</lastmod>
+         <loc>https://mnemex.dev/ROADMAP/</loc>
+         <lastmod>2025-10-11</lastmod>
     </url>
     <url>
-         <loc>https://simplemindedbot.github.io/mnemex/api/</loc>
-         <lastmod>2025-10-10</lastmod>
+         <loc>https://mnemex.dev/api/</loc>
+         <lastmod>2025-10-11</lastmod>
     </url>
     <url>
-         <loc>https://simplemindedbot.github.io/mnemex/architecture/</loc>
-         <lastmod>2025-10-10</lastmod>
+         <loc>https://mnemex.dev/architecture/</loc>
+         <lastmod>2025-10-11</lastmod>
     </url>
     <url>
-         <loc>https://simplemindedbot.github.io/mnemex/configuration/</loc>
-         <lastmod>2025-10-10</lastmod>
+         <loc>https://mnemex.dev/configuration/</loc>
+         <lastmod>2025-10-11</lastmod>
     </url>
     <url>
-         <loc>https://simplemindedbot.github.io/mnemex/deployment/</loc>
-         <lastmod>2025-10-10</lastmod>
+         <loc>https://mnemex.dev/deployment/</loc>
+         <lastmod>2025-10-11</lastmod>
     </url>
     <url>
-         <loc>https://simplemindedbot.github.io/mnemex/future_roadmap/</loc>
-         <lastmod>2025-10-10</lastmod>
+         <loc>https://mnemex.dev/future_roadmap/</loc>
+         <lastmod>2025-10-11</lastmod>
     </url>
     <url>
-         <loc>https://simplemindedbot.github.io/mnemex/graph_features/</loc>
-         <lastmod>2025-10-10</lastmod>
+         <loc>https://mnemex.dev/graph_features/</loc>
+         <lastmod>2025-10-11</lastmod>
     </url>
     <url>
-         <loc>https://simplemindedbot.github.io/mnemex/installation/</loc>
-         <lastmod>2025-10-10</lastmod>
+         <loc>https://mnemex.dev/installation/</loc>
+         <lastmod>2025-10-11</lastmod>
     </url>
     <url>
-         <loc>https://simplemindedbot.github.io/mnemex/prompt_injection/</loc>
-         <lastmod>2025-10-10</lastmod>
+         <loc>https://mnemex.dev/prompt_injection/</loc>
+         <lastmod>2025-10-11</lastmod>
     </url>
     <url>
-         <loc>https://simplemindedbot.github.io/mnemex/quickstart/</loc>
-         <lastmod>2025-10-10</lastmod>
+         <loc>https://mnemex.dev/quickstart/</loc>
+         <lastmod>2025-10-11</lastmod>
     </url>
     <url>
-         <loc>https://simplemindedbot.github.io/mnemex/scoring_algorithm/</loc>
-         <lastmod>2025-10-10</lastmod>
+         <loc>https://mnemex.dev/scoring_algorithm/</loc>
+         <lastmod>2025-10-11</lastmod>
     </url>
     <url>
-         <loc>https://simplemindedbot.github.io/mnemex/security/</loc>
-         <lastmod>2025-10-10</lastmod>
+         <loc>https://mnemex.dev/security/</loc>
+         <lastmod>2025-10-11</lastmod>
     </url>
     <url>
-         <loc>https://simplemindedbot.github.io/mnemex/prompts/memory_system_prompt/</loc>
-         <lastmod>2025-10-10</lastmod>
+         <loc>https://mnemex.dev/prompts/memory_system_prompt/</loc>
+         <lastmod>2025-10-11</lastmod>
     </url>
 </urlset>
