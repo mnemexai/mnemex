@@ -1,7 +1,7 @@
 site_name: Mnemex Documentation
 site_description: Memory persistence for AI assistants with temporal decay
 site_author: simplemindedbot
-site_url: https://simplemindedbot.github.io/mnemex/
+site_url: https://mnemex.dev/
 
 repo_name: simplemindedbot/mnemex
 repo_url: https://github.com/simplemindedbot/mnemex

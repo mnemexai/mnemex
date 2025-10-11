@@ -46,4 +46,5 @@ jobs:
         run: mkdocs build --strict
 
       - name: Deploy to GitHub Pages
-        run: mkdocs gh-deploy --force
+        # Include custom domain to preserve CNAME on each deploy
+        run: mkdocs gh-deploy --force --custom-domain mnemex.dev
