@@ -25,7 +25,8 @@ jobs:
           # Disallow adding built site artifacts to main
           # Block top-level index.html, assets/*, search/*, sitemap.* at repo root
           if echo "$CHANGED_FILES" | grep -E '^(index\.html|assets/|search/|sitemap\.xml(\.gz)?$)' >/dev/null; then
-            echo "\n❌ Built site artifacts detected in PR targeting main."
+            echo ""
+            echo "❌ Built site artifacts detected in PR targeting main."
             echo "Do not commit generated documentation to main. CI publishes docs to gh-pages."
             exit 1
           fi
