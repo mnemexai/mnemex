@@ -85,6 +85,7 @@ def validate_string_length(
     max_length: int,
     field_name: str = "value",
     allow_none: bool = False,
+    allow_empty: bool = True,
 ) -> str | None:
     """
     Validate string length is within acceptable limits.
@@ -94,12 +95,13 @@ def validate_string_length(
         max_length: Maximum allowed length
         field_name: Name of field for error messages
         allow_none: Whether None is acceptable
+        allow_empty: Whether empty strings are acceptable
 
     Returns:
         Validated string (or None if allow_none=True)
 
     Raises:
-        ValueError: If string exceeds max_length
+        ValueError: If string exceeds max_length or is empty when not allowed
     """
     if value is None:
         if allow_none:
@@ -108,6 +110,9 @@ def validate_string_length(
 
     if not isinstance(value, str):
         raise ValueError(f"{field_name} must be a string, got {type(value).__name__}")
+
+    if not allow_empty and len(value) == 0:
+        raise ValueError(f"{field_name} cannot be empty")
 
     if len(value) > max_length:
         raise ValueError(

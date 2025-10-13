@@ -21,19 +21,26 @@ from ..storage.models import Memory, MemoryMetadata
 
 logger = logging.getLogger(__name__)
 
+# Optional dependency for embeddings
+try:
+    from sentence_transformers import SentenceTransformer
+
+    SENTENCE_TRANSFORMERS_AVAILABLE = True
+except ImportError:
+    SentenceTransformer = None
+    SENTENCE_TRANSFORMERS_AVAILABLE = False
+
 
 def _generate_embedding(content: str) -> list[float] | None:
     """Generate embedding for content if embeddings are enabled."""
     config = get_config()
-    if not config.enable_embeddings:
+    if not config.enable_embeddings or not SENTENCE_TRANSFORMERS_AVAILABLE:
         return None
     try:
-        from sentence_transformers import SentenceTransformer
-
         model = SentenceTransformer(config.embed_model)
         embedding = model.encode(content, convert_to_numpy=True)
         return cast(list[float], embedding.tolist())
-    except (ImportError, Exception):
+    except Exception:
         return None
 
 
@@ -65,7 +72,9 @@ def save_memory(
         ValueError: If any input fails validation.
     """
     # Input validation
-    content = cast(str, validate_string_length(content, MAX_CONTENT_LENGTH, "content"))
+    content = cast(
+        str, validate_string_length(content, MAX_CONTENT_LENGTH, "content", allow_empty=False)
+    )
 
     if tags is not None:
         tags = validate_list_length(tags, MAX_TAGS_COUNT, "tags")
