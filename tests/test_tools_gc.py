@@ -203,7 +203,7 @@ class TestGarbageCollection:
             mem = Memory(
                 id=mem_id,
                 content=f"Memory {i}",
-                use_count=0,
+                use_count=1,  # Set to 1 so memories have non-zero scores
                 last_used=old_time,
                 created_at=old_time,
             )

@@ -213,7 +213,7 @@ class TestSaveMemory:
 
     # Embedding tests
     @patch("mnemex.tools.save.get_config")
-    @patch("sentence_transformers.SentenceTransformer")
+    @patch("mnemex.tools.save.SentenceTransformer")
     def test_save_memory_with_embeddings_enabled(self, mock_transformer, mock_config, temp_storage):
         """Test that embeddings are generated when enabled."""
         # Setup mocks
@@ -242,8 +242,9 @@ class TestSaveMemory:
         memory = temp_storage.get_memory(result["memory_id"])
         assert memory.embed is None
 
+    @patch("mnemex.tools.save.SENTENCE_TRANSFORMERS_AVAILABLE", True)
     @patch("mnemex.tools.save.get_config")
-    @patch("sentence_transformers.SentenceTransformer")
+    @patch("mnemex.tools.save.SentenceTransformer")
     def test_save_memory_embedding_import_error(self, mock_transformer, mock_config, temp_storage):
         """Test that import error in embedding generation is handled gracefully."""
         mock_config.return_value.enable_embeddings = True

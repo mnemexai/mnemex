@@ -15,10 +15,12 @@ class TestSearchMemory:
 
     def test_search_basic_text_query(self, temp_storage):
         """Test basic text search."""
-        # Create test memories
-        mem1 = Memory(id=make_test_uuid("mem-1"), content="Python programming tutorial")
-        mem2 = Memory(id=make_test_uuid("mem-2"), content="JavaScript guide")
-        mem3 = Memory(id=make_test_uuid("mem-3"), content="Python data analysis")
+        # Create test memories with use_count > 0 so they have non-zero scores
+        mem1 = Memory(
+            id=make_test_uuid("mem-1"), content="Python programming tutorial", use_count=1
+        )
+        mem2 = Memory(id=make_test_uuid("mem-2"), content="JavaScript guide", use_count=1)
+        mem3 = Memory(id=make_test_uuid("mem-3"), content="Python data analysis", use_count=1)
 
         temp_storage.save_memory(mem1)
         temp_storage.save_memory(mem2)
@@ -37,8 +39,19 @@ class TestSearchMemory:
         """Test that exact matches score higher than partial matches."""
         id1 = make_test_uuid("mem-1")
         id2 = make_test_uuid("mem-2")
-        mem1 = Memory(id=id1, content="machine learning basics")
-        mem2 = Memory(id=id2, content="learning")
+
+        # Create mem1 as older so it has lower decay score
+        now = int(time.time())
+        old_time = now - (7 * 86400)  # 7 days ago
+
+        mem1 = Memory(
+            id=id1,
+            content="machine learning basics",
+            use_count=1,
+            last_used=old_time,
+            created_at=old_time,
+        )
+        mem2 = Memory(id=id2, content="learning", use_count=1, last_used=now, created_at=now)
 
         temp_storage.save_memory(mem1)
         temp_storage.save_memory(mem2)
@@ -47,7 +60,7 @@ class TestSearchMemory:
 
         assert result["success"] is True
         assert result["count"] == 2
-        # Verify that the exact match ('mem-2') is scored higher and appears first
+        # Verify that the more recent exact match ('mem-2') is scored higher and appears first
         assert result["results"][0]["id"] == id2
         assert result["results"][1]["id"] == id1
         assert result["results"][0]["score"] > result["results"][1]["score"]
@@ -285,7 +298,7 @@ class TestSearchMemory:
 
     # Embedding tests
     @patch("mnemex.tools.search.get_config")
-    @patch("sentence_transformers.SentenceTransformer")
+    @patch("mnemex.tools.search.SentenceTransformer")
     def test_search_with_embeddings(self, mock_transformer, mock_config, temp_storage):
         """Test semantic search with embeddings."""
         # Setup mocks
@@ -327,8 +340,9 @@ class TestSearchMemory:
         if result["count"] > 0:
             assert result["results"][0]["similarity"] is None
 
+    @patch("mnemex.tools.search.SENTENCE_TRANSFORMERS_AVAILABLE", True)
     @patch("mnemex.tools.search.get_config")
-    @patch("sentence_transformers.SentenceTransformer")
+    @patch("mnemex.tools.search.SentenceTransformer")
     def test_search_embedding_import_error(self, mock_transformer, mock_config, temp_storage):
         """Test graceful handling of embedding import errors."""
         mock_config.return_value.enable_embeddings = True

@@ -18,19 +18,26 @@ from ..security.validators import (
 )
 from ..storage.models import MemoryStatus, SearchResult
 
+# Optional dependency for embeddings
+try:
+    from sentence_transformers import SentenceTransformer
+
+    SENTENCE_TRANSFORMERS_AVAILABLE = True
+except ImportError:
+    SentenceTransformer = None
+    SENTENCE_TRANSFORMERS_AVAILABLE = False
+
 
 def _generate_query_embedding(query: str) -> list[float] | None:
     """Generate embedding for search query."""
     config = get_config()
-    if not config.enable_embeddings:
+    if not config.enable_embeddings or not SENTENCE_TRANSFORMERS_AVAILABLE:
         return None
     try:
-        from sentence_transformers import SentenceTransformer
-
         model = SentenceTransformer(config.embed_model)
         embedding = model.encode(query, convert_to_numpy=True)
         return cast(list[float], embedding.tolist())
-    except (ImportError, Exception):
+    except Exception:
         return None
 
 

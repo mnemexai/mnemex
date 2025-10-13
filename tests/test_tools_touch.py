@@ -15,15 +15,17 @@ class TestTouchMemory:
     def test_touch_basic_reinforcement(self, temp_storage):
         """Test basic memory reinforcement without strength boost."""
         test_id = make_test_uuid("test-123")
-        mem = Memory(id=test_id, content="Test memory", use_count=0, strength=1.0)
+
+        # Create memory with old timestamp to ensure touch updates it
+        old_time = int(time.time()) - 10  # 10 seconds ago
+        mem = Memory(
+            id=test_id, content="Test memory", use_count=0, strength=1.0, last_used=old_time
+        )
         temp_storage.save_memory(mem)
 
         # Get the saved memory to check its timestamp
         saved_mem = temp_storage.get_memory(test_id)
         original_last_used = saved_mem.last_used
-
-        # Wait a moment to ensure different timestamp
-        time.sleep(0.1)
 
         result = touch_memory(memory_id=test_id, boost_strength=False)
 
