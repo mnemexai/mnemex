@@ -65,7 +65,7 @@ def save_memory(
         ValueError: If any input fails validation.
     """
     # Input validation
-    content = cast(str, validate_string_length(content, MAX_CONTENT_LENGTH, "content"))
+    content = cast(str, validate_string_length(content, MAX_CONTENT_LENGTH, "content", allow_empty=False))
 
     if tags is not None:
         tags = validate_list_length(tags, MAX_TAGS_COUNT, "tags")
