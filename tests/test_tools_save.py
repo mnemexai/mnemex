@@ -212,6 +212,7 @@ class TestSaveMemory:
         assert "Secrets detected" in caplog.text
 
     # Embedding tests
+    @patch("mnemex.tools.save.SENTENCE_TRANSFORMERS_AVAILABLE", True)
     @patch("mnemex.tools.save.get_config")
     @patch("mnemex.tools.save.SentenceTransformer")
     def test_save_memory_with_embeddings_enabled(self, mock_transformer, mock_config, temp_storage):
