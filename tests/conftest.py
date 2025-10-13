@@ -52,8 +52,13 @@ def temp_storage(monkeypatch):
 
         # Monkey-patch the global db instance in context and all tool modules
         import mnemex.context
+        import mnemex.tools.cluster
+        import mnemex.tools.consolidate
+        import mnemex.tools.create_relation
         import mnemex.tools.gc
+        import mnemex.tools.open_memories
         import mnemex.tools.promote
+        import mnemex.tools.read_graph
         import mnemex.tools.save
         import mnemex.tools.search
         import mnemex.tools.touch
@@ -65,6 +70,11 @@ def temp_storage(monkeypatch):
             mnemex.tools.touch,
             mnemex.tools.gc,
             mnemex.tools.promote,
+            mnemex.tools.cluster,
+            mnemex.tools.consolidate,
+            mnemex.tools.create_relation,
+            mnemex.tools.open_memories,
+            mnemex.tools.read_graph,
         ]
         for module in modules_to_patch:
             monkeypatch.setattr(module, "db", storage)
