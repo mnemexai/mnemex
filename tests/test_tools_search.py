@@ -297,6 +297,7 @@ class TestSearchMemory:
             search_memory(min_score=1.1)
 
     # Embedding tests
+    @patch("mnemex.tools.search.SENTENCE_TRANSFORMERS_AVAILABLE", True)
     @patch("mnemex.tools.search.get_config")
     @patch("mnemex.tools.search.SentenceTransformer")
     def test_search_with_embeddings(self, mock_transformer, mock_config, temp_storage):
