@@ -265,7 +265,7 @@ class TestFilterByScore:
         # Only high-scoring memory should pass
         assert len(filtered) >= 1
         # Verify all results meet threshold
-        for mem, score in filtered:
+        for _mem, score in filtered:
             assert score >= 0.5
 
     def test_filter_by_score_all_above_threshold(self):

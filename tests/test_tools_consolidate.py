@@ -75,9 +75,7 @@ class TestConsolidateMemories:
         mem1 = Memory(id=make_test_uuid("mem-1"), content="Test 1", use_count=1)
         temp_storage.save_memory(mem1)
 
-        result = consolidate_memories(
-            auto_detect=True, mode="preview", cohesion_threshold=0.9
-        )
+        result = consolidate_memories(auto_detect=True, mode="preview", cohesion_threshold=0.9)
 
         assert result["success"] is True
         assert result["mode"] == "auto_detect_preview"
@@ -88,15 +86,11 @@ class TestConsolidateMemories:
         temp_storage.save_memory(mem)
 
         # Test minimum threshold
-        result_min = consolidate_memories(
-            auto_detect=True, mode="preview", cohesion_threshold=0.0
-        )
+        result_min = consolidate_memories(auto_detect=True, mode="preview", cohesion_threshold=0.0)
         assert result_min["success"] is True
 
         # Test maximum threshold
-        result_max = consolidate_memories(
-            auto_detect=True, mode="preview", cohesion_threshold=1.0
-        )
+        result_max = consolidate_memories(auto_detect=True, mode="preview", cohesion_threshold=1.0)
         assert result_max["success"] is True
 
     def test_consolidate_result_format_auto_preview(self, temp_storage):
@@ -176,9 +170,7 @@ class TestConsolidateMemories:
     def test_consolidate_invalid_cohesion_negative(self, temp_storage):
         """Test that negative cohesion_threshold fails validation."""
         with pytest.raises(ValueError, match="cohesion_threshold"):
-            consolidate_memories(
-                auto_detect=True, mode="preview", cohesion_threshold=-0.1
-            )
+            consolidate_memories(auto_detect=True, mode="preview", cohesion_threshold=-0.1)
 
     def test_consolidate_invalid_cohesion_too_high(self, temp_storage):
         """Test that cohesion_threshold > 1.0 fails validation."""
@@ -221,9 +213,7 @@ class TestConsolidateMemories:
             )
             temp_storage.save_memory(mem)
 
-        result = consolidate_memories(
-            auto_detect=True, mode="preview", cohesion_threshold=0.5
-        )
+        result = consolidate_memories(auto_detect=True, mode="preview", cohesion_threshold=0.5)
 
         assert result["success"] is True
         # Should show at most 5 previews
