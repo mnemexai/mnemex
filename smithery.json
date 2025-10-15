@@ -1,0 +1,5 @@
+{
+  "name": "Mnemex: Temporal Memory for AI",
+  "description": "An MCP server providing human-like memory dynamics for AI assistants. Memories naturally fade over time unless reinforced through use, mimicking the Ebbinghaus forgetting curve.",
+  "tags": ["memory", "mcp", "ai", "temporal-memory", "forgetting-curve"]
+}
