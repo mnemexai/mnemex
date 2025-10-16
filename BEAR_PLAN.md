@@ -86,6 +86,7 @@ bear://x-callback-url/create?title={title}&text={text}&tags={tags}&token={api_to
   - Load notes from database via `BearReader`
   - Build in-memory index with title, content, tags
   - `search(query, tags, limit)` - Search interface matching `LTMIndex.search()`
+  - `title_exists(title)` - Fast O(1) lookup for title uniqueness checking
   - Support incremental updates (check modified timestamps)
   - Cache index to avoid repeated database reads
 
@@ -108,7 +109,10 @@ bear://x-callback-url/create?title={title}&text={text}&tags={tags}&token={api_to
 
 **Note Title Strategy:**
 - Primary: Use first 50 chars of content as title
-- Uniqueness check: Query Bear database for existing titles
+- Uniqueness check: Check against in-memory Bear Index (Section 4) for existing titles
+  - Much faster than direct database queries
+  - Reduces load on SQLite database
+  - Index already loaded for search operations
 - Collision handling: Append `[{timestamp}]` or `[{stm_id[:8]}]` to ensure uniqueness
 - Prevents user confusion from multiple notes with identical titles
 
@@ -274,6 +278,12 @@ After initial review, the following improvements were identified and incorporate
    - Multiple memories with similar content could create duplicate titles
    - Confusing for users even though Bear allows it
    - Solution: Check for existing titles and append unique suffix (timestamp or STM ID)
+
+6. **Efficient Title Uniqueness Check (Section 5)**
+   - Direct database queries for title checking would be slow
+   - Adds unnecessary load to SQLite database
+   - Solution: Use in-memory Bear Index (Section 4) for title lookups
+   - Much faster and index already loaded for search operations
 
 ## Research Links
 
