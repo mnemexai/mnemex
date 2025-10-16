@@ -43,6 +43,13 @@
 - Query `ZSFNOTETAG` for tag relationships
 - Handle Bear's polar markup (image references like `[assets/image1.png]`)
 
+**Error Handling:**
+- Gracefully handle database lock scenarios (SQLite busy/locked)
+- Handle corrupted database files without crashing
+- Return clear error messages for debugging
+- Use read-only connection mode to prevent accidental writes
+- Implement connection timeouts to avoid hanging
+
 ### 3. Bear X-Callback-URL Writer (integration/bear_writer.py)
 **Purpose**: Safe write operations via Bear's official API
 
@@ -52,6 +59,8 @@
 
 **Key Methods:**
 - `create_note(title, text, tags)` - Create new note, returns note ID
+  - For large content (>2000 chars): Create with title only, then append content
+  - Avoids OS-level URL length limits that could cause silent failures
 - `add_text_to_note(note_id, text, mode='append')` - Append/prepend to existing note
 - `add_tags_to_note(note_id, tags)` - Add tags to note
 - `open_note(note_id)` - Open note in Bear (for verification)
@@ -60,6 +69,13 @@
 ```python
 bear://x-callback-url/create?title={title}&text={text}&tags={tags}&token={api_token}
 ```
+
+**Retry & Error Handling:**
+- Implement retry mechanism (3 attempts with exponential backoff)
+- Handle timeouts when Bear is slow or not running
+- Return detailed status object: `{success: bool, note_id: str|None, error: str|None, timeout: bool}`
+- Validate Bear is running before attempting callback
+- Log failed callbacks for debugging
 
 ### 4. Bear Index (storage/bear_index.py)
 **Purpose**: In-memory index of Bear notes for fast unified search
@@ -86,12 +102,19 @@ bear://x-callback-url/create?title={title}&text={text}&tags={tags}&token={api_to
   - Format memory content as markdown
   - Add metadata in note (created, last_used, use_count, STM ID)
   - Add tags (combine memory tags + configurable prefix like `#mnemex`)
+  - **Ensure unique titles**: Append timestamp or STM ID suffix if title collision detected
   - Return note ID and success status
 - `get_bear_stats()` - Count notes with mnemex tag prefix
 
+**Note Title Strategy:**
+- Primary: Use first 50 chars of content as title
+- Uniqueness check: Query Bear database for existing titles
+- Collision handling: Append `[{timestamp}]` or `[{stm_id[:8]}]` to ensure uniqueness
+- Prevents user confusion from multiple notes with identical titles
+
 **Note Format:**
 ```markdown
-# {Memory Content Preview}
+# {Memory Content Preview} [{unique_suffix_if_needed}]
 
 {Full Memory Content}
 
@@ -135,7 +158,11 @@ bear://x-callback-url/create?title={title}&text={text}&tags={tags}&token={api_to
 
 ### 8. Configuration Helpers
 **Add to config.py or new util:**
-- `detect_bear_database()` - Auto-find Bear DB at default location
+- `detect_bear_database()` - Auto-find Bear DB (robust detection)
+  - **Dynamic detection**: Scan `~/Library/Group Containers` for pattern `*.net.shinyfrog.bear`
+  - Avoids hardcoding group container ID (differs between App Store/Setapp versions)
+  - Future-proof against Bear app updates that change container ID
+  - Returns first matching database path or None
 - `validate_bear_token()` - Test API token with simple callback
 - `get_bear_api_token_instructions()` - Return help text for finding token
 
@@ -217,6 +244,36 @@ bear = [
 - ✅ Configuration validates Bear availability before enabling
 - ✅ Tests cover all Bear operations with mocks
 - ✅ Documentation explains setup and usage clearly
+
+## Code Review Improvements
+
+After initial review, the following improvements were identified and incorporated:
+
+1. **URL Length Limits (Section 3)**
+   - Large memory content could exceed OS URL length limits
+   - Solution: Create note with title only, then append content via `add_text_to_note()`
+   - Prevents silent data loss from failed x-callback-url calls
+
+2. **Dynamic Database Detection (Section 8)**
+   - Hardcoded group container ID `9K33E3U3T4` is brittle
+   - Different between App Store/Setapp versions
+   - Solution: Scan for pattern `*.net.shinyfrog.bear` instead
+   - More robust and future-proof
+
+3. **Database Error Handling (Section 2)**
+   - Explicit error handling for SQLite operations
+   - Handle locked, busy, or corrupted databases gracefully
+   - Prevent application crashes from database issues
+
+4. **X-Callback-URL Retry Logic (Section 3)**
+   - Handle timeouts when Bear is slow or not running
+   - Implement retry mechanism with exponential backoff
+   - Return detailed status objects for debugging
+
+5. **Unique Note Titles (Section 5)**
+   - Multiple memories with similar content could create duplicate titles
+   - Confusing for users even though Bear allows it
+   - Solution: Check for existing titles and append unique suffix (timestamp or STM ID)
 
 ## Research Links
 
