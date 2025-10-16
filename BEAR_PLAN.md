@@ -280,10 +280,10 @@ After initial review, the following improvements were identified and incorporate
    - Solution: Check for existing titles and append unique suffix (timestamp or STM ID)
 
 6. **Efficient Title Uniqueness Check (Section 5)**
-   - Direct database queries for title checking would be slow
-   - Adds unnecessary load to SQLite database
-   - Solution: Use in-memory Bear Index (Section 4) for title lookups
-   - Much faster and index already loaded for search operations
+  - Direct database queries for title checking would be slow
+  - Adds unnecessary load to SQLite database
+  - Solution: Use in-memory Bear Index (Section 4) for title lookups
+  - Much faster and index already loaded for search operations
 
 ## Research Links
 
