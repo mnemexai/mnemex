@@ -200,6 +200,30 @@ class Config(BaseModel):
         description="Enable secrets detection (warns about API keys, tokens, etc.)",
     )
 
+    # Performance settings
+    batch_size: int = Field(
+        default=100,
+        description="Batch size for bulk operations",
+        ge=1,
+        le=1000,
+    )
+    cache_size: int = Field(
+        default=1000,
+        description="Maximum number of items to cache in memory",
+        ge=100,
+        le=10000,
+    )
+    enable_async_io: bool = Field(
+        default=True,
+        description="Enable async I/O operations for better performance",
+    )
+    search_timeout: float = Field(
+        default=5.0,
+        description="Search operation timeout in seconds",
+        ge=1.0,
+        le=60.0,
+    )
+
     @field_validator("storage_path", "ltm_vault_path", "ltm_index_path", mode="before")
     @classmethod
     def expand_path(cls, v: str | Path | None) -> Path | None:

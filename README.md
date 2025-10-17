@@ -496,6 +496,7 @@ Frequent access significantly extends retention.
 - **[Smart Prompting](docs/prompts/memory_system_prompt.md)** - Patterns for natural LLM integration
 - **[Architecture](docs/architecture.md)** - System design and implementation
 - **[API Reference](docs/api.md)** - MCP tool documentation
+- **[Bear Integration](docs/bear-integration.md)** - Guide to using Bear app as an LTM store
 - **[Graph Features](docs/graph_features.md)** - Knowledge graph usage
 
 ## Use Cases
