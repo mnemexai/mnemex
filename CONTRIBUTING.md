@@ -862,6 +862,16 @@ uv run mypy src/mnemex
 
 4. **Add tests** for new functionality
 
+### PR Checklist (Operating Principles)
+
+Before opening a PR, confirm:
+
+- [ ] Root cause stated; verified env/config/deps (see `AGENTS.md#operating-principles`).
+- [ ] Verification steps and findings included in PR description.
+- [ ] Local checks pass: `pytest`, `ruff check`, `ruff format`, `mypy`.
+- [ ] No import-time side effects; config/storage paths remain injectable.
+- [ ] Docs and examples updated if behavior or config changed.
+
 ### Creating a Pull Request
 
 1. **Push your branch:**

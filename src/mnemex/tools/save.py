@@ -39,13 +39,13 @@ def _get_embedding_model(model_name: str) -> SentenceTransformer | None:
     """Get cached embedding model or create new one."""
     if not SENTENCE_TRANSFORMERS_AVAILABLE:
         return None
-    
+
     if model_name not in _model_cache:
         try:
             _model_cache[model_name] = SentenceTransformer(model_name)
         except Exception:
             return None
-    
+
     return _model_cache[model_name]
 
 
@@ -54,11 +54,11 @@ def _generate_embedding(content: str) -> list[float] | None:
     config = get_config()
     if not config.enable_embeddings or not SENTENCE_TRANSFORMERS_AVAILABLE:
         return None
-    
+
     model = _get_embedding_model(config.embed_model)
     if model is None:
         return None
-    
+
     try:
         embedding = model.encode(content, convert_to_numpy=True)
         return cast(list[float], embedding.tolist())

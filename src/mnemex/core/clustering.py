@@ -86,6 +86,9 @@ def cluster_memories_simple(memories: list[Memory], config: ClusterConfig) -> li
     # Cache for similarity calculations to avoid recomputation
     similarity_cache: dict[tuple[str, str], float] = {}
 
+    # Cache for similarity calculations to avoid recomputation
+    similarity_cache: dict[tuple[str, str], float] = {}
+
     for memory in memories_with_embed:
         if memory.embed is None:
             continue
@@ -96,7 +99,7 @@ def cluster_memories_simple(memories: list[Memory], config: ClusterConfig) -> li
             # Early termination: skip if cluster is already at max size
             if len(cluster_memories) >= config.max_cluster_size:
                 continue
-                
+
             # Check if memory is similar to any in this cluster
             for cluster_mem in cluster_memories:
                 if cluster_mem.embed is None:
@@ -106,7 +109,7 @@ def cluster_memories_simple(memories: list[Memory], config: ClusterConfig) -> li
                 cache_key = tuple(sorted([memory.id, cluster_mem.id]))
                 if cache_key not in similarity_cache:
                     similarity_cache[cache_key] = cosine_similarity(memory.embed, cluster_mem.embed)
-                
+
                 similarity = similarity_cache[cache_key]
                 if similarity >= config.threshold:
                     similar_clusters.append(cluster_idx)

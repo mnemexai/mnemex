@@ -1,11 +1,13 @@
 """Performance monitoring tool for Mnemex."""
 
+from typing import Any
+
 from ..context import mcp
 from ..performance import get_performance_stats, reset_metrics
 
 
 @mcp.tool()
-def get_performance_metrics() -> dict[str, any]:
+def get_performance_metrics() -> dict[str, Any]:
     """
     Get current performance metrics and statistics.
 
@@ -16,7 +18,7 @@ def get_performance_metrics() -> dict[str, any]:
 
 
 @mcp.tool()
-def reset_performance_metrics() -> dict[str, any]:
+def reset_performance_metrics() -> dict[str, Any]:
     """
     Reset all performance metrics and return confirmation.
 

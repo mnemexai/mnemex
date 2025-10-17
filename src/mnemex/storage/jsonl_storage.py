@@ -51,6 +51,10 @@ class JSONLStorage:
         self._tag_index: dict[str, set[str]] = {}
         self._last_indexed_memory_count = 0
 
+        # Performance optimization: tag index for faster filtering
+        self._tag_index: dict[str, set[str]] = {}
+        self._last_indexed_memory_count = 0
+
         # Track if connected
         self._connected = False
 
@@ -128,18 +132,23 @@ class JSONLStorage:
                 self._tag_index[tag].add(memory_id)
         self._last_indexed_memory_count = len(self._memories)
 
-    def _update_tag_index(self, memory: Memory) -> None:
+    def _update_tag_index(self, memory: Memory, old_memory: Memory | None = None) -> None:
         """Update tag index for a single memory."""
-        # Remove old tags for this memory
-        for tag, memory_ids in self._tag_index.items():
-            memory_ids.discard(memory.id)
-        
-        # Add new tags
-        for tag in memory.meta.tags:
+        old_tags = set(old_memory.meta.tags) if old_memory else set()
+        new_tags = set(memory.meta.tags)
+
+        # Remove from tags that are no longer present
+        for tag in old_tags - new_tags:
+            if tag in self._tag_index:
+                self._tag_index[tag].discard(memory.id)
+                if not self._tag_index[tag]:
+                    del self._tag_index[tag]
+
+        # Add to new tags
+        for tag in new_tags - old_tags:
             if tag not in self._tag_index:
                 self._tag_index[tag] = set()
             self._tag_index[tag].add(memory.id)
-
     def _ensure_tag_index_current(self) -> None:
         """Ensure tag index is current (rebuild if needed)."""
         if len(self._memories) != self._last_indexed_memory_count:
@@ -227,10 +236,10 @@ class JSONLStorage:
             raise RuntimeError("Storage not connected")
 
         # Update in-memory index
+        old_memory = self._memories.get(memory.id)
         self._memories[memory.id] = memory
-        
         # Update tag index
-        self._update_tag_index(memory)
+        self._update_tag_index(memory, old_memory)
 
         # Append to JSONL file
         self._append_memory(memory)
@@ -264,7 +273,7 @@ class JSONLStorage:
             try:
                 secure_file(self.memories_path)
             except Exception as e:
-                logging.error(f"Failed to set secure file permissions for '{self.memories_path}': {e}")
+                logging.warning(f"Failed to secure file '{self.memories_path}': {e}")
 
     def get_memory(self, memory_id: str) -> Memory | None:
         """
@@ -684,10 +693,10 @@ class JSONLStorage:
             raise RuntimeError("Storage not connected")
 
         # Update in-memory index
+        old_memory = self._memories.get(memory.id)
         self._memories[memory.id] = memory
-        
         # Update tag index
-        self._update_tag_index(memory)
+        self._update_tag_index(memory, old_memory)
 
         # Async append to JSONL file
         await self._append_memory_async(memory)
@@ -695,27 +704,28 @@ class JSONLStorage:
     async def _append_memory_async(self, memory: Memory) -> None:
         """Async append memory to JSONL file."""
         file_created = not self.memories_path.exists()
-        
+
         # Use asyncio for file I/O
         loop = asyncio.get_event_loop()
         data = memory.model_dump(mode="json")
         content = json.dumps(data) + "\n"
-        
+
+        # This is an I/O-bound operation, run it in a thread pool to avoid blocking the event loop.
+        # The 'a' mode correctly handles file creation and appends atomically.
+        def _sync_append() -> None:
+            with open(self.memories_path, "a", buffering=8192, encoding="utf-8") as f:
+                f.write(content)
+
         await loop.run_in_executor(
-            None, 
-            lambda: self.memories_path.write_text(
-                self.memories_path.read_text() + content, 
-                encoding='utf-8'
-            ) if self.memories_path.exists() 
-            else self.memories_path.write_text(content, encoding='utf-8')
+            None, _sync_append
         )
 
         # Secure file permissions if newly created
         if file_created:
             try:
+                secure_file(self.memories_path)
             except Exception as e:
-                import logging
-                logging.warning(f"Failed to secure file permissions for {self.memories_path}: {e}")
+                logging.error(f"Failed to secure file {self.memories_path}: {e}", exc_info=True)
 
     def get_storage_stats(self) -> dict[str, Any]:
         """
