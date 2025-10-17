@@ -1,8 +1,6 @@
 """Background task management for expensive operations."""
 
 import logging
-import threading
-import time
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Callable, Dict, Optional
 
