@@ -2,7 +2,7 @@
 
 import time
 from collections import defaultdict
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 from functools import wraps
 
 
