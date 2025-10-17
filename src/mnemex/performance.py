@@ -74,12 +74,12 @@ def get_metrics() -> PerformanceMetrics:
     return _metrics
 
 
-def time_operation(operation_name: str):  # type: ignore[no-untyped-def]
+def time_operation(operation_name: str) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """Decorator to time function execution."""
 
-    def decorator(func):  # type: ignore[no-untyped-def]
+    def decorator(func: Callable[P, R]) -> Callable[P, R]:
         @wraps(func)
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
+        def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
             metrics = get_metrics()
             metrics.start_timer(operation_name)
             try:
