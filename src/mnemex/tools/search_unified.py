@@ -154,7 +154,7 @@ def search_unified(
             if ltm_index.index_path.exists():
                 # Check if index is recent (less than 1 hour old)
                 index_age = time.time() - ltm_index.index_path.stat().st_mtime
-                if index_age < 3600:  # 1 hour
+                if index_age < config.ltm_index_max_age_seconds:  # 1 hour
                     ltm_index.load_index()
                     ltm_docs = ltm_index.search(query=query, tags=tags, limit=limit * 2)
                     for doc in ltm_docs:
