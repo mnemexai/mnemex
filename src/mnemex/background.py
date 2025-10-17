@@ -1,6 +1,5 @@
 """Background task management for expensive operations."""
 
-import asyncio
 import logging
 import threading
 import time
