@@ -713,9 +713,9 @@ class JSONLStorage:
         # Secure file permissions if newly created
         if file_created:
             try:
-                secure_file(self.memories_path)
-            except Exception:
-                pass
+            except Exception as e:
+                import logging
+                logging.warning(f"Failed to secure file permissions for {self.memories_path}: {e}")
 
     def get_storage_stats(self) -> dict[str, Any]:
         """
