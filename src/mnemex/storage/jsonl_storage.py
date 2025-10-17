@@ -128,18 +128,23 @@ class JSONLStorage:
                 self._tag_index[tag].add(memory_id)
         self._last_indexed_memory_count = len(self._memories)
 
-    def _update_tag_index(self, memory: Memory) -> None:
+    def _update_tag_index(self, memory: Memory, old_memory: Memory | None = None) -> None:
         """Update tag index for a single memory."""
-        # Remove old tags for this memory
-        for _tag, memory_ids in self._tag_index.items():
-            memory_ids.discard(memory.id)
+        old_tags = set(old_memory.meta.tags) if old_memory else set()
+        new_tags = set(memory.meta.tags)
 
-        # Add new tags
-        for tag in memory.meta.tags:
+        # Remove from tags that are no longer present
+        for tag in old_tags - new_tags:
+            if tag in self._tag_index:
+                self._tag_index[tag].discard(memory.id)
+                if not self._tag_index[tag]:
+                    del self._tag_index[tag]
+
+        # Add to new tags
+        for tag in new_tags - old_tags:
             if tag not in self._tag_index:
                 self._tag_index[tag] = set()
             self._tag_index[tag].add(memory.id)
-
     def _ensure_tag_index_current(self) -> None:
         """Ensure tag index is current (rebuild if needed)."""
         if len(self._memories) != self._last_indexed_memory_count:
