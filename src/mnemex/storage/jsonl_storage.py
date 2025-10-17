@@ -701,13 +701,14 @@ class JSONLStorage:
         data = memory.model_dump(mode="json")
         content = json.dumps(data) + "\n"
 
+        # This is an I/O-bound operation, run it in a thread pool to avoid blocking the event loop.
+        # The 'a' mode correctly handles file creation and appends atomically.
+        def _sync_append() -> None:
+            with open(self.memories_path, "a", buffering=8192, encoding="utf-8") as f:
+                f.write(content)
+
         await loop.run_in_executor(
-            None,
-            lambda: self.memories_path.write_text(
-                self.memories_path.read_text() + content, encoding="utf-8"
-            )
-            if self.memories_path.exists()
-            else self.memories_path.write_text(content, encoding="utf-8"),
+            None, _sync_append
         )
 
         # Secure file permissions if newly created
