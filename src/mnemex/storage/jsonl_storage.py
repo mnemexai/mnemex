@@ -720,8 +720,8 @@ class JSONLStorage:
         if file_created:
             try:
                 secure_file(self.memories_path)
-            except Exception:
-                pass
+            except Exception as e:
+                logging.error(f"Failed to secure file {self.memories_path}: {e}", exc_info=True)
 
     def get_storage_stats(self) -> dict[str, Any]:
         """
