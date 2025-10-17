@@ -46,6 +46,10 @@ class JSONLStorage:
         self._relations: dict[str, Relation] = {}
         self._deleted_memory_ids: set[str] = set()
         self._deleted_relation_ids: set[str] = set()
+        
+        # Performance optimization: tag index for faster filtering
+        self._tag_index: dict[str, set[str]] = {}
+        self._last_indexed_memory_count = 0
 
         # Performance optimization: tag index for faster filtering
         self._tag_index: dict[str, set[str]] = {}

@@ -6,6 +6,7 @@ from typing import Any, cast
 from ..config import get_config
 from ..context import db, mcp
 from ..core.clustering import cosine_similarity
+from ..performance import time_operation
 from ..core.decay import calculate_score
 from ..performance import time_operation
 from ..security.validators import (

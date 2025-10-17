@@ -82,6 +82,9 @@ def cluster_memories_simple(memories: list[Memory], config: ClusterConfig) -> li
     # Track which memories are in which cluster
     memory_to_cluster: dict[str, int] = {}
     clusters: list[list[Memory]] = []
+    
+    # Cache for similarity calculations to avoid recomputation
+    similarity_cache: dict[tuple[str, str], float] = {}
 
     # Cache for similarity calculations to avoid recomputation
     similarity_cache: dict[tuple[str, str], float] = {}
