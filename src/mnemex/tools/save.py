@@ -7,6 +7,7 @@ from typing import Any, cast
 
 from ..config import get_config
 from ..context import db, mcp
+from ..performance import time_operation
 from ..security.secrets import detect_secrets, format_secret_warning, should_warn_about_secrets
 from ..security.validators import (
     MAX_CONTENT_LENGTH,
@@ -30,14 +31,35 @@ except ImportError:
     SentenceTransformer = None
     SENTENCE_TRANSFORMERS_AVAILABLE = False
 
+# Global model cache to avoid reloading on every request
+_model_cache: dict[str, SentenceTransformer] = {}
+
+
+def _get_embedding_model(model_name: str) -> SentenceTransformer | None:
+    """Get cached embedding model or create new one."""
+    if not SENTENCE_TRANSFORMERS_AVAILABLE:
+        return None
+    
+    if model_name not in _model_cache:
+        try:
+            _model_cache[model_name] = SentenceTransformer(model_name)
+        except Exception:
+            return None
+    
+    return _model_cache[model_name]
+
 
 def _generate_embedding(content: str) -> list[float] | None:
     """Generate embedding for content if embeddings are enabled."""
     config = get_config()
     if not config.enable_embeddings or not SENTENCE_TRANSFORMERS_AVAILABLE:
         return None
+    
+    model = _get_embedding_model(config.embed_model)
+    if model is None:
+        return None
+    
     try:
-        model = SentenceTransformer(config.embed_model)
         embedding = model.encode(content, convert_to_numpy=True)
         return cast(list[float], embedding.tolist())
     except Exception:
@@ -45,6 +67,7 @@ def _generate_embedding(content: str) -> list[float] | None:
 
 
 @mcp.tool()
+@time_operation("save_memory")
 def save_memory(
     content: str,
     tags: list[str] | None = None,

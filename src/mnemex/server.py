@@ -17,6 +17,7 @@ from .tools import (
     create_relation,
     gc,
     open_memories,
+    performance,
     promote,
     read_graph,
     save,
@@ -32,6 +33,7 @@ _TOOL_MODULES = (
     create_relation,
     gc,
     open_memories,
+    performance,
     promote,
     read_graph,
     save,
@@ -132,7 +134,7 @@ def initialize_server() -> None:
                 # Ignore errors scanning .env (might be locked, etc.)
                 pass
 
-    logger.info("MCP server tools registered (11 tools)")
+    logger.info("MCP server tools registered (13 tools)")
 
 
 def main_sync() -> None:

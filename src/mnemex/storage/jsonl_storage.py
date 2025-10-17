@@ -3,6 +3,7 @@
 Human-readable, git-friendly storage with in-memory indexing for fast queries.
 """
 
+import asyncio
 import json
 import time
 from pathlib import Path
@@ -44,6 +45,10 @@ class JSONLStorage:
         self._relations: dict[str, Relation] = {}
         self._deleted_memory_ids: set[str] = set()
         self._deleted_relation_ids: set[str] = set()
+        
+        # Performance optimization: tag index for faster filtering
+        self._tag_index: dict[str, set[str]] = {}
+        self._last_indexed_memory_count = 0
 
         # Track if connected
         self._connected = False
@@ -110,6 +115,34 @@ class JSONLStorage:
                         self._relations[relation.id] = relation
 
         self._connected = True
+        self._rebuild_tag_index()
+
+    def _rebuild_tag_index(self) -> None:
+        """Rebuild the tag index for faster filtering."""
+        self._tag_index.clear()
+        for memory_id, memory in self._memories.items():
+            for tag in memory.meta.tags:
+                if tag not in self._tag_index:
+                    self._tag_index[tag] = set()
+                self._tag_index[tag].add(memory_id)
+        self._last_indexed_memory_count = len(self._memories)
+
+    def _update_tag_index(self, memory: Memory) -> None:
+        """Update tag index for a single memory."""
+        # Remove old tags for this memory
+        for tag, memory_ids in self._tag_index.items():
+            memory_ids.discard(memory.id)
+        
+        # Add new tags
+        for tag in memory.meta.tags:
+            if tag not in self._tag_index:
+                self._tag_index[tag] = set()
+            self._tag_index[tag].add(memory.id)
+
+    def _ensure_tag_index_current(self) -> None:
+        """Ensure tag index is current (rebuild if needed)."""
+        if len(self._memories) != self._last_indexed_memory_count:
+            self._rebuild_tag_index()
 
     def close(self) -> None:
         """Close storage (no-op for JSONL, everything is already persisted)."""
@@ -128,7 +161,8 @@ class JSONLStorage:
         """Append memory to JSONL file and secure permissions."""
         file_created = not self.memories_path.exists()
 
-        with open(self.memories_path, "a") as f:
+        # Use buffered writing for better performance
+        with open(self.memories_path, "a", buffering=8192) as f:
             # Convert to JSON-serializable dict
             data = memory.model_dump(mode="json")
             f.write(json.dumps(data) + "\n")
@@ -145,7 +179,8 @@ class JSONLStorage:
         """Append relation to JSONL file and secure permissions."""
         file_created = not self.relations_path.exists()
 
-        with open(self.relations_path, "a") as f:
+        # Use buffered writing for better performance
+        with open(self.relations_path, "a", buffering=8192) as f:
             data = relation.model_dump(mode="json")
             f.write(json.dumps(data) + "\n")
 
@@ -192,9 +227,43 @@ class JSONLStorage:
 
         # Update in-memory index
         self._memories[memory.id] = memory
+        
+        # Update tag index
+        self._update_tag_index(memory)
 
         # Append to JSONL file
         self._append_memory(memory)
+
+    def save_memories_batch(self, memories: list[Memory]) -> None:
+        """
+        Save multiple memories in a single batch operation for better performance.
+
+        Args:
+            memories: List of Memory objects to save
+        """
+        if not self._connected:
+            raise RuntimeError("Storage not connected")
+
+        if not memories:
+            return
+
+        # Update in-memory indexes
+        for memory in memories:
+            self._memories[memory.id] = memory
+
+        # Batch write to JSONL file
+        file_created = not self.memories_path.exists()
+        with open(self.memories_path, "a", buffering=8192) as f:
+            for memory in memories:
+                data = memory.model_dump(mode="json")
+                f.write(json.dumps(data) + "\n")
+
+        # Secure file permissions if newly created
+        if file_created:
+            try:
+                secure_file(self.memories_path)
+            except Exception:
+                pass
 
     def get_memory(self, memory_id: str) -> Memory | None:
         """
@@ -347,7 +416,18 @@ class JSONLStorage:
         if not self._connected:
             raise RuntimeError("Storage not connected")
 
-        memories = list(self._memories.values())
+        self._ensure_tag_index_current()
+
+        # Start with all memories or tag-filtered subset
+        if tags:
+            # Use tag index for faster filtering
+            memory_ids = set()
+            for tag in tags:
+                if tag in self._tag_index:
+                    memory_ids.update(self._tag_index[tag])
+            memories = [self._memories[mid] for mid in memory_ids if mid in self._memories]
+        else:
+            memories = list(self._memories.values())
 
         # Filter by status
         if status is not None:
@@ -357,10 +437,6 @@ class JSONLStorage:
         if window_days is not None:
             cutoff = int(time.time()) - (window_days * 86400)
             memories = [m for m in memories if m.last_used >= cutoff]
-
-        # Filter by tags (any match)
-        if tags:
-            memories = [m for m in memories if any(tag in m.meta.tags for tag in tags)]
 
         # Sort by last_used DESC
         memories.sort(key=lambda m: m.last_used, reverse=True)
@@ -599,6 +675,46 @@ class JSONLStorage:
         self._deleted_relation_ids.clear()
 
         return stats
+
+    # Async methods for better I/O performance
+    async def save_memory_async(self, memory: Memory) -> None:
+        """Async version of save_memory for better I/O performance."""
+        if not self._connected:
+            raise RuntimeError("Storage not connected")
+
+        # Update in-memory index
+        self._memories[memory.id] = memory
+        
+        # Update tag index
+        self._update_tag_index(memory)
+
+        # Async append to JSONL file
+        await self._append_memory_async(memory)
+
+    async def _append_memory_async(self, memory: Memory) -> None:
+        """Async append memory to JSONL file."""
+        file_created = not self.memories_path.exists()
+        
+        # Use asyncio for file I/O
+        loop = asyncio.get_event_loop()
+        data = memory.model_dump(mode="json")
+        content = json.dumps(data) + "\n"
+        
+        await loop.run_in_executor(
+            None, 
+            lambda: self.memories_path.write_text(
+                self.memories_path.read_text() + content, 
+                encoding='utf-8'
+            ) if self.memories_path.exists() 
+            else self.memories_path.write_text(content, encoding='utf-8')
+        )
+
+        # Secure file permissions if newly created
+        if file_created:
+            try:
+                secure_file(self.memories_path)
+            except Exception:
+                pass
 
     def get_storage_stats(self) -> dict[str, Any]:
         """
