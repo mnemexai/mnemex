@@ -6,6 +6,7 @@ from typing import Any
 from ..config import get_config
 from ..context import db, mcp
 from ..core.decay import calculate_score
+from ..performance import time_operation
 from ..security.validators import (
     MAX_CONTENT_LENGTH,
     MAX_TAGS_COUNT,
@@ -59,6 +60,7 @@ class UnifiedSearchResult:
 
 
 @mcp.tool()
+@time_operation("search_unified")
 def search_unified(
     query: str | None = None,
     tags: list[str] | None = None,
@@ -143,33 +145,35 @@ def search_unified(
     except Exception as e:
         print(f"Warning: STM search failed: {e}")
 
-    # Search LTM
+    # Search LTM (lazy loading)
     try:
         if config.ltm_vault_path and config.ltm_vault_path.exists():
             ltm_index = LTMIndex(vault_path=config.ltm_vault_path)
+
+            # Only load index if it exists and is recent, otherwise skip LTM search
             if ltm_index.index_path.exists():
-                ltm_index.load_index()
-            else:
-                ltm_index.build_index(verbose=False)
+                # Check if index is recent (less than 1 hour old)
+                index_age = time.time() - ltm_index.index_path.stat().st_mtime
+                if index_age < config.ltm_index_max_age_seconds:  # 1 hour
+                    ltm_index.load_index()
+                    ltm_docs = ltm_index.search(query=query, tags=tags, limit=limit * 2)
+                    for doc in ltm_docs:
+                        relevance_score = 0.5
+                        if query:
+                            title_match = 2.0 if query.lower() in doc.title.lower() else 0.0
+                            content_match = 1.0 if query.lower() in doc.content.lower() else 0.0
+                            relevance_score = min(1.0, (title_match + content_match) / 3.0)
 
-            ltm_docs = ltm_index.search(query=query, tags=tags, limit=limit * 2)
-            for doc in ltm_docs:
-                relevance_score = 0.5
-                if query:
-                    title_match = 2.0 if query.lower() in doc.title.lower() else 0.0
-                    content_match = 1.0 if query.lower() in doc.content.lower() else 0.0
-                    relevance_score = min(1.0, (title_match + content_match) / 3.0)
-
-                results.append(
-                    UnifiedSearchResult(
-                        content=doc.content[:500],
-                        title=doc.title,
-                        source="ltm",
-                        score=relevance_score * ltm_weight,
-                        path=doc.path,
-                        tags=doc.tags,
-                    )
-                )
+                        results.append(
+                            UnifiedSearchResult(
+                                content=doc.content[:500],
+                                title=doc.title,
+                                source="ltm",
+                                score=relevance_score * ltm_weight,
+                                path=doc.path,
+                                tags=doc.tags,
+                            )
+                        )
     except Exception as e:
         print(f"Warning: LTM search failed: {e}")
 
