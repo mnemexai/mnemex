@@ -8,6 +8,7 @@ import json
 import time
 from pathlib import Path
 from typing import Any
+import logging
 
 from ..config import get_config
 from ..security.permissions import secure_file
@@ -262,8 +263,8 @@ class JSONLStorage:
         if file_created:
             try:
                 secure_file(self.memories_path)
-            except Exception:
-                pass
+            except Exception as e:
+                logging.warning(f"Failed to secure file '{self.memories_path}': {e}")
 
     def get_memory(self, memory_id: str) -> Memory | None:
         """
