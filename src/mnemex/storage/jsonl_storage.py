@@ -232,10 +232,10 @@ class JSONLStorage:
             raise RuntimeError("Storage not connected")
 
         # Update in-memory index
+        old_memory = self._memories.get(memory.id)
         self._memories[memory.id] = memory
-
         # Update tag index
-        self._update_tag_index(memory)
+        self._update_tag_index(memory, old_memory)
 
         # Append to JSONL file
         self._append_memory(memory)
