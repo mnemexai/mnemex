@@ -112,11 +112,22 @@ See the main [README.md](README.md) for detailed documentation.
 
 ## Recent Changes
 
+**2024-10-18**: Major Test Coverage Expansion
+- **Expanded coverage from 52% to 67%** (+15 percentage points)
+- **Increased tests from 305 to 606** (+301 new tests, +98%)
+- Created comprehensive tests for 5 critical modules:
+  - `security/paths.py`: 11% → 93% (49 tests) - Path traversal prevention
+  - `security/permissions.py`: 13% → 96% (69 tests) - File permission security
+  - `security/secrets.py`: 41% → 95% (96 tests) - Secret detection
+  - `storage/jsonl_storage.py`: 42% → 92% (45 total tests) - Core storage operations
+  - `tools/search_unified.py`: 57% → 98% (50 tests) - Unified STM+LTM search
+- Fixed cross-platform compatibility with POSIX-specific permission tests
+- All tests passing with improved reliability
+
 **2024-10-18**: Environment Variable Configuration Enhancement
 - Added environment variable support for `MNEMEX_LTM_INDEX_MAX_AGE_SECONDS`
 - Created regression tests with proper monkeypatch cleanup
 - All tests passing reliably with isolated fixtures
-- **Test Results**: 305 tests passing, 52% code coverage
 
 **2024-10-18**: Testing Infrastructure & Test Fixes
 - Installed pytest and testing dependencies (pytest, pytest-asyncio, pytest-cov)
