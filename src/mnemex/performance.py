@@ -3,7 +3,10 @@
 import time
 from collections import defaultdict
 from functools import wraps
-from typing import Any
+from typing import Any, Callable, ParamSpec, TypeVar
+
+P = ParamSpec('P')
+R = TypeVar('R')
 
 
 class PerformanceMetrics:
