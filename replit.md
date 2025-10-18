@@ -112,6 +112,18 @@ See the main [README.md](README.md) for detailed documentation.
 
 ## Recent Changes
 
+**2025-10-18**: Second Wave Test Coverage Expansion
+- **Expanded coverage from 67% to 70%** (+3 percentage points)
+- **Increased tests from 606 to 770** (+164 new tests, +27%)
+- **Total improvement from baseline: 305 → 770 tests (+152%), 52% → 70% coverage (+18 points)**
+- Created comprehensive tests for 3 critical modules:
+  - `security/validators.py`: 80% → 98% (105 tests) - Input validation for all validators
+  - `core/decay.py`: 78% → 90% (28 total tests) - All three decay models and projections
+  - `storage/ltm_index.py`: 71% → 99% (43 tests) - Document indexing, search, and CLI
+- All decay models tested: power_law, exponential, two_component
+- Comprehensive LTM document serialization, wikilink/hashtag extraction, and legacy path fallback
+- All 770 tests passing with excellent reliability
+
 **2024-10-18**: Major Test Coverage Expansion
 - **Expanded coverage from 52% to 67%** (+15 percentage points)
 - **Increased tests from 305 to 606** (+301 new tests, +98%)
