@@ -3,14 +3,13 @@
 from __future__ import annotations
 
 import time
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
 
 from ..config import get_config
 from ..context import db, mcp
 from ..core.clustering import cosine_similarity
 from ..performance import time_operation
 from ..core.decay import calculate_score
-from ..performance import time_operation
 from ..security.validators import (
     MAX_CONTENT_LENGTH,
     MAX_TAGS_COUNT,
@@ -22,17 +21,19 @@ from ..security.validators import (
 )
 from ..storage.models import MemoryStatus, SearchResult
 
+if TYPE_CHECKING:
+    from sentence_transformers import SentenceTransformer
+
 # Optional dependency for embeddings
 try:
     from sentence_transformers import SentenceTransformer
 
     SENTENCE_TRANSFORMERS_AVAILABLE = True
 except ImportError:
-    SentenceTransformer = None
     SENTENCE_TRANSFORMERS_AVAILABLE = False
 
 # Global model cache to avoid reloading on every request
-_model_cache: dict[str, SentenceTransformer] = {}
+_model_cache: dict[str, Any] = {}
 
 
 def _get_embedding_model(model_name: str) -> SentenceTransformer | None:
