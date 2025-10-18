@@ -6,6 +6,7 @@ from pathlib import Path
 
 from mnemex.config import Config, set_config
 from mnemex.context import db
+from mnemex.storage.ltm_index import LTMIndex
 from mnemex.storage.models import Memory, MemoryMetadata
 from mnemex.tools.search_unified import UnifiedSearchResult, search_unified
 
@@ -47,6 +48,10 @@ Documenting TypeScript preference across projects.
 """,
         encoding="utf-8",
     )
+
+    # Build LTM index so the unified search can find the markdown file
+    index = LTMIndex(vault_path=vault_dir)
+    index.build_index(force=True)
 
     # Execute unified search
     result_dict = search_unified(query="TypeScript", tags=["preferences"], limit=5)

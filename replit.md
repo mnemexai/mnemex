@@ -112,6 +112,14 @@ See the main [README.md](README.md) for detailed documentation.
 
 ## Recent Changes
 
+**2024-10-18**: Testing Infrastructure & Test Fixes
+- Installed pytest and testing dependencies (pytest, pytest-asyncio, pytest-cov)
+- Fixed 5 failing tests related to optional SentenceTransformer dependency
+- Added missing `ltm_index_max_age_seconds` config parameter
+- Improved test_search_unified to properly index LTM files
+- **Test Results**: 303 tests passing, 52% code coverage (up from 50% baseline)
+- Created comprehensive test coverage report
+
 **2024-10-18**: Initial Replit setup
 - Installed Python dependencies via pip
 - Fixed compatibility issues for Python 3.10
