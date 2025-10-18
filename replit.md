@@ -112,12 +112,17 @@ See the main [README.md](README.md) for detailed documentation.
 
 ## Recent Changes
 
+**2024-10-18**: Environment Variable Configuration Enhancement
+- Added environment variable support for `MNEMEX_LTM_INDEX_MAX_AGE_SECONDS`
+- Created regression tests with proper monkeypatch cleanup
+- All tests passing reliably with isolated fixtures
+- **Test Results**: 305 tests passing, 52% code coverage
+
 **2024-10-18**: Testing Infrastructure & Test Fixes
 - Installed pytest and testing dependencies (pytest, pytest-asyncio, pytest-cov)
 - Fixed 5 failing tests related to optional SentenceTransformer dependency
-- Added missing `ltm_index_max_age_seconds` config parameter
+- Added missing `ltm_index_max_age_seconds` config parameter to Config model
 - Improved test_search_unified to properly index LTM files
-- **Test Results**: 303 tests passing, 52% code coverage (up from 50% baseline)
 - Created comprehensive test coverage report
 
 **2024-10-18**: Initial Replit setup
