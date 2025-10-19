@@ -5,6 +5,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2025-10-18
+
+🛡️ **Stable Baseline Release** - Expanded Test Coverage & Repository Cleanup
+
+This release significantly expands test coverage across critical system modules and establishes a clean baseline for future development.
+
+### Added
+- **Comprehensive security test suite** (4 new test modules, 100+ tests):
+  - `test_security_paths.py` - Path traversal and validation tests
+  - `test_security_permissions.py` - File permission and access control tests
+  - `test_security_secrets.py` - Secret detection and sanitization tests
+  - `test_security_validators.py` - Input validation and security checks
+- **Expanded test coverage** for critical modules:
+  - `test_decay.py` - Power-law, exponential, and two-component decay models (415+ tests)
+  - `test_ltm_index.py` - LTM indexing, search, and vault integration (797+ tests)
+  - `test_search_unified.py` - Unified search across STM and LTM (1159+ tests)
+  - `test_storage.py` - JSONL storage, compaction, and concurrency (921+ tests)
+- Configuration tests for LTM index age settings
+- Performance optimization infrastructure and monitoring
+- Background processing capabilities
+
+### Changed
+- **Repository cleanup**: Removed all stale feature branches (25+ branches deleted)
+- **PR management**: Closed outdated draft PRs, established clean main branch
+- Enhanced test infrastructure with improved fixtures and helpers
+- Improved type hints and optional dependency handling for ML models
+
+### Fixed
+- Resolved lint formatting issues across codebase
+- Fixed Windows path separator handling in tests
+- Corrected type annotations for mypy compliance
+
+### Notes
+- **Test coverage significantly improved** - Comprehensive coverage of core modules
+- **Platform compatibility** - Tests verified on macOS, Linux (Ubuntu), and Windows
+- **Stable baseline established** - Clean state for rollback if needed
+- No breaking API changes
+- All existing functionality preserved
+
 ## [0.4.0] - 2025-10-09
 
 ⚙️ Maintenance & CI Hardening; SBOM; Type Checking
