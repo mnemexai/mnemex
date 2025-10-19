@@ -1,12 +1,14 @@
 """Search memory tool."""
 
 import time
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
+
+if TYPE_CHECKING:
+    from sentence_transformers import SentenceTransformer
 
 from ..config import get_config
 from ..context import db, mcp
 from ..core.clustering import cosine_similarity
-from ..performance import time_operation
 from ..core.decay import calculate_score
 from ..performance import time_operation
 from ..security.validators import (
@@ -30,10 +32,10 @@ except ImportError:
     SENTENCE_TRANSFORMERS_AVAILABLE = False
 
 # Global model cache to avoid reloading on every request
-_model_cache: dict[str, SentenceTransformer] = {}
+_model_cache: dict[str, Any] = {}
 
 
-def _get_embedding_model(model_name: str) -> SentenceTransformer | None:
+def _get_embedding_model(model_name: str) -> Any:
     """Get cached embedding model or create new one."""
     if not SENTENCE_TRANSFORMERS_AVAILABLE:
         return None

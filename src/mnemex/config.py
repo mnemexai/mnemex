@@ -184,6 +184,11 @@ class Config(BaseModel):
         description="Weight for LTM results in unified search",
         ge=0,
     )
+    ltm_index_max_age_seconds: int = Field(
+        default=3600,  # 1 hour
+        description="Maximum age of LTM index before it's considered stale",
+        ge=0,
+    )
 
     # Legacy Integration (deprecated) — removed
     basic_memory_path: Path | None | None = None
