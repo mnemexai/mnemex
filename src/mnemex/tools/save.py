@@ -33,7 +33,7 @@ try:
 
     SENTENCE_TRANSFORMERS_AVAILABLE = True
 except ImportError:
-    SentenceTransformer = None  # type: ignore
+    SentenceTransformer = None
     SENTENCE_TRANSFORMERS_AVAILABLE = False
 
 # Global model cache to avoid reloading on every request

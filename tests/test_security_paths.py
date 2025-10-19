@@ -36,7 +36,7 @@ class TestValidateFolderPath:
         """Test empty folder with allow_empty=False."""
         with pytest.raises(ValueError, match="cannot be empty"):
             validate_folder_path("", allow_empty=False)
-    
+
     def test_whitespace_only_folder(self):
         """Test that whitespace-only folders become empty after stripping."""
         with pytest.raises(ValueError, match="empty path component"):
@@ -199,10 +199,31 @@ class TestSanitizeFilename:
 
     def test_windows_reserved_names(self):
         """Test rejection of Windows reserved names."""
-        reserved = ["CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4", 
-                   "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2", "LPT3",
-                   "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"]
-        
+        reserved = [
+            "CON",
+            "PRN",
+            "AUX",
+            "NUL",
+            "COM1",
+            "COM2",
+            "COM3",
+            "COM4",
+            "COM5",
+            "COM6",
+            "COM7",
+            "COM8",
+            "COM9",
+            "LPT1",
+            "LPT2",
+            "LPT3",
+            "LPT4",
+            "LPT5",
+            "LPT6",
+            "LPT7",
+            "LPT8",
+            "LPT9",
+        ]
+
         for name in reserved:
             with pytest.raises(ValueError, match="Windows reserved name"):
                 sanitize_filename(name)
@@ -230,7 +251,7 @@ class TestSanitizeFilename:
         filename_too_long = "a" * 256
         with pytest.raises(ValueError, match="exceeds maximum length"):
             sanitize_filename(filename_too_long)
-        
+
         filename_260 = "x" * 260
         with pytest.raises(ValueError, match="exceeds maximum length"):
             sanitize_filename(filename_260)
@@ -239,7 +260,7 @@ class TestSanitizeFilename:
         """Test custom max_length parameter."""
         with pytest.raises(ValueError, match="exceeds maximum length of 10"):
             sanitize_filename("verylongfilename.txt", max_length=10)
-        
+
         assert sanitize_filename("short.txt", max_length=20) == "short.txt"
 
     def test_empty_filename(self):
@@ -290,17 +311,18 @@ class TestEnsureWithinDirectory:
         with tempfile.TemporaryDirectory() as tmpdir:
             base_dir = Path(tmpdir)
             test_path = base_dir / "notes" / "test.md"
-            
+
             result = ensure_within_directory(test_path, base_dir)
             assert result.is_absolute()
-            assert str(result).startswith(str(base_dir))
+            # Resolve both paths to handle symlinks (e.g., /var -> /private/var on macOS)
+            assert str(result).startswith(str(base_dir.resolve()))
 
     def test_path_within_base_directory_absolute(self):
         """Test that paths within base directory are accepted (absolute)."""
         with tempfile.TemporaryDirectory() as tmpdir:
             base_dir = Path(tmpdir).resolve()
             test_path = base_dir / "subfolder" / "file.txt"
-            
+
             result = ensure_within_directory(test_path, base_dir)
             assert result.is_absolute()
             assert str(result).startswith(str(base_dir))
@@ -310,7 +332,7 @@ class TestEnsureWithinDirectory:
         with tempfile.TemporaryDirectory() as tmpdir:
             base_dir = Path(tmpdir)
             test_path = base_dir / "a" / "b" / "c" / "d" / "e" / "file.txt"
-            
+
             result = ensure_within_directory(test_path, base_dir)
             assert str(result).startswith(str(base_dir.resolve()))
 
@@ -318,11 +340,11 @@ class TestEnsureWithinDirectory:
         """Test that path traversal attempts are rejected."""
         with tempfile.TemporaryDirectory() as tmpdir:
             base_dir = Path(tmpdir)
-            
+
             test_path = base_dir / ".." / "etc" / "passwd"
             with pytest.raises(ValueError, match="escapes base directory"):
                 ensure_within_directory(test_path, base_dir)
-            
+
             test_path2 = base_dir / "notes" / ".." / ".." / "etc"
             with pytest.raises(ValueError, match="escapes base directory"):
                 ensure_within_directory(test_path2, base_dir)
@@ -331,7 +353,7 @@ class TestEnsureWithinDirectory:
         """Test that absolute paths outside base are rejected."""
         with tempfile.TemporaryDirectory() as tmpdir:
             base_dir = Path(tmpdir)
-            
+
             outside_path = Path("/etc/passwd")
             with pytest.raises(ValueError, match="escapes base directory"):
                 ensure_within_directory(outside_path, base_dir)
@@ -340,13 +362,13 @@ class TestEnsureWithinDirectory:
         """Test symlink resolution with resolve_symlinks=True."""
         with tempfile.TemporaryDirectory() as tmpdir:
             base_dir = Path(tmpdir)
-            
+
             real_file = base_dir / "real_file.txt"
             real_file.write_text("test content")
-            
+
             symlink_file = base_dir / "symlink.txt"
             symlink_file.symlink_to(real_file)
-            
+
             result = ensure_within_directory(symlink_file, base_dir, resolve_symlinks=True)
             assert result.is_absolute()
             assert str(result).startswith(str(base_dir.resolve()))
@@ -355,13 +377,13 @@ class TestEnsureWithinDirectory:
         """Test symlink resolution with resolve_symlinks=False."""
         with tempfile.TemporaryDirectory() as tmpdir:
             base_dir = Path(tmpdir)
-            
+
             real_file = base_dir / "real_file.txt"
             real_file.write_text("test content")
-            
+
             symlink_file = base_dir / "symlink.txt"
             symlink_file.symlink_to(real_file)
-            
+
             result = ensure_within_directory(symlink_file, base_dir, resolve_symlinks=False)
             assert result.is_absolute()
             assert str(result).startswith(str(base_dir.absolute()))
@@ -371,15 +393,15 @@ class TestEnsureWithinDirectory:
         with tempfile.TemporaryDirectory() as tmpdir:
             base_dir = Path(tmpdir) / "vault"
             base_dir.mkdir()
-            
+
             outside_dir = Path(tmpdir) / "outside"
             outside_dir.mkdir()
             outside_file = outside_dir / "secret.txt"
             outside_file.write_text("secret")
-            
+
             symlink = base_dir / "link_to_secret.txt"
             symlink.symlink_to(outside_file)
-            
+
             with pytest.raises(ValueError, match="escapes base directory"):
                 ensure_within_directory(symlink, base_dir, resolve_symlinks=True)
 
@@ -388,7 +410,7 @@ class TestEnsureWithinDirectory:
         with tempfile.TemporaryDirectory() as tmpdir:
             base_dir = Path(tmpdir)
             outside_path = Path("/etc/passwd")
-            
+
             with pytest.raises(ValueError, match="my_path"):
                 ensure_within_directory(outside_path, base_dir, field_name="my_path")
 
@@ -401,7 +423,7 @@ class TestValidateVaultPath:
         with tempfile.TemporaryDirectory() as tmpdir:
             vault_path = Path(tmpdir) / "vault"
             vault_path.mkdir()
-            
+
             result = validate_vault_path(vault_path)
             assert result.is_absolute()
             assert result == vault_path.resolve()
@@ -411,7 +433,7 @@ class TestValidateVaultPath:
         with tempfile.TemporaryDirectory() as tmpdir:
             vault_dir = Path(tmpdir) / "vault"
             vault_dir.mkdir()
-            
+
             result = validate_vault_path(str(vault_dir))
             assert result.is_absolute()
             assert isinstance(result, Path)
@@ -429,14 +451,14 @@ class TestValidateVaultPath:
         """Test that tilde (~) paths are expanded."""
         vault_path = Path("~/vault")
         result = validate_vault_path(vault_path)
-        
+
         assert result.is_absolute()
         assert "~" not in str(result)
 
     def test_path_expansion_tilde_string(self):
         """Test that tilde paths as strings are expanded."""
         result = validate_vault_path("~/test/vault")
-        
+
         assert result.is_absolute()
         assert "~" not in str(result)
 
@@ -444,7 +466,7 @@ class TestValidateVaultPath:
         """Test that non-existent paths are allowed (will be created later)."""
         with tempfile.TemporaryDirectory() as tmpdir:
             vault_path = Path(tmpdir) / "nonexistent" / "vault"
-            
+
             result = validate_vault_path(vault_path)
             assert result.is_absolute()
 

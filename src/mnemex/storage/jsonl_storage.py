@@ -5,10 +5,10 @@ Human-readable, git-friendly storage with in-memory indexing for fast queries.
 
 import asyncio
 import json
+import logging
 import time
 from pathlib import Path
 from typing import Any
-import logging
 
 from ..config import get_config
 from ..security.permissions import secure_file
@@ -46,10 +46,6 @@ class JSONLStorage:
         self._relations: dict[str, Relation] = {}
         self._deleted_memory_ids: set[str] = set()
         self._deleted_relation_ids: set[str] = set()
-        
-        # Performance optimization: tag index for faster filtering
-        self._tag_index: dict[str, set[str]] = {}
-        self._last_indexed_memory_count = 0
 
         # Performance optimization: tag index for faster filtering
         self._tag_index: dict[str, set[str]] = {}
@@ -149,6 +145,7 @@ class JSONLStorage:
             if tag not in self._tag_index:
                 self._tag_index[tag] = set()
             self._tag_index[tag].add(memory.id)
+
     def _ensure_tag_index_current(self) -> None:
         """Ensure tag index is current (rebuild if needed)."""
         if len(self._memories) != self._last_indexed_memory_count:
@@ -716,9 +713,7 @@ class JSONLStorage:
             with open(self.memories_path, "a", buffering=8192, encoding="utf-8") as f:
                 f.write(content)
 
-        await loop.run_in_executor(
-            None, _sync_append
-        )
+        await loop.run_in_executor(None, _sync_append)
 
         # Secure file permissions if newly created
         if file_created:

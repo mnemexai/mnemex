@@ -1,0 +1,27 @@
+{
+  "session_id": "edf8b3f2-0579-4cdf-ab52-66238836138d",
+  "last_saved": "2025-10-16T00:25:11.659316Z",
+  "working_directory": "/Users/sc/Documents/GitHub/mnemex",
+  "project_context": {
+    "project_name": "unknown",
+    "project_type": "unknown",
+    "key_files": [],
+    "dependencies": [],
+    "current_focus": ""
+  },
+  "file_history": [],
+  "tokenization_rules": {
+    "dist": 131,
+    "node_modules": 128,
+    ".git": 129,
+    "target": 130
+  },
+  "insights": [],
+  "philosophy": {
+    "sid_waves": true,
+    "vic_sprites": true,
+    "c64_nostalgia": "A gentleman and a scholar indeed!"
+  },
+  "todos": [],
+  "notes": ""
+}

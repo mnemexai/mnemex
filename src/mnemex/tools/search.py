@@ -8,8 +8,8 @@ from typing import TYPE_CHECKING, Any, cast
 from ..config import get_config
 from ..context import db, mcp
 from ..core.clustering import cosine_similarity
-from ..performance import time_operation
 from ..core.decay import calculate_score
+from ..performance import time_operation
 from ..security.validators import (
     MAX_CONTENT_LENGTH,
     MAX_TAGS_COUNT,
@@ -30,7 +30,7 @@ try:
 
     SENTENCE_TRANSFORMERS_AVAILABLE = True
 except ImportError:
-    SentenceTransformer = None  # type: ignore
+    SentenceTransformer = None
     SENTENCE_TRANSFORMERS_AVAILABLE = False
 
 # Global model cache to avoid reloading on every request

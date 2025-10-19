@@ -6,10 +6,8 @@ from mnemex.security.validators import (
     ALLOWED_RELATION_TYPES,
     ALLOWED_TARGETS,
     MAX_CONTENT_LENGTH,
-    MAX_ENTITIES_COUNT,
     MAX_LIST_LENGTH,
     MAX_TAG_LENGTH,
-    MAX_TAGS_COUNT,
     validate_entity,
     validate_list_length,
     validate_positive_int,
@@ -137,7 +135,9 @@ class TestValidateStringLength:
 
     def test_string_too_long(self):
         """Test rejection of strings exceeding max_length."""
-        with pytest.raises(ValueError, match=r"exceeds maximum length of 10 characters \(got 15 characters\)"):
+        with pytest.raises(
+            ValueError, match=r"exceeds maximum length of 10 characters \(got 15 characters\)"
+        ):
             validate_string_length("a" * 15, 10)
 
     def test_string_exceeds_max_content_length(self):
@@ -532,7 +532,9 @@ class TestValidateListLength:
     def test_list_too_long(self):
         """Test rejection of lists exceeding max_length."""
         long_list = list(range(20))
-        with pytest.raises(ValueError, match=r"exceeds maximum length of 10 items \(got 20 items\)"):
+        with pytest.raises(
+            ValueError, match=r"exceeds maximum length of 10 items \(got 20 items\)"
+        ):
             validate_list_length(long_list, 10)
 
     def test_list_exceeds_max_list_length(self):

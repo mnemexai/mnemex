@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import sys
 import time
 from pathlib import Path
@@ -697,9 +696,7 @@ def test_cli_main_with_custom_index_path(tmp_path: Path, monkeypatch) -> None:
 
     from mnemex.storage.ltm_index import main
 
-    monkeypatch.setattr(
-        sys, "argv", ["ltm_index", str(vault), "--index-path", str(custom_index)]
-    )
+    monkeypatch.setattr(sys, "argv", ["ltm_index", str(vault), "--index-path", str(custom_index)])
     result = main()
 
     assert result == 0
