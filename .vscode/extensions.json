@@ -1,0 +1,37 @@
+{
+  "recommendations": [
+    // Python development
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+
+    // Linting and formatting
+    "charliermarsh.ruff",
+
+    // Testing
+    "ms-python.pytest",
+
+    // Type checking
+    "ms-python.mypy-type-checker",
+
+    // Git integration
+    "eamodio.gitlens",
+
+    // Markdown (for docs)
+    "yzhang.markdown-all-in-one",
+
+    // TOML support (pyproject.toml)
+    "tamasfe.even-better-toml",
+
+    // Environment variables
+    "mikestead.dotenv",
+
+    // Direnv support
+    "mkhl.direnv"
+  ],
+  "unwantedRecommendations": [
+    // Avoid conflicts with Ruff
+    "ms-python.flake8",
+    "ms-python.pylint",
+    "ms-python.black-formatter"
+  ]
+}
