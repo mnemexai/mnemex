@@ -161,6 +161,11 @@ class Config(BaseModel):
         default="mnemex-promoted",
         description="Folder within vault for promoted memories",
     )
+    ltm_index_max_age_seconds: int = Field(
+        default=3600,
+        description="Maximum age of LTM index before rebuilding (in seconds, default 1 hour)",
+        ge=60,
+    )
 
     # Git Backup
     git_auto_commit: bool = Field(
@@ -299,6 +304,8 @@ class Config(BaseModel):
             config_dict["ltm_index_path"] = ltm_index_path
         if ltm_promoted_folder := os.getenv("LTM_PROMOTED_FOLDER"):
             config_dict["ltm_promoted_folder"] = ltm_promoted_folder
+        if ltm_index_max_age_seconds := os.getenv("MNEMEX_LTM_INDEX_MAX_AGE_SECONDS"):
+            config_dict["ltm_index_max_age_seconds"] = int(ltm_index_max_age_seconds)
 
         # Git Backup
         if git_auto_commit := os.getenv("GIT_AUTO_COMMIT"):

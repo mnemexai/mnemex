@@ -1,9 +1,11 @@
 """Save memory tool."""
 
+from __future__ import annotations
+
 import logging
 import time
 import uuid
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
 
 from ..config import get_config
 from ..context import db, mcp
@@ -20,6 +22,9 @@ from ..security.validators import (
 )
 from ..storage.models import Memory, MemoryMetadata
 
+if TYPE_CHECKING:
+    from sentence_transformers import SentenceTransformer
+
 logger = logging.getLogger(__name__)
 
 # Optional dependency for embeddings
@@ -32,7 +37,7 @@ except ImportError:
     SENTENCE_TRANSFORMERS_AVAILABLE = False
 
 # Global model cache to avoid reloading on every request
-_model_cache: dict[str, SentenceTransformer] = {}
+_model_cache: dict[str, Any] = {}
 
 
 def _get_embedding_model(model_name: str) -> SentenceTransformer | None:
