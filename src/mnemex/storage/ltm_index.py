@@ -164,8 +164,8 @@ class LTMIndex:
             # Get file stats
             stat = file_path.stat()
 
-            # Create relative path from vault root
-            rel_path = str(file_path.relative_to(self.vault_path))
+            # Create relative path from vault root (use POSIX style for cross-platform consistency)
+            rel_path = file_path.relative_to(self.vault_path).as_posix()
 
             return LTMDocument(
                 path=rel_path,
@@ -216,7 +216,7 @@ class LTMIndex:
         skipped_count = 0
 
         for file_path in markdown_files:
-            rel_path = str(file_path.relative_to(self.vault_path))
+            rel_path = file_path.relative_to(self.vault_path).as_posix()
             seen_paths.add(rel_path)
 
             # Check if file needs updating (incremental mode)

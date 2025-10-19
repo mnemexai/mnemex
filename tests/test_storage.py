@@ -718,7 +718,10 @@ def test_compact_with_relations(temp_storage):
     for i in range(3):
         temp_storage.create_relation(
             Relation(
-                id=f"rel-{i}", from_memory_id=f"m{i}", to_memory_id=f"m{i+1}", relation_type="test"
+                id=f"rel-{i}",
+                from_memory_id=f"m{i}",
+                to_memory_id=f"m{i + 1}",
+                relation_type="test",
             )
         )
 
@@ -961,7 +964,7 @@ def test_get_storage_stats(temp_storage):
             Relation(
                 id=f"rel-stat-{i}",
                 from_memory_id=f"stat-{i}",
-                to_memory_id=f"stat-{i+1}",
+                to_memory_id=f"stat-{i + 1}",
                 relation_type="test",
             )
         )
