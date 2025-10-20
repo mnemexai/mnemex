@@ -1,5 +1,7 @@
 # Mnemex: Temporal Memory for AI
 
+<!-- mcp-name: io.github.simplemindedbot/mnemex -->
+
 A Model Context Protocol (MCP) server providing **human-like memory dynamics** for AI assistants. Memories naturally fade over time unless reinforced through use, mimicking the [Ebbinghaus forgetting curve](https://en.wikipedia.org/wiki/Forgetting_curve).
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
