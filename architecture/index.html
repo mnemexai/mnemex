@@ -702,6 +702,84 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#natural-spaced-repetition" class="md-nav__link">
+    <span class="md-ellipsis">
+      Natural Spaced Repetition
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Natural Spaced Repetition">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#review-priority-calculation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Review Priority Calculation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cross-domain-usage-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cross-Domain Usage Detection
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automatic-reinforcement" class="md-nav__link">
+    <span class="md-ellipsis">
+      Automatic Reinforcement
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blended-search-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      Blended Search Results
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#memory-model-extensions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Memory Model Extensions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#usage-pattern-conversational" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage Pattern (Conversational)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#system-architecture" class="md-nav__link">
     <span class="md-ellipsis">
       System Architecture
@@ -1460,6 +1538,84 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#natural-spaced-repetition" class="md-nav__link">
+    <span class="md-ellipsis">
+      Natural Spaced Repetition
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Natural Spaced Repetition">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#review-priority-calculation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Review Priority Calculation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cross-domain-usage-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cross-Domain Usage Detection
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automatic-reinforcement" class="md-nav__link">
+    <span class="md-ellipsis">
+      Automatic Reinforcement
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#blended-search-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      Blended Search Results
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#memory-model-extensions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Memory Model Extensions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#usage-pattern-conversational" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage Pattern (Conversational)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#system-architecture" class="md-nav__link">
     <span class="md-ellipsis">
       System Architecture
@@ -1782,35 +1938,182 @@
 <p>Memories are forgotten (deleted) if:</p>
 <p><code>score &lt; forget_threshold</code> (default: 0.05)</p>
 <p>This prevents indefinite accumulation of unused memories.</p>
+<h2 id="natural-spaced-repetition">Natural Spaced Repetition<a class="headerlink" href="#natural-spaced-repetition" title="Permanent link">&para;</a></h2>
+<p>Mnemex implements a natural spaced repetition system inspired by how humans remember concepts better when they appear across different contexts - the "Maslow effect" (remembering Maslow's hierarchy better when it appears in history, economics, and sociology classes).</p>
+<p><strong>Key principle:</strong> No flashcards, no explicit review sessions. Reinforcement happens naturally through conversation.</p>
+<h3 id="review-priority-calculation">Review Priority Calculation<a class="headerlink" href="#review-priority-calculation" title="Permanent link">&para;</a></h3>
+<p>Memories are prioritized for review based on their position in the "danger zone" - the decay score range where memories are most at risk of being forgotten:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">calculate_review_priority</span><span class="p">(</span><span class="n">memory</span><span class="p">:</span> <span class="n">Memory</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate review priority using inverted parabola curve.</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="sd">    Priority peaks at the midpoint of the danger zone (0.25 by default).</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="sd">    Returns 0.0-1.0 priority score.</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="n">score</span> <span class="o">=</span> <span class="n">calculate_score</span><span class="p">(</span><span class="n">memory</span><span class="p">)</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="k">if</span> <span class="n">score</span> <span class="o">&lt;</span> <span class="n">danger_zone_min</span> <span class="ow">or</span> <span class="n">score</span> <span class="o">&gt;</span> <span class="n">danger_zone_max</span><span class="p">:</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>        <span class="k">return</span> <span class="mf">0.0</span>  <span class="c1"># Outside danger zone</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    <span class="c1"># Inverted parabola: peaks at midpoint</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>    <span class="n">midpoint</span> <span class="o">=</span> <span class="p">(</span><span class="n">danger_zone_min</span> <span class="o">+</span> <span class="n">danger_zone_max</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>    <span class="n">range_width</span> <span class="o">=</span> <span class="n">danger_zone_max</span> <span class="o">-</span> <span class="n">danger_zone_min</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>    <span class="c1"># Normalize to 0-1 range</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>    <span class="n">normalized</span> <span class="o">=</span> <span class="p">(</span><span class="n">score</span> <span class="o">-</span> <span class="n">danger_zone_min</span><span class="p">)</span> <span class="o">/</span> <span class="n">range_width</span>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>    <span class="c1"># Inverted parabola: 1 - 4*(x - 0.5)^2</span>
+<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>    <span class="n">priority</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">normalized</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>
+<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>    <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">priority</span><span class="p">))</span>
+</code></pre></div>
+<p><strong>Danger zone defaults:</strong>
+- Lower bound: 0.15 (memories decaying rapidly)
+- Upper bound: 0.35 (memories still reasonably strong)
+- Peak priority: 0.25 (midpoint - maximum urgency)</p>
+<h3 id="cross-domain-usage-detection">Cross-Domain Usage Detection<a class="headerlink" href="#cross-domain-usage-detection" title="Permanent link">&para;</a></h3>
+<p>The system detects when memories are used in different contexts by comparing the memory's original tags with the current conversation context tags:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">detect_cross_domain_usage</span><span class="p">(</span><span class="n">memory</span><span class="p">:</span> <span class="n">Memory</span><span class="p">,</span> <span class="n">context_tags</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Detect if memory is being used in a different domain.</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="sd">    Uses Jaccard similarity: intersection / union</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="sd">    If similarity &lt; 30%, tags are sufficiently different to indicate cross-domain usage.</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">memory</span><span class="o">.</span><span class="n">tags</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">context_tags</span><span class="p">:</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>        <span class="k">return</span> <span class="kc">False</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>    <span class="n">memory_tags</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">memory</span><span class="o">.</span><span class="n">tags</span><span class="p">)</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>    <span class="n">context_tags_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">context_tags</span><span class="p">)</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>    <span class="n">intersection</span> <span class="o">=</span> <span class="n">memory_tags</span> <span class="o">&amp;</span> <span class="n">context_tags_set</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>    <span class="n">union</span> <span class="o">=</span> <span class="n">memory_tags</span> <span class="o">|</span> <span class="n">context_tags_set</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>    <span class="n">jaccard_similarity</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">intersection</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">union</span><span class="p">)</span>
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>
+<a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>    <span class="k">return</span> <span class="n">jaccard_similarity</span> <span class="o">&lt;</span> <span class="mf">0.3</span>  <span class="c1"># &lt;30% overlap = cross-domain</span>
+</code></pre></div>
+<p><strong>Example:</strong>
+- Memory tags: <code>[security, jwt, preferences]</code>
+- Context tags: <code>[api, auth, backend]</code>
+- Jaccard similarity: 0.0 (no overlap) → <strong>Cross-domain detected</strong>
+- Result: Memory gets strength boost (1.0 → 1.1-1.2)</p>
+<h3 id="automatic-reinforcement">Automatic Reinforcement<a class="headerlink" href="#automatic-reinforcement" title="Permanent link">&para;</a></h3>
+<p>When a memory is used in conversation, the <code>observe_memory_usage</code> tool:</p>
+<ol>
+<li><strong>Updates usage statistics</strong>: Increments <code>use_count</code>, updates <code>last_used</code></li>
+<li><strong>Increments review count</strong>: Tracks how many times memory has been reinforced</li>
+<li><strong>Detects cross-domain usage</strong>: Compares memory tags with context tags</li>
+<li><strong>Applies strength boost</strong>: If cross-domain, increases strength (capped at 2.0)</li>
+<li><strong>Recalculates priority</strong>: Updates review priority for next search</li>
+</ol>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">reinforce_memory</span><span class="p">(</span><span class="n">memory</span><span class="p">:</span> <span class="n">Memory</span><span class="p">,</span> <span class="n">cross_domain</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Memory</span><span class="p">:</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Reinforce a memory through usage.</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="sd">    Args:</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="sd">        memory: Memory to reinforce</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="sd">        cross_domain: Whether this is cross-domain usage (gets extra boost)</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="sd">        Updated memory with reinforced values</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>    <span class="n">now</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>    <span class="c1"># Standard reinforcement</span>
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>    <span class="n">memory</span><span class="o">.</span><span class="n">last_used</span> <span class="o">=</span> <span class="n">now</span>
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>    <span class="n">memory</span><span class="o">.</span><span class="n">use_count</span> <span class="o">+=</span> <span class="mi">1</span>
+<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>    <span class="n">memory</span><span class="o">.</span><span class="n">review_count</span> <span class="o">+=</span> <span class="mi">1</span>
+<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>    <span class="n">memory</span><span class="o">.</span><span class="n">last_review_at</span> <span class="o">=</span> <span class="n">now</span>
+<a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a>
+<a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a>    <span class="c1"># Cross-domain bonus</span>
+<a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a>    <span class="k">if</span> <span class="n">cross_domain</span><span class="p">:</span>
+<a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a>        <span class="n">memory</span><span class="o">.</span><span class="n">cross_domain_count</span> <span class="o">+=</span> <span class="mi">1</span>
+<a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a>        <span class="c1"># Boost strength (capped at 2.0)</span>
+<a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a>        <span class="n">boost</span> <span class="o">=</span> <span class="mf">0.1</span>
+<a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a>        <span class="n">memory</span><span class="o">.</span><span class="n">strength</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">memory</span><span class="o">.</span><span class="n">strength</span> <span class="o">+</span> <span class="n">boost</span><span class="p">)</span>
+<a id="__codelineno-4-25" name="__codelineno-4-25" href="#__codelineno-4-25"></a>
+<a id="__codelineno-4-26" name="__codelineno-4-26" href="#__codelineno-4-26"></a>    <span class="c1"># Recalculate priority</span>
+<a id="__codelineno-4-27" name="__codelineno-4-27" href="#__codelineno-4-27"></a>    <span class="n">memory</span><span class="o">.</span><span class="n">review_priority</span> <span class="o">=</span> <span class="n">calculate_review_priority</span><span class="p">(</span><span class="n">memory</span><span class="p">)</span>
+<a id="__codelineno-4-28" name="__codelineno-4-28" href="#__codelineno-4-28"></a>
+<a id="__codelineno-4-29" name="__codelineno-4-29" href="#__codelineno-4-29"></a>    <span class="k">return</span> <span class="n">memory</span>
+</code></pre></div>
+<h3 id="blended-search-results">Blended Search Results<a class="headerlink" href="#blended-search-results" title="Permanent link">&para;</a></h3>
+<p>The <code>search_memory</code> tool automatically blends review candidates into search results:</p>
+<ol>
+<li><strong>Query primary index</strong>: Get relevant memories matching search criteria</li>
+<li><strong>Get review queue</strong>: Retrieve memories with highest review priority</li>
+<li><strong>Filter for relevance</strong>: Remove review candidates not relevant to query</li>
+<li><strong>Blend results</strong>: Interleave primary results with review candidates</li>
+<li>Default: 70% primary results, 30% review candidates</li>
+<li>Configurable via <code>MNEMEX_REVIEW_BLEND_RATIO</code></li>
+</ol>
+<p><strong>Example flow:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>User searches for &quot;typescript preferences&quot;
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>→ Primary results: 7 matches (sorted by relevance × decay score)
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>→ Review queue: 10 memories in danger zone
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>→ Filter review queue: Keep only typescript-related (3 matches)
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>→ Blend: [primary[0], primary[1], review[0], primary[2], primary[3], review[1], ...]
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>→ Return top 5 blended results
+</code></pre></div></p>
+<p>This ensures memories needing reinforcement naturally surface during relevant searches, without disrupting the user experience.</p>
+<h3 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Natural Spaced Repetition</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="nv">MNEMEX_REVIEW_BLEND_RATIO</span><span class="o">=</span><span class="m">0</span>.3<span class="w">           </span><span class="c1"># 30% review candidates in search</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="nv">MNEMEX_REVIEW_DANGER_ZONE_MIN</span><span class="o">=</span><span class="m">0</span>.15<span class="w">      </span><span class="c1"># Lower bound of danger zone</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="nv">MNEMEX_REVIEW_DANGER_ZONE_MAX</span><span class="o">=</span><span class="m">0</span>.35<span class="w">      </span><span class="c1"># Upper bound of danger zone</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="nv">MNEMEX_AUTO_REINFORCE</span><span class="o">=</span><span class="nb">true</span><span class="w">              </span><span class="c1"># Auto-reinforce on observe</span>
+</code></pre></div>
+<h3 id="memory-model-extensions">Memory Model Extensions<a class="headerlink" href="#memory-model-extensions" title="Permanent link">&para;</a></h3>
+<p>Natural spaced repetition adds four fields to the <code>Memory</code> model:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">Memory</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="c1"># ... existing fields ...</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    <span class="c1"># Review tracking (v0.5.1+)</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>    <span class="n">review_priority</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">ge</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">le</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># 0.0-1.0 urgency</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>    <span class="n">last_review_at</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>         <span class="c1"># Last reinforcement timestamp</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>    <span class="n">review_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>                     <span class="c1"># Total reinforcements</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>    <span class="n">cross_domain_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>               <span class="c1"># Cross-domain usages</span>
+</code></pre></div>
+<p>These fields are backward-compatible - existing memories default to 0/None.</p>
+<h3 id="usage-pattern-conversational">Usage Pattern (Conversational)<a class="headerlink" href="#usage-pattern-conversational" title="Permanent link">&para;</a></h3>
+<p>The natural spaced repetition system works entirely through conversation:</p>
+<ol>
+<li><strong>User asks question</strong> with implicit context (tags, topics)</li>
+<li><strong>System searches</strong> (automatically includes review candidates in results)</li>
+<li><strong>System uses memories</strong> to form intelligent response</li>
+<li><strong>System observes</strong> memory usage with <code>observe_memory_usage(memory_ids, context_tags)</code></li>
+<li><strong>Cross-domain detection</strong> triggers if tags differ significantly</li>
+<li><strong>Automatic reinforcement</strong> updates memory statistics and priority</li>
+<li><strong>Next search</strong> naturally surfaces memories in danger zone</li>
+</ol>
+<p><strong>No explicit review commands. No interruptions. Just natural strengthening through use.</strong></p>
 <h2 id="system-architecture">System Architecture<a class="headerlink" href="#system-architecture" title="Permanent link">&para;</a></h2>
 <h3 id="layers">Layers<a class="headerlink" href="#layers" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>┌─────────────────────────────────────┐
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>│       MCP Tools (API Layer)         │
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>│  save, search, touch, gc, promote   │
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>└─────────────────┬───────────────────┘
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>                  │
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>┌─────────────────▼───────────────────┐
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>│         Core Logic Layer            │
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>│   decay, scoring, clustering        │
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>└─────────────────┬───────────────────┘
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>                  │
-<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>┌─────────────────▼───────────────────┐
-<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>│      Storage Layer (JSONL)          │
-<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>│  human-readable files + models      │
-<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>└─────────────────────────────────────┘
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>┌─────────────────────────────────────┐
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>│       MCP Tools (API Layer)         │
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>│  save, search, touch, gc, promote   │
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>└─────────────────┬───────────────────┘
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>                  │
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>┌─────────────────▼───────────────────┐
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>│         Core Logic Layer            │
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>│   decay, scoring, clustering        │
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>└─────────────────┬───────────────────┘
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>                  │
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>┌─────────────────▼───────────────────┐
+<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>│      Storage Layer (JSONL)          │
+<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>│  human-readable files + models      │
+<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>└─────────────────────────────────────┘
 </code></pre></div>
 <h3 id="storage-format-jsonl">Storage Format (JSONL)<a class="headerlink" href="#storage-format-jsonl" title="Permanent link">&para;</a></h3>
 <p>Each memory is stored as a JSON object, one per line, in <code>memories.jsonl</code>. Relations in <code>relations.jsonl</code>.</p>
 <p>Example line:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>{&quot;id&quot;:&quot;...&quot;,&quot;content&quot;:&quot;...&quot;,&quot;meta&quot;:{&quot;tags&quot;:[&quot;...&quot;]},&quot;created_at&quot;:1736275200,&quot;last_used&quot;:1736275200,&quot;use_count&quot;:0,&quot;strength&quot;:1.0,&quot;status&quot;:&quot;active&quot;}
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>{&quot;id&quot;:&quot;...&quot;,&quot;content&quot;:&quot;...&quot;,&quot;meta&quot;:{&quot;tags&quot;:[&quot;...&quot;]},&quot;created_at&quot;:1736275200,&quot;last_used&quot;:1736275200,&quot;use_count&quot;:0,&quot;strength&quot;:1.0,&quot;status&quot;:&quot;active&quot;}
 </code></pre></div></p>
 <p>In-memory indexes are built at startup for fast queries; periodic compaction rewrites files to remove tombstones and duplicates.</p>
 <h3 id="memory-states">Memory States<a class="headerlink" href="#memory-states" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>ACTIVE → [high score/usage] → PROMOTED
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>   ↓
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>[low score]
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>   ↓
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>ARCHIVED or DELETED
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>ACTIVE → [high score/usage] → PROMOTED
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>   ↓
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>[low score]
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>   ↓
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>ARCHIVED or DELETED
 </code></pre></div>
 <ul>
 <li><strong>ACTIVE</strong>: Normal short-term memory undergoing decay</li>
@@ -1819,69 +2122,69 @@
 </ul>
 <h2 id="data-flow">Data Flow<a class="headerlink" href="#data-flow" title="Permanent link">&para;</a></h2>
 <h3 id="saving-a-memory">Saving a Memory<a class="headerlink" href="#saving-a-memory" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>User/AI → save_memory(content, tags)
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    ↓
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>Generate embedding (optional)
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    ↓
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>Create Memory object
-<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    ↓
-<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>Append to JSONL storage
-<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    ↓
-<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>Return memory_id
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>User/AI → save_memory(content, tags)
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>    ↓
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>Generate embedding (optional)
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>    ↓
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>Create Memory object
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>    ↓
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>Append to JSONL storage
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>    ↓
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>Return memory_id
 </code></pre></div>
 <h3 id="searching-memories">Searching Memories<a class="headerlink" href="#searching-memories" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>User/AI → search_memory(query, filters)
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    ↓
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>Database query (tags, window, status)
-<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    ↓
-<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>Calculate decay scores for each
-<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>    ↓
-<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>[Optional] Calculate semantic similarity
-<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    ↓
-<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>Rank by combined score
-<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>    ↓
-<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>Return top_k results
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>User/AI → search_memory(query, filters)
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>    ↓
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>Database query (tags, window, status)
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>    ↓
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>Calculate decay scores for each
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>    ↓
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>[Optional] Calculate semantic similarity
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>    ↓
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>Rank by combined score
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>    ↓
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>Return top_k results
 </code></pre></div>
 <h3 id="touching-a-memory">Touching a Memory<a class="headerlink" href="#touching-a-memory" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>User/AI → touch_memory(id)
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    ↓
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>Get existing memory
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    ↓
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>Update: last_used=now, use_count+=1, strength+=boost
-<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>    ↓
-<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>Calculate new score
-<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>    ↓
-<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>Save updated memory
-<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>    ↓
-<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>Return old/new scores
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>User/AI → touch_memory(id)
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>    ↓
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>Get existing memory
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>    ↓
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>Update: last_used=now, use_count+=1, strength+=boost
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>    ↓
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>Calculate new score
+<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>    ↓
+<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>Save updated memory
+<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>    ↓
+<a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>Return old/new scores
 </code></pre></div>
 <h3 id="promotion-flow">Promotion Flow<a class="headerlink" href="#promotion-flow" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>[Automatic or Manual Trigger]
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    ↓
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>Identify candidates (score/usage criteria)
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>    ↓
-<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>[Optional: Dry-run preview]
-<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>    ↓
-<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>For each candidate:
-<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>    ├─ Generate Markdown note
-<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>    ├─ Write to Obsidian vault
-<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>    ├─ Update status=PROMOTED
-<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>    └─ Store vault path
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>[Automatic or Manual Trigger]
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>    ↓
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>Identify candidates (score/usage criteria)
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>    ↓
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>[Optional: Dry-run preview]
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>    ↓
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>For each candidate:
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a>    ├─ Generate Markdown note
+<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>    ├─ Write to Obsidian vault
+<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a>    ├─ Update status=PROMOTED
+<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a>    └─ Store vault path
 </code></pre></div>
 <h3 id="garbage-collection_1">Garbage Collection<a class="headerlink" href="#garbage-collection_1" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>gc(dry_run, archive_instead)
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    ↓
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>Get all ACTIVE memories
-<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>    ↓
-<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>Calculate scores
-<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>    ↓
-<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>Filter: score &lt; forget_threshold
-<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>    ↓
-<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>[Optional: Dry-run preview]
-<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>    ↓
-<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>Delete or Archive
-<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>    ↓
-<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>Return statistics
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>gc(dry_run, archive_instead)
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>    ↓
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>Get all ACTIVE memories
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>    ↓
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>Calculate scores
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>    ↓
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>Filter: score &lt; forget_threshold
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>    ↓
+<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>[Optional: Dry-run preview]
+<a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a>    ↓
+<a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a>Delete or Archive
+<a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a>    ↓
+<a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a>Return statistics
 </code></pre></div>
 <h2 id="clustering-for-consolidation">Clustering for Consolidation<a class="headerlink" href="#clustering-for-consolidation" title="Permanent link">&para;</a></h2>
 <h3 id="similarity-based-clustering">Similarity-Based Clustering<a class="headerlink" href="#similarity-based-clustering" title="Permanent link">&para;</a></h3>

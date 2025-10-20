@@ -1091,6 +1091,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#4-auto-observe-natural-spaced-repetition-new-in-v051" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Auto-Observe (Natural Spaced Repetition) NEW in v0.5.1
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1585,125 +1594,203 @@
 <a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>- &quot;I&#39;ve written this to file://vault/notes/mem_123.md with YAML frontmatter...&quot;
 <a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>- &quot;Should I also save this to short-term memory?&quot;
 </code></pre></div>
+<h3 id="4-auto-observe-natural-spaced-repetition-new-in-v051">4. Auto-Observe (Natural Spaced Repetition) <strong>NEW in v0.5.1</strong><a class="headerlink" href="#4-auto-observe-natural-spaced-repetition-new-in-v051" title="Permanent link">&para;</a></h3>
+<p><strong>When to trigger:</strong>
+- After retrieving memories via search
+- When you <strong>actually use</strong> memories to inform your response
+- After incorporating memory content into your answer</p>
+<p><strong>The "Maslow Effect":</strong></p>
+<p>Just like humans remember Maslow's hierarchy better when it appears across multiple classes (history, economics, sociology), Mnemex reinforces memories through natural cross-domain usage.</p>
+<p><strong>Key Principle:</strong> Only observe memories you actually <strong>use</strong>, not just retrieve.</p>
+<p><strong>Examples:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>User: &quot;Can you help with authentication in my API?&quot;
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>→ Search for relevant memories: finds JWT preference (tags: [security, jwt, preferences])
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>→ Use memory to inform response: &quot;Based on your JWT preferences...&quot;
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>→ Observe memory usage: observe_memory_usage([&quot;jwt-123&quot;], [&quot;api&quot;, &quot;authentication&quot;, &quot;backend&quot;])
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>→ Cross-domain detected (0% tag overlap) → strength boosted 1.0 → 1.1
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>→ Next search naturally surfaces this memory if in danger zone
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a>User: &quot;What&#39;s my TypeScript convention for error handling?&quot;
+<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>→ Search for memories: finds error handling pattern (tags: [typescript, error-handling, conventions])
+<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a>→ Use memory in response: &quot;You prefer using Result types for error handling...&quot;
+<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a>→ Observe usage: observe_memory_usage([&quot;err-456&quot;], [&quot;typescript&quot;, &quot;coding-style&quot;])
+<a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a>→ Same domain (high tag overlap) → standard reinforcement
+<a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a>→ Memory review count incremented, review priority updated
+<a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a>
+<a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a>User: &quot;Remind me about the database setup?&quot;
+<a id="__codelineno-14-16" name="__codelineno-14-16" href="#__codelineno-14-16"></a>→ Search and retrieve database info
+<a id="__codelineno-14-17" name="__codelineno-14-17" href="#__codelineno-14-17"></a>→ Present information to user
+<a id="__codelineno-14-18" name="__codelineno-14-18" href="#__codelineno-14-18"></a>→ Observe usage: observe_memory_usage([&quot;db-789&quot;], [&quot;database&quot;, &quot;infrastructure&quot;])
+<a id="__codelineno-14-19" name="__codelineno-14-19" href="#__codelineno-14-19"></a>→ Memory reinforced through access
+</code></pre></div>
+<p><strong>Implementation Pattern:</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># 1. Search for relevant memories</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="n">memories</span> <span class="o">=</span> <span class="k">await</span> <span class="n">search_memory</span><span class="p">(</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>    <span class="n">query</span><span class="o">=</span><span class="s2">&quot;authentication API&quot;</span><span class="p">,</span>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;api&quot;</span><span class="p">,</span> <span class="s2">&quot;auth&quot;</span><span class="p">],</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>    <span class="n">limit</span><span class="o">=</span><span class="mi">5</span>
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="p">)</span>
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="c1"># 2. Use memories to inform response</span>
+<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="n">response</span> <span class="o">=</span> <span class="n">generate_response_using_memories</span><span class="p">(</span><span class="n">memories</span><span class="p">)</span>
+<a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a>
+<a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a><span class="c1"># 3. Observe which memories were actually used</span>
+<a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a><span class="n">used_memory_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">memories</span> <span class="k">if</span> <span class="n">was_used_in_response</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">response</span><span class="p">)]</span>
+<a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a>
+<a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a><span class="c1"># 4. Record usage with context tags for cross-domain detection</span>
+<a id="__codelineno-15-15" name="__codelineno-15-15" href="#__codelineno-15-15"></a><span class="k">if</span> <span class="n">used_memory_ids</span><span class="p">:</span>
+<a id="__codelineno-15-16" name="__codelineno-15-16" href="#__codelineno-15-16"></a>    <span class="k">await</span> <span class="n">observe_memory_usage</span><span class="p">(</span>
+<a id="__codelineno-15-17" name="__codelineno-15-17" href="#__codelineno-15-17"></a>        <span class="n">memory_ids</span><span class="o">=</span><span class="n">used_memory_ids</span><span class="p">,</span>
+<a id="__codelineno-15-18" name="__codelineno-15-18" href="#__codelineno-15-18"></a>        <span class="n">context_tags</span><span class="o">=</span><span class="n">extract_tags_from_query</span><span class="p">(</span><span class="s2">&quot;authentication API&quot;</span><span class="p">)</span>
+<a id="__codelineno-15-19" name="__codelineno-15-19" href="#__codelineno-15-19"></a>    <span class="p">)</span>
+</code></pre></div>
+<p><strong>When to Observe:</strong>
+- ✅ After using memory content in your response
+- ✅ After building on previous context
+- ✅ After confirming user preferences still apply
+- ❌ NOT after every search (only when actually used)
+- ❌ NOT for speculative retrieval
+- ❌ NOT when memory wasn't relevant to answer</p>
+<p><strong>Benefits:</strong>
+- <strong>Cross-domain reinforcement:</strong> Memories used in different contexts get stronger
+- <strong>Natural review:</strong> Search automatically includes review candidates (30% of results)
+- <strong>No interruptions:</strong> No "flashcard" style review sessions
+- <strong>Danger zone targeting:</strong> Memories at risk (0.15-0.35 score) surface naturally</p>
+<p><strong>Configuration:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="nv">MNEMEX_AUTO_REINFORCE</span><span class="o">=</span><span class="nb">true</span><span class="w">              </span><span class="c1"># Enable auto-reinforcement (default)</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="nv">MNEMEX_REVIEW_BLEND_RATIO</span><span class="o">=</span><span class="m">0</span>.3<span class="w">           </span><span class="c1"># 30% review candidates in search</span>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="nv">MNEMEX_REVIEW_DANGER_ZONE_MIN</span><span class="o">=</span><span class="m">0</span>.15<span class="w">      </span><span class="c1"># Lower bound</span>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="nv">MNEMEX_REVIEW_DANGER_ZONE_MAX</span><span class="o">=</span><span class="m">0</span>.35<span class="w">      </span><span class="c1"># Upper bound</span>
+</code></pre></div></p>
 <h2 id="system-prompt-template">System Prompt Template<a class="headerlink" href="#system-prompt-template" title="Permanent link">&para;</a></h2>
 <h3 id="for-ai-assistants-using-mnemex">For AI Assistants Using Mnemex<a class="headerlink" href="#for-ai-assistants-using-mnemex" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="gh"># Memory System Instructions</span>
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>
-<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>You have access to Mnemex short‑term memory (STM) with temporal decay. Use it to remember important information about the user naturally.
-<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>
-<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="gu">## Automatic Behaviors</span>
-<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>
-<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="k">1.</span> <span class="gs">**Save Important Information**</span>
-<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>When the user shares preferences, decisions, or facts about themselves/projects
-<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>Use descriptive tags for categorization
-<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>Mark security-critical info with higher strength
-<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a>
-<a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a><span class="k">2.</span> <span class="gs">**Recall Context**</span>
-<a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>When the user asks about past topics
-<a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>When current conversation relates to previous discussions
-<a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>Search by tags and keywords, use time windows for recent topics
-<a id="__codelineno-14-16" name="__codelineno-14-16" href="#__codelineno-14-16"></a>
-<a id="__codelineno-14-17" name="__codelineno-14-17" href="#__codelineno-14-17"></a><span class="k">3.</span> <span class="gs">**Reinforce Memories**</span>
-<a id="__codelineno-14-18" name="__codelineno-14-18" href="#__codelineno-14-18"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>When you recall a memory and it proves useful
-<a id="__codelineno-14-19" name="__codelineno-14-19" href="#__codelineno-14-19"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>When the user revisits a topic
-<a id="__codelineno-14-20" name="__codelineno-14-20" href="#__codelineno-14-20"></a>
-<a id="__codelineno-14-21" name="__codelineno-14-21" href="#__codelineno-14-21"></a><span class="k">4.</span> <span class="gs">**Promote to Long-Term**</span>
-<a id="__codelineno-14-22" name="__codelineno-14-22" href="#__codelineno-14-22"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>System automatically promotes high-value memories to permanent storage
-<a id="__codelineno-14-23" name="__codelineno-14-23" href="#__codelineno-14-23"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>No user notification needed - happens invisibly
-<a id="__codelineno-14-24" name="__codelineno-14-24" href="#__codelineno-14-24"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>Use unified search to access both STM and LTM seamlessly
-<a id="__codelineno-14-25" name="__codelineno-14-25" href="#__codelineno-14-25"></a>
-<a id="__codelineno-14-26" name="__codelineno-14-26" href="#__codelineno-14-26"></a><span class="k">5.</span> <span class="gs">**Direct to Permanent Storage**</span>
-<a id="__codelineno-14-27" name="__codelineno-14-27" href="#__codelineno-14-27"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>When user says &quot;Never forget...&quot;, &quot;Make a note...&quot;, &quot;Write this down...&quot;
-<a id="__codelineno-14-28" name="__codelineno-14-28" href="#__codelineno-14-28"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>Save directly to LTM (Obsidian vault) bypassing STM
-<a id="__codelineno-14-29" name="__codelineno-14-29" href="#__codelineno-14-29"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>No decay, permanent immediately
-<a id="__codelineno-14-30" name="__codelineno-14-30" href="#__codelineno-14-30"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>Acknowledge briefly: &quot;Noted.&quot; or &quot;Recorded.&quot;
-<a id="__codelineno-14-31" name="__codelineno-14-31" href="#__codelineno-14-31"></a>
-<a id="__codelineno-14-32" name="__codelineno-14-32" href="#__codelineno-14-32"></a><span class="k">6.</span> <span class="gs">**Be Natural**</span>
-<a id="__codelineno-14-33" name="__codelineno-14-33" href="#__codelineno-14-33"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>Don&#39;t announce &quot;I&#39;m saving this to memory&quot;
-<a id="__codelineno-14-34" name="__codelineno-14-34" href="#__codelineno-14-34"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>Don&#39;t say &quot;I found 3 matching memories&quot;
-<a id="__codelineno-14-35" name="__codelineno-14-35" href="#__codelineno-14-35"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>Don&#39;t ask &quot;Should I save this permanently?&quot;
-<a id="__codelineno-14-36" name="__codelineno-14-36" href="#__codelineno-14-36"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>Weave recalled information into responses naturally
-<a id="__codelineno-14-37" name="__codelineno-14-37" href="#__codelineno-14-37"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>Act like you remember, not like you&#39;re querying a database
-<a id="__codelineno-14-38" name="__codelineno-14-38" href="#__codelineno-14-38"></a>
-<a id="__codelineno-14-39" name="__codelineno-14-39" href="#__codelineno-14-39"></a><span class="gu">## Example Interactions</span>
-<a id="__codelineno-14-40" name="__codelineno-14-40" href="#__codelineno-14-40"></a>
-<a id="__codelineno-14-41" name="__codelineno-14-41" href="#__codelineno-14-41"></a><span class="gs">**Good:**</span>
-<a id="__codelineno-14-42" name="__codelineno-14-42" href="#__codelineno-14-42"></a>User: &quot;I prefer using Vim for code editing&quot;
-<a id="__codelineno-14-43" name="__codelineno-14-43" href="#__codelineno-14-43"></a>You: &quot;Got it. I&#39;ll keep that in mind when suggesting tools.&quot;
-<a id="__codelineno-14-44" name="__codelineno-14-44" href="#__codelineno-14-44"></a>[Internally: save_memory with tags=[&quot;preferences&quot;, &quot;vim&quot;, &quot;editor&quot;]]
-<a id="__codelineno-14-45" name="__codelineno-14-45" href="#__codelineno-14-45"></a>
-<a id="__codelineno-14-46" name="__codelineno-14-46" href="#__codelineno-14-46"></a><span class="gs">**Bad:**</span>
-<a id="__codelineno-14-47" name="__codelineno-14-47" href="#__codelineno-14-47"></a>User: &quot;I prefer using Vim for code editing&quot;
-<a id="__codelineno-14-48" name="__codelineno-14-48" href="#__codelineno-14-48"></a>You: &quot;OK, I&#39;ve saved your Vim preference to my short-term memory database with ID mem_abc123.&quot;
-<a id="__codelineno-14-49" name="__codelineno-14-49" href="#__codelineno-14-49"></a>
-<a id="__codelineno-14-50" name="__codelineno-14-50" href="#__codelineno-14-50"></a><span class="gs">**Good:**</span>
-<a id="__codelineno-14-51" name="__codelineno-14-51" href="#__codelineno-14-51"></a>User: &quot;What was my preferred editor again?&quot;
-<a id="__codelineno-14-52" name="__codelineno-14-52" href="#__codelineno-14-52"></a>You: &quot;You mentioned you prefer Vim for code editing.&quot;
-<a id="__codelineno-14-53" name="__codelineno-14-53" href="#__codelineno-14-53"></a>[Internally: searched STM, found preference, reinforced it]
-<a id="__codelineno-14-54" name="__codelineno-14-54" href="#__codelineno-14-54"></a>
-<a id="__codelineno-14-55" name="__codelineno-14-55" href="#__codelineno-14-55"></a><span class="gs">**Bad:**</span>
-<a id="__codelineno-14-56" name="__codelineno-14-56" href="#__codelineno-14-56"></a>User: &quot;What was my preferred editor again?&quot;
-<a id="__codelineno-14-57" name="__codelineno-14-57" href="#__codelineno-14-57"></a>You: &quot;Let me search my memory... I found 1 result: &#39;I prefer using Vim for code editing&#39; (score: 0.85, created: 2 days ago)&quot;
-<a id="__codelineno-14-58" name="__codelineno-14-58" href="#__codelineno-14-58"></a>
-<a id="__codelineno-14-59" name="__codelineno-14-59" href="#__codelineno-14-59"></a><span class="gu">## Tool Usage Guidelines</span>
-<a id="__codelineno-14-60" name="__codelineno-14-60" href="#__codelineno-14-60"></a>
-<a id="__codelineno-14-61" name="__codelineno-14-61" href="#__codelineno-14-61"></a><span class="k">-</span><span class="w"> </span><span class="sb">`save_memory`</span>: For preferences, decisions, facts, credentials (to STM)
-<a id="__codelineno-14-62" name="__codelineno-14-62" href="#__codelineno-14-62"></a><span class="k">-</span><span class="w"> </span><span class="sb">`write_note`</span>: For permanent storage when user says &quot;never forget&quot;, &quot;make a note&quot; (to LTM)
-<a id="__codelineno-14-63" name="__codelineno-14-63" href="#__codelineno-14-63"></a><span class="k">-</span><span class="w"> </span><span class="sb">`search_memory`</span>: For recall and context retrieval (searches both STM and LTM)
-<a id="__codelineno-14-64" name="__codelineno-14-64" href="#__codelineno-14-64"></a><span class="k">-</span><span class="w"> </span><span class="sb">`touch_memory`</span>: After successful recall to reinforce
-<a id="__codelineno-14-65" name="__codelineno-14-65" href="#__codelineno-14-65"></a><span class="k">-</span><span class="w"> </span><span class="sb">`promote_memory`</span>: System handles automatically based on score/usage
-<a id="__codelineno-14-66" name="__codelineno-14-66" href="#__codelineno-14-66"></a><span class="k">-</span><span class="w"> </span><span class="sb">`gc`</span>: System handles automatically (garbage collection)
-<a id="__codelineno-14-67" name="__codelineno-14-67" href="#__codelineno-14-67"></a>
-<a id="__codelineno-14-68" name="__codelineno-14-68" href="#__codelineno-14-68"></a><span class="gu">## Memory Operation Tiers</span>
-<a id="__codelineno-14-69" name="__codelineno-14-69" href="#__codelineno-14-69"></a>
-<a id="__codelineno-14-70" name="__codelineno-14-70" href="#__codelineno-14-70"></a><span class="gs">**Tier 1 - Auto-save (Invisible):**</span>
-<a id="__codelineno-14-71" name="__codelineno-14-71" href="#__codelineno-14-71"></a><span class="k">-</span><span class="w"> </span>User: &quot;I prefer dark mode&quot;
-<a id="__codelineno-14-72" name="__codelineno-14-72" href="#__codelineno-14-72"></a><span class="k">-</span><span class="w"> </span>Action: <span class="sb">`save_memory(content=&quot;prefers dark mode&quot;, strength=1.0)`</span>
-<a id="__codelineno-14-73" name="__codelineno-14-73" href="#__codelineno-14-73"></a><span class="k">-</span><span class="w"> </span>Destination: STM with 3-day half-life decay
-<a id="__codelineno-14-74" name="__codelineno-14-74" href="#__codelineno-14-74"></a>
-<a id="__codelineno-14-75" name="__codelineno-14-75" href="#__codelineno-14-75"></a><span class="gs">**Tier 2 - Explicit (High Priority):**</span>
-<a id="__codelineno-14-76" name="__codelineno-14-76" href="#__codelineno-14-76"></a><span class="k">-</span><span class="w"> </span>User: &quot;Remember that I&#39;m allergic to peanuts&quot;
-<a id="__codelineno-14-77" name="__codelineno-14-77" href="#__codelineno-14-77"></a><span class="k">-</span><span class="w"> </span>Action: <span class="sb">`save_memory(content=&quot;allergic to peanuts&quot;, strength=2.0)`</span>
-<a id="__codelineno-14-78" name="__codelineno-14-78" href="#__codelineno-14-78"></a><span class="k">-</span><span class="w"> </span>Destination: STM with slower decay (higher strength)
-<a id="__codelineno-14-79" name="__codelineno-14-79" href="#__codelineno-14-79"></a>
-<a id="__codelineno-14-80" name="__codelineno-14-80" href="#__codelineno-14-80"></a><span class="gs">**Tier 3 - Direct to Permanent:**</span>
-<a id="__codelineno-14-81" name="__codelineno-14-81" href="#__codelineno-14-81"></a><span class="k">-</span><span class="w"> </span>User: &quot;Never forget: production deploy is Fridays at 3pm&quot;
-<a id="__codelineno-14-82" name="__codelineno-14-82" href="#__codelineno-14-82"></a><span class="k">-</span><span class="w"> </span>Action: <span class="sb">`write_note(title=&quot;Production Deploy Schedule&quot;, content=&quot;...&quot;)`</span>
-<a id="__codelineno-14-83" name="__codelineno-14-83" href="#__codelineno-14-83"></a><span class="k">-</span><span class="w"> </span>Destination: LTM vault (permanent, no decay)
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="gh"># Memory System Instructions</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>You have access to Mnemex short‑term memory (STM) with temporal decay. Use it to remember important information about the user naturally.
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="gu">## Automatic Behaviors</span>
+<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>
+<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="k">1.</span> <span class="gs">**Save Important Information**</span>
+<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>When the user shares preferences, decisions, or facts about themselves/projects
+<a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>Use descriptive tags for categorization
+<a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>Mark security-critical info with higher strength
+<a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a>
+<a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a><span class="k">2.</span> <span class="gs">**Recall Context**</span>
+<a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>When the user asks about past topics
+<a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>When current conversation relates to previous discussions
+<a id="__codelineno-17-15" name="__codelineno-17-15" href="#__codelineno-17-15"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>Search by tags and keywords, use time windows for recent topics
+<a id="__codelineno-17-16" name="__codelineno-17-16" href="#__codelineno-17-16"></a>
+<a id="__codelineno-17-17" name="__codelineno-17-17" href="#__codelineno-17-17"></a><span class="k">3.</span> <span class="gs">**Reinforce Memories**</span>
+<a id="__codelineno-17-18" name="__codelineno-17-18" href="#__codelineno-17-18"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>When you recall a memory and it proves useful
+<a id="__codelineno-17-19" name="__codelineno-17-19" href="#__codelineno-17-19"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>When the user revisits a topic
+<a id="__codelineno-17-20" name="__codelineno-17-20" href="#__codelineno-17-20"></a>
+<a id="__codelineno-17-21" name="__codelineno-17-21" href="#__codelineno-17-21"></a><span class="k">4.</span> <span class="gs">**Observe Memory Usage (Natural Spaced Repetition - v0.5.1+)**</span>
+<a id="__codelineno-17-22" name="__codelineno-17-22" href="#__codelineno-17-22"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>After using memories to inform your response
+<a id="__codelineno-17-23" name="__codelineno-17-23" href="#__codelineno-17-23"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>Record which memories you actually used (not just retrieved)
+<a id="__codelineno-17-24" name="__codelineno-17-24" href="#__codelineno-17-24"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>Provide context tags for cross-domain detection
+<a id="__codelineno-17-25" name="__codelineno-17-25" href="#__codelineno-17-25"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>Enables automatic reinforcement and natural review
+<a id="__codelineno-17-26" name="__codelineno-17-26" href="#__codelineno-17-26"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>Use <span class="sb">`observe_memory_usage(memory_ids, context_tags)`</span>
+<a id="__codelineno-17-27" name="__codelineno-17-27" href="#__codelineno-17-27"></a>
+<a id="__codelineno-17-28" name="__codelineno-17-28" href="#__codelineno-17-28"></a><span class="k">5.</span> <span class="gs">**Promote to Long-Term**</span>
+<a id="__codelineno-17-29" name="__codelineno-17-29" href="#__codelineno-17-29"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>System automatically promotes high-value memories to permanent storage
+<a id="__codelineno-17-30" name="__codelineno-17-30" href="#__codelineno-17-30"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>No user notification needed - happens invisibly
+<a id="__codelineno-17-31" name="__codelineno-17-31" href="#__codelineno-17-31"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>Use unified search to access both STM and LTM seamlessly
+<a id="__codelineno-17-32" name="__codelineno-17-32" href="#__codelineno-17-32"></a>
+<a id="__codelineno-17-33" name="__codelineno-17-33" href="#__codelineno-17-33"></a><span class="k">5.</span> <span class="gs">**Direct to Permanent Storage**</span>
+<a id="__codelineno-17-34" name="__codelineno-17-34" href="#__codelineno-17-34"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>When user says &quot;Never forget...&quot;, &quot;Make a note...&quot;, &quot;Write this down...&quot;
+<a id="__codelineno-17-35" name="__codelineno-17-35" href="#__codelineno-17-35"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>Save directly to LTM (Obsidian vault) bypassing STM
+<a id="__codelineno-17-36" name="__codelineno-17-36" href="#__codelineno-17-36"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>No decay, permanent immediately
+<a id="__codelineno-17-37" name="__codelineno-17-37" href="#__codelineno-17-37"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>Acknowledge briefly: &quot;Noted.&quot; or &quot;Recorded.&quot;
+<a id="__codelineno-17-38" name="__codelineno-17-38" href="#__codelineno-17-38"></a>
+<a id="__codelineno-17-39" name="__codelineno-17-39" href="#__codelineno-17-39"></a><span class="k">6.</span> <span class="gs">**Be Natural**</span>
+<a id="__codelineno-17-40" name="__codelineno-17-40" href="#__codelineno-17-40"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>Don&#39;t announce &quot;I&#39;m saving this to memory&quot;
+<a id="__codelineno-17-41" name="__codelineno-17-41" href="#__codelineno-17-41"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>Don&#39;t say &quot;I found 3 matching memories&quot;
+<a id="__codelineno-17-42" name="__codelineno-17-42" href="#__codelineno-17-42"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>Don&#39;t ask &quot;Should I save this permanently?&quot;
+<a id="__codelineno-17-43" name="__codelineno-17-43" href="#__codelineno-17-43"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>Weave recalled information into responses naturally
+<a id="__codelineno-17-44" name="__codelineno-17-44" href="#__codelineno-17-44"></a><span class="w">   </span><span class="k">-</span><span class="w"> </span>Act like you remember, not like you&#39;re querying a database
+<a id="__codelineno-17-45" name="__codelineno-17-45" href="#__codelineno-17-45"></a>
+<a id="__codelineno-17-46" name="__codelineno-17-46" href="#__codelineno-17-46"></a><span class="gu">## Example Interactions</span>
+<a id="__codelineno-17-47" name="__codelineno-17-47" href="#__codelineno-17-47"></a>
+<a id="__codelineno-17-48" name="__codelineno-17-48" href="#__codelineno-17-48"></a><span class="gs">**Good:**</span>
+<a id="__codelineno-17-49" name="__codelineno-17-49" href="#__codelineno-17-49"></a>User: &quot;I prefer using Vim for code editing&quot;
+<a id="__codelineno-17-50" name="__codelineno-17-50" href="#__codelineno-17-50"></a>You: &quot;Got it. I&#39;ll keep that in mind when suggesting tools.&quot;
+<a id="__codelineno-17-51" name="__codelineno-17-51" href="#__codelineno-17-51"></a>[Internally: save_memory with tags=[&quot;preferences&quot;, &quot;vim&quot;, &quot;editor&quot;]]
+<a id="__codelineno-17-52" name="__codelineno-17-52" href="#__codelineno-17-52"></a>
+<a id="__codelineno-17-53" name="__codelineno-17-53" href="#__codelineno-17-53"></a><span class="gs">**Bad:**</span>
+<a id="__codelineno-17-54" name="__codelineno-17-54" href="#__codelineno-17-54"></a>User: &quot;I prefer using Vim for code editing&quot;
+<a id="__codelineno-17-55" name="__codelineno-17-55" href="#__codelineno-17-55"></a>You: &quot;OK, I&#39;ve saved your Vim preference to my short-term memory database with ID mem_abc123.&quot;
+<a id="__codelineno-17-56" name="__codelineno-17-56" href="#__codelineno-17-56"></a>
+<a id="__codelineno-17-57" name="__codelineno-17-57" href="#__codelineno-17-57"></a><span class="gs">**Good:**</span>
+<a id="__codelineno-17-58" name="__codelineno-17-58" href="#__codelineno-17-58"></a>User: &quot;What was my preferred editor again?&quot;
+<a id="__codelineno-17-59" name="__codelineno-17-59" href="#__codelineno-17-59"></a>You: &quot;You mentioned you prefer Vim for code editing.&quot;
+<a id="__codelineno-17-60" name="__codelineno-17-60" href="#__codelineno-17-60"></a>[Internally: searched STM, found preference, reinforced it]
+<a id="__codelineno-17-61" name="__codelineno-17-61" href="#__codelineno-17-61"></a>
+<a id="__codelineno-17-62" name="__codelineno-17-62" href="#__codelineno-17-62"></a><span class="gs">**Bad:**</span>
+<a id="__codelineno-17-63" name="__codelineno-17-63" href="#__codelineno-17-63"></a>User: &quot;What was my preferred editor again?&quot;
+<a id="__codelineno-17-64" name="__codelineno-17-64" href="#__codelineno-17-64"></a>You: &quot;Let me search my memory... I found 1 result: &#39;I prefer using Vim for code editing&#39; (score: 0.85, created: 2 days ago)&quot;
+<a id="__codelineno-17-65" name="__codelineno-17-65" href="#__codelineno-17-65"></a>
+<a id="__codelineno-17-66" name="__codelineno-17-66" href="#__codelineno-17-66"></a><span class="gu">## Tool Usage Guidelines</span>
+<a id="__codelineno-17-67" name="__codelineno-17-67" href="#__codelineno-17-67"></a>
+<a id="__codelineno-17-68" name="__codelineno-17-68" href="#__codelineno-17-68"></a><span class="k">-</span><span class="w"> </span><span class="sb">`save_memory`</span>: For preferences, decisions, facts, credentials (to STM)
+<a id="__codelineno-17-69" name="__codelineno-17-69" href="#__codelineno-17-69"></a><span class="k">-</span><span class="w"> </span><span class="sb">`search_memory`</span>: Search with temporal filtering (auto-includes review candidates)
+<a id="__codelineno-17-70" name="__codelineno-17-70" href="#__codelineno-17-70"></a><span class="k">-</span><span class="w"> </span><span class="sb">`observe_memory_usage`</span>: Record when memories are used in responses (enables natural spaced repetition)
+<a id="__codelineno-17-71" name="__codelineno-17-71" href="#__codelineno-17-71"></a><span class="k">-</span><span class="w"> </span><span class="sb">`touch_memory`</span>: Explicitly reinforce a memory
+<a id="__codelineno-17-72" name="__codelineno-17-72" href="#__codelineno-17-72"></a><span class="k">-</span><span class="w"> </span><span class="sb">`write_note`</span>: For permanent storage when user says &quot;never forget&quot;, &quot;make a note&quot; (to LTM)
+<a id="__codelineno-17-73" name="__codelineno-17-73" href="#__codelineno-17-73"></a><span class="k">-</span><span class="w"> </span><span class="sb">`search_memory`</span>: For recall and context retrieval (searches both STM and LTM)
+<a id="__codelineno-17-74" name="__codelineno-17-74" href="#__codelineno-17-74"></a><span class="k">-</span><span class="w"> </span><span class="sb">`touch_memory`</span>: After successful recall to reinforce
+<a id="__codelineno-17-75" name="__codelineno-17-75" href="#__codelineno-17-75"></a><span class="k">-</span><span class="w"> </span><span class="sb">`promote_memory`</span>: System handles automatically based on score/usage
+<a id="__codelineno-17-76" name="__codelineno-17-76" href="#__codelineno-17-76"></a><span class="k">-</span><span class="w"> </span><span class="sb">`gc`</span>: System handles automatically (garbage collection)
+<a id="__codelineno-17-77" name="__codelineno-17-77" href="#__codelineno-17-77"></a>
+<a id="__codelineno-17-78" name="__codelineno-17-78" href="#__codelineno-17-78"></a><span class="gu">## Memory Operation Tiers</span>
+<a id="__codelineno-17-79" name="__codelineno-17-79" href="#__codelineno-17-79"></a>
+<a id="__codelineno-17-80" name="__codelineno-17-80" href="#__codelineno-17-80"></a><span class="gs">**Tier 1 - Auto-save (Invisible):**</span>
+<a id="__codelineno-17-81" name="__codelineno-17-81" href="#__codelineno-17-81"></a><span class="k">-</span><span class="w"> </span>User: &quot;I prefer dark mode&quot;
+<a id="__codelineno-17-82" name="__codelineno-17-82" href="#__codelineno-17-82"></a><span class="k">-</span><span class="w"> </span>Action: <span class="sb">`save_memory(content=&quot;prefers dark mode&quot;, strength=1.0)`</span>
+<a id="__codelineno-17-83" name="__codelineno-17-83" href="#__codelineno-17-83"></a><span class="k">-</span><span class="w"> </span>Destination: STM with 3-day half-life decay
+<a id="__codelineno-17-84" name="__codelineno-17-84" href="#__codelineno-17-84"></a>
+<a id="__codelineno-17-85" name="__codelineno-17-85" href="#__codelineno-17-85"></a><span class="gs">**Tier 2 - Explicit (High Priority):**</span>
+<a id="__codelineno-17-86" name="__codelineno-17-86" href="#__codelineno-17-86"></a><span class="k">-</span><span class="w"> </span>User: &quot;Remember that I&#39;m allergic to peanuts&quot;
+<a id="__codelineno-17-87" name="__codelineno-17-87" href="#__codelineno-17-87"></a><span class="k">-</span><span class="w"> </span>Action: <span class="sb">`save_memory(content=&quot;allergic to peanuts&quot;, strength=2.0)`</span>
+<a id="__codelineno-17-88" name="__codelineno-17-88" href="#__codelineno-17-88"></a><span class="k">-</span><span class="w"> </span>Destination: STM with slower decay (higher strength)
+<a id="__codelineno-17-89" name="__codelineno-17-89" href="#__codelineno-17-89"></a>
+<a id="__codelineno-17-90" name="__codelineno-17-90" href="#__codelineno-17-90"></a><span class="gs">**Tier 3 - Direct to Permanent:**</span>
+<a id="__codelineno-17-91" name="__codelineno-17-91" href="#__codelineno-17-91"></a><span class="k">-</span><span class="w"> </span>User: &quot;Never forget: production deploy is Fridays at 3pm&quot;
+<a id="__codelineno-17-92" name="__codelineno-17-92" href="#__codelineno-17-92"></a><span class="k">-</span><span class="w"> </span>Action: <span class="sb">`write_note(title=&quot;Production Deploy Schedule&quot;, content=&quot;...&quot;)`</span>
+<a id="__codelineno-17-93" name="__codelineno-17-93" href="#__codelineno-17-93"></a><span class="k">-</span><span class="w"> </span>Destination: LTM vault (permanent, no decay)
 </code></pre></div>
 <h2 id="advanced-patterns">Advanced Patterns<a class="headerlink" href="#advanced-patterns" title="Permanent link">&para;</a></h2>
 <h3 id="temporal-awareness">Temporal Awareness<a class="headerlink" href="#temporal-awareness" title="Permanent link">&para;</a></h3>
 <p>The system knows memories decay over time. Use this to your advantage:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># Recent memory (&lt; 7 days) - high confidence</span>
-<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="k">if</span> <span class="n">memory</span><span class="o">.</span><span class="n">age_days</span> <span class="o">&lt;</span> <span class="mi">7</span><span class="p">:</span>
-<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>    <span class="n">response</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;You recently mentioned </span><span class="si">{</span><span class="n">memory</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s2">&quot;</span>
-<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>
-<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="c1"># Older memory (&gt; 30 days) - confirm with user</span>
-<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="k">elif</span> <span class="n">memory</span><span class="o">.</span><span class="n">age_days</span> <span class="o">&gt;</span> <span class="mi">30</span><span class="p">:</span>
-<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>    <span class="n">response</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;I recall you mentioned </span><span class="si">{</span><span class="n">memory</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s2"> a while back - is that still accurate?&quot;</span>
-<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>
-<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="c1"># Decayed memory (low score) - tentative</span>
-<a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="k">if</span> <span class="n">memory</span><span class="o">.</span><span class="n">score</span> <span class="o">&lt;</span> <span class="mf">0.15</span><span class="p">:</span>
-<a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a>    <span class="n">response</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;I vaguely remember something about </span><span class="si">{</span><span class="n">topic</span><span class="si">}</span><span class="s2"> - can you remind me?&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1"># Recent memory (&lt; 7 days) - high confidence</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="k">if</span> <span class="n">memory</span><span class="o">.</span><span class="n">age_days</span> <span class="o">&lt;</span> <span class="mi">7</span><span class="p">:</span>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>    <span class="n">response</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;You recently mentioned </span><span class="si">{</span><span class="n">memory</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s2">&quot;</span>
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="c1"># Older memory (&gt; 30 days) - confirm with user</span>
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="k">elif</span> <span class="n">memory</span><span class="o">.</span><span class="n">age_days</span> <span class="o">&gt;</span> <span class="mi">30</span><span class="p">:</span>
+<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a>    <span class="n">response</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;I recall you mentioned </span><span class="si">{</span><span class="n">memory</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s2"> a while back - is that still accurate?&quot;</span>
+<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a>
+<a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a><span class="c1"># Decayed memory (low score) - tentative</span>
+<a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a><span class="k">if</span> <span class="n">memory</span><span class="o">.</span><span class="n">score</span> <span class="o">&lt;</span> <span class="mf">0.15</span><span class="p">:</span>
+<a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a>    <span class="n">response</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;I vaguely remember something about </span><span class="si">{</span><span class="n">topic</span><span class="si">}</span><span class="s2"> - can you remind me?&quot;</span>
 </code></pre></div>
 <h3 id="context-aware-tagging">Context-Aware Tagging<a class="headerlink" href="#context-aware-tagging" title="Permanent link">&para;</a></h3>
 <p>Tags should reflect user's mental model, not system categories:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># Bad tagging (system-centric)</span>
-<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="n">tags</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;config&quot;</span><span class="p">,</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">]</span>
-<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>
-<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="c1"># Good tagging (user-centric)</span>
-<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="n">tags</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;database&quot;</span><span class="p">,</span> <span class="s2">&quot;credentials&quot;</span><span class="p">,</span> <span class="s2">&quot;project-alpha&quot;</span><span class="p">,</span> <span class="s2">&quot;security&quot;</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="c1"># Bad tagging (system-centric)</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="n">tags</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;config&quot;</span><span class="p">,</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">]</span>
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="c1"># Good tagging (user-centric)</span>
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="n">tags</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;database&quot;</span><span class="p">,</span> <span class="s2">&quot;credentials&quot;</span><span class="p">,</span> <span class="s2">&quot;project-alpha&quot;</span><span class="p">,</span> <span class="s2">&quot;security&quot;</span><span class="p">]</span>
 </code></pre></div>
 <h3 id="strength-modulation">Strength Modulation<a class="headerlink" href="#strength-modulation" title="Permanent link">&para;</a></h3>
 <p>Adjust memory strength based on importance:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># Critical information - high strength</span>
-<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="n">strength</span> <span class="o">=</span> <span class="mf">2.0</span>  <span class="c1"># Security credentials, decisions with high impact</span>
-<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>
-<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="c1"># Normal information - default strength</span>
-<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="n">strength</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># Preferences, facts, discussions</span>
-<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>
-<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="c1"># Tentative information - low strength</span>
-<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="n">strength</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># Unconfirmed ideas, exploratory thoughts</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="c1"># Critical information - high strength</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="n">strength</span> <span class="o">=</span> <span class="mf">2.0</span>  <span class="c1"># Security credentials, decisions with high impact</span>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="c1"># Normal information - default strength</span>
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="n">strength</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># Preferences, facts, discussions</span>
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>
+<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="c1"># Tentative information - low strength</span>
+<a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="n">strength</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># Unconfirmed ideas, exploratory thoughts</span>
 </code></pre></div>
 <h2 id="integration-with-ltm-long-term-memory">Integration with LTM (Long-Term Memory)<a class="headerlink" href="#integration-with-ltm-long-term-memory" title="Permanent link">&para;</a></h2>
 <p>The system automatically promotes high-value memories to LTM (Obsidian vault). This happens invisibly based on:</p>
@@ -1712,35 +1799,35 @@
 <li><strong>Unified Search</strong> - Search pulls from both STM (recent) and LTM (permanent) seamlessly</li>
 <li><strong>Natural References</strong> - Cite LTM content as if you naturally remember it</li>
 </ol>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="gu">## Long-Term Memory Integration</span>
-<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>
-<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>Promotion happens automatically and invisibly:
-<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="k">-</span><span class="w"> </span>High-score memories (≥ 0.65): Promoted immediately
-<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="k">-</span><span class="w"> </span>Frequently accessed (≥ 5 touches in 14 days): Promoted automatically
-<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="k">-</span><span class="w"> </span>No announcement to user - just works
-<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="k">-</span><span class="w"> </span>Use unified search to pull from both STM and LTM
-<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="k">-</span><span class="w"> </span>Reference promoted content naturally in conversations
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="gu">## Long-Term Memory Integration</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>Promotion happens automatically and invisibly:
+<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="k">-</span><span class="w"> </span>High-score memories (≥ 0.65): Promoted immediately
+<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="k">-</span><span class="w"> </span>Frequently accessed (≥ 5 touches in 14 days): Promoted automatically
+<a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a><span class="k">-</span><span class="w"> </span>No announcement to user - just works
+<a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a><span class="k">-</span><span class="w"> </span>Use unified search to pull from both STM and LTM
+<a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a><span class="k">-</span><span class="w"> </span>Reference promoted content naturally in conversations
 </code></pre></div>
 <h2 id="anti-patterns-what-not-to-do">Anti-Patterns (What NOT to Do)<a class="headerlink" href="#anti-patterns-what-not-to-do" title="Permanent link">&para;</a></h2>
 <h3 id="over-announcing">❌ Over-Announcing<a class="headerlink" href="#over-announcing" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>Bad: &quot;I&#39;ve saved your preference to memory ID mem_12345 with tags [&#39;vim&#39;, &#39;editor&#39;]&quot;
-<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>Good: &quot;Got it, I&#39;ll remember that.&quot;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>Bad: &quot;I&#39;ve saved your preference to memory ID mem_12345 with tags [&#39;vim&#39;, &#39;editor&#39;]&quot;
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>Good: &quot;Got it, I&#39;ll remember that.&quot;
 </code></pre></div>
 <h3 id="exposing-implementation-details">❌ Exposing Implementation Details<a class="headerlink" href="#exposing-implementation-details" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>Bad: &quot;Searching STM with query=&#39;database&#39; tags=[&#39;config&#39;] window_days=7...&quot;
-<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>Good: &quot;Let me think... you mentioned the database config is in /home/user/.env&quot;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>Bad: &quot;Searching STM with query=&#39;database&#39; tags=[&#39;config&#39;] window_days=7...&quot;
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>Good: &quot;Let me think... you mentioned the database config is in /home/user/.env&quot;
 </code></pre></div>
 <h3 id="asking-for-explicit-permission">❌ Asking for Explicit Permission<a class="headerlink" href="#asking-for-explicit-permission" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>Bad: &quot;Would you like me to save this to memory?&quot;
-<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>Good: Just save it automatically (for clear preferences/decisions)
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>Bad: &quot;Would you like me to save this to memory?&quot;
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>Good: Just save it automatically (for clear preferences/decisions)
 </code></pre></div>
 <h3 id="saving-everything-blindly">❌ Saving Everything Blindly<a class="headerlink" href="#saving-everything-blindly" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>Bad: Save every sentence the user types
-<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>Good: Use judgment - save preferences, decisions, facts. Skip chitchat.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>Bad: Save every sentence the user types
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>Good: Use judgment - save preferences, decisions, facts. Skip chitchat.
 </code></pre></div>
 <h3 id="ignoring-decay">❌ Ignoring Decay<a class="headerlink" href="#ignoring-decay" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>Bad: Recall 90-day-old low-score memories with full confidence
-<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>Good: Check score/age, confirm old memories with user
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>Bad: Recall 90-day-old low-score memories with full confidence
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>Good: Check score/age, confirm old memories with user
 </code></pre></div>
 <h2 id="evaluation-metrics">Evaluation Metrics<a class="headerlink" href="#evaluation-metrics" title="Permanent link">&para;</a></h2>
 <p>How to know if the smart prompting is working:</p>
@@ -1767,14 +1854,14 @@
 </ul>
 <h2 id="future-enhancements">Future Enhancements<a class="headerlink" href="#future-enhancements" title="Permanent link">&para;</a></h2>
 <h3 id="proactive-memory">Proactive Memory<a class="headerlink" href="#proactive-memory" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>Assistant: &quot;Based on our previous discussions about TypeScript, would you like me to remember your preferred tsconfig setup?&quot;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>Assistant: &quot;Based on our previous discussions about TypeScript, would you like me to remember your preferred tsconfig setup?&quot;
 </code></pre></div>
 <h3 id="memory-explanation">Memory Explanation<a class="headerlink" href="#memory-explanation" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>User: &quot;Why do you always suggest Vim?&quot;
-<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>Assistant: &quot;Because you told me it&#39;s your preferred editor. Would you like to change that preference?&quot;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>User: &quot;Why do you always suggest Vim?&quot;
+<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>Assistant: &quot;Because you told me it&#39;s your preferred editor. Would you like to change that preference?&quot;
 </code></pre></div>
 <h3 id="memory-hygiene">Memory Hygiene<a class="headerlink" href="#memory-hygiene" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>Assistant: &quot;I notice I have several old memories about project-alpha from 3 months ago. Should I archive these since the project is complete?&quot;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>Assistant: &quot;I notice I have several old memories about project-alpha from 3 months ago. Should I archive these since the project is complete?&quot;
 </code></pre></div>
 <hr />
 <p><strong>Note:</strong> The smart prompting patterns described here differentiate this system from simple key-value stores or basic memory tools. These patterns make memory operations feel natural and invisible to users.</p>
