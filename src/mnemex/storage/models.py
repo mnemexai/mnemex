@@ -60,6 +60,24 @@ class Memory(BaseModel):
     entities: list[str] = Field(
         default_factory=list, description="Named entities extracted from or tagged in this memory"
     )
+    # Natural spaced repetition fields
+    review_priority: float = Field(
+        default=0.0,
+        description="Priority score for natural review (0.0 = not needed, 1.0 = urgent)",
+        ge=0,
+        le=1,
+    )
+    last_review_at: int | None = Field(
+        default=None,
+        description="Timestamp when memory was last naturally reinforced in conversation",
+    )
+    review_count: int = Field(
+        default=0, description="Number of times memory has been naturally reinforced"
+    )
+    cross_domain_count: int = Field(
+        default=0,
+        description="Number of times used across different contexts/domains",
+    )
 
     def to_db_dict(self) -> dict[str, Any]:
         """Convert memory to dictionary for database storage."""
@@ -77,6 +95,10 @@ class Memory(BaseModel):
             "promoted_at": self.promoted_at,
             "promoted_to": self.promoted_to,
             "entities": json.dumps(self.entities),
+            "review_priority": self.review_priority,
+            "last_review_at": self.last_review_at,
+            "review_count": self.review_count,
+            "cross_domain_count": self.cross_domain_count,
             # embed handled separately as BLOB
         }
 
@@ -104,6 +126,10 @@ class Memory(BaseModel):
             promoted_to=row.get("promoted_to"),
             embed=row.get("embed"),
             entities=entities,
+            review_priority=row.get("review_priority", 0.0),
+            last_review_at=row.get("last_review_at"),
+            review_count=row.get("review_count", 0),
+            cross_domain_count=row.get("cross_domain_count", 0),
         )
 
 
