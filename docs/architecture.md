@@ -64,6 +64,183 @@ Memories are forgotten (deleted) if:
 
 This prevents indefinite accumulation of unused memories.
 
+## Natural Spaced Repetition
+
+Mnemex implements a natural spaced repetition system inspired by how humans remember concepts better when they appear across different contexts - the "Maslow effect" (remembering Maslow's hierarchy better when it appears in history, economics, and sociology classes).
+
+**Key principle:** No flashcards, no explicit review sessions. Reinforcement happens naturally through conversation.
+
+### Review Priority Calculation
+
+Memories are prioritized for review based on their position in the "danger zone" - the decay score range where memories are most at risk of being forgotten:
+
+```python
+def calculate_review_priority(memory: Memory) -> float:
+    """Calculate review priority using inverted parabola curve.
+    
+    Priority peaks at the midpoint of the danger zone (0.25 by default).
+    Returns 0.0-1.0 priority score.
+    """
+    score = calculate_score(memory)
+    
+    if score < danger_zone_min or score > danger_zone_max:
+        return 0.0  # Outside danger zone
+    
+    # Inverted parabola: peaks at midpoint
+    midpoint = (danger_zone_min + danger_zone_max) / 2
+    range_width = danger_zone_max - danger_zone_min
+    
+    # Normalize to 0-1 range
+    normalized = (score - danger_zone_min) / range_width
+    
+    # Inverted parabola: 1 - 4*(x - 0.5)^2
+    priority = 1.0 - 4.0 * (normalized - 0.5) ** 2
+    
+    return max(0.0, min(1.0, priority))
+```
+
+**Danger zone defaults:**
+- Lower bound: 0.15 (memories decaying rapidly)
+- Upper bound: 0.35 (memories still reasonably strong)
+- Peak priority: 0.25 (midpoint - maximum urgency)
+
+### Cross-Domain Usage Detection
+
+The system detects when memories are used in different contexts by comparing the memory's original tags with the current conversation context tags:
+
+```python
+def detect_cross_domain_usage(memory: Memory, context_tags: list[str]) -> bool:
+    """Detect if memory is being used in a different domain.
+    
+    Uses Jaccard similarity: intersection / union
+    If similarity < 30%, tags are sufficiently different to indicate cross-domain usage.
+    """
+    if not memory.tags or not context_tags:
+        return False
+    
+    memory_tags = set(memory.tags)
+    context_tags_set = set(context_tags)
+    
+    intersection = memory_tags & context_tags_set
+    union = memory_tags | context_tags_set
+    
+    jaccard_similarity = len(intersection) / len(union)
+    
+    return jaccard_similarity < 0.3  # <30% overlap = cross-domain
+```
+
+**Example:**
+- Memory tags: `[security, jwt, preferences]`
+- Context tags: `[api, auth, backend]`
+- Jaccard similarity: 0.0 (no overlap) → **Cross-domain detected**
+- Result: Memory gets strength boost (1.0 → 1.1-1.2)
+
+### Automatic Reinforcement
+
+When a memory is used in conversation, the `observe_memory_usage` tool:
+
+1. **Updates usage statistics**: Increments `use_count`, updates `last_used`
+2. **Increments review count**: Tracks how many times memory has been reinforced
+3. **Detects cross-domain usage**: Compares memory tags with context tags
+4. **Applies strength boost**: If cross-domain, increases strength (capped at 2.0)
+5. **Recalculates priority**: Updates review priority for next search
+
+```python
+def reinforce_memory(memory: Memory, cross_domain: bool = False) -> Memory:
+    """Reinforce a memory through usage.
+    
+    Args:
+        memory: Memory to reinforce
+        cross_domain: Whether this is cross-domain usage (gets extra boost)
+    
+    Returns:
+        Updated memory with reinforced values
+    """
+    now = int(time.time())
+    
+    # Standard reinforcement
+    memory.last_used = now
+    memory.use_count += 1
+    memory.review_count += 1
+    memory.last_review_at = now
+    
+    # Cross-domain bonus
+    if cross_domain:
+        memory.cross_domain_count += 1
+        # Boost strength (capped at 2.0)
+        boost = 0.1
+        memory.strength = min(2.0, memory.strength + boost)
+    
+    # Recalculate priority
+    memory.review_priority = calculate_review_priority(memory)
+    
+    return memory
+```
+
+### Blended Search Results
+
+The `search_memory` tool automatically blends review candidates into search results:
+
+1. **Query primary index**: Get relevant memories matching search criteria
+2. **Get review queue**: Retrieve memories with highest review priority
+3. **Filter for relevance**: Remove review candidates not relevant to query
+4. **Blend results**: Interleave primary results with review candidates
+   - Default: 70% primary results, 30% review candidates
+   - Configurable via `MNEMEX_REVIEW_BLEND_RATIO`
+
+**Example flow:**
+```
+User searches for "typescript preferences"
+→ Primary results: 7 matches (sorted by relevance × decay score)
+→ Review queue: 10 memories in danger zone
+→ Filter review queue: Keep only typescript-related (3 matches)
+→ Blend: [primary[0], primary[1], review[0], primary[2], primary[3], review[1], ...]
+→ Return top 5 blended results
+```
+
+This ensures memories needing reinforcement naturally surface during relevant searches, without disrupting the user experience.
+
+### Configuration
+
+```bash
+# Natural Spaced Repetition
+MNEMEX_REVIEW_BLEND_RATIO=0.3           # 30% review candidates in search
+MNEMEX_REVIEW_DANGER_ZONE_MIN=0.15      # Lower bound of danger zone
+MNEMEX_REVIEW_DANGER_ZONE_MAX=0.35      # Upper bound of danger zone
+MNEMEX_AUTO_REINFORCE=true              # Auto-reinforce on observe
+```
+
+### Memory Model Extensions
+
+Natural spaced repetition adds four fields to the `Memory` model:
+
+```python
+class Memory(BaseModel):
+    # ... existing fields ...
+    
+    # Review tracking (v0.5.1+)
+    review_priority: float = Field(default=0.0, ge=0, le=1)  # 0.0-1.0 urgency
+    last_review_at: int | None = Field(default=None)         # Last reinforcement timestamp
+    review_count: int = Field(default=0)                     # Total reinforcements
+    cross_domain_count: int = Field(default=0)               # Cross-domain usages
+```
+
+These fields are backward-compatible - existing memories default to 0/None.
+
+### Usage Pattern (Conversational)
+
+The natural spaced repetition system works entirely through conversation:
+
+1. **User asks question** with implicit context (tags, topics)
+2. **System searches** (automatically includes review candidates in results)
+3. **System uses memories** to form intelligent response
+4. **System observes** memory usage with `observe_memory_usage(memory_ids, context_tags)`
+5. **Cross-domain detection** triggers if tags differ significantly
+6. **Automatic reinforcement** updates memory statistics and priority
+7. **Next search** naturally surfaces memories in danger zone
+
+**No explicit review commands. No interruptions. Just natural strengthening through use.**
+
 ## System Architecture
 
 ### Layers

@@ -164,6 +164,92 @@ Reinforce a memory by updating its access time and use count.
 
 ---
 
+### observe_memory_usage
+
+Record that memories were actively used in conversation for natural spaced repetition. This tool should be called when memories are actually **incorporated into responses**, not just retrieved.
+
+Enables natural reinforcement through:
+- Updates usage statistics (last_used, use_count)
+- Detects cross-domain usage (via tag Jaccard similarity)
+- Automatically boosts strength for cross-domain usage
+- Recalculates review priority for next search
+
+**Parameters:**
+
+| Name | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `memory_ids` | array[string] | Yes | - | IDs of memories that were used |
+| `context_tags` | array[string] | No | [] | Tags representing current conversation context |
+
+**Returns:**
+
+```json
+{
+  "reinforced": true,
+  "count": 2,
+  "cross_domain_count": 1,
+  "results": [
+    {
+      "id": "mem-123",
+      "status": "reinforced",
+      "cross_domain": false,
+      "new_use_count": 4,
+      "new_review_count": 3,
+      "strength": 1.0
+    },
+    {
+      "id": "mem-456",
+      "status": "reinforced",
+      "cross_domain": true,
+      "new_use_count": 2,
+      "new_review_count": 1,
+      "strength": 1.1
+    }
+  ]
+}
+```
+
+**Example:**
+
+```json
+{
+  "memory_ids": ["mem-123", "mem-456"],
+  "context_tags": ["api", "authentication", "backend"]
+}
+```
+
+**Use Case:**
+
+```
+User asks: "Can you help with authentication in my API?"
+→ System searches and retrieves JWT preference memory (tags: [security, jwt, preferences])
+→ System uses memory to answer question
+→ System calls observe_memory_usage:
+  {
+    "memory_ids": ["jwt-pref-123"],
+    "context_tags": ["api", "authentication", "backend"]
+  }
+→ Cross-domain usage detected (0% tag overlap)
+→ Memory strength boosted: 1.0 → 1.1
+→ Next search naturally surfaces this memory if in danger zone
+```
+
+**Configuration:**
+
+```bash
+# Enable/disable automatic reinforcement
+MNEMEX_AUTO_REINFORCE=true
+
+# If disabled, returns:
+{
+  "reinforced": false,
+  "reason": "auto_reinforce is disabled in config",
+  "count": 0
+}
+```
+
+---
+
 ## Management Tools
 
 ### gc

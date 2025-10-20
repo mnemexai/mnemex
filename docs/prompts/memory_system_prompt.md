@@ -297,6 +297,89 @@ Bad:
 - "Should I also save this to short-term memory?"
 ```
 
+### 4. Auto-Observe (Natural Spaced Repetition) **NEW in v0.5.1**
+
+**When to trigger:**
+- After retrieving memories via search
+- When you **actually use** memories to inform your response
+- After incorporating memory content into your answer
+
+**The "Maslow Effect":**
+
+Just like humans remember Maslow's hierarchy better when it appears across multiple classes (history, economics, sociology), Mnemex reinforces memories through natural cross-domain usage.
+
+**Key Principle:** Only observe memories you actually **use**, not just retrieve.
+
+**Examples:**
+
+```
+User: "Can you help with authentication in my API?"
+→ Search for relevant memories: finds JWT preference (tags: [security, jwt, preferences])
+→ Use memory to inform response: "Based on your JWT preferences..."
+→ Observe memory usage: observe_memory_usage(["jwt-123"], ["api", "authentication", "backend"])
+→ Cross-domain detected (0% tag overlap) → strength boosted 1.0 → 1.1
+→ Next search naturally surfaces this memory if in danger zone
+
+User: "What's my TypeScript convention for error handling?"
+→ Search for memories: finds error handling pattern (tags: [typescript, error-handling, conventions])
+→ Use memory in response: "You prefer using Result types for error handling..."
+→ Observe usage: observe_memory_usage(["err-456"], ["typescript", "coding-style"])
+→ Same domain (high tag overlap) → standard reinforcement
+→ Memory review count incremented, review priority updated
+
+User: "Remind me about the database setup?"
+→ Search and retrieve database info
+→ Present information to user
+→ Observe usage: observe_memory_usage(["db-789"], ["database", "infrastructure"])
+→ Memory reinforced through access
+```
+
+**Implementation Pattern:**
+
+```python
+# 1. Search for relevant memories
+memories = await search_memory(
+    query="authentication API",
+    tags=["api", "auth"],
+    limit=5
+)
+
+# 2. Use memories to inform response
+response = generate_response_using_memories(memories)
+
+# 3. Observe which memories were actually used
+used_memory_ids = [m.id for m in memories if was_used_in_response(m, response)]
+
+# 4. Record usage with context tags for cross-domain detection
+if used_memory_ids:
+    await observe_memory_usage(
+        memory_ids=used_memory_ids,
+        context_tags=extract_tags_from_query("authentication API")
+    )
+```
+
+**When to Observe:**
+- ✅ After using memory content in your response
+- ✅ After building on previous context
+- ✅ After confirming user preferences still apply
+- ❌ NOT after every search (only when actually used)
+- ❌ NOT for speculative retrieval
+- ❌ NOT when memory wasn't relevant to answer
+
+**Benefits:**
+- **Cross-domain reinforcement:** Memories used in different contexts get stronger
+- **Natural review:** Search automatically includes review candidates (30% of results)
+- **No interruptions:** No "flashcard" style review sessions
+- **Danger zone targeting:** Memories at risk (0.15-0.35 score) surface naturally
+
+**Configuration:**
+```bash
+MNEMEX_AUTO_REINFORCE=true              # Enable auto-reinforcement (default)
+MNEMEX_REVIEW_BLEND_RATIO=0.3           # 30% review candidates in search
+MNEMEX_REVIEW_DANGER_ZONE_MIN=0.15      # Lower bound
+MNEMEX_REVIEW_DANGER_ZONE_MAX=0.35      # Upper bound
+```
+
 ## System Prompt Template
 
 ### For AI Assistants Using Mnemex
@@ -322,7 +405,14 @@ You have access to Mnemex short‑term memory (STM) with temporal decay. Use it 
    - When you recall a memory and it proves useful
    - When the user revisits a topic
 
-4. **Promote to Long-Term**
+4. **Observe Memory Usage (Natural Spaced Repetition - v0.5.1+)**
+   - After using memories to inform your response
+   - Record which memories you actually used (not just retrieved)
+   - Provide context tags for cross-domain detection
+   - Enables automatic reinforcement and natural review
+   - Use `observe_memory_usage(memory_ids, context_tags)`
+
+5. **Promote to Long-Term**
    - System automatically promotes high-value memories to permanent storage
    - No user notification needed - happens invisibly
    - Use unified search to access both STM and LTM seamlessly
@@ -363,6 +453,9 @@ You: "Let me search my memory... I found 1 result: 'I prefer using Vim for code 
 ## Tool Usage Guidelines
 
 - `save_memory`: For preferences, decisions, facts, credentials (to STM)
+- `search_memory`: Search with temporal filtering (auto-includes review candidates)
+- `observe_memory_usage`: Record when memories are used in responses (enables natural spaced repetition)
+- `touch_memory`: Explicitly reinforce a memory
 - `write_note`: For permanent storage when user says "never forget", "make a note" (to LTM)
 - `search_memory`: For recall and context retrieval (searches both STM and LTM)
 - `touch_memory`: After successful recall to reinforce
