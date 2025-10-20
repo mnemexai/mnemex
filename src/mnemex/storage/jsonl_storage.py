@@ -296,6 +296,10 @@ class JSONLStorage:
         status: MemoryStatus | None = None,
         promoted_at: int | None = None,
         promoted_to: str | None = None,
+        review_priority: float | None = None,
+        last_review_at: int | None = None,
+        review_count: int | None = None,
+        cross_domain_count: int | None = None,
     ) -> bool:
         """
         Update specific fields of a memory.
@@ -308,6 +312,10 @@ class JSONLStorage:
             status: New status
             promoted_at: New promoted_at timestamp
             promoted_to: New promoted_to path
+            review_priority: New review priority (0.0-1.0)
+            last_review_at: New last review timestamp
+            review_count: New review count
+            cross_domain_count: New cross-domain usage count
 
         Returns:
             True if memory was updated, False if not found
@@ -332,6 +340,14 @@ class JSONLStorage:
             memory.promoted_at = promoted_at
         if promoted_to is not None:
             memory.promoted_to = promoted_to
+        if review_priority is not None:
+            memory.review_priority = review_priority
+        if last_review_at is not None:
+            memory.last_review_at = last_review_at
+        if review_count is not None:
+            memory.review_count = review_count
+        if cross_domain_count is not None:
+            memory.cross_domain_count = cross_domain_count
 
         # Append updated memory to JSONL
         self._append_memory(memory)

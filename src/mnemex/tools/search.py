@@ -9,6 +9,7 @@ from ..config import get_config
 from ..context import db, mcp
 from ..core.clustering import cosine_similarity
 from ..core.decay import calculate_score
+from ..core.review import blend_search_results, get_memories_due_for_review
 from ..performance import time_operation
 from ..security.validators import (
     MAX_CONTENT_LENGTH,
@@ -77,9 +78,14 @@ def search_memory(
     window_days: int | None = None,
     min_score: float | None = None,
     use_embeddings: bool = False,
+    include_review_candidates: bool = True,
 ) -> dict[str, Any]:
     """
     Search for memories with optional filters and scoring.
+
+    This tool implements natural spaced repetition by blending memories due
+    for review into results when they're relevant. This creates the "Maslow
+    effect" - natural reinforcement through conversation.
 
     Args:
         query: Text query to search for (max 50,000 chars).
@@ -88,9 +94,11 @@ def search_memory(
         window_days: Only search memories from last N days (1-3650).
         min_score: Minimum decay score threshold (0.0-1.0).
         use_embeddings: Use semantic search with embeddings.
+        include_review_candidates: Blend in memories due for review (default True).
 
     Returns:
-        List of matching memories with scores.
+        List of matching memories with scores. Some may be review candidates
+        that benefit from reinforcement.
 
     Raises:
         ValueError: If any input fails validation.
@@ -160,11 +168,59 @@ def search_memory(
         results.append(SearchResult(memory=memory, score=final_score, similarity=similarity))
 
     results.sort(key=lambda r: r.score, reverse=True)
-    results = results[:top_k]
+
+    # Natural spaced repetition: blend in review candidates
+    final_memories = [r.memory for r in results[:top_k]]
+
+    if include_review_candidates and query:
+        # Get all active memories for review queue
+        all_active = db.search_memories(status=MemoryStatus.ACTIVE, limit=10000)
+
+        # Get memories due for review
+        review_queue = get_memories_due_for_review(all_active, min_priority=0.3, limit=20)
+
+        # Filter review candidates for relevance to query
+        relevant_reviews = []
+        for mem in review_queue:
+            # Simple relevance check
+            if query.lower() in mem.content.lower():
+                relevant_reviews.append(mem)
+            elif any(word in mem.content.lower() for word in query.lower().split()):
+                relevant_reviews.append(mem)
+            # Also check semantic similarity if available
+            elif query_embed and mem.embed:
+                sim = cosine_similarity(query_embed, mem.embed)
+                if sim and sim > 0.6:  # Somewhat relevant
+                    relevant_reviews.append(mem)
+
+        # Blend primary results with review candidates
+        if relevant_reviews:
+            final_memories = blend_search_results(
+                final_memories,
+                relevant_reviews,
+                blend_ratio=config.review_blend_ratio,
+            )
+
+    # Convert back to SearchResult format for final output
+    final_results = []
+    for mem in final_memories:
+        # Find the original SearchResult if it exists
+        original = next((r for r in results if r.memory.id == mem.id), None)
+        if original:
+            final_results.append(original)
+        else:
+            # It's a review candidate, calculate fresh score
+            score = calculate_score(
+                use_count=mem.use_count,
+                last_used=mem.last_used,
+                strength=mem.strength,
+                now=now,
+            )
+            final_results.append(SearchResult(memory=mem, score=score, similarity=None))
 
     return {
         "success": True,
-        "count": len(results),
+        "count": len(final_results),
         "results": [
             {
                 "id": r.memory.id,
@@ -175,7 +231,10 @@ def search_memory(
                 "use_count": r.memory.use_count,
                 "last_used": r.memory.last_used,
                 "age_days": round((now - r.memory.created_at) / 86400, 1),
+                "review_priority": round(r.memory.review_priority, 4)
+                if r.memory.review_priority > 0
+                else None,
             }
-            for r in results
+            for r in final_results
         ],
     }

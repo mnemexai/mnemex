@@ -142,6 +142,30 @@ class Config(BaseModel):
         ge=0,
         le=1,
     )
+
+    # Natural spaced repetition
+    review_blend_ratio: float = Field(
+        default=0.3,
+        description="Ratio of review candidates to blend into search results (0.0-1.0)",
+        ge=0,
+        le=1,
+    )
+    review_danger_zone_min: float = Field(
+        default=0.15,
+        description="Minimum score for review danger zone (below this = too far gone)",
+        ge=0,
+        le=1,
+    )
+    review_danger_zone_max: float = Field(
+        default=0.35,
+        description="Maximum score for review danger zone (above this = still fresh)",
+        ge=0,
+        le=1,
+    )
+    auto_reinforce: bool = Field(
+        default=True,
+        description="Automatically reinforce memories when used in conversation",
+    )
     cluster_max_size: int = Field(
         default=12,
         description="Maximum cluster size for LLM review",
@@ -296,6 +320,16 @@ class Config(BaseModel):
             config_dict["cluster_link_threshold"] = float(cluster_link_threshold)
         if cluster_max_size := os.getenv("MNEMEX_CLUSTER_MAX_SIZE"):
             config_dict["cluster_max_size"] = int(cluster_max_size)
+
+        # Natural spaced repetition
+        if review_blend_ratio := os.getenv("MNEMEX_REVIEW_BLEND_RATIO"):
+            config_dict["review_blend_ratio"] = float(review_blend_ratio)
+        if review_danger_zone_min := os.getenv("MNEMEX_REVIEW_DANGER_ZONE_MIN"):
+            config_dict["review_danger_zone_min"] = float(review_danger_zone_min)
+        if review_danger_zone_max := os.getenv("MNEMEX_REVIEW_DANGER_ZONE_MAX"):
+            config_dict["review_danger_zone_max"] = float(review_danger_zone_max)
+        if auto_reinforce := os.getenv("MNEMEX_AUTO_REINFORCE"):
+            config_dict["auto_reinforce"] = auto_reinforce.lower() in ("true", "1", "yes")
 
         # Long-Term Memory
         if ltm_vault_path := os.getenv("LTM_VAULT_PATH"):
