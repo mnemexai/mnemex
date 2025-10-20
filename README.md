@@ -144,7 +144,43 @@ User: "Yes, still using TypeScript"
 
 No explicit memory commands needed - just natural conversation.
 
-### 3. Two-Layer Architecture
+### 3. Natural Spaced Repetition
+
+Inspired by how concepts naturally reinforce across different contexts (the "Maslow effect" - remembering Maslow's hierarchy better when it appears in history, economics, and sociology classes).
+
+**No flashcards. No explicit review sessions. Just natural conversation.**
+
+**How it works:**
+
+1. **Review Priority Calculation** - Memories in the "danger zone" (0.15-0.35 decay score) get highest priority
+2. **Cross-Domain Detection** - Detects when memories are used in different contexts (tag Jaccard similarity <30%)
+3. **Automatic Reinforcement** - Memories strengthen naturally when used, especially across domains
+4. **Blended Search** - Review candidates appear in 30% of search results (configurable)
+
+**Usage pattern:**
+
+```
+User: "Can you help with authentication in my API?"
+→ System searches, retrieves JWT preference memory
+→ System uses memory to answer question
+→ System calls observe_memory_usage with context tags [api, auth, backend]
+→ Cross-domain usage detected (original tags: [security, jwt, preferences])
+→ Memory automatically reinforced, strength boosted
+→ Next search naturally surfaces memories needing review
+```
+
+**Configuration:**
+
+```bash
+MNEMEX_REVIEW_BLEND_RATIO=0.3           # 30% review candidates in search
+MNEMEX_REVIEW_DANGER_ZONE_MIN=0.15      # Lower bound of danger zone
+MNEMEX_REVIEW_DANGER_ZONE_MAX=0.35      # Upper bound of danger zone
+MNEMEX_AUTO_REINFORCE=true              # Auto-reinforce on observe
+```
+
+See `docs/prompts/` for LLM system prompt templates that enable natural memory usage.
+
+### 4. Two-Layer Architecture
 
 ```
 ┌─────────────────────────────────────┐
@@ -172,7 +208,7 @@ mnemex/
 ├── src/mnemex/
 │   ├── core/                          # Decay, scoring, clustering
 │   ├── storage/                       # JSONL and LTM index
-│   ├── tools/                         # 10 MCP tools
+│   ├── tools/                         # 11 MCP tools
 │   ├── backup/                        # Git integration
 │   └── vault/                         # Obsidian integration
 ├── docs/
@@ -348,14 +384,15 @@ mnemex-maintenance      # JSONL storage stats and compaction
 
 ## MCP Tools
 
-10 tools for AI assistants to manage memories:
+11 tools for AI assistants to manage memories:
 
 | Tool | Purpose |
 |------|---------|
 | `save_memory` | Save new memory with tags, entities |
-| `search_memory` | Search with filters and scoring |
+| `search_memory` | Search with filters and scoring (includes review candidates) |
 | `search_unified` | Unified search across STM + LTM |
 | `touch_memory` | Reinforce memory (boost strength) |
+| `observe_memory_usage` | Record memory usage for natural spaced repetition |
 | `gc` | Garbage collect low-scoring memories |
 | `promote_memory` | Move to long-term storage |
 | `cluster_memories` | Find similar memories |
@@ -524,6 +561,11 @@ Frequent access significantly extends retention.
 MIT License - See [LICENSE](LICENSE) for details.
 
 Clean-room implementation. No AGPL dependencies.
+
+### Knowledge & Memory
+*   [mem0ai/mem0-mcp](https://github.com/mem0ai/mem0-mcp) (Python) - A MCP server that provides a smart memory for AI to manage and reference past conversations, user preferences, and key details.
+*   [mnemex](https://github.com/simplemindedbot/mnemex) (Python) - A Python-based MCP server that provides a human-like short-term working memory (JSONL) and long-term memory (Markdown) system for AI assistants. The core of the project is a temporal decay algorithm that causes memories to fade over time unless they are reinforced through use.
+*   [modelcontextprotocol/server-memory](https://github.com/modelcontextprotocol/server-memory) (TypeScript) - A knowledge graph-based persistent memory system for AI.
 
 ## Related Work
 
