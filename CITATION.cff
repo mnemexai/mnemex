@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "Mnemex: Temporal Memory for AI"
+abstract: "A Model Context Protocol (MCP) server providing human-like memory dynamics for AI assistants. Memories naturally fade over time unless reinforced through use, mimicking the Ebbinghaus forgetting curve."
+authors:
+  - family-names: "simplemindedbot"
+    alias: "simplemindedbot"
+repository-code: "https://github.com/simplemindedbot/mnemex"
+url: "https://mnemex.dev"
+license: MIT
+version: "0.5.3"
+date-released: "2025-01-22"
+keywords:
+  - mcp
+  - memory
+  - ai
+  - llm
+  - temporal-decay
+  - mnemonic
+  - memex
+  - cognitive-science
+  - ebbinghaus
+  - forgetting-curve
