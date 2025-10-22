@@ -122,6 +122,29 @@ Add this to your Claude Desktop config file:
 
 That's it! Just one line - no paths, no environment variables.
 
+**Troubleshooting: Command Not Found**
+
+If Claude Desktop shows errors like `spawn mnemex ENOENT`, it can't find the `mnemex` command.
+
+This happens because GUI apps on macOS/Linux don't see your shell's PATH. To fix it:
+
+```bash
+# 1. Find where mnemex is installed
+which mnemex
+# Example: /Users/username/.local/bin/mnemex
+
+# 2. Use the absolute path in your config
+{
+  "mcpServers": {
+    "mnemex": {
+      "command": "/Users/username/.local/bin/mnemex"
+    }
+  }
+}
+```
+
+Replace with your actual path from step 1.
+
 ### Step 4: Restart Claude Desktop
 
 Now Claude has memory.

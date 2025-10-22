@@ -108,6 +108,47 @@ Configuration file location:
 
 **Configuration:** All settings go in `~/.config/mnemex/.env`, not in the MCP config. See `.env.example` for options.
 
+**Troubleshooting: Command Not Found**
+
+If Claude Desktop shows `spawn mnemex ENOENT` errors, the `mnemex` command isn't in Claude Desktop's PATH.
+
+GUI applications on macOS/Linux don't inherit shell PATH configurations (`.zshrc`, `.bashrc`, etc.). Claude Desktop only searches:
+- `/usr/local/bin`
+- `/opt/homebrew/bin` (macOS)
+- `/usr/bin`, `/bin`, `/usr/sbin`, `/sbin`
+
+If `uv tool install` placed `mnemex` in `~/.local/bin/` or another custom location, Claude Desktop can't find it.
+
+**Solution: Use absolute path**
+
+```bash
+# Find where mnemex is installed
+which mnemex
+# Example output: /Users/username/.local/bin/mnemex
+```
+
+Update Claude config with the absolute path:
+
+```json
+{
+  "mcpServers": {
+    "mnemex": {
+      "command": "/Users/username/.local/bin/mnemex"
+    }
+  }
+}
+```
+
+**Alternative: System-wide install**
+
+```bash
+# Option 1: Symlink to system location
+sudo ln -s ~/.local/bin/mnemex /usr/local/bin/mnemex
+
+# Option 2: Install with UV to system location (requires admin)
+sudo uv tool install git+https://github.com/simplemindedbot/mnemex.git
+```
+
 Restart Claude Desktop after configuration.
 
 ### Claude Desktop (Windows)
