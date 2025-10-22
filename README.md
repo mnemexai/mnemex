@@ -17,6 +17,7 @@ A Model Context Protocol (MCP) server providing **human-like memory dynamics** f
 > This project is under active development and should be considered **experimental**. You will likely encounter bugs, breaking changes, and incomplete features. Use at your own risk. Please report issues on GitHub, but understand that this is research code, not production-ready software.
 >
 > **Known issues:**
+>
 > - API may change without notice between versions
 > - Test coverage is incomplete
 
@@ -316,6 +317,56 @@ That's it! No paths, no environment variables needed.
 **Configuration:**
 - Storage paths are configured in `~/.config/mnemex/.env` or project `.env`
 - See `.env.example` for all available settings
+
+#### Troubleshooting: Command Not Found
+
+If Claude Desktop shows `spawn mnemex ENOENT` errors, the `mnemex` command isn't in Claude Desktop's PATH.
+
+**macOS/Linux: GUI apps don't inherit shell PATH**
+
+GUI applications on macOS and Linux don't see your shell's PATH configuration (`.zshrc`, `.bashrc`, etc.). Claude Desktop only searches:
+- `/usr/local/bin`
+- `/opt/homebrew/bin` (macOS)
+- `/usr/bin`
+- `/bin`
+- `/usr/sbin`
+- `/sbin`
+
+If `uv tool install` placed `mnemex` in `~/.local/bin/` or another custom location, Claude Desktop can't find it.
+
+**Solution: Use absolute path**
+
+```bash
+# Find where mnemex is installed
+which mnemex
+# Example output: /Users/username/.local/bin/mnemex
+```
+
+Update your Claude config with the absolute path:
+
+```json
+{
+  "mcpServers": {
+    "mnemex": {
+      "command": "/Users/username/.local/bin/mnemex"
+    }
+  }
+}
+```
+
+Replace `/Users/username/.local/bin/mnemex` with your actual path from `which mnemex`.
+
+**Alternative: System-wide install**
+
+You can also install to a system location that Claude Desktop searches:
+
+```bash
+# Option 1: Link to /usr/local/bin
+sudo ln -s ~/.local/bin/mnemex /usr/local/bin/mnemex
+
+# Option 2: Install with pipx/uv to system location (requires admin)
+sudo uv tool install git+https://github.com/simplemindedbot/mnemex.git
+```
 
 ### Maintenance
 
