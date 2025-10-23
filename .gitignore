@@ -130,3 +130,11 @@ $RECYCLE.BIN/
 # Linux
 *~
 .directory
+
+# Sensitive files
+.mcpregistry_github_token
+.mcpregistry_registry_token
+claude.json
+
+# Cloned repos
+awesome-mcp-servers-mnemex/
