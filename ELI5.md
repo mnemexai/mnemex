@@ -81,8 +81,14 @@ This system is **smart**:
 ### Step 1: Install
 
 ```bash
-# Install Mnemex as a UV tool
-uv tool install git+https://github.com/simplemindedbot/mnemex.git
+# Install Mnemex from PyPI (recommended - fast and easy!)
+uv tool install mnemex
+
+# Or using pipx
+pipx install mnemex
+
+# Or using pip (traditional)
+pip install mnemex
 ```
 
 This installs `mnemex` and all 7 CLI commands in one step!
@@ -349,13 +355,11 @@ Read the examples in the `examples/` directory or check out:
 
 **Quick start**:
 ```bash
-# Install
-uv tool install git+https://github.com/simplemindedbot/mnemex.git
-
-# Configure (optional - creates ~/.config/mnemex/.env)
-cp ~/.config/mnemex/.env.example ~/.config/mnemex/.env
+# Install from PyPI
+uv tool install mnemex
 
 # Add to Claude config: {"command": "mnemex"}
+# Or use absolute path if needed: {"command": "/path/to/mnemex"}
 ```
 
 Then restart Claude Desktop. Done.

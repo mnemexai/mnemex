@@ -23,7 +23,47 @@ A Model Context Protocol (MCP) server providing **human-like memory dynamics** f
 
 > **📖 New to this project?** Start with the [ELI5 Guide](ELI5.md) for a simple explanation of what this does and how to use it.
 
-## Overview
+## What is Mnemex?
+
+**Mnemex gives AI assistants like Claude a human-like memory system.**
+
+### The Problem
+
+When you chat with Claude, it forgets everything between conversations. You tell it "I prefer TypeScript" or "I'm allergic to peanuts," and three days later, you have to repeat yourself. This is frustrating and wastes time.
+
+### What Mnemex Does
+
+Mnemex makes AI assistants **remember things naturally**, just like human memory:
+
+- 🧠 **Remembers what matters** - Your preferences, decisions, and important facts
+- ⏰ **Forgets naturally** - Old, unused information fades away over time (like the [Ebbinghaus forgetting curve](https://en.wikipedia.org/wiki/Forgetting_curve))
+- 💪 **Gets stronger with use** - The more you reference something, the longer it's remembered
+- 📦 **Saves important things permanently** - Frequently used memories get promoted to long-term storage
+
+### How It Works (Simple Version)
+
+1. **You talk naturally** - "I prefer dark mode in all my apps"
+2. **Memory is saved automatically** - No special commands needed
+3. **Time passes** - Memory gradually fades if not used
+4. **You reference it again** - "Make this app dark mode"
+5. **Memory gets stronger** - Now it lasts even longer
+6. **Important memories promoted** - Used 5+ times? Saved permanently to your Obsidian vault
+
+**No flashcards. No explicit review. Just natural conversation.**
+
+### Why It's Different
+
+Most memory systems are dumb:
+- ❌ "Delete after 7 days" (doesn't care if you used it 100 times)
+- ❌ "Keep last 100 items" (throws away important stuff just because it's old)
+
+Mnemex is smart:
+- ✅ Combines **recency** (when?), **frequency** (how often?), and **importance** (how critical?)
+- ✅ Memories fade naturally like human memory
+- ✅ Frequently used memories stick around longer
+- ✅ You can mark critical things to "never forget"
+
+## Technical Overview
 
 This repository contains research, design, and a complete implementation of a short-term memory system that combines:
 
@@ -228,19 +268,29 @@ mnemex/
 
 ### Installation
 
-**Recommended: UV Tool Install**
+**Recommended: UV Tool Install (from PyPI)**
 
 ```bash
-# Install from GitHub (recommended)
-uv tool install git+https://github.com/simplemindedbot/mnemex.git
-
-# Or install from local directory (for development)
-uv tool install .
+# Install from PyPI (recommended - fast, isolated, includes all 7 CLI commands)
+uv tool install mnemex
 ```
 
-This installs `mnemex` and all 7 CLI commands as isolated tools.
+This installs `mnemex` and all 7 CLI commands in an isolated environment.
 
-**Alternative: Editable Install (for development)**
+**Alternative Installation Methods**
+
+```bash
+# Using pipx (similar isolation to uv)
+pipx install mnemex
+
+# Using pip (traditional, installs in current environment)
+pip install mnemex
+
+# From GitHub (latest development version)
+uv tool install git+https://github.com/simplemindedbot/mnemex.git
+```
+
+**For Development (Editable Install)**
 
 ```bash
 # Clone and install in editable mode
@@ -636,7 +686,7 @@ If you use this work in research, please cite:
   author = {simplemindedbot},
   year = {2025},
   url = {https://github.com/simplemindedbot/mnemex},
-  version = {1.0.0}
+  version = {0.5.3}
 }
 ```
 

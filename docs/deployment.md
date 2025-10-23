@@ -7,19 +7,29 @@
 - Python 3.10+
 - `uv` package manager
 
-### UV Tool Install
+### Installation Options
 
-**This is the recommended method for end users:**
+**Recommended: UV Tool Install from PyPI**
 
 ```bash
-# Install from GitHub
-uv tool install git+https://github.com/simplemindedbot/mnemex.git
-
-# Or from local directory
-uv tool install .
+# Install from PyPI (recommended - fast, isolated, automatic updates)
+uv tool install mnemex
 ```
 
-This installs `mnemex` and all 7 CLI commands as isolated tools. Configuration goes in `~/.config/mnemex/.env`.
+**Alternative Methods:**
+
+```bash
+# Using pipx (similar isolation, cross-platform)
+pipx install mnemex
+
+# Using pip (traditional, installs in current environment)
+pip install mnemex
+
+# From GitHub (latest development version)
+uv tool install git+https://github.com/simplemindedbot/mnemex.git
+```
+
+All methods install `mnemex` and all 7 CLI commands. Configuration goes in `~/.config/mnemex/.env`.
 
 ---
 
