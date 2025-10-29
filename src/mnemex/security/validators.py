@@ -45,8 +45,10 @@ ALLOWED_RELATION_TYPES = {
 UUID_PATTERN = re.compile(
     r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", re.IGNORECASE
 )
-TAG_PATTERN = re.compile(r"^[a-zA-Z0-9\-_]+$")  # Alphanumeric, hyphens, underscores only
-ENTITY_PATTERN = re.compile(r"^[a-zA-Z0-9\-_ ]+$")  # Same + spaces for entity names
+# Obsidian tag spec: alphanumeric + hyphen + underscore + forward slash (for nested tags)
+# See: https://help.obsidian.md/tags
+TAG_PATTERN = re.compile(r"^[a-zA-Z0-9\-_/]+$")
+ENTITY_PATTERN = re.compile(r"^[a-zA-Z0-9\-_ ]+$")  # Same as tags but with spaces, no slashes
 
 
 def validate_uuid(value: str, field_name: str = "value") -> str:
@@ -209,30 +211,77 @@ def validate_list_length(
     return items
 
 
-def validate_tag(tag: str, field_name: str = "tag") -> str:
+def sanitize_tag(tag: str) -> str:
+    """
+    Sanitize a tag string to match Obsidian's allowed characters.
+
+    Obsidian tags allow: alphanumeric, hyphens, underscores, forward slashes
+    This function converts invalid characters to valid ones:
+    - Periods (.) → hyphens (-)
+    - Spaces → underscores (_)
+    - Other special chars → underscores (_)
+
+    Args:
+        tag: Tag string to sanitize
+
+    Returns:
+        Sanitized tag string safe for Obsidian
+    """
+    if not isinstance(tag, str):
+        return ""
+
+    # Strip whitespace and convert to lowercase for consistency
+    tag = tag.strip().lower()
+
+    if not tag:
+        return ""
+
+    # Replace common invalid characters with valid equivalents
+    tag = tag.replace(".", "-")  # periods → hyphens (e.g., "v3.0" → "v3-0")
+    tag = tag.replace(" ", "_")  # spaces → underscores
+
+    # Replace any remaining invalid characters with underscores
+    sanitized = "".join(c if c.isalnum() or c in "-_/" else "_" for c in tag)
+
+    # Remove duplicate separators (e.g., "foo--bar" → "foo-bar")
+    while "--" in sanitized or "__" in sanitized or "//" in sanitized:
+        sanitized = sanitized.replace("--", "-").replace("__", "_").replace("//", "/")
+
+    # Remove leading/trailing separators
+    sanitized = sanitized.strip("-_/")
+
+    return sanitized
+
+
+def validate_tag(tag: str, field_name: str = "tag", auto_sanitize: bool = True) -> str:
     """
     Validate and sanitize a tag string.
 
-    Tags must be alphanumeric with hyphens and underscores only.
-    This prevents injection attacks and ensures consistent formatting.
+    Tags must match Obsidian's spec: alphanumeric + hyphens + underscores + forward slashes.
+    Invalid characters are automatically sanitized by default.
 
     Args:
         tag: Tag string to validate
         field_name: Name of field for error messages
+        auto_sanitize: If True, automatically sanitize invalid characters (default: True)
 
     Returns:
-        Validated tag (stripped of whitespace)
+        Validated tag (sanitized if auto_sanitize=True)
 
     Raises:
-        ValueError: If tag contains invalid characters or is too long
+        ValueError: If tag is empty after sanitization or too long
     """
     if not isinstance(tag, str):
         raise ValueError(f"{field_name} must be a string, got {type(tag).__name__}")
 
-    tag = tag.strip()
+    # Apply sanitization if enabled
+    if auto_sanitize:
+        tag = sanitize_tag(tag)
+    else:
+        tag = tag.strip()
 
     if not tag:
-        raise ValueError(f"{field_name} cannot be empty")
+        raise ValueError(f"{field_name} cannot be empty (empty after sanitization)")
 
     if len(tag) > MAX_TAG_LENGTH:
         raise ValueError(
@@ -243,36 +292,85 @@ def validate_tag(tag: str, field_name: str = "tag") -> str:
     if not TAG_PATTERN.match(tag):
         raise ValueError(
             f"{field_name} contains invalid characters. "
-            f"Only alphanumeric, hyphens, and underscores allowed. Got: {tag[:50]}"
+            f"Only alphanumeric, hyphens, underscores, and forward slashes allowed. Got: {tag[:50]}"
         )
 
     return tag
 
 
-def validate_entity(entity: str, field_name: str = "entity") -> str:
+def sanitize_entity(entity: str) -> str:
+    """
+    Sanitize an entity string to match allowed characters.
+
+    Entities allow: alphanumeric, hyphens, underscores, spaces (no slashes)
+    This function converts invalid characters to valid ones:
+    - Periods (.) → hyphens (-)
+    - Other special chars → underscores (_)
+
+    Args:
+        entity: Entity string to sanitize
+
+    Returns:
+        Sanitized entity string
+    """
+    if not isinstance(entity, str):
+        return ""
+
+    # Strip whitespace
+    entity = entity.strip()
+
+    if not entity:
+        return ""
+
+    # Replace common invalid characters with valid equivalents
+    entity = entity.replace(".", "-")  # periods → hyphens
+
+    # Replace any remaining invalid characters with underscores (except spaces)
+    sanitized = "".join(c if c.isalnum() or c in "-_ " else "_" for c in entity)
+
+    # Normalize multiple spaces/separators
+    sanitized = " ".join(sanitized.split())  # Multiple spaces → single space
+    while "--" in sanitized or "__" in sanitized:
+        sanitized = sanitized.replace("--", "-").replace("__", "_")
+
+    # Remove leading/trailing separators (but preserve spaces between words)
+    sanitized = sanitized.strip("-_")
+
+    return sanitized
+
+
+def validate_entity(entity: str, field_name: str = "entity", auto_sanitize: bool = True) -> str:
     """
     Validate and sanitize an entity string.
 
     Entities can contain alphanumeric characters, hyphens, underscores, and spaces.
+    Invalid characters are automatically sanitized by default.
     Examples: "Claude AI", "project-alpha", "user_123"
 
     Args:
         entity: Entity string to validate
         field_name: Name of field for error messages
+        auto_sanitize: If True, automatically sanitize invalid characters (default: True)
 
     Returns:
-        Validated entity (stripped of excess whitespace)
+        Validated entity (sanitized if auto_sanitize=True)
 
     Raises:
-        ValueError: If entity contains invalid characters or is too long
+        ValueError: If entity is empty after sanitization or too long
     """
     if not isinstance(entity, str):
         raise ValueError(f"{field_name} must be a string, got {type(entity).__name__}")
 
-    entity = entity.strip()
+    # Apply sanitization if enabled
+    if auto_sanitize:
+        entity = sanitize_entity(entity)
+    else:
+        entity = entity.strip()
+        # Normalize multiple spaces to single space
+        entity = " ".join(entity.split())
 
     if not entity:
-        raise ValueError(f"{field_name} cannot be empty")
+        raise ValueError(f"{field_name} cannot be empty (empty after sanitization)")
 
     if len(entity) > MAX_TAG_LENGTH:  # Reuse TAG length limit
         raise ValueError(
@@ -285,9 +383,6 @@ def validate_entity(entity: str, field_name: str = "entity") -> str:
             f"{field_name} contains invalid characters. "
             f"Only alphanumeric, hyphens, underscores, and spaces allowed. Got: {entity[:50]}"
         )
-
-    # Normalize multiple spaces to single space
-    entity = " ".join(entity.split())
 
     return entity
 

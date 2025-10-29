@@ -109,6 +109,7 @@ select = [
 ]
 ignore = [
     "E501",  # line too long (handled by formatter)
+    "UP038",  # isinstance with tuple (deprecated, slower than tuple syntax)
 ]
 
 [tool.ruff.lint.isort]
