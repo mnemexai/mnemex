@@ -592,7 +592,7 @@ wheels = [
 
 [[package]]
 name = "mnemex"
-version = "0.5.0"
+version = "0.5.3"
 source = { editable = "." }
 dependencies = [
     { name = "gitpython" },
