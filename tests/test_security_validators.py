@@ -8,6 +8,8 @@ from mnemex.security.validators import (
     MAX_CONTENT_LENGTH,
     MAX_LIST_LENGTH,
     MAX_TAG_LENGTH,
+    sanitize_entity,
+    sanitize_tag,
     validate_entity,
     validate_list_length,
     validate_positive_int,
@@ -342,7 +344,7 @@ class TestValidateTag:
         """Test valid alphanumeric tags."""
         assert validate_tag("tag") == "tag"
         assert validate_tag("tag123") == "tag123"
-        assert validate_tag("TAG") == "TAG"
+        assert validate_tag("TAG") == "tag"  # Now lowercase due to sanitization
 
     def test_valid_tags_with_hyphens(self):
         """Test valid tags with hyphens."""
@@ -357,7 +359,7 @@ class TestValidateTag:
     def test_valid_tags_mixed_allowed_characters(self):
         """Test valid tags with mix of alphanumeric, hyphens, underscores."""
         assert validate_tag("my-tag_123") == "my-tag_123"
-        assert validate_tag("ML-model_v2") == "ML-model_v2"
+        assert validate_tag("ML-model_v2") == "ml-model_v2"  # Now lowercase
 
     def test_whitespace_stripped(self):
         """Test that leading/trailing whitespace is stripped."""
@@ -365,20 +367,28 @@ class TestValidateTag:
         assert validate_tag("\ttag\t") == "tag"
 
     def test_invalid_characters_spaces(self):
-        """Test rejection of tags with spaces."""
+        """Test that tags with spaces are sanitized (or rejected if auto_sanitize=False)."""
+        # With auto_sanitize=True (default), spaces become underscores
+        assert validate_tag("my tag") == "my_tag"
+
+        # With auto_sanitize=False, rejection occurs
         with pytest.raises(ValueError, match="contains invalid characters"):
-            validate_tag("my tag")
+            validate_tag("my tag", auto_sanitize=False)
 
     def test_invalid_characters_special_chars(self):
-        """Test rejection of tags with special characters."""
-        with pytest.raises(ValueError, match="contains invalid characters"):
-            validate_tag("tag!")
+        """Test that tags with special characters are sanitized (or rejected if auto_sanitize=False)."""
+        # With auto_sanitize=True (default), special chars become underscores
+        assert validate_tag("tag!") == "tag"
+        assert validate_tag("tag@email") == "tag_email"
+        assert validate_tag("tag#hash") == "tag_hash"
 
+        # With auto_sanitize=False, rejection occurs
         with pytest.raises(ValueError, match="contains invalid characters"):
-            validate_tag("tag@email")
-
+            validate_tag("tag!", auto_sanitize=False)
         with pytest.raises(ValueError, match="contains invalid characters"):
-            validate_tag("tag#hash")
+            validate_tag("tag@email", auto_sanitize=False)
+        with pytest.raises(ValueError, match="contains invalid characters"):
+            validate_tag("tag#hash", auto_sanitize=False)
 
     def test_empty_tag_after_strip(self):
         """Test rejection of empty tags after stripping."""
@@ -409,8 +419,9 @@ class TestValidateTag:
 
     def test_custom_field_name_in_errors(self):
         """Test that custom field_name appears in error messages."""
+        # Test with auto_sanitize=False to trigger errors
         with pytest.raises(ValueError, match="category"):
-            validate_tag("invalid tag", field_name="category")
+            validate_tag("invalid tag", field_name="category", auto_sanitize=False)
 
         with pytest.raises(ValueError, match="label"):
             validate_tag("", field_name="label")
@@ -418,8 +429,9 @@ class TestValidateTag:
     def test_tag_truncation_in_error_message(self):
         """Test that long invalid tags are truncated in error messages."""
         long_invalid = "x" * 60 + " invalid"
+        # With auto_sanitize=False to trigger the error
         with pytest.raises(ValueError, match="Got:"):
-            validate_tag(long_invalid)
+            validate_tag(long_invalid, auto_sanitize=False)
 
 
 class TestValidateEntity:
@@ -460,15 +472,19 @@ class TestValidateEntity:
         assert validate_entity("A    B    C") == "A B C"
 
     def test_invalid_characters_special_chars(self):
-        """Test rejection of entities with invalid special characters."""
-        with pytest.raises(ValueError, match="contains invalid characters"):
-            validate_entity("entity!")
+        """Test that entities with special characters are sanitized (or rejected if auto_sanitize=False)."""
+        # With auto_sanitize=True (default), special chars become underscores
+        assert validate_entity("entity!") == "entity"
+        assert validate_entity("entity@domain") == "entity_domain"
+        assert validate_entity("entity#tag") == "entity_tag"
 
+        # With auto_sanitize=False, rejection occurs
         with pytest.raises(ValueError, match="contains invalid characters"):
-            validate_entity("entity@domain")
-
+            validate_entity("entity!", auto_sanitize=False)
         with pytest.raises(ValueError, match="contains invalid characters"):
-            validate_entity("entity#tag")
+            validate_entity("entity@domain", auto_sanitize=False)
+        with pytest.raises(ValueError, match="contains invalid characters"):
+            validate_entity("entity#tag", auto_sanitize=False)
 
     def test_empty_entity_after_strip(self):
         """Test rejection of empty entities after stripping."""
@@ -499,8 +515,9 @@ class TestValidateEntity:
 
     def test_custom_field_name_in_errors(self):
         """Test that custom field_name appears in error messages."""
+        # With auto_sanitize=False to trigger errors
         with pytest.raises(ValueError, match="person"):
-            validate_entity("invalid!", field_name="person")
+            validate_entity("invalid!", field_name="person", auto_sanitize=False)
 
         with pytest.raises(ValueError, match="project_name"):
             validate_entity("", field_name="project_name")
@@ -508,8 +525,182 @@ class TestValidateEntity:
     def test_entity_truncation_in_error_message(self):
         """Test that long invalid entities are truncated in error messages."""
         long_invalid = "x" * 60 + "!"
+        # With auto_sanitize=False to trigger the error
         with pytest.raises(ValueError, match="Got:"):
-            validate_entity(long_invalid)
+            validate_entity(long_invalid, auto_sanitize=False)
+
+
+class TestSanitizeTag:
+    """Tests for sanitize_tag function."""
+
+    def test_periods_converted_to_hyphens(self):
+        """Test that periods are converted to hyphens."""
+        assert sanitize_tag("agpl-3.0") == "agpl-3-0"
+        assert sanitize_tag("v1.2.3") == "v1-2-3"
+        assert sanitize_tag("python.3.11") == "python-3-11"
+
+    def test_spaces_converted_to_underscores(self):
+        """Test that spaces are converted to underscores."""
+        assert sanitize_tag("my tag") == "my_tag"
+        assert sanitize_tag("machine learning") == "machine_learning"
+
+    def test_lowercase_conversion(self):
+        """Test that tags are converted to lowercase."""
+        assert sanitize_tag("AGPL") == "agpl"
+        assert sanitize_tag("MixedCase") == "mixedcase"
+        assert sanitize_tag("PyThOn") == "python"
+
+    def test_valid_characters_preserved(self):
+        """Test that valid characters are preserved."""
+        assert sanitize_tag("my-tag") == "my-tag"
+        assert sanitize_tag("my_tag") == "my_tag"
+        assert sanitize_tag("tag123") == "tag123"
+
+    def test_forward_slashes_preserved(self):
+        """Test that forward slashes are preserved for nested tags."""
+        assert sanitize_tag("project/subproject") == "project/subproject"
+        assert sanitize_tag("code/python/django") == "code/python/django"
+
+    def test_special_chars_converted_to_underscores(self):
+        """Test that other special characters are converted to underscores."""
+        assert sanitize_tag("tag@email") == "tag_email"
+        assert sanitize_tag("tag#hash") == "tag_hash"
+        assert sanitize_tag("tag!exclaim") == "tag_exclaim"
+
+    def test_duplicate_separators_removed(self):
+        """Test that duplicate separators are normalized."""
+        assert sanitize_tag("foo--bar") == "foo-bar"
+        assert sanitize_tag("foo__bar") == "foo_bar"
+        assert sanitize_tag("foo//bar") == "foo/bar"
+
+    def test_leading_trailing_separators_removed(self):
+        """Test that leading/trailing separators are removed."""
+        assert sanitize_tag("-tag-") == "tag"
+        assert sanitize_tag("_tag_") == "tag"
+        assert sanitize_tag("/tag/") == "tag"
+
+    def test_empty_string_returns_empty(self):
+        """Test that empty strings return empty."""
+        assert sanitize_tag("") == ""
+        assert sanitize_tag("   ") == ""
+
+    def test_non_string_returns_empty(self):
+        """Test that non-string inputs return empty string."""
+        assert sanitize_tag(123) == ""
+        assert sanitize_tag(None) == ""
+
+    def test_complex_sanitization(self):
+        """Test complex sanitization scenarios."""
+        assert sanitize_tag("AGPL-3.0") == "agpl-3-0"
+        assert sanitize_tag("C++ Programming") == "c_programming"  # ++ → __, then collapse
+        assert sanitize_tag("project/sub.folder") == "project/sub-folder"
+
+
+class TestSanitizeEntity:
+    """Tests for sanitize_entity function."""
+
+    def test_periods_converted_to_hyphens(self):
+        """Test that periods are converted to hyphens."""
+        assert sanitize_entity("AGPL-3.0") == "AGPL-3-0"
+        assert sanitize_entity("v1.2.3") == "v1-2-3"
+
+    def test_spaces_preserved(self):
+        """Test that spaces are preserved in entities."""
+        assert sanitize_entity("Claude AI") == "Claude AI"
+        assert sanitize_entity("Project Alpha") == "Project Alpha"
+
+    def test_valid_characters_preserved(self):
+        """Test that valid characters are preserved."""
+        assert sanitize_entity("my-entity") == "my-entity"
+        assert sanitize_entity("user_123") == "user_123"
+
+    def test_special_chars_converted_to_underscores(self):
+        """Test that other special characters are converted to underscores."""
+        assert sanitize_entity("user@domain") == "user_domain"
+        assert sanitize_entity("entity#tag") == "entity_tag"
+
+    def test_multiple_spaces_normalized(self):
+        """Test that multiple spaces are normalized to single space."""
+        assert sanitize_entity("Claude  AI") == "Claude AI"
+        assert sanitize_entity("A    B    C") == "A B C"
+
+    def test_duplicate_separators_removed(self):
+        """Test that duplicate separators are normalized."""
+        assert sanitize_entity("foo--bar") == "foo-bar"
+        assert sanitize_entity("foo__bar") == "foo_bar"
+
+    def test_leading_trailing_separators_removed(self):
+        """Test that leading/trailing separators are removed."""
+        assert sanitize_entity("-entity-") == "entity"
+        assert sanitize_entity("_entity_") == "entity"
+
+    def test_empty_string_returns_empty(self):
+        """Test that empty strings return empty."""
+        assert sanitize_entity("") == ""
+        assert sanitize_entity("   ") == ""
+
+    def test_non_string_returns_empty(self):
+        """Test that non-string inputs return empty string."""
+        assert sanitize_entity(123) == ""
+        assert sanitize_entity(None) == ""
+
+
+class TestValidateTagWithSanitization:
+    """Tests for validate_tag with auto_sanitize parameter."""
+
+    def test_auto_sanitize_enabled_by_default(self):
+        """Test that auto_sanitize is enabled by default."""
+        assert validate_tag("agpl-3.0") == "agpl-3-0"
+        assert validate_tag("My Tag") == "my_tag"
+
+    def test_auto_sanitize_explicit_true(self):
+        """Test auto_sanitize=True explicitly."""
+        assert validate_tag("AGPL-3.0", auto_sanitize=True) == "agpl-3-0"
+        assert validate_tag("my tag", auto_sanitize=True) == "my_tag"
+
+    def test_auto_sanitize_false_rejects_invalid(self):
+        """Test that auto_sanitize=False rejects invalid characters."""
+        with pytest.raises(ValueError, match="contains invalid characters"):
+            validate_tag("agpl-3.0", auto_sanitize=False)
+
+        with pytest.raises(ValueError, match="contains invalid characters"):
+            validate_tag("my tag", auto_sanitize=False)
+
+    def test_nested_tags_with_slashes(self):
+        """Test that nested tags with forward slashes work."""
+        assert validate_tag("project/subproject") == "project/subproject"
+        assert validate_tag("code/python/django") == "code/python/django"
+
+    def test_valid_tag_unchanged(self):
+        """Test that valid tags are unchanged."""
+        assert validate_tag("valid-tag") == "valid-tag"
+        assert validate_tag("valid_tag") == "valid_tag"
+
+
+class TestValidateEntityWithSanitization:
+    """Tests for validate_entity with auto_sanitize parameter."""
+
+    def test_auto_sanitize_enabled_by_default(self):
+        """Test that auto_sanitize is enabled by default."""
+        assert validate_entity("AGPL-3.0") == "AGPL-3-0"
+        assert validate_entity("user@domain") == "user_domain"
+
+    def test_auto_sanitize_explicit_true(self):
+        """Test auto_sanitize=True explicitly."""
+        assert validate_entity("AGPL-3.0", auto_sanitize=True) == "AGPL-3-0"
+
+    def test_auto_sanitize_false_rejects_invalid(self):
+        """Test that auto_sanitize=False rejects invalid characters."""
+        with pytest.raises(ValueError, match="contains invalid characters"):
+            validate_entity("AGPL-3.0", auto_sanitize=False)
+
+        with pytest.raises(ValueError, match="contains invalid characters"):
+            validate_entity("user@domain", auto_sanitize=False)
+
+    def test_valid_entity_unchanged(self):
+        """Test that valid entities are unchanged."""
+        assert validate_entity("Claude AI") == "Claude AI"
+        assert validate_entity("project-alpha") == "project-alpha"
 
 
 class TestValidateListLength:
