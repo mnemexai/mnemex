@@ -131,10 +131,13 @@ class TestSaveMemory:
         with pytest.raises(ValueError, match="tag.*exceeds maximum"):
             save_memory(content="Test", tags=[long_tag])
 
-    def test_save_invalid_tag_characters_fails(self):
-        """Test that tags with invalid characters fail validation."""
-        with pytest.raises(ValueError, match="tag.*invalid characters"):
-            save_memory(content="Test", tags=["invalid tag!"])
+    def test_save_invalid_tag_characters_sanitized(self, temp_storage):
+        """Test that tags with invalid characters are auto-sanitized (MCP-friendly)."""
+        result = save_memory(content="Test", tags=["invalid tag!"])
+        assert result["success"] is True
+        # Verify memory was saved with sanitized tag ("invalid tag!" -> "invalid_tag")
+        memory = temp_storage.get_memory(result["memory_id"])
+        assert "invalid_tag" in memory.meta.tags
 
     def test_save_too_many_entities_fails(self):
         """Test that too many entities fails validation."""

@@ -261,10 +261,12 @@ class TestSearchMemory:
         with pytest.raises(ValueError, match="tags.*exceeds maximum"):
             search_memory(tags=too_many_tags)
 
-    def test_search_invalid_tag_fails(self):
-        """Test that invalid tag characters fail."""
-        with pytest.raises(ValueError, match="tag.*invalid characters"):
-            search_memory(tags=["invalid tag!"])
+    def test_search_invalid_tag_sanitized(self, temp_storage):
+        """Test that invalid tag characters are auto-sanitized (MCP-friendly)."""
+        # Should succeed with sanitized tag ("invalid tag!" -> "invalid_tag")
+        result = search_memory(tags=["invalid tag!"])
+        assert result["success"] is True
+        # Search should complete without error (even if no results found)
 
     def test_search_invalid_top_k_fails(self):
         """Test that invalid top_k values fail."""
