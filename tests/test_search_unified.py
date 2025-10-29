@@ -479,8 +479,8 @@ class TestSearchUnifiedValidation:
         with pytest.raises(ValueError, match="tags"):
             search_unified(tags=too_many_tags)
 
-    def test_invalid_tag(self, tmp_path: Path) -> None:
-        """Test invalid tag format."""
+    def test_invalid_tag_sanitized(self, tmp_path: Path) -> None:
+        """Test that invalid tags are auto-sanitized (MCP-friendly)."""
         storage_dir = tmp_path / "jsonl"
         cfg = Config(storage_path=storage_dir, enable_embeddings=False)
         set_config(cfg)
@@ -488,8 +488,10 @@ class TestSearchUnifiedValidation:
         db.storage_path = storage_dir
         db.connect()
 
-        with pytest.raises(ValueError, match="tag"):
-            search_unified(tags=["valid", "invalid tag with spaces"])
+        # Should succeed with sanitized tags ("invalid tag with spaces" -> "invalid_tag_with_spaces")
+        result = search_unified(tags=["valid", "invalid tag with spaces"])
+        assert result["success"] is True
+        assert result["count"] >= 0  # Search succeeds even if no results
 
     def test_limit_too_small(self, tmp_path: Path) -> None:
         """Test limit less than 1."""
