@@ -1,12 +1,15 @@
 """Promote memory tool - move high-value memories to long-term storage."""
 
 import time
+from pathlib import Path
 from typing import Any
 
+from ..config import get_config
 from ..context import db, mcp
 from ..core.scoring import calculate_memory_age, should_promote
 from ..integration.basic_memory import BasicMemoryIntegration
 from ..security.validators import validate_target, validate_uuid
+from ..storage.ltm_index import LTMIndex
 from ..storage.models import MemoryStatus, PromotionCandidate
 
 
@@ -99,6 +102,16 @@ def promote_memory(
 
     if not dry_run and candidates:
         integration = BasicMemoryIntegration()
+        config = get_config()
+
+        # Initialize LTM index if vault is configured
+        ltm_index = None
+        if config.ltm_vault_path and config.ltm_vault_path.exists():
+            ltm_index = LTMIndex(vault_path=config.ltm_vault_path)
+            # Load existing index if it exists
+            if ltm_index.index_path.exists():
+                ltm_index.load_index()
+
         for candidate in candidates:
             if target == "obsidian":
                 result = integration.promote_to_obsidian(candidate.memory)
@@ -113,6 +126,14 @@ def promote_memory(
                     promoted_to=result.get("path"),
                 )
                 promoted_ids.append(candidate.memory.id)
+
+                # Incrementally update LTM index with newly promoted file
+                if ltm_index and result.get("full_path"):
+                    try:
+                        file_path = Path(result["full_path"])
+                        ltm_index.add_document(file_path)
+                    except Exception as e:
+                        print(f"Warning: Failed to update LTM index for {result['path']}: {e}")
 
     return {
         "success": True,

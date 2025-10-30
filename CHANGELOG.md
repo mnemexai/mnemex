@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **Automatic LTM index management** - Major UX improvement for promoted memories
+  - `LTMIndex.add_document()` - Incrementally add single documents to index
+  - `promote_memory` now automatically updates LTM index after successful promotion
+  - `search_unified` now auto-rebuilds stale or missing indexes (transparent to user)
+  - **No more manual `mnemex-index-ltm` needed** - index stays fresh automatically
+  - Newly promoted memories are immediately searchable
+  - Stale indexes (>1 hour old) are auto-rebuilt on first search
+
+### Changed
+- **README refactored to eliminate repetition**
+  - Removed duplicate "Comprehensive Repository Overview" section (260 lines)
+  - Consolidated decay algorithm explanations from 3 separate sections into 1
+  - Removed duplicate project structure section
+  - Improved flow: What → Why → Core Algorithm → Key Innovations → Quick Start
+  - Decay formula now explained once in "Core Algorithm", referenced elsewhere
+
+### Documented
+- **LTM (Long-Term Memory) implementation status**
+  - Confirmed LTM is fully implemented (not stubbed)
+  - ltm_index.py: Complete with build_index, load_index, save_index, search methods
+  - promote_memory tool: Fully functional
+  - search_unified tool: Fully functional (searches both STM + LTM)
+  - Known issue: #58 (hardcoded 'STM/' folder instead of respecting LTM_PROMOTED_FOLDER config)
+
 ## [0.5.0] - 2025-10-18
 
 🛡️ **Stable Baseline Release** - Expanded Test Coverage & Repository Cleanup
