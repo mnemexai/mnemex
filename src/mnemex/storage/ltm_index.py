@@ -406,6 +406,41 @@ class LTMIndex:
         """
         return self.stats.copy()
 
+    def add_document(self, file_path: Path) -> bool:
+        """
+        Add or update a single document in the index.
+
+        Incrementally adds a new document without rebuilding the entire index.
+        Useful for keeping index up-to-date when files are added.
+
+        Args:
+            file_path: Absolute path to the markdown file to add
+
+        Returns:
+            True if document was added/updated, False if parsing failed
+        """
+        if not file_path.exists():
+            print(f"Warning: File does not exist: {file_path}")
+            return False
+
+        # Parse the file
+        doc = self.parse_markdown_file(file_path)
+        if not doc:
+            return False
+
+        # Add to index
+        self._documents[doc.path] = doc
+
+        # Update statistics
+        self.stats["total_documents"] = len(self._documents)
+        self.stats["total_wikilinks"] = sum(len(doc.wikilinks) for doc in self._documents.values())
+        self.stats["last_indexed"] = int(time.time())
+
+        # Save updated index
+        self.save_index()
+
+        return True
+
 
 def main() -> int:
     """CLI entry point for LTM indexer."""

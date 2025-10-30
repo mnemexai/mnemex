@@ -150,30 +150,45 @@ def search_unified(
         if config.ltm_vault_path and config.ltm_vault_path.exists():
             ltm_index = LTMIndex(vault_path=config.ltm_vault_path)
 
-            # Only load index if it exists and is recent, otherwise skip LTM search
-            if ltm_index.index_path.exists():
-                # Check if index is recent (less than 1 hour old)
+            # Check if index exists and is fresh
+            index_needs_rebuild = False
+            if not ltm_index.index_path.exists():
+                # No index exists, need to build it
+                index_needs_rebuild = True
+            else:
+                # Check if index is stale (older than configured max age)
                 index_age = time.time() - ltm_index.index_path.stat().st_mtime
-                if index_age < config.ltm_index_max_age_seconds:  # 1 hour
-                    ltm_index.load_index()
-                    ltm_docs = ltm_index.search(query=query, tags=tags, limit=limit * 2)
-                    for doc in ltm_docs:
-                        relevance_score = 0.5
-                        if query:
-                            title_match = 2.0 if query.lower() in doc.title.lower() else 0.0
-                            content_match = 1.0 if query.lower() in doc.content.lower() else 0.0
-                            relevance_score = min(1.0, (title_match + content_match) / 3.0)
+                if index_age >= config.ltm_index_max_age_seconds:
+                    index_needs_rebuild = True
 
-                        results.append(
-                            UnifiedSearchResult(
-                                content=doc.content[:500],
-                                title=doc.title,
-                                source="ltm",
-                                score=relevance_score * ltm_weight,
-                                path=doc.path,
-                                tags=doc.tags,
-                            )
+            # Auto-rebuild stale or missing index
+            if index_needs_rebuild:
+                try:
+                    ltm_index.build_index(force=False, verbose=False)  # Incremental rebuild
+                except Exception as e:
+                    print(f"Warning: Failed to rebuild LTM index: {e}")
+
+            # Load and search index if it exists
+            if ltm_index.index_path.exists():
+                ltm_index.load_index()
+                ltm_docs = ltm_index.search(query=query, tags=tags, limit=limit * 2)
+                for doc in ltm_docs:
+                    relevance_score = 0.5
+                    if query:
+                        title_match = 2.0 if query.lower() in doc.title.lower() else 0.0
+                        content_match = 1.0 if query.lower() in doc.content.lower() else 0.0
+                        relevance_score = min(1.0, (title_match + content_match) / 3.0)
+
+                    results.append(
+                        UnifiedSearchResult(
+                            content=doc.content[:500],
+                            title=doc.title,
+                            source="ltm",
+                            score=relevance_score * ltm_weight,
+                            path=doc.path,
+                            tags=doc.tags,
                         )
+                    )
     except Exception as e:
         print(f"Warning: LTM search failed: {e}")
 
