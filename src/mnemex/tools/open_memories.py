@@ -5,6 +5,7 @@ from typing import Any
 
 from ..context import db, mcp
 from ..core.decay import calculate_score
+from ..core.pagination import paginate_list, validate_pagination_params
 from ..security.validators import MAX_LIST_LENGTH, validate_list_length, validate_uuid
 
 
@@ -13,6 +14,8 @@ def open_memories(
     memory_ids: str | list[str],
     include_relations: bool = True,
     include_scores: bool = True,
+    page: int | None = None,
+    page_size: int | None = None,
 ) -> dict[str, Any]:
     """
     Retrieve specific memories by their IDs.
@@ -21,13 +24,28 @@ def open_memories(
     Returns detailed information about the requested memories including
     their relations to other memories.
 
+    **Pagination:** When retrieving many memories by ID, results are paginated.
+    Use `page` and `page_size` to navigate through the list of requested memories.
+
     Args:
         memory_ids: Single memory ID or list of memory IDs to retrieve (max 100 IDs).
         include_relations: Include relations from/to these memories.
         include_scores: Include decay scores and age.
+        page: Page number to retrieve (1-indexed, default: 1).
+        page_size: Number of memories per page (default: 10, max: 100).
 
     Returns:
-        Detailed information about the requested memories with relations.
+        Dictionary with paginated results including:
+        - memories: Detailed memory information for current page
+        - not_found: List of IDs that weren't found
+        - pagination: Metadata (page, page_size, total_count, total_pages, has_more)
+
+    Examples:
+        # Get first page of memories
+        open_memories(["id1", "id2", "id3", ...], page=1, page_size=10)
+
+        # Get next page
+        open_memories(["id1", "id2", "id3", ...], page=2, page_size=10)
 
     Raises:
         ValueError: If any memory ID is invalid or list exceeds maximum length.
@@ -40,6 +58,10 @@ def open_memories(
 
     ids = validate_list_length(ids, MAX_LIST_LENGTH, "memory_ids")
     ids = [validate_uuid(mid, f"memory_ids[{i}]") for i, mid in enumerate(ids)]
+
+    # Only validate pagination if explicitly requested
+    pagination_requested = page is not None or page_size is not None
+
     memories = []
     not_found = []
     now = int(time.time())
@@ -100,9 +122,23 @@ def open_memories(
 
         memories.append(mem_data)
 
-    return {
-        "success": True,
-        "count": len(memories),
-        "memories": memories,
-        "not_found": not_found,
-    }
+    # Apply pagination only if requested
+    if pagination_requested:
+        # Validate and get non-None values
+        valid_page, valid_page_size = validate_pagination_params(page, page_size)
+        paginated_memories = paginate_list(memories, page=valid_page, page_size=valid_page_size)
+        return {
+            "success": True,
+            "count": len(paginated_memories.items),
+            "memories": paginated_memories.items,
+            "not_found": not_found,
+            "pagination": paginated_memories.to_dict(),
+        }
+    else:
+        # No pagination - return all memories
+        return {
+            "success": True,
+            "count": len(memories),
+            "memories": memories,
+            "not_found": not_found,
+        }

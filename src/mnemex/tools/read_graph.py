@@ -5,13 +5,18 @@ from typing import Any
 
 from ..context import db, mcp
 from ..core.decay import calculate_score
+from ..core.pagination import paginate_list, validate_pagination_params
 from ..security.validators import validate_positive_int
 from ..storage.models import MemoryStatus
 
 
 @mcp.tool()
 def read_graph(
-    status: str = "active", include_scores: bool = True, limit: int | None = None
+    status: str = "active",
+    include_scores: bool = True,
+    limit: int | None = None,
+    page: int | None = None,
+    page_size: int | None = None,
 ) -> dict[str, Any]:
     """
     Read the entire knowledge graph of memories and relations.
@@ -19,13 +24,33 @@ def read_graph(
     Returns the complete graph structure including all memories (with decay scores),
     all relations between memories, and statistics about the graph.
 
+    **Pagination:** Results are paginated to help you navigate large knowledge graphs.
+    Use `page` and `page_size` to retrieve specific portions of the graph.
+    If searching for specific memories or patterns, increment `page` to see more results.
+
     Args:
         status: Filter memories by status - "active", "promoted", "archived", or "all".
         include_scores: Include decay scores and age in results.
         limit: Maximum number of memories to return (1-10,000).
+        page: Page number to retrieve (1-indexed, default: 1).
+        page_size: Number of memories per page (default: 10, max: 100).
 
     Returns:
-        Complete knowledge graph with memories, relations, and statistics.
+        Dictionary with paginated graph including:
+        - memories: List of memories for current page
+        - relations: All relations (not paginated, for graph structure)
+        - stats: Graph statistics
+        - pagination: Metadata (page, page_size, total_count, total_pages, has_more)
+
+    Examples:
+        # Get first page of active memories
+        read_graph(status="active", page=1, page_size=10)
+
+        # Get next page
+        read_graph(status="active", page=2, page_size=10)
+
+        # Larger page for overview
+        read_graph(status="active", page=1, page_size=50)
 
     Raises:
         ValueError: If status is invalid or limit is out of range.
@@ -37,6 +62,9 @@ def read_graph(
 
     if limit is not None:
         limit = validate_positive_int(limit, "limit", min_value=1, max_value=10000)
+
+    # Only validate pagination if explicitly requested
+    pagination_requested = page is not None or page_size is not None
 
     status_filter = None if status == "all" else MemoryStatus(status)
     graph = db.get_knowledge_graph(status=status_filter)
@@ -82,15 +110,37 @@ def read_graph(
         for rel in graph.relations
     ]
 
-    return {
-        "success": True,
-        "memories": memories_data,
-        "relations": relations_data,
-        "stats": {
-            "total_memories": graph.stats["total_memories"],
-            "total_relations": graph.stats["total_relations"],
-            "avg_score": round(graph.stats["avg_score"], 4),
-            "avg_use_count": round(graph.stats["avg_use_count"], 2),
-            "status_filter": graph.stats["status_filter"],
-        },
-    }
+    # Apply pagination only if requested
+    if pagination_requested:
+        # Validate and get non-None values
+        valid_page, valid_page_size = validate_pagination_params(page, page_size)
+        paginated_memories = paginate_list(
+            memories_data, page=valid_page, page_size=valid_page_size
+        )
+        return {
+            "success": True,
+            "memories": paginated_memories.items,
+            "relations": relations_data,
+            "stats": {
+                "total_memories": graph.stats["total_memories"],
+                "total_relations": graph.stats["total_relations"],
+                "avg_score": round(graph.stats["avg_score"], 4),
+                "avg_use_count": round(graph.stats["avg_use_count"], 2),
+                "status_filter": graph.stats["status_filter"],
+            },
+            "pagination": paginated_memories.to_dict(),
+        }
+    else:
+        # No pagination - return all memories
+        return {
+            "success": True,
+            "memories": memories_data,
+            "relations": relations_data,
+            "stats": {
+                "total_memories": graph.stats["total_memories"],
+                "total_relations": graph.stats["total_relations"],
+                "avg_score": round(graph.stats["avg_score"], 4),
+                "avg_use_count": round(graph.stats["avg_use_count"], 2),
+                "status_filter": graph.stats["status_filter"],
+            },
+        }
