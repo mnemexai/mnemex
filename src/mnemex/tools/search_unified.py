@@ -129,8 +129,8 @@ def search_unified(
     if min_score is not None:
         min_score = validate_score(min_score, "min_score")
 
-    # Validate pagination parameters
-    page, page_size = validate_pagination_params(page, page_size)
+    # Only validate pagination if explicitly requested
+    pagination_requested = page is not None or page_size is not None
 
     config = get_config()
     results: list[UnifiedSearchResult] = []
@@ -226,15 +226,24 @@ def search_unified(
             if len(deduplicated) >= limit:
                 break
 
-    # Apply pagination to deduplicated results
-    paginated = paginate_list(deduplicated, page=page, page_size=page_size)
-
-    return {
-        "success": True,
-        "count": len(paginated.items),
-        "results": [r.to_dict() for r in paginated.items],
-        "pagination": paginated.to_dict(),
-    }
+    # Apply pagination only if requested
+    if pagination_requested:
+        # Validate and get non-None values
+        valid_page, valid_page_size = validate_pagination_params(page, page_size)
+        paginated = paginate_list(deduplicated, page=valid_page, page_size=valid_page_size)
+        return {
+            "success": True,
+            "count": len(paginated.items),
+            "results": [r.to_dict() for r in paginated.items],
+            "pagination": paginated.to_dict(),
+        }
+    else:
+        # No pagination - return all results
+        return {
+            "success": True,
+            "count": len(deduplicated),
+            "results": [r.to_dict() for r in deduplicated],
+        }
 
 
 def format_results(results: list[UnifiedSearchResult], *, verbose: bool = False) -> str:

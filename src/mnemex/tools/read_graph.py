@@ -63,8 +63,8 @@ def read_graph(
     if limit is not None:
         limit = validate_positive_int(limit, "limit", min_value=1, max_value=10000)
 
-    # Validate pagination parameters
-    page, page_size = validate_pagination_params(page, page_size)
+    # Only validate pagination if explicitly requested
+    pagination_requested = page is not None or page_size is not None
 
     status_filter = None if status == "all" else MemoryStatus(status)
     graph = db.get_knowledge_graph(status=status_filter)
@@ -98,9 +98,6 @@ def read_graph(
             mem_data["age_days"] = round((now - memory.created_at) / 86400, 1)
         memories_data.append(mem_data)
 
-    # Apply pagination to memories
-    paginated_memories = paginate_list(memories_data, page=page, page_size=page_size)
-
     relations_data = [
         {
             "id": rel.id,
@@ -113,16 +110,37 @@ def read_graph(
         for rel in graph.relations
     ]
 
-    return {
-        "success": True,
-        "memories": paginated_memories.items,
-        "relations": relations_data,
-        "stats": {
-            "total_memories": graph.stats["total_memories"],
-            "total_relations": graph.stats["total_relations"],
-            "avg_score": round(graph.stats["avg_score"], 4),
-            "avg_use_count": round(graph.stats["avg_use_count"], 2),
-            "status_filter": graph.stats["status_filter"],
-        },
-        "pagination": paginated_memories.to_dict(),
-    }
+    # Apply pagination only if requested
+    if pagination_requested:
+        # Validate and get non-None values
+        valid_page, valid_page_size = validate_pagination_params(page, page_size)
+        paginated_memories = paginate_list(
+            memories_data, page=valid_page, page_size=valid_page_size
+        )
+        return {
+            "success": True,
+            "memories": paginated_memories.items,
+            "relations": relations_data,
+            "stats": {
+                "total_memories": graph.stats["total_memories"],
+                "total_relations": graph.stats["total_relations"],
+                "avg_score": round(graph.stats["avg_score"], 4),
+                "avg_use_count": round(graph.stats["avg_use_count"], 2),
+                "status_filter": graph.stats["status_filter"],
+            },
+            "pagination": paginated_memories.to_dict(),
+        }
+    else:
+        # No pagination - return all memories
+        return {
+            "success": True,
+            "memories": memories_data,
+            "relations": relations_data,
+            "stats": {
+                "total_memories": graph.stats["total_memories"],
+                "total_relations": graph.stats["total_relations"],
+                "avg_score": round(graph.stats["avg_score"], 4),
+                "avg_use_count": round(graph.stats["avg_use_count"], 2),
+                "status_filter": graph.stats["status_filter"],
+            },
+        }

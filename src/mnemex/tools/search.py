@@ -146,8 +146,8 @@ def search_memory(
     if min_score is not None:
         min_score = validate_score(min_score, "min_score")
 
-    # Validate pagination parameters
-    page, page_size = validate_pagination_params(page, page_size)
+    # Only validate pagination if explicitly requested
+    pagination_requested = page is not None or page_size is not None
 
     config = get_config()
     now = int(time.time())
@@ -243,27 +243,51 @@ def search_memory(
             )
             final_results.append(SearchResult(memory=mem, score=score, similarity=None))
 
-    # Apply pagination to final results
-    paginated = paginate_list(final_results, page=page, page_size=page_size)
-
-    return {
-        "success": True,
-        "count": len(paginated.items),
-        "results": [
-            {
-                "id": r.memory.id,
-                "content": r.memory.content,
-                "tags": r.memory.meta.tags,
-                "score": round(r.score, 4),
-                "similarity": round(r.similarity, 4) if r.similarity else None,
-                "use_count": r.memory.use_count,
-                "last_used": r.memory.last_used,
-                "age_days": round((now - r.memory.created_at) / 86400, 1),
-                "review_priority": round(r.memory.review_priority, 4)
-                if r.memory.review_priority > 0
-                else None,
-            }
-            for r in paginated.items
-        ],
-        "pagination": paginated.to_dict(),
-    }
+    # Apply pagination only if requested
+    if pagination_requested:
+        # Validate and get non-None values
+        valid_page, valid_page_size = validate_pagination_params(page, page_size)
+        paginated = paginate_list(final_results, page=valid_page, page_size=valid_page_size)
+        return {
+            "success": True,
+            "count": len(paginated.items),
+            "results": [
+                {
+                    "id": r.memory.id,
+                    "content": r.memory.content,
+                    "tags": r.memory.meta.tags,
+                    "score": round(r.score, 4),
+                    "similarity": round(r.similarity, 4) if r.similarity else None,
+                    "use_count": r.memory.use_count,
+                    "last_used": r.memory.last_used,
+                    "age_days": round((now - r.memory.created_at) / 86400, 1),
+                    "review_priority": round(r.memory.review_priority, 4)
+                    if r.memory.review_priority > 0
+                    else None,
+                }
+                for r in paginated.items
+            ],
+            "pagination": paginated.to_dict(),
+        }
+    else:
+        # No pagination - return all results
+        return {
+            "success": True,
+            "count": len(final_results),
+            "results": [
+                {
+                    "id": r.memory.id,
+                    "content": r.memory.content,
+                    "tags": r.memory.meta.tags,
+                    "score": round(r.score, 4),
+                    "similarity": round(r.similarity, 4) if r.similarity else None,
+                    "use_count": r.memory.use_count,
+                    "last_used": r.memory.last_used,
+                    "age_days": round((now - r.memory.created_at) / 86400, 1),
+                    "review_priority": round(r.memory.review_priority, 4)
+                    if r.memory.review_priority > 0
+                    else None,
+                }
+                for r in final_results
+            ],
+        }

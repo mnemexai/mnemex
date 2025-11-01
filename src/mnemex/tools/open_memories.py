@@ -59,8 +59,8 @@ def open_memories(
     ids = validate_list_length(ids, MAX_LIST_LENGTH, "memory_ids")
     ids = [validate_uuid(mid, f"memory_ids[{i}]") for i, mid in enumerate(ids)]
 
-    # Validate pagination parameters
-    page, page_size = validate_pagination_params(page, page_size)
+    # Only validate pagination if explicitly requested
+    pagination_requested = page is not None or page_size is not None
 
     memories = []
     not_found = []
@@ -122,13 +122,23 @@ def open_memories(
 
         memories.append(mem_data)
 
-    # Apply pagination to memories
-    paginated_memories = paginate_list(memories, page=page, page_size=page_size)
-
-    return {
-        "success": True,
-        "count": len(paginated_memories.items),
-        "memories": paginated_memories.items,
-        "not_found": not_found,
-        "pagination": paginated_memories.to_dict(),
-    }
+    # Apply pagination only if requested
+    if pagination_requested:
+        # Validate and get non-None values
+        valid_page, valid_page_size = validate_pagination_params(page, page_size)
+        paginated_memories = paginate_list(memories, page=valid_page, page_size=valid_page_size)
+        return {
+            "success": True,
+            "count": len(paginated_memories.items),
+            "memories": paginated_memories.items,
+            "not_found": not_found,
+            "pagination": paginated_memories.to_dict(),
+        }
+    else:
+        # No pagination - return all memories
+        return {
+            "success": True,
+            "count": len(memories),
+            "memories": memories,
+            "not_found": not_found,
+        }
