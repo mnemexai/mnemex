@@ -5,13 +5,18 @@ from typing import Any
 
 from ..context import db, mcp
 from ..core.decay import calculate_score
+from ..core.pagination import paginate_list, validate_pagination_params
 from ..security.validators import validate_positive_int
 from ..storage.models import MemoryStatus
 
 
 @mcp.tool()
 def read_graph(
-    status: str = "active", include_scores: bool = True, limit: int | None = None
+    status: str = "active",
+    include_scores: bool = True,
+    limit: int | None = None,
+    page: int | None = None,
+    page_size: int | None = None,
 ) -> dict[str, Any]:
     """
     Read the entire knowledge graph of memories and relations.
@@ -19,13 +24,33 @@ def read_graph(
     Returns the complete graph structure including all memories (with decay scores),
     all relations between memories, and statistics about the graph.
 
+    **Pagination:** Results are paginated to help you navigate large knowledge graphs.
+    Use `page` and `page_size` to retrieve specific portions of the graph.
+    If searching for specific memories or patterns, increment `page` to see more results.
+
     Args:
         status: Filter memories by status - "active", "promoted", "archived", or "all".
         include_scores: Include decay scores and age in results.
         limit: Maximum number of memories to return (1-10,000).
+        page: Page number to retrieve (1-indexed, default: 1).
+        page_size: Number of memories per page (default: 10, max: 100).
 
     Returns:
-        Complete knowledge graph with memories, relations, and statistics.
+        Dictionary with paginated graph including:
+        - memories: List of memories for current page
+        - relations: All relations (not paginated, for graph structure)
+        - stats: Graph statistics
+        - pagination: Metadata (page, page_size, total_count, total_pages, has_more)
+
+    Examples:
+        # Get first page of active memories
+        read_graph(status="active", page=1, page_size=10)
+
+        # Get next page
+        read_graph(status="active", page=2, page_size=10)
+
+        # Larger page for overview
+        read_graph(status="active", page=1, page_size=50)
 
     Raises:
         ValueError: If status is invalid or limit is out of range.
@@ -37,6 +62,9 @@ def read_graph(
 
     if limit is not None:
         limit = validate_positive_int(limit, "limit", min_value=1, max_value=10000)
+
+    # Validate pagination parameters
+    page, page_size = validate_pagination_params(page, page_size)
 
     status_filter = None if status == "all" else MemoryStatus(status)
     graph = db.get_knowledge_graph(status=status_filter)
@@ -70,6 +98,9 @@ def read_graph(
             mem_data["age_days"] = round((now - memory.created_at) / 86400, 1)
         memories_data.append(mem_data)
 
+    # Apply pagination to memories
+    paginated_memories = paginate_list(memories_data, page=page, page_size=page_size)
+
     relations_data = [
         {
             "id": rel.id,
@@ -84,7 +115,7 @@ def read_graph(
 
     return {
         "success": True,
-        "memories": memories_data,
+        "memories": paginated_memories.items,
         "relations": relations_data,
         "stats": {
             "total_memories": graph.stats["total_memories"],
@@ -93,4 +124,5 @@ def read_graph(
             "avg_use_count": round(graph.stats["avg_use_count"], 2),
             "status_filter": graph.stats["status_filter"],
         },
+        "pagination": paginated_memories.to_dict(),
     }

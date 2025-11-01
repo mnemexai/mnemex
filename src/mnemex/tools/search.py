@@ -9,6 +9,7 @@ from ..config import get_config
 from ..context import db, mcp
 from ..core.clustering import cosine_similarity
 from ..core.decay import calculate_score
+from ..core.pagination import paginate_list, validate_pagination_params
 from ..core.review import blend_search_results, get_memories_due_for_review
 from ..performance import time_operation
 from ..security.validators import (
@@ -79,6 +80,8 @@ def search_memory(
     min_score: float | None = None,
     use_embeddings: bool = False,
     include_review_candidates: bool = True,
+    page: int | None = None,
+    page_size: int | None = None,
 ) -> dict[str, Any]:
     """
     Search for memories with optional filters and scoring.
@@ -87,18 +90,37 @@ def search_memory(
     for review into results when they're relevant. This creates the "Maslow
     effect" - natural reinforcement through conversation.
 
+    **Pagination:** Results are paginated to help you find specific memories across
+    large result sets. Use `page` and `page_size` to navigate through results.
+    If a search term isn't found on the first page, increment `page` to see more results.
+
     Args:
         query: Text query to search for (max 50,000 chars).
         tags: Filter by tags (max 50 tags).
-        top_k: Maximum number of results (1-100).
+        top_k: Maximum number of results before pagination (1-100).
         window_days: Only search memories from last N days (1-3650).
         min_score: Minimum decay score threshold (0.0-1.0).
         use_embeddings: Use semantic search with embeddings.
         include_review_candidates: Blend in memories due for review (default True).
+        page: Page number to retrieve (1-indexed, default: 1).
+        page_size: Number of memories per page (default: 10, max: 100).
 
     Returns:
-        List of matching memories with scores. Some may be review candidates
-        that benefit from reinforcement.
+        Dictionary with paginated results including:
+        - results: List of matching memories with scores for current page
+        - pagination: Metadata (page, page_size, total_count, total_pages, has_more)
+
+        Some results may be review candidates that benefit from reinforcement.
+
+    Examples:
+        # Get first page (10 results)
+        search_memory(query="authentication", page=1, page_size=10)
+
+        # Get next page
+        search_memory(query="authentication", page=2, page_size=10)
+
+        # Larger page size
+        search_memory(query="authentication", page=1, page_size=25)
 
     Raises:
         ValueError: If any input fails validation.
@@ -123,6 +145,9 @@ def search_memory(
 
     if min_score is not None:
         min_score = validate_score(min_score, "min_score")
+
+    # Validate pagination parameters
+    page, page_size = validate_pagination_params(page, page_size)
 
     config = get_config()
     now = int(time.time())
@@ -218,9 +243,12 @@ def search_memory(
             )
             final_results.append(SearchResult(memory=mem, score=score, similarity=None))
 
+    # Apply pagination to final results
+    paginated = paginate_list(final_results, page=page, page_size=page_size)
+
     return {
         "success": True,
-        "count": len(final_results),
+        "count": len(paginated.items),
         "results": [
             {
                 "id": r.memory.id,
@@ -235,6 +263,7 @@ def search_memory(
                 if r.memory.review_priority > 0
                 else None,
             }
-            for r in final_results
+            for r in paginated.items
         ],
+        "pagination": paginated.to_dict(),
     }

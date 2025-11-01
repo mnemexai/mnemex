@@ -6,6 +6,7 @@ from typing import Any
 from ..config import get_config
 from ..context import db, mcp
 from ..core.decay import calculate_score
+from ..core.pagination import paginate_list, validate_pagination_params
 from ..performance import time_operation
 from ..security.validators import (
     MAX_CONTENT_LENGTH,
@@ -69,21 +70,39 @@ def search_unified(
     ltm_weight: float = 0.7,
     window_days: int | None = None,
     min_score: float | None = None,
+    page: int | None = None,
+    page_size: int | None = None,
 ) -> dict[str, Any]:
     """
     Search across both STM and LTM with unified ranking.
 
+    **Pagination:** Results are paginated to help you find specific memories across
+    large result sets from both short-term and long-term memory. Use `page` and `page_size`
+    to navigate through results. If a search term isn't found on the first page,
+    increment `page` to see more results.
+
     Args:
         query: Text query to search for (max 50,000 chars).
         tags: Filter by tags (max 50 tags).
-        limit: Maximum total results (1-100).
+        limit: Maximum total results before pagination (1-100).
         stm_weight: Weight multiplier for STM results (0.0-2.0).
         ltm_weight: Weight multiplier for LTM results (0.0-2.0).
         window_days: Only include STM memories from last N days (1-3650).
         min_score: Minimum score threshold for STM memories (0.0-1.0).
+        page: Page number to retrieve (1-indexed, default: 1).
+        page_size: Number of memories per page (default: 10, max: 100).
 
     Returns:
-        A dictionary containing the search results.
+        Dictionary with paginated results including:
+        - results: List of matching memories from STM and LTM for current page
+        - pagination: Metadata (page, page_size, total_count, total_pages, has_more)
+
+    Examples:
+        # Get first page (10 results)
+        search_unified(query="architecture", page=1, page_size=10)
+
+        # Get next page
+        search_unified(query="architecture", page=2, page_size=10)
 
     Raises:
         ValueError: If any input fails validation.
@@ -109,6 +128,9 @@ def search_unified(
 
     if min_score is not None:
         min_score = validate_score(min_score, "min_score")
+
+    # Validate pagination parameters
+    page, page_size = validate_pagination_params(page, page_size)
 
     config = get_config()
     results: list[UnifiedSearchResult] = []
@@ -204,10 +226,14 @@ def search_unified(
             if len(deduplicated) >= limit:
                 break
 
+    # Apply pagination to deduplicated results
+    paginated = paginate_list(deduplicated, page=page, page_size=page_size)
+
     return {
         "success": True,
-        "count": len(deduplicated),
-        "results": [r.to_dict() for r in deduplicated],
+        "count": len(paginated.items),
+        "results": [r.to_dict() for r in paginated.items],
+        "pagination": paginated.to_dict(),
     }
 
 
