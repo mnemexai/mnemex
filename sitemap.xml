@@ -2,78 +2,82 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://mnemex.dev/</loc>
-         <lastmod>2025-10-31</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://mnemex.dev/CHANGELOG/</loc>
-         <lastmod>2025-10-31</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://mnemex.dev/CONTRIBUTING/</loc>
-         <lastmod>2025-10-31</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://mnemex.dev/LICENSE/</loc>
-         <lastmod>2025-10-31</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://mnemex.dev/ROADMAP/</loc>
-         <lastmod>2025-10-31</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://mnemex.dev/api/</loc>
-         <lastmod>2025-10-31</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://mnemex.dev/architecture/</loc>
-         <lastmod>2025-10-31</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://mnemex.dev/bear-integration/</loc>
-         <lastmod>2025-10-31</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://mnemex.dev/configuration/</loc>
-         <lastmod>2025-10-31</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://mnemex.dev/deployment/</loc>
-         <lastmod>2025-10-31</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://mnemex.dev/future_roadmap/</loc>
-         <lastmod>2025-10-31</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://mnemex.dev/graph_features/</loc>
-         <lastmod>2025-10-31</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://mnemex.dev/installation/</loc>
-         <lastmod>2025-10-31</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://mnemex.dev/prompt_injection/</loc>
-         <lastmod>2025-10-31</lastmod>
+         <lastmod>2025-11-04</lastmod>
+    </url>
+    <url>
+         <loc>https://mnemex.dev/prompt_optimization_flow/</loc>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://mnemex.dev/quickstart/</loc>
-         <lastmod>2025-10-31</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://mnemex.dev/scoring_algorithm/</loc>
-         <lastmod>2025-10-31</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://mnemex.dev/security/</loc>
-         <lastmod>2025-10-31</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://mnemex.dev/use-cases/</loc>
-         <lastmod>2025-10-31</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://mnemex.dev/prompts/memory_system_prompt/</loc>
-         <lastmod>2025-10-31</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
 </urlset>
