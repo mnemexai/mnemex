@@ -38,8 +38,8 @@ class JSONLStorage:
 
         self.storage_dir.mkdir(parents=True, exist_ok=True)
 
-        self.memories_path = self.storage_dir / "memories.jsonl"
-        self.relations_path = self.storage_dir / "relations.jsonl"
+        self.memories_path = self.storage_dir / config.stm_memories_filename
+        self.relations_path = self.storage_dir / config.stm_relations_filename
 
         # In-memory indexes
         self._memories: dict[str, Memory] = {}
@@ -71,8 +71,9 @@ class JSONLStorage:
         path = value if isinstance(value, Path) else Path(value)
         self.storage_dir = path
         self.storage_dir.mkdir(parents=True, exist_ok=True)
-        self.memories_path = self.storage_dir / "memories.jsonl"
-        self.relations_path = self.storage_dir / "relations.jsonl"
+        config = get_config()
+        self.memories_path = self.storage_dir / config.stm_memories_filename
+        self.relations_path = self.storage_dir / config.stm_relations_filename
 
     def connect(self) -> None:
         """Load JSONL files into memory and build indexes."""

@@ -11,6 +11,8 @@ from typing import Any
 
 import frontmatter
 
+from ..config import get_config
+
 
 class LTMDocument:
     """A document in the LTM index."""
@@ -81,10 +83,14 @@ class LTMIndex:
             index_path: Path to index JSONL file (default: vault_path/.mnemex-index.jsonl)
         """
         self.vault_path = vault_path
+        self.config = get_config()
+
         # Prefer new default path; fallback to legacy if it exists
         if index_path is None:
-            new_path = vault_path / ".mnemex-index.jsonl"
-            legacy_path = vault_path / ".stm-index.jsonl"
+            new_filename = self.config.ltm_index_filename
+            legacy_filename = self.config.ltm_legacy_index_filename
+            new_path = vault_path / new_filename
+            legacy_path = vault_path / legacy_filename
             if new_path.exists() or not legacy_path.exists():
                 self.index_path = new_path
             else:
