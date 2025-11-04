@@ -24,10 +24,22 @@ _env_paths = [
     Path(".env"),  # Fallback: ./env (for development)
 ]
 
+_env_file_found = False
 for env_path in _env_paths:
     if env_path.exists():
         load_dotenv(env_path)
+        _env_file_found = True
         break
+
+# Log warning if no .env file found (but don't fail - config has defaults)
+if not _env_file_found:
+    import logging
+
+    logging.warning(
+        "No .env file found. Mnemex will use default configuration.\n"
+        f"To customize settings, create: {_config_dir / '.env'}\n"
+        f"See .env.example in the mnemex repository for all available options."
+    )
 
 
 class Config(BaseModel):
@@ -181,14 +193,32 @@ class Config(BaseModel):
         default=None,
         description="Path to LTM index file (default: vault/.mnemex-index.jsonl)",
     )
-    ltm_promoted_folder: str = Field(
-        default="mnemex-promoted",
-        description="Folder within vault for promoted memories",
+    ltm_promoted_folder: str | None = Field(
+        default=None,
+        description="Folder within vault for promoted memories (required for promotion)",
+    )
+    ltm_index_filename: str = Field(
+        default=".mnemex-index.jsonl",
+        description="Filename for LTM index (within vault)",
+    )
+    ltm_legacy_index_filename: str = Field(
+        default=".stm-index.jsonl",
+        description="Legacy index filename (fallback if new index doesn't exist)",
     )
     ltm_index_max_age_seconds: int = Field(
         default=3600,
         description="Maximum age of LTM index before rebuilding (in seconds, default 1 hour)",
         ge=60,
+    )
+
+    # Short-Term Memory (STM) Storage Filenames
+    stm_memories_filename: str = Field(
+        default="memories.jsonl",
+        description="Filename for memories storage (within MNEMEX_STORAGE_PATH)",
+    )
+    stm_relations_filename: str = Field(
+        default="relations.jsonl",
+        description="Filename for relations storage (within MNEMEX_STORAGE_PATH)",
     )
 
     # Git Backup
@@ -338,8 +368,18 @@ class Config(BaseModel):
             config_dict["ltm_index_path"] = ltm_index_path
         if ltm_promoted_folder := os.getenv("LTM_PROMOTED_FOLDER"):
             config_dict["ltm_promoted_folder"] = ltm_promoted_folder
+        if ltm_index_filename := os.getenv("LTM_INDEX_FILENAME"):
+            config_dict["ltm_index_filename"] = ltm_index_filename
+        if ltm_legacy_index_filename := os.getenv("LTM_LEGACY_INDEX_FILENAME"):
+            config_dict["ltm_legacy_index_filename"] = ltm_legacy_index_filename
         if ltm_index_max_age_seconds := os.getenv("MNEMEX_LTM_INDEX_MAX_AGE_SECONDS"):
             config_dict["ltm_index_max_age_seconds"] = int(ltm_index_max_age_seconds)
+
+        # Short-Term Memory Storage Filenames
+        if stm_memories_filename := os.getenv("MNEMEX_MEMORIES_FILENAME"):
+            config_dict["stm_memories_filename"] = stm_memories_filename
+        if stm_relations_filename := os.getenv("MNEMEX_RELATIONS_FILENAME"):
+            config_dict["stm_relations_filename"] = stm_relations_filename
 
         # Git Backup
         if git_auto_commit := os.getenv("GIT_AUTO_COMMIT"):

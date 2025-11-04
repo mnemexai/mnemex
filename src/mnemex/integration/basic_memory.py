@@ -14,12 +14,45 @@ class BasicMemoryIntegration:
         """Initialize the Basic Memory integration."""
         self.config = get_config()
         self.vault_path = self.config.ltm_vault_path
+        self.promoted_folder = self.config.ltm_promoted_folder
 
     def is_available(self) -> bool:
         """Check if Basic Memory vault is configured and accessible."""
         if self.vault_path is None:
             return False
+        if self.promoted_folder is None:
+            return False
         return self.vault_path.exists() and self.vault_path.is_dir()
+
+    def get_config_error(self) -> str:
+        """Get detailed error message about configuration issues."""
+        if self.vault_path is None:
+            return (
+                "LTM_VAULT_PATH is not configured.\n\n"
+                "To enable memory promotion, add this to ~/.config/mnemex/.env:\n"
+                "  LTM_VAULT_PATH=~/Documents/Obsidian/Vault\n\n"
+                "Replace with your actual Obsidian vault path."
+            )
+        elif not self.vault_path.exists():
+            return (
+                f"LTM vault path does not exist: {self.vault_path}\n\n"
+                f"Please create the directory:\n"
+                f"  mkdir -p {self.vault_path}\n\n"
+                f"Or update LTM_VAULT_PATH in ~/.config/mnemex/.env to point to your Obsidian vault."
+            )
+        elif not self.vault_path.is_dir():
+            return (
+                f"LTM vault path is not a directory: {self.vault_path}\n\n"
+                f"LTM_VAULT_PATH must point to a directory, not a file."
+            )
+        elif self.promoted_folder is None:
+            return (
+                "LTM_PROMOTED_FOLDER is not configured.\n\n"
+                "To enable memory promotion, add this to ~/.config/mnemex/.env:\n"
+                "  LTM_PROMOTED_FOLDER=stm-promoted\n\n"
+                "This is the subfolder within your vault where promoted memories will be stored."
+            )
+        return "Configuration is valid"
 
     def _sanitize_filename(self, content: str) -> str:
         """Create a safe filename from content."""
@@ -122,8 +155,9 @@ class BasicMemoryIntegration:
         if not self.is_available():
             return {
                 "success": False,
-                "message": "Basic Memory vault not configured or not accessible",
+                "message": self.get_config_error(),
                 "vault_path": str(self.vault_path) if self.vault_path else None,
+                "promoted_folder": self.promoted_folder,
             }
 
         # Create filename from content
@@ -133,8 +167,9 @@ class BasicMemoryIntegration:
 
         # Ensure uniqueness
         assert self.vault_path is not None
-        base_path = self.vault_path / "STM"
-        base_path.mkdir(exist_ok=True)
+        assert self.promoted_folder is not None
+        base_path = self.vault_path / self.promoted_folder
+        base_path.mkdir(exist_ok=True, parents=True)
 
         file_path = base_path / f"{filename}.md"
         counter = 1
@@ -171,11 +206,12 @@ class BasicMemoryIntegration:
             }
 
         assert self.vault_path is not None
-        stm_folder = self.vault_path / "STM"
-        if not stm_folder.exists():
+        assert self.promoted_folder is not None
+        promoted_path = self.vault_path / self.promoted_folder
+        if not promoted_path.exists():
             note_count = 0
         else:
-            note_count = len(list(stm_folder.glob("*.md")))
+            note_count = len(list(promoted_path.glob("*.md")))
 
         return {
             "available": True,

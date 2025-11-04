@@ -278,7 +278,24 @@ uv pip install -e ".[dev]"
 
 ### Configuration
 
-Copy `.env.example` to `.env` and configure:
+**IMPORTANT**: Configuration location depends on installation method:
+
+**Method 1: .env file (Works for all installation methods)**
+
+Create `~/.config/mnemex/.env`:
+
+```bash
+# Create config directory
+mkdir -p ~/.config/mnemex
+
+# Option A: Copy from cloned repo
+cp .env.example ~/.config/mnemex/.env
+
+# Option B: Download directly
+curl -o ~/.config/mnemex/.env https://raw.githubusercontent.com/simplemindedbot/mnemex/main/.env.example
+```
+
+Edit `~/.config/mnemex/.env` with your settings:
 
 ```bash
 # Storage
@@ -311,9 +328,34 @@ MNEMEX_PROMOTE_THRESHOLD=0.65
 LTM_VAULT_PATH=~/Documents/Obsidian/Vault
 ```
 
+**Method 2: Environment variables in Claude Desktop config**
+
+Add environment variables directly to `~/Library/Application Support/Claude/claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "mnemex": {
+      "command": "mnemex",
+      "env": {
+        "MNEMEX_STORAGE_PATH": "~/.config/mnemex/jsonl",
+        "MNEMEX_DECAY_MODEL": "power_law",
+        "MNEMEX_PL_ALPHA": "1.1",
+        "MNEMEX_PL_HALFLIFE_DAYS": "3.0",
+        "LTM_VAULT_PATH": "~/Documents/Obsidian/Vault"
+      }
+    }
+  }
+}
+```
+
+**Where mnemex looks for .env files:**
+1. **Primary**: `~/.config/mnemex/.env` ← Use this for `uv tool install` / `uvx`
+2. **Fallback**: `./.env` (current directory) ← Only works for editable installs
+
 ### MCP Configuration
 
-Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_desktop_config.json`):
+**Standard installation (uv tool install / pipx / pip):**
 
 ```json
 {
@@ -325,7 +367,7 @@ Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_
 }
 ```
 
-That's it! No paths, no environment variables needed.
+Configuration loaded from `~/.config/mnemex/.env` or environment variables (see Configuration section above).
 
 **For development (editable install):**
 
@@ -341,9 +383,7 @@ That's it! No paths, no environment variables needed.
 }
 ```
 
-**Configuration:**
-- Storage paths are configured in `~/.config/mnemex/.env` or project `.env`
-- See `.env.example` for all available settings
+Configuration can be loaded from `./.env` in the project directory OR `~/.config/mnemex/.env`.
 
 #### Troubleshooting: Command Not Found
 
@@ -461,6 +501,39 @@ mnemex-vault            # Vault markdown operations
 mnemex-search           # Unified STM+LTM search
 mnemex-maintenance      # JSONL storage stats and compaction
 ```
+
+## Visualization
+
+Interactive graph visualization using PyVis:
+
+```bash
+# Install visualization dependencies
+pip install "mnemex[visualization]"
+# or with uv
+uv pip install "mnemex[visualization]"
+
+# Or install dependencies manually
+pip install pyvis networkx
+
+# Generate interactive HTML visualization
+python scripts/visualize_graph.py
+
+# Custom output location
+python scripts/visualize_graph.py --output ~/Desktop/memory_graph.html
+
+# Custom data paths
+python scripts/visualize_graph.py --memories ~/data/memories.jsonl --relations ~/data/relations.jsonl
+```
+
+**Features:**
+- Interactive network graph with pan/zoom
+- Node colors by status (active=blue, promoted=green, archived=gray)
+- Node size based on use count
+- Edge colors by relation type
+- Hover tooltips showing full content, tags, and entities
+- Physics controls for layout adjustment
+
+The visualization reads directly from your JSONL files and creates a standalone HTML file you can open in any browser.
 
 ## MCP Tools
 
