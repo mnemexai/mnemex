@@ -233,8 +233,8 @@ sequenceDiagram
 ### Complexity Thresholds
 \`\`\`python
 # Proxy configuration
-COMPLEXITY_SIMPLE_MAX = 0.3      # Below this: simple path
-COMPLEXITY_COMPLEX_MIN = 0.5     # Above this: full optimization
+# Prompts with complexity > COMPLEX_PROMPT_THRESHOLD follow the complex path, otherwise the simple path is used.
+COMPLEX_PROMPT_THRESHOLD = 0.4
 \`\`\`
 
 ### Validation Settings
