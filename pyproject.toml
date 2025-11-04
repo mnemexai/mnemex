@@ -1,6 +1,6 @@
 [project]
 name = "mnemex"
-version = "0.5.6"
+version = "0.6.0"
 description = "Mnemex: Temporal memory management for AI assistants with human-like dynamics"
 readme = "README.md"
 requires-python = ">=3.10"
