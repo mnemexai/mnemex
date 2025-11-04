@@ -311,7 +311,7 @@ GEMINI_TEMPERATURE = 0.3               # Consistent assembly
 
 **Optimized Approach** (this architecture):
 - Local LLMs: Free (self-hosted) or cheap (cloud)
-- Gemini: Free tier up to 1,500 requests/day
+- Gemini: Leverages the generous free tier for final assembly
 - Claude API: Only hit after full optimization
 - Cost: $0 until Claude execution, then same $X but better results
 
