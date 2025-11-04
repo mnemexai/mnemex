@@ -255,9 +255,9 @@ VALIDATOR_MODELS = [                        # Validation ensemble
     "deepseek-v2"
 ]
 
-# Cloud providers (alternative to local)
-OPTIMIZER_MODEL = "openai:gpt-4"
-VALIDATOR_MODELS = ["anthropic:claude-3-opus", "openai:gpt-4"]
+# Example using cloud providers (alternative to local)
+# OPTIMIZER_MODEL = "openai:gpt-4"
+# VALIDATOR_MODELS = ["anthropic:claude-3-opus", "openai:gpt-4"]
 \`\`\`
 
 ### MCP Tools
