@@ -65,7 +65,7 @@ class TestPromoteMemory:
         assert "does not meet" in result["message"].lower()
         assert "score" in result
 
-    @patch("mnemex.tools.promote.BasicMemoryIntegration")
+    @patch("cortexgraph.tools.promote.BasicMemoryIntegration")
     def test_promote_with_force_flag(self, mock_integration, temp_storage):
         """Test that force flag bypasses criteria check."""
         now = int(time.time())
@@ -87,7 +87,7 @@ class TestPromoteMemory:
         assert result["success"] is True
         assert result["promoted_count"] >= 1
 
-    @patch("mnemex.tools.promote.BasicMemoryIntegration")
+    @patch("cortexgraph.tools.promote.BasicMemoryIntegration")
     def test_promote_high_scoring_memory(self, mock_integration, temp_storage):
         """Test promoting a high-scoring memory."""
         now = int(time.time())
@@ -157,7 +157,7 @@ class TestPromoteMemory:
         assert result["success"] is True
         assert result["candidates_found"] == 0
 
-    @patch("mnemex.tools.promote.BasicMemoryIntegration")
+    @patch("cortexgraph.tools.promote.BasicMemoryIntegration")
     def test_promote_auto_detect_finds_candidates(self, mock_integration, temp_storage):
         """Test auto-detect finds high-value memories."""
         now = int(time.time())
@@ -250,7 +250,7 @@ class TestPromoteMemory:
         # Candidate preview list should be limited to 10
         assert len(result["candidates"]) <= 10
 
-    @patch("mnemex.tools.promote.BasicMemoryIntegration")
+    @patch("cortexgraph.tools.promote.BasicMemoryIntegration")
     def test_promote_updates_memory_status(self, mock_integration, temp_storage):
         """Test that promotion updates memory status."""
         now = int(time.time())
@@ -330,7 +330,7 @@ class TestPromoteMemory:
         assert result["success"] is True
         assert "would promote" in result["message"].lower()
 
-    @patch("mnemex.tools.promote.BasicMemoryIntegration")
+    @patch("cortexgraph.tools.promote.BasicMemoryIntegration")
     def test_promote_message_actual_run(self, mock_integration, temp_storage):
         """Test that actual run message says 'Promoted'."""
         mock_integration_instance = MagicMock()
@@ -353,7 +353,7 @@ class TestPromoteMemory:
         assert result["candidates_found"] == 0
         assert result["promoted_count"] == 0
 
-    @patch("mnemex.tools.promote.BasicMemoryIntegration")
+    @patch("cortexgraph.tools.promote.BasicMemoryIntegration")
     def test_promote_integration_failure(self, mock_integration, temp_storage):
         """Test handling of integration failure."""
         now = int(time.time())
