@@ -16,7 +16,7 @@ We release patches for security vulnerabilities in the following versions:
 
 Use GitHub's **Private Vulnerability Reporting** feature:
 
-1. Go to the [Security tab](https://github.com/simplemindedbot/mnemex/security)
+1. Go to the [Security tab](https://github.com/simplemindedbot/cortexgraph/security)
 2. Click **"Report a vulnerability"**
 3. Fill out the advisory form with details
 4. Submit privately to the maintainers
@@ -100,9 +100,9 @@ Security patches are released as:
 - Announced via GitHub Releases
 - Documented in CHANGELOG.md
 
-Subscribe to releases: https://github.com/simplemindedbot/mnemex/releases
+Subscribe to releases: https://github.com/simplemindedbot/cortexgraph/releases
 
 ## Contact
 
 - **Security issues**: Use GitHub's private vulnerability reporting (see above)
-- **General issues**: https://github.com/simplemindedbot/mnemex/issues
+- **General issues**: https://github.com/simplemindedbot/cortexgraph/issues

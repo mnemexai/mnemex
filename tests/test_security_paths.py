@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from mnemex.security.paths import (
+from cortexgraph.security.paths import (
     ensure_within_directory,
     sanitize_filename,
     validate_folder_path,

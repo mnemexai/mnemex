@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `LTMIndex.add_document()` - Incrementally add single documents to index
   - `promote_memory` now automatically updates LTM index after successful promotion
   - `search_unified` now auto-rebuilds stale or missing indexes (transparent to user)
-  - **No more manual `mnemex-index-ltm` needed** - index stays fresh automatically
+  - **No more manual `cortexgraph-index-ltm` needed** - index stays fresh automatically
   - Newly promoted memories are immediately searchable
   - Stale indexes (>1 hour old) are auto-rebuilt on first search
 
@@ -108,16 +108,16 @@ This is the first production-ready release of Mnemex (formerly STM Research/STM 
 #### Complete Rebranding
 - **Renamed from STM Research/STM Server to Mnemex**
   - Updated all references, paths, and documentation
-  - Changed storage paths from `~/.stm/` to `~/.config/mnemex/` (XDG-compliant)
-  - Updated command names from `stm-*` to `mnemex-*`
+  - Changed storage paths from `~/.stm/` to `~/.config/cortexgraph/` (XDG-compliant)
+  - Updated command names from `stm-*` to `cortexgraph-*`
   - Updated environment variables from `STM_*` to `MNEMEX_*`
-  - Repository moved to https://github.com/simplemindedbot/mnemex
+  - Repository moved to https://github.com/simplemindedbot/cortexgraph
 
 #### Simplified Installation
 - **UV Tool Install Support**
-  - One-command installation: `uv tool install git+https://github.com/simplemindedbot/mnemex.git`
-  - Simplified MCP configuration: `{"command": "mnemex"}` (no more complex paths)
-  - All configuration moved to `~/.config/mnemex/.env` (not MCP config)
+  - One-command installation: `uv tool install git+https://github.com/simplemindedbot/cortexgraph.git`
+  - Simplified MCP configuration: `{"command": "cortexgraph"}` (no more complex paths)
+  - All configuration moved to `~/.config/cortexgraph/.env` (not MCP config)
   - Automatic installation of all 7 CLI commands
 
 #### Memory Consolidation
@@ -141,7 +141,7 @@ This is the first production-ready release of Mnemex (formerly STM Research/STM 
 
 ### 📦 Added
 
-- Migration tool (`mnemex-migrate`) to upgrade from old STM Server installations
+- Migration tool (`cortexgraph-migrate`) to upgrade from old STM Server installations
 - Comprehensive contributing guide with platform-specific instructions
 - Windows/Linux tester recruitment documentation
 - Future roadmap documentation
@@ -151,8 +151,8 @@ This is the first production-ready release of Mnemex (formerly STM Research/STM 
 
 ### 🔄 Changed
 
-- **Storage paths**: Migrated to XDG-compliant `~/.config/mnemex/`
-- **Command names**: All CLI tools renamed from `stm-*` to `mnemex-*`
+- **Storage paths**: Migrated to XDG-compliant `~/.config/cortexgraph/`
+- **Command names**: All CLI tools renamed from `stm-*` to `cortexgraph-*`
 - **Configuration**: Simplified MCP setup, all settings in `.env` file
 - **Installation**: UV tool install as recommended method
 - **Documentation**: Complete overhaul across all files
@@ -192,13 +192,13 @@ This is the first production-ready release of Mnemex (formerly STM Research/STM 
 11. `create_relation` - Create explicit links between memories
 
 **7 CLI Commands:**
-- `mnemex` - MCP server
-- `mnemex-migrate` - Migration from old installations
-- `mnemex-search` - Unified search across STM and LTM
-- `mnemex-maintenance` - Storage stats and compaction
-- `mnemex-index-ltm` - Index Obsidian vault
-- `mnemex-backup` - Git backup operations
-- `mnemex-vault` - Markdown file operations
+- `cortexgraph` - MCP server
+- `cortexgraph-migrate` - Migration from old installations
+- `cortexgraph-search` - Unified search across STM and LTM
+- `cortexgraph-maintenance` - Storage stats and compaction
+- `cortexgraph-index-ltm` - Index Obsidian vault
+- `cortexgraph-backup` - Git backup operations
+- `cortexgraph-vault` - Markdown file operations
 
 ### 💡 Core Innovations
 

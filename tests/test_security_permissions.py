@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from mnemex.security.permissions import (
+from cortexgraph.security.permissions import (
     DIR_PERMISSIONS,
     FILE_PERMISSIONS,
     check_permissions,
@@ -830,7 +830,7 @@ class TestMain:
     @pytest.mark.skipif(not IS_POSIX, reason="Unix permissions not applicable on Windows")
     def test_main_check_secure_file(self, monkeypatch, capsys):
         """Test main with --check flag on a secure file."""
-        from mnemex.security.permissions import main
+        from cortexgraph.security.permissions import main
 
         with tempfile.TemporaryDirectory() as tmpdir:
             test_file = Path(tmpdir) / "secure.txt"
@@ -848,7 +848,7 @@ class TestMain:
     @pytest.mark.skipif(not IS_POSIX, reason="Unix permissions not applicable on Windows")
     def test_main_check_insecure_file(self, monkeypatch, capsys):
         """Test main with --check flag on an insecure file."""
-        from mnemex.security.permissions import main
+        from cortexgraph.security.permissions import main
 
         with tempfile.TemporaryDirectory() as tmpdir:
             test_file = Path(tmpdir) / "insecure.txt"
@@ -867,7 +867,7 @@ class TestMain:
     @pytest.mark.skipif(not IS_POSIX, reason="Unix permissions not applicable on Windows")
     def test_main_secure_config_file(self, monkeypatch, capsys):
         """Test main with --config flag."""
-        from mnemex.security.permissions import main
+        from cortexgraph.security.permissions import main
 
         with tempfile.TemporaryDirectory() as tmpdir:
             config_file = Path(tmpdir) / ".env"
@@ -888,7 +888,7 @@ class TestMain:
     @pytest.mark.skipif(not IS_POSIX, reason="Unix permissions not applicable on Windows")
     def test_main_secure_single_file(self, monkeypatch, capsys):
         """Test main securing a single file."""
-        from mnemex.security.permissions import main
+        from cortexgraph.security.permissions import main
 
         with tempfile.TemporaryDirectory() as tmpdir:
             test_file = Path(tmpdir) / "test.txt"
@@ -910,7 +910,7 @@ class TestMain:
     @pytest.mark.skipif(not IS_POSIX, reason="Unix permissions not applicable on Windows")
     def test_main_secure_directory_non_recursive(self, monkeypatch, capsys):
         """Test main securing a directory without --recursive."""
-        from mnemex.security.permissions import main
+        from cortexgraph.security.permissions import main
 
         with tempfile.TemporaryDirectory() as tmpdir:
             test_dir = Path(tmpdir) / "test_dir"
@@ -931,7 +931,7 @@ class TestMain:
 
     def test_main_secure_directory_recursive(self, monkeypatch, capsys):
         """Test main securing a directory with --recursive."""
-        from mnemex.security.permissions import main
+        from cortexgraph.security.permissions import main
 
         with tempfile.TemporaryDirectory() as tmpdir:
             test_dir = Path(tmpdir) / "test_dir"
@@ -955,7 +955,7 @@ class TestMain:
 
     def test_main_recursive_with_errors(self, monkeypatch, capsys):
         """Test main with --recursive when there are permission errors."""
-        from mnemex.security.permissions import main
+        from cortexgraph.security.permissions import main
 
         with tempfile.TemporaryDirectory() as tmpdir:
             test_dir = Path(tmpdir) / "test_dir"
@@ -976,7 +976,7 @@ class TestMain:
 
     def test_main_nonexistent_path(self, monkeypatch, capsys):
         """Test main with a nonexistent path."""
-        from mnemex.security.permissions import main
+        from cortexgraph.security.permissions import main
 
         with tempfile.TemporaryDirectory() as tmpdir:
             nonexistent = Path(tmpdir) / "nonexistent"
@@ -991,7 +991,7 @@ class TestMain:
 
     def test_main_exception_handling(self, monkeypatch, capsys):
         """Test main exception handling."""
-        from mnemex.security.permissions import main
+        from cortexgraph.security.permissions import main
 
         monkeypatch.setattr("sys.argv", ["prog", "/nonexistent/path/that/does/not/exist"])
 
@@ -1155,7 +1155,7 @@ class TestPermissionErrors:
         """Test main returns 1 when ensure_secure_storage has errors."""
         import os
 
-        from mnemex.security.permissions import main
+        from cortexgraph.security.permissions import main
 
         with tempfile.TemporaryDirectory() as tmpdir:
             test_dir = Path(tmpdir) / "test_dir"

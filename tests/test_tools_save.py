@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from mnemex.tools.save import save_memory
+from cortexgraph.tools.save import save_memory
 
 
 class TestSaveMemory:
@@ -197,7 +197,7 @@ class TestSaveMemory:
         self, mock_detect, mock_config, temp_storage, caplog
     ):
         """Test that secret detection warns but still saves memory."""
-        from mnemex.security.secrets import SecretMatch
+        from cortexgraph.security.secrets import SecretMatch
 
         # Setup mocks
         mock_config.return_value.detect_secrets = True

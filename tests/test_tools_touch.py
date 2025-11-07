@@ -4,8 +4,8 @@ import time
 
 import pytest
 
-from mnemex.storage.models import Memory, MemoryMetadata
-from mnemex.tools.touch import touch_memory
+from cortexgraph.storage.models import Memory, MemoryMetadata
+from cortexgraph.tools.touch import touch_memory
 from tests.conftest import make_test_uuid
 
 

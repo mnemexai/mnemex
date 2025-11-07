@@ -2,8 +2,8 @@
 
 import pytest
 
-from mnemex.storage.models import Memory
-from mnemex.tools.consolidate import consolidate_memories
+from cortexgraph.storage.models import Memory
+from cortexgraph.tools.consolidate import consolidate_memories
 from tests.conftest import make_test_uuid
 
 

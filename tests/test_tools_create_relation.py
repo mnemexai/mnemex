@@ -4,8 +4,8 @@ import time
 
 import pytest
 
-from mnemex.storage.models import Memory
-from mnemex.tools.create_relation import create_relation
+from cortexgraph.storage.models import Memory
+from cortexgraph.tools.create_relation import create_relation
 from tests.conftest import make_test_uuid
 
 

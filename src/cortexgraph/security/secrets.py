@@ -213,7 +213,7 @@ def format_secret_warning(matches: list[SecretMatch]) -> str:
             "  2. Using a secrets manager (AWS Secrets Manager, HashiCorp Vault, etc.)",
             "  3. Removing secrets from memory content",
             "",
-            "To disable secrets detection, set MNEMEX_DETECT_SECRETS=false in your .env file.",
+            "To disable secrets detection, set CORTEXGRAPH_DETECT_SECRETS=false in your .env file.",
         ]
     )
 

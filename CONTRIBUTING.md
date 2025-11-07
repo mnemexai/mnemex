@@ -37,11 +37,11 @@ While I've written platform-specific instructions based on best practices, **I c
 1. **Installation Testing**
    - Does `uv tool install` work smoothly?
    - Are the setup instructions clear and accurate?
-   - Do the paths work correctly (`~/.config/mnemex/` on Linux, `C:/Users/.../` on Windows)?
+   - Do the paths work correctly (`~/.config/cortexgraph/` on Linux, `C:/Users/.../` on Windows)?
 
 2. **Running the Server**
-   - Does `mnemex` command work after installation?
-   - Do all 7 CLI commands work (`mnemex-search`, `mnemex-maintenance`, etc.)?
+   - Does `cortexgraph` command work after installation?
+   - Do all 7 CLI commands work (`cortexgraph-search`, `cortexgraph-maintenance`, etc.)?
    - Can you connect via Claude Desktop or other MCP clients?
 
 3. **Testing Suite**
@@ -52,7 +52,7 @@ While I've written platform-specific instructions based on best practices, **I c
 4. **File Operations**
    - Does JSONL storage work correctly?
    - Do file paths with spaces or special characters work?
-   - Does the maintenance CLI (`mnemex-maintenance`) work?
+   - Does the maintenance CLI (`cortexgraph-maintenance`) work?
 
 #### Medium Priority
 
@@ -73,13 +73,13 @@ While I've written platform-specific instructions based on best practices, **I c
 
 ```bash
 # Install and verify
-uv tool install git+https://github.com/simplemindedbot/mnemex.git
-mnemex --version
+uv tool install git+https://github.com/simplemindedbot/cortexgraph.git
+cortexgraph --version
 
 # Run basic tests
 cd $(mktemp -d)
-mnemex-maintenance stats
-mnemex-search "test" --verbose
+cortexgraph-maintenance stats
+cortexgraph-search "test" --verbose
 ```
 
 Then report:
@@ -100,7 +100,7 @@ Follow the platform-specific setup guide in this file, then:
 
 ### Where to Report
 
-**[Open an issue](https://github.com/simplemindedbot/mnemex/issues/new)** with:
+**[Open an issue](https://github.com/simplemindedbot/cortexgraph/issues/new)** with:
 
 ```markdown
 **Platform:** [Windows 11 / Ubuntu 22.04 / etc.]
@@ -193,8 +193,8 @@ uv --version
 
 ```powershell
 # Using Command Prompt or PowerShell
-git clone https://github.com/simplemindedbot/mnemex.git
-cd mnemex
+git clone https://github.com/simplemindedbot/cortexgraph.git
+cd cortexgraph
 ```
 
 #### 5. Set Up Development Environment
@@ -204,7 +204,7 @@ cd mnemex
 uv sync --all-extras
 
 # Verify installation
-uv run python -c "import mnemex; print('Mnemex installed successfully!')"
+uv run python -c "import cortexgraph; print('Mnemex installed successfully!')"
 ```
 
 #### 6. Configure Environment
@@ -217,13 +217,13 @@ copy .env.example .env
 notepad .env
 ```
 
-**Windows-specific config (`~/.config/mnemex/.env` or project `.env`):**
+**Windows-specific config (`~/.config/cortexgraph/.env` or project `.env`):**
 
 ```bash
 # Use Windows paths with forward slashes or escaped backslashes
-MNEMEX_STORAGE_PATH=C:/Users/YourUsername/.config/mnemex/jsonl
+MNEMEX_STORAGE_PATH=C:/Users/YourUsername/.config/cortexgraph/jsonl
 # Or with escaped backslashes
-# MNEMEX_STORAGE_PATH=C:\\Users\\YourUsername\\.config\\mnemex\\jsonl
+# MNEMEX_STORAGE_PATH=C:\\Users\\YourUsername\\.config\\cortexgraph\\jsonl
 
 # Optional: LTM vault path
 LTM_VAULT_PATH=C:/Users/YourUsername/Documents/Obsidian/Vault
@@ -236,7 +236,7 @@ LTM_VAULT_PATH=C:/Users/YourUsername/Documents/Obsidian/Vault
 uv run python -m pytest
 
 # Run with coverage
-uv run python -m pytest --cov=mnemex --cov-report=html
+uv run python -m pytest --cov=cortexgraph --cov-report=html
 
 # Open coverage report
 start htmlcov\index.html
@@ -253,7 +253,7 @@ uv run python -m pytest -k "test_merge" -v
 **Issue: `ModuleNotFoundError`**
 ```powershell
 # Ensure you're in the project directory
-cd path\to\mnemex
+cd path\to\cortexgraph
 
 # Reinstall dependencies
 uv sync --all-extras
@@ -324,8 +324,8 @@ uv --version
 #### 3. Clone the Repository
 
 ```bash
-git clone https://github.com/simplemindedbot/mnemex.git
-cd mnemex
+git clone https://github.com/simplemindedbot/cortexgraph.git
+cd cortexgraph
 ```
 
 #### 4. Set Up Development Environment
@@ -335,7 +335,7 @@ cd mnemex
 uv sync --all-extras
 
 # Verify installation
-uv run python -c "import mnemex; print('Mnemex installed successfully!')"
+uv run python -c "import cortexgraph; print('Mnemex installed successfully!')"
 ```
 
 #### 5. Configure Environment
@@ -352,11 +352,11 @@ vim .env
 code .env  # VS Code
 ```
 
-**Linux-specific config (`~/.config/mnemex/.env` or project `.env`):**
+**Linux-specific config (`~/.config/cortexgraph/.env` or project `.env`):**
 
 ```bash
 # Standard XDG paths
-MNEMEX_STORAGE_PATH=~/.config/mnemex/jsonl
+MNEMEX_STORAGE_PATH=~/.config/cortexgraph/jsonl
 
 # Optional: LTM vault path
 LTM_VAULT_PATH=~/Documents/Obsidian/Vault
@@ -379,7 +379,7 @@ MNEMEX_PROMOTE_THRESHOLD=0.65
 uv run python -m pytest
 
 # Run with coverage
-uv run python -m pytest --cov=mnemex --cov-report=html
+uv run python -m pytest --cov=cortexgraph --cov-report=html
 
 # Open coverage report
 xdg-open htmlcov/index.html
@@ -402,13 +402,13 @@ uv run python -m pytest -n auto
 chmod +x .venv/bin/*
 
 # Or use uv run instead
-uv run mnemex --help
+uv run cortexgraph --help
 ```
 
 **Issue: `ModuleNotFoundError`**
 ```bash
 # Ensure you're in the project directory
-cd /path/to/mnemex
+cd /path/to/cortexgraph
 
 # Reinstall dependencies
 uv sync --all-extras
@@ -463,8 +463,8 @@ uv --version
 #### 4. Clone the Repository
 
 ```bash
-git clone https://github.com/simplemindedbot/mnemex.git
-cd mnemex
+git clone https://github.com/simplemindedbot/cortexgraph.git
+cd cortexgraph
 ```
 
 #### 5. Set Up Development Environment
@@ -474,7 +474,7 @@ cd mnemex
 uv sync --all-extras
 
 # Verify installation
-uv run python -c "import mnemex; print('Mnemex installed successfully!')"
+uv run python -c "import cortexgraph; print('Mnemex installed successfully!')"
 ```
 
 #### 6. Configure Environment
@@ -489,11 +489,11 @@ nano .env
 open -e .env  # TextEdit
 ```
 
-**macOS-specific config (`~/.config/mnemex/.env` or project `.env`):**
+**macOS-specific config (`~/.config/cortexgraph/.env` or project `.env`):**
 
 ```bash
 # Standard macOS paths
-MNEMEX_STORAGE_PATH=~/.config/mnemex/jsonl
+MNEMEX_STORAGE_PATH=~/.config/cortexgraph/jsonl
 
 # Optional: LTM vault path
 LTM_VAULT_PATH=~/Documents/Obsidian/Vault
@@ -506,7 +506,7 @@ LTM_VAULT_PATH=~/Documents/Obsidian/Vault
 uv run python -m pytest
 
 # Run with coverage
-uv run python -m pytest --cov=mnemex --cov-report=html
+uv run python -m pytest --cov=cortexgraph --cov-report=html
 
 # Open coverage report
 open htmlcov/index.html
@@ -543,20 +543,20 @@ git checkout -b fix/bug-description
 uv run python -m pytest
 
 # With coverage
-uv run python -m pytest --cov=mnemex
+uv run python -m pytest --cov=cortexgraph
 ```
 
 4. **Run linters:**
 
 ```bash
 # Check code style
-uv run ruff check src/mnemex tests
+uv run ruff check src/cortexgraph tests
 
 # Format code
-uv run ruff format src/mnemex tests
+uv run ruff format src/cortexgraph tests
 
 # Type checking
-uv run mypy src/mnemex
+uv run mypy src/cortexgraph
 ```
 
 5. **Commit your changes:**
@@ -693,7 +693,7 @@ uv run python -m pytest -n auto
 - Check coverage with:
 
 ```bash
-uv run python -m pytest --cov=mnemex --cov-report=term-missing
+uv run python -m pytest --cov=cortexgraph --cov-report=term-missing
 ```
 
 ---
@@ -706,13 +706,13 @@ We use **Ruff** for linting and formatting (no Black):
 
 ```bash
 # Check for style issues
-uv run ruff check src/mnemex tests
+uv run ruff check src/cortexgraph tests
 
 # Auto-fix issues
-uv run ruff check --fix src/mnemex tests
+uv run ruff check --fix src/cortexgraph tests
 
 # Format code
-uv run ruff format src/mnemex tests
+uv run ruff format src/cortexgraph tests
 ```
 
 ### Pre-commit Hook
@@ -763,7 +763,7 @@ def calculate_score(use_count, last_used, strength):
 Run type checker:
 
 ```bash
-uv run mypy src/mnemex
+uv run mypy src/cortexgraph
 ```
 
 ### Docstrings
@@ -830,7 +830,7 @@ pre-commit run --all-files
 Hooks configured in `.pre-commit-config.yaml`:
 - `ruff` — lint with autofix (`--fix`)
 - `ruff-format` — enforce formatting
-- `mypy (src)` — type-check `src/mnemex` only
+- `mypy (src)` — type-check `src/cortexgraph` only
 - `check-toml` — validates `pyproject.toml` parses
 - `fs-sanity-duplicates` — blocks filenames with trailing numbers (e.g., `file 2.md`)
 
@@ -850,9 +850,9 @@ uv run python -m pytest
 
 2. **Check code style:**
 ```bash
-uv run ruff check src/mnemex tests
-uv run ruff format src/mnemex tests
-uv run mypy src/mnemex
+uv run ruff check src/cortexgraph tests
+uv run ruff format src/cortexgraph tests
+uv run mypy src/cortexgraph
 ```
 
 3. **Update documentation** if you:
@@ -927,7 +927,7 @@ None - this is a new feature with no API changes.
 1. **Search existing issues** to avoid duplicates
 2. **Try the latest version** - your issue might be fixed
 3. **Gather information:**
-   - Mnemex version (`mnemex --version` or check `pyproject.toml`)
+   - Mnemex version (`cortexgraph --version` or check `pyproject.toml`)
    - Python version (`python --version`)
    - Operating system and version
    - Steps to reproduce
@@ -987,7 +987,7 @@ Other approaches you've thought about.
 ## Getting Help
 
 - **Documentation:** [docs/](docs/) directory
-- **Issues:** [GitHub Issues](https://github.com/simplemindedbot/mnemex/issues)
+- **Issues:** [GitHub Issues](https://github.com/simplemindedbot/cortexgraph/issues)
 - **Roadmap:** [future_roadmap.md](future_roadmap.md)
 
 ---

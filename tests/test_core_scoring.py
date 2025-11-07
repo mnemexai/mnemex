@@ -2,7 +2,7 @@
 
 import time
 
-from mnemex.core.scoring import (
+from cortexgraph.core.scoring import (
     calculate_memory_age,
     calculate_recency,
     filter_by_score,
@@ -10,7 +10,7 @@ from mnemex.core.scoring import (
     should_forget,
     should_promote,
 )
-from mnemex.storage.models import Memory
+from cortexgraph.storage.models import Memory
 from tests.conftest import make_test_uuid
 
 

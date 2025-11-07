@@ -461,7 +461,7 @@ Create `tests/test_prompt_injection.py`:
 """Test prompt injection detection and sanitization."""
 
 import pytest
-from mnemex.security.prompt_injection import (
+from cortexgraph.security.prompt_injection import (
     detect_prompt_injection,
     sanitize_content,
     should_warn_about_injection,

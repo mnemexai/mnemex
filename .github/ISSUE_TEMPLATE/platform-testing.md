@@ -16,8 +16,8 @@ assignees: ''
 ## What I Tested
 
 - [ ] Installation (`uv tool install`)
-- [ ] Running server (`mnemex` command)
-- [ ] CLI commands (`mnemex-search`, `mnemex-maintenance`, etc.)
+- [ ] Running server (`cortexgraph` command)
+- [ ] CLI commands (`cortexgraph-search`, `cortexgraph-maintenance`, etc.)
 - [ ] Test suite (`uv run python -m pytest`)
 - [ ] File operations (JSONL storage, paths with spaces)
 - [ ] Development setup (editable install)

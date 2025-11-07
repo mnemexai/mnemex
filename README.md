@@ -1,19 +1,32 @@
-# Mnemex: Temporal Memory for AI
+# CortexGraph: Temporal Memory for AI
 
 <div align="center">
-  <img src="mnemex_logo.png" alt="Mnemex Logo" width="400">
+  <img src="cortexgraph_logo.png" alt="CortexGraph Logo" width="400">
 </div>
 
-<!-- mcp-name: io.github.simplemindedbot/mnemex -->
+<!-- mcp-name: io.github.prefrontal-systems/cortexgraph -->
 
 A Model Context Protocol (MCP) server providing **human-like memory dynamics** for AI assistants. Memories naturally fade over time unless reinforced through use, mimicking the [Ebbinghaus forgetting curve](https://en.wikipedia.org/wiki/Forgetting_curve).
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://github.com/simplemindedbot/mnemex/actions/workflows/tests.yml/badge.svg)](https://github.com/simplemindedbot/mnemex/actions/workflows/tests.yml)
-[![Security Scanning](https://github.com/simplemindedbot/mnemex/actions/workflows/security.yml/badge.svg)](https://github.com/simplemindedbot/mnemex/actions/workflows/security.yml)
-[![codecov](https://codecov.io/gh/simplemindedbot/mnemex/branch/main/graph/badge.svg)](https://codecov.io/gh/simplemindedbot/mnemex)
-[![SBOM: CycloneDX](https://img.shields.io/badge/SBOM-CycloneDX-blue)](https://github.com/simplemindedbot/mnemex/actions/workflows/security.yml)
+[![Tests](https://github.com/prefrontal-systems/cortexgraph/actions/workflows/tests.yml/badge.svg)](https://github.com/prefrontal-systems/cortexgraph/actions/workflows/tests.yml)
+[![Security Scanning](https://github.com/prefrontal-systems/cortexgraph/actions/workflows/security.yml/badge.svg)](https://github.com/prefrontal-systems/cortexgraph/actions/workflows/security.yml)
+[![codecov](https://codecov.io/gh/prefrontal-systems/cortexgraph/branch/main/graph/badge.svg)](https://codecov.io/gh/prefrontal-systems/cortexgraph)
+[![SBOM: CycloneDX](https://img.shields.io/badge/SBOM-CycloneDX-blue)](https://github.com/prefrontal-systems/cortexgraph/actions/workflows/security.yml)
+
+> [!NOTE]
+> **About the Name & Version**
+>
+> This project was originally developed as **mnemex** (published to PyPI up to v0.6.0). In November 2025, it was transferred to [Prefrontal Systems](https://prefrontal.systems) and renamed to **CortexGraph** to better reflect its role within a broader cognitive architecture for AI systems.
+>
+> **Version numbering starts at 0.1.0** for the cortexgraph package to signal a fresh start under the new name, while acknowledging the mature, well-tested codebase (791 tests, 98%+ coverage) inherited from mnemex. The mnemex package remains frozen at v0.6.0 on PyPI.
+>
+> This versioning approach:
+> - Signals "new package" to PyPI users discovering cortexgraph
+> - Gives room to evolve the brand, API, and organizational integration before 1.0
+> - Maintains continuity: users can migrate from `pip install mnemex` → `pip install cortexgraph`
+> - Reflects that while the code is mature, the cortexgraph identity is just beginning
 
 > [!WARNING]
 > **🚧 ACTIVE DEVELOPMENT - EXPECT BUGS 🚧**
@@ -27,17 +40,17 @@ A Model Context Protocol (MCP) server providing **human-like memory dynamics** f
 
 > **📖 New to this project?** Start with the [ELI5 Guide](ELI5.md) for a simple explanation of what this does and how to use it.
 
-## What is Mnemex?
+## What is CortexGraph?
 
-**Mnemex gives AI assistants like Claude a human-like memory system.**
+**CortexGraph gives AI assistants like Claude a human-like memory system.**
 
 ### The Problem
 
 When you chat with Claude, it forgets everything between conversations. You tell it "I prefer TypeScript" or "I'm allergic to peanuts," and three days later, you have to repeat yourself. This is frustrating and wastes time.
 
-### What Mnemex Does
+### What CortexGraph Does
 
-Mnemex makes AI assistants **remember things naturally**, just like human memory:
+CortexGraph makes AI assistants **remember things naturally**, just like human memory:
 
 - 🧠 **Remembers what matters** - Your preferences, decisions, and important facts
 - ⏰ **Forgets naturally** - Old, unused information fades away over time (like the [Ebbinghaus forgetting curve](https://en.wikipedia.org/wiki/Forgetting_curve))
@@ -61,7 +74,7 @@ Most memory systems are dumb:
 - ❌ "Delete after 7 days" (doesn't care if you used it 100 times)
 - ❌ "Keep last 100 items" (throws away important stuff just because it's old)
 
-Mnemex is smart:
+CortexGraph is smart:
 - ✅ Combines **recency** (when?), **frequency** (how often?), and **importance** (how critical?)
 - ✅ Memories fade naturally like human memory
 - ✅ Frequently used memories stick around longer
@@ -78,13 +91,13 @@ This repository contains research, design, and a complete implementation of a sh
 - **Git-friendly storage** with human-readable JSONL
 - **Knowledge graph** with entities and relations
 
-## Why Mnemex?
+## Why CortexGraph?
 
 ### 🔒 Privacy & Transparency
 
 **All data stored locally on your machine** - no cloud services, no tracking, no data sharing.
 
-- **Short-term memory**: Human-readable JSONL files (`~/.config/mnemex/jsonl/`)
+- **Short-term memory**: Human-readable JSONL files (`~/.config/cortexgraph/jsonl/`)
   - One JSON object per line
   - Easy to inspect, version control, and backup
   - Git-friendly format for tracking changes
@@ -249,30 +262,30 @@ See `docs/prompts/` for LLM system prompt templates that enable natural memory u
 
 ```bash
 # Install from PyPI (recommended - fast, isolated, includes all 7 CLI commands)
-uv tool install mnemex
+uv tool install cortexgraph
 ```
 
-This installs `mnemex` and all 7 CLI commands in an isolated environment.
+This installs `cortexgraph` and all 7 CLI commands in an isolated environment.
 
 **Alternative Installation Methods**
 
 ```bash
 # Using pipx (similar isolation to uv)
-pipx install mnemex
+pipx install cortexgraph
 
 # Using pip (traditional, installs in current environment)
-pip install mnemex
+pip install cortexgraph
 
 # From GitHub (latest development version)
-uv tool install git+https://github.com/simplemindedbot/mnemex.git
+uv tool install git+https://github.com/simplemindedbot/cortexgraph.git
 ```
 
 **For Development (Editable Install)**
 
 ```bash
 # Clone and install in editable mode
-git clone https://github.com/simplemindedbot/mnemex.git
-cd mnemex
+git clone https://github.com/simplemindedbot/cortexgraph.git
+cd cortexgraph
 uv pip install -e ".[dev]"
 ```
 
@@ -282,24 +295,24 @@ uv pip install -e ".[dev]"
 
 **Method 1: .env file (Works for all installation methods)**
 
-Create `~/.config/mnemex/.env`:
+Create `~/.config/cortexgraph/.env`:
 
 ```bash
 # Create config directory
-mkdir -p ~/.config/mnemex
+mkdir -p ~/.config/cortexgraph
 
 # Option A: Copy from cloned repo
-cp .env.example ~/.config/mnemex/.env
+cp .env.example ~/.config/cortexgraph/.env
 
 # Option B: Download directly
-curl -o ~/.config/mnemex/.env https://raw.githubusercontent.com/simplemindedbot/mnemex/main/.env.example
+curl -o ~/.config/cortexgraph/.env https://raw.githubusercontent.com/simplemindedbot/cortexgraph/main/.env.example
 ```
 
-Edit `~/.config/mnemex/.env` with your settings:
+Edit `~/.config/cortexgraph/.env` with your settings:
 
 ```bash
 # Storage
-MNEMEX_STORAGE_PATH=~/.config/mnemex/jsonl
+MNEMEX_STORAGE_PATH=~/.config/cortexgraph/jsonl
 
 # Decay model (power_law | exponential | two_component)
 MNEMEX_DECAY_MODEL=power_law
@@ -335,10 +348,10 @@ Add environment variables directly to `~/Library/Application Support/Claude/clau
 ```json
 {
   "mcpServers": {
-    "mnemex": {
-      "command": "mnemex",
+    "cortexgraph": {
+      "command": "cortexgraph",
       "env": {
-        "MNEMEX_STORAGE_PATH": "~/.config/mnemex/jsonl",
+        "MNEMEX_STORAGE_PATH": "~/.config/cortexgraph/jsonl",
         "MNEMEX_DECAY_MODEL": "power_law",
         "MNEMEX_PL_ALPHA": "1.1",
         "MNEMEX_PL_HALFLIFE_DAYS": "3.0",
@@ -349,8 +362,8 @@ Add environment variables directly to `~/Library/Application Support/Claude/clau
 }
 ```
 
-**Where mnemex looks for .env files:**
-1. **Primary**: `~/.config/mnemex/.env` ← Use this for `uv tool install` / `uvx`
+**Where cortexgraph looks for .env files:**
+1. **Primary**: `~/.config/cortexgraph/.env` ← Use this for `uv tool install` / `uvx`
 2. **Fallback**: `./.env` (current directory) ← Only works for editable installs
 
 ### MCP Configuration
@@ -360,34 +373,34 @@ Add environment variables directly to `~/Library/Application Support/Claude/clau
 ```json
 {
   "mcpServers": {
-    "mnemex": {
-      "command": "mnemex"
+    "cortexgraph": {
+      "command": "cortexgraph"
     }
   }
 }
 ```
 
-Configuration loaded from `~/.config/mnemex/.env` or environment variables (see Configuration section above).
+Configuration loaded from `~/.config/cortexgraph/.env` or environment variables (see Configuration section above).
 
 **For development (editable install):**
 
 ```json
 {
   "mcpServers": {
-    "mnemex": {
+    "cortexgraph": {
       "command": "uv",
-      "args": ["--directory", "/path/to/mnemex", "run", "mnemex"],
-      "env": {"PYTHONPATH": "/path/to/mnemex/src"}
+      "args": ["--directory", "/path/to/cortexgraph", "run", "cortexgraph"],
+      "env": {"PYTHONPATH": "/path/to/cortexgraph/src"}
     }
   }
 }
 ```
 
-Configuration can be loaded from `./.env` in the project directory OR `~/.config/mnemex/.env`.
+Configuration can be loaded from `./.env` in the project directory OR `~/.config/cortexgraph/.env`.
 
 #### Troubleshooting: Command Not Found
 
-If Claude Desktop shows `spawn mnemex ENOENT` errors, the `mnemex` command isn't in Claude Desktop's PATH.
+If Claude Desktop shows `spawn cortexgraph ENOENT` errors, the `cortexgraph` command isn't in Claude Desktop's PATH.
 
 **macOS/Linux: GUI apps don't inherit shell PATH**
 
@@ -399,14 +412,14 @@ GUI applications on macOS and Linux don't see your shell's PATH configuration (`
 - `/usr/sbin`
 - `/sbin`
 
-If `uv tool install` placed `mnemex` in `~/.local/bin/` or another custom location, Claude Desktop can't find it.
+If `uv tool install` placed `cortexgraph` in `~/.local/bin/` or another custom location, Claude Desktop can't find it.
 
 **Solution: Use absolute path**
 
 ```bash
-# Find where mnemex is installed
-which mnemex
-# Example output: /Users/username/.local/bin/mnemex
+# Find where cortexgraph is installed
+which cortexgraph
+# Example output: /Users/username/.local/bin/cortexgraph
 ```
 
 Update your Claude config with the absolute path:
@@ -414,14 +427,14 @@ Update your Claude config with the absolute path:
 ```json
 {
   "mcpServers": {
-    "mnemex": {
-      "command": "/Users/username/.local/bin/mnemex"
+    "cortexgraph": {
+      "command": "/Users/username/.local/bin/cortexgraph"
     }
   }
 }
 ```
 
-Replace `/Users/username/.local/bin/mnemex` with your actual path from `which mnemex`.
+Replace `/Users/username/.local/bin/cortexgraph` with your actual path from `which cortexgraph`.
 
 **Alternative: System-wide install**
 
@@ -429,10 +442,10 @@ You can also install to a system location that Claude Desktop searches:
 
 ```bash
 # Option 1: Link to /usr/local/bin
-sudo ln -s ~/.local/bin/mnemex /usr/local/bin/mnemex
+sudo ln -s ~/.local/bin/cortexgraph /usr/local/bin/cortexgraph
 
 # Option 2: Install with pipx/uv to system location (requires admin)
-sudo uv tool install git+https://github.com/simplemindedbot/mnemex.git
+sudo uv tool install git+https://github.com/simplemindedbot/cortexgraph.git
 ```
 
 ### Maintenance
@@ -441,10 +454,10 @@ Use the maintenance CLI to inspect and compact JSONL storage:
 
 ```bash
 # Show storage stats (active counts, file sizes, compaction hints)
-mnemex-maintenance stats
+cortexgraph-maintenance stats
 
 # Compact JSONL (rewrite without tombstones/duplicates)
-mnemex-maintenance compact
+cortexgraph-maintenance compact
 ```
 
 ### Migrating to UV Tool Install
@@ -453,17 +466,17 @@ If you're currently using an editable install (`uv pip install -e .`), you can s
 
 ```bash
 # 1. Uninstall editable version
-uv pip uninstall mnemex
+uv pip uninstall cortexgraph
 
 # 2. Install as UV tool
-uv tool install git+https://github.com/simplemindedbot/mnemex.git
+uv tool install git+https://github.com/simplemindedbot/cortexgraph.git
 
 # 3. Update Claude Desktop config to just:
-#    {"command": "mnemex"}
+#    {"command": "cortexgraph"}
 #    Remove the --directory, run, and PYTHONPATH settings
 ```
 
-**Your data is safe!** This only changes how the command is installed. Your memories in `~/.config/mnemex/` are untouched.
+**Your data is safe!** This only changes how the command is installed. Your memories in `~/.config/cortexgraph/` are untouched.
 
 ### Migrating from STM Server
 
@@ -471,35 +484,35 @@ If you previously used this project as "STM Server", use the migration tool:
 
 ```bash
 # Preview what will be migrated
-mnemex-migrate --dry-run
+cortexgraph-migrate --dry-run
 
-# Migrate data files from ~/.stm/ to ~/.config/mnemex/
-mnemex-migrate --data-only
+# Migrate data files from ~/.stm/ to ~/.config/cortexgraph/
+cortexgraph-migrate --data-only
 
 # Also migrate .env file (rename STM_* variables to MNEMEX_*)
-mnemex-migrate --migrate-env --env-path ./.env
+cortexgraph-migrate --migrate-env --env-path ./.env
 ```
 
 The migration tool will:
-- Copy JSONL files from `~/.stm/jsonl/` to `~/.config/mnemex/jsonl/`
+- Copy JSONL files from `~/.stm/jsonl/` to `~/.config/cortexgraph/jsonl/`
 - Optionally rename environment variables (STM_* → MNEMEX_*)
 - Create backups before making changes
 - Provide clear next-step instructions
 
-After migration, update your Claude Desktop config to use `mnemex` instead of `stm`.
+After migration, update your Claude Desktop config to use `cortexgraph` instead of `stm`.
 
 ## CLI Commands
 
 The server includes 7 command-line tools:
 
 ```bash
-mnemex                  # Run MCP server
-mnemex-migrate          # Migrate from old STM setup
-mnemex-index-ltm        # Index Obsidian vault
-mnemex-backup           # Git backup operations
-mnemex-vault            # Vault markdown operations
-mnemex-search           # Unified STM+LTM search
-mnemex-maintenance      # JSONL storage stats and compaction
+cortexgraph                  # Run MCP server
+cortexgraph-migrate          # Migrate from old STM setup
+cortexgraph-index-ltm        # Index Obsidian vault
+cortexgraph-backup           # Git backup operations
+cortexgraph-vault            # Vault markdown operations
+cortexgraph-search           # Unified STM+LTM search
+cortexgraph-maintenance      # JSONL storage stats and compaction
 ```
 
 ## Visualization
@@ -508,9 +521,9 @@ Interactive graph visualization using PyVis:
 
 ```bash
 # Install visualization dependencies
-pip install "mnemex[visualization]"
+pip install "cortexgraph[visualization]"
 # or with uv
-uv pip install "mnemex[visualization]"
+uv pip install "cortexgraph[visualization]"
 
 # Or install dependencies manually
 pip install pyvis networkx
@@ -559,7 +572,7 @@ The visualization reads directly from your JSONL files and creates a standalone 
 Search across STM and LTM with the CLI:
 
 ```bash
-mnemex-search "typescript preferences" --tags preferences --limit 5 --verbose
+cortexgraph-search "typescript preferences" --tags preferences --limit 5 --verbose
 ```
 
 ### Example: Reinforce (Touch) Memory
@@ -717,7 +730,7 @@ Clean-room implementation. No AGPL dependencies.
 
 ### Knowledge & Memory
 *   [mem0ai/mem0-mcp](https://github.com/mem0ai/mem0-mcp) (Python) - A MCP server that provides a smart memory for AI to manage and reference past conversations, user preferences, and key details.
-*   [mnemex](https://github.com/simplemindedbot/mnemex) (Python) - A Python-based MCP server that provides a human-like short-term working memory (JSONL) and long-term memory (Markdown) system for AI assistants. The core of the project is a temporal decay algorithm that causes memories to fade over time unless they are reinforced through use.
+*   [cortexgraph](https://github.com/simplemindedbot/cortexgraph) (Python) - A Python-based MCP server that provides a human-like short-term working memory (JSONL) and long-term memory (Markdown) system for AI assistants. The core of the project is a temporal decay algorithm that causes memories to fade over time unless they are reinforced through use.
 *   [modelcontextprotocol/server-memory](https://github.com/modelcontextprotocol/server-memory) (TypeScript) - A knowledge graph-based persistent memory system for AI.
 
 ## Related Work
@@ -731,11 +744,11 @@ Clean-room implementation. No AGPL dependencies.
 If you use this work in research, please cite:
 
 ```bibtex
-@software{mnemex_2025,
+@software{cortexgraph_2025,
   title = {Mnemex: Temporal Memory for AI},
   author = {simplemindedbot},
   year = {2025},
-  url = {https://github.com/simplemindedbot/mnemex},
+  url = {https://github.com/simplemindedbot/cortexgraph},
   version = {0.5.3}
 }
 ```

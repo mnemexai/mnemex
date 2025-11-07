@@ -13,23 +13,23 @@
 
 ```bash
 # Install from PyPI (recommended - fast, isolated, automatic updates)
-uv tool install mnemex
+uv tool install cortexgraph
 ```
 
 **Alternative Methods:**
 
 ```bash
 # Using pipx (similar isolation, cross-platform)
-pipx install mnemex
+pipx install cortexgraph
 
 # Using pip (traditional, installs in current environment)
-pip install mnemex
+pip install cortexgraph
 
 # From GitHub (latest development version)
-uv tool install git+https://github.com/simplemindedbot/mnemex.git
+uv tool install git+https://github.com/simplemindedbot/cortexgraph.git
 ```
 
-All methods install `mnemex` and all 7 CLI commands. Configuration goes in `~/.config/mnemex/.env`.
+All methods install `cortexgraph` and all 7 CLI commands. Configuration goes in `~/.config/cortexgraph/.env`.
 
 ---
 
@@ -47,8 +47,8 @@ All methods install `mnemex` and all 7 CLI commands. Configuration goes in `~/.c
 
 ```bash
 # Clone the repository
-git clone https://github.com/simplemindedbot/mnemex.git
-cd mnemex
+git clone https://github.com/simplemindedbot/cortexgraph.git
+cd cortexgraph
 
 # Install with uv (recommended)
 uv pip install -e ".[dev]"
@@ -70,7 +70,7 @@ vim .env
 pytest
 
 # With coverage
-pytest --cov=mnemex --cov-report=html
+pytest --cov=cortexgraph --cov-report=html
 
 # Run specific test file
 pytest tests/test_decay.py
@@ -95,8 +95,8 @@ Configuration file location:
 ```json
 {
   "mcpServers": {
-    "mnemex": {
-      "command": "mnemex"
+    "cortexgraph": {
+      "command": "cortexgraph"
     }
   }
 }
@@ -107,34 +107,34 @@ Configuration file location:
 ```json
 {
   "mcpServers": {
-    "mnemex": {
+    "cortexgraph": {
       "command": "uv",
-      "args": ["--directory", "/path/to/mnemex", "run", "mnemex"],
-      "env": {"PYTHONPATH": "/path/to/mnemex/src"}
+      "args": ["--directory", "/path/to/cortexgraph", "run", "cortexgraph"],
+      "env": {"PYTHONPATH": "/path/to/cortexgraph/src"}
     }
   }
 }
 ```
 
-**Configuration:** All settings go in `~/.config/mnemex/.env`, not in the MCP config. See `.env.example` for options.
+**Configuration:** All settings go in `~/.config/cortexgraph/.env`, not in the MCP config. See `.env.example` for options.
 
 **Troubleshooting: Command Not Found**
 
-If Claude Desktop shows `spawn mnemex ENOENT` errors, the `mnemex` command isn't in Claude Desktop's PATH.
+If Claude Desktop shows `spawn cortexgraph ENOENT` errors, the `cortexgraph` command isn't in Claude Desktop's PATH.
 
 GUI applications on macOS/Linux don't inherit shell PATH configurations (`.zshrc`, `.bashrc`, etc.). Claude Desktop only searches:
 - `/usr/local/bin`
 - `/opt/homebrew/bin` (macOS)
 - `/usr/bin`, `/bin`, `/usr/sbin`, `/sbin`
 
-If `uv tool install` placed `mnemex` in `~/.local/bin/` or another custom location, Claude Desktop can't find it.
+If `uv tool install` placed `cortexgraph` in `~/.local/bin/` or another custom location, Claude Desktop can't find it.
 
 **Solution: Use absolute path**
 
 ```bash
-# Find where mnemex is installed
-which mnemex
-# Example output: /Users/username/.local/bin/mnemex
+# Find where cortexgraph is installed
+which cortexgraph
+# Example output: /Users/username/.local/bin/cortexgraph
 ```
 
 Update Claude config with the absolute path:
@@ -142,8 +142,8 @@ Update Claude config with the absolute path:
 ```json
 {
   "mcpServers": {
-    "mnemex": {
-      "command": "/Users/username/.local/bin/mnemex"
+    "cortexgraph": {
+      "command": "/Users/username/.local/bin/cortexgraph"
     }
   }
 }
@@ -153,10 +153,10 @@ Update Claude config with the absolute path:
 
 ```bash
 # Option 1: Symlink to system location
-sudo ln -s ~/.local/bin/mnemex /usr/local/bin/mnemex
+sudo ln -s ~/.local/bin/cortexgraph /usr/local/bin/cortexgraph
 
 # Option 2: Install with UV to system location (requires admin)
-sudo uv tool install git+https://github.com/simplemindedbot/mnemex.git
+sudo uv tool install git+https://github.com/simplemindedbot/cortexgraph.git
 ```
 
 Restart Claude Desktop after configuration.
@@ -173,8 +173,8 @@ Configuration file location:
 ```json
 {
   "mcpServers": {
-    "mnemex": {
-      "command": "mnemex"
+    "cortexgraph": {
+      "command": "cortexgraph"
     }
   }
 }
@@ -185,10 +185,10 @@ Configuration file location:
 ```json
 {
   "mcpServers": {
-    "mnemex": {
+    "cortexgraph": {
       "command": "uv",
-      "args": ["--directory", "C:\\path\\to\\mnemex", "run", "mnemex"],
-      "env": {"PYTHONPATH": "C:\\path\\to\\mnemex\\src"}
+      "args": ["--directory", "C:\\path\\to\\cortexgraph", "run", "cortexgraph"],
+      "env": {"PYTHONPATH": "C:\\path\\to\\cortexgraph\\src"}
     }
   }
 }
@@ -201,8 +201,8 @@ Configuration file location:
 ```json
 {
   "mcp.servers": {
-    "mnemex": {
-      "command": "mnemex"
+    "cortexgraph": {
+      "command": "cortexgraph"
     }
   }
 }
@@ -213,9 +213,9 @@ Configuration file location:
 ```json
 {
   "mcp.servers": {
-    "mnemex": {
+    "cortexgraph": {
       "command": "uv",
-      "args": ["--directory", "${workspaceFolder}", "run", "mnemex"],
+      "args": ["--directory", "${workspaceFolder}", "run", "cortexgraph"],
       "env": {"PYTHONPATH": "${workspaceFolder}/src"}
     }
   }
@@ -317,7 +317,7 @@ Tuning tips:
 
 ### Location
 
-Default directory: `~/.config/mnemex/jsonl/`
+Default directory: `~/.config/cortexgraph/jsonl/`
 
 Custom location via `MNEMEX_STORAGE_PATH` environment variable.
 
@@ -325,15 +325,15 @@ Custom location via `MNEMEX_STORAGE_PATH` environment variable.
 
 ```bash
 # Simple backup
-cp ~/.config/mnemex/jsonl/memories.jsonl ~/.config/mnemex/backups/memories.jsonl.backup
-cp ~/.config/mnemex/jsonl/relations.jsonl ~/.config/mnemex/backups/relations.jsonl.backup
+cp ~/.config/cortexgraph/jsonl/memories.jsonl ~/.config/cortexgraph/backups/memories.jsonl.backup
+cp ~/.config/cortexgraph/jsonl/relations.jsonl ~/.config/cortexgraph/backups/relations.jsonl.backup
 
 # Timestamped backup
-cp ~/.config/mnemex/jsonl/memories.jsonl ~/.config/mnemex/backups/memories.jsonl.$(date +%Y%m%d)
-cp ~/.config/mnemex/jsonl/relations.jsonl ~/.config/mnemex/backups/relations.jsonl.$(date +%Y%m%d)
+cp ~/.config/cortexgraph/jsonl/memories.jsonl ~/.config/cortexgraph/backups/memories.jsonl.$(date +%Y%m%d)
+cp ~/.config/cortexgraph/jsonl/relations.jsonl ~/.config/cortexgraph/backups/relations.jsonl.$(date +%Y%m%d)
 
 # Automated daily backup (cron)
-0 2 * * * cp ~/.config/mnemex/jsonl/memories.jsonl ~/.config/mnemex/backups/memories.jsonl.$(date +\%Y\%m\%d) && cp ~/.config/mnemex/jsonl/relations.jsonl ~/.config/mnemex/backups/relations.jsonl.$(date +\%Y\%m\%d)
+0 2 * * * cp ~/.config/cortexgraph/jsonl/memories.jsonl ~/.config/cortexgraph/backups/memories.jsonl.$(date +\%Y\%m\%d) && cp ~/.config/cortexgraph/jsonl/relations.jsonl ~/.config/cortexgraph/backups/relations.jsonl.$(date +\%Y\%m\%d)
 ```
 
 ### Migration
@@ -344,10 +344,10 @@ Not applicable. JSONL storage requires no schema migrations.
 
 ```bash
 # WARNING: This deletes all memories
-rm -rf ~/.config/mnemex/jsonl
+rm -rf ~/.config/cortexgraph/jsonl
 
 # Next run will create fresh storage files
-mnemex
+cortexgraph
 ```
 
 ---
@@ -403,38 +403,38 @@ Use the built-in CLI for storage housekeeping:
 
 ```bash
 # Show JSONL storage stats (active counts, file sizes, compaction hints)
-mnemex-maintenance stats
+cortexgraph-maintenance stats
 
 # Compact JSONL (rewrite files without tombstones/duplicates)
-mnemex-maintenance compact
+cortexgraph-maintenance compact
 
 # With explicit path
-mnemex-maintenance --storage-path ~/.config/mnemex/jsonl stats
+cortexgraph-maintenance --storage-path ~/.config/cortexgraph/jsonl stats
 ```
 
 ### Daily Maintenance (Automated)
 
-Create a maintenance script `~/.config/mnemex/maintenance.sh`:
+Create a maintenance script `~/.config/cortexgraph/maintenance.sh`:
 
 ```bash
 #!/bin/bash
 # Mnemex Server Daily Maintenance
 
-LOG_FILE="$HOME/.config/mnemex/maintenance.log"
+LOG_FILE="$HOME/.config/cortexgraph/maintenance.log"
 echo "=== Maintenance run at $(date) ===" >> "$LOG_FILE"
 
 # Backup storage
-cp "$HOME/.config/mnemex/jsonl/memories.jsonl" "$HOME/.config/mnemex/backups/memories.jsonl.$(date +%Y%m%d)"
-cp "$HOME/.config/mnemex/jsonl/relations.jsonl" "$HOME/.config/mnemex/backups/relations.jsonl.$(date +%Y%m%d)"
+cp "$HOME/.config/cortexgraph/jsonl/memories.jsonl" "$HOME/.config/cortexgraph/backups/memories.jsonl.$(date +%Y%m%d)"
+cp "$HOME/.config/cortexgraph/jsonl/relations.jsonl" "$HOME/.config/cortexgraph/backups/relations.jsonl.$(date +%Y%m%d)"
 
 # Log stats
-echo "Storage files: $(ls -l $HOME/.config/mnemex/jsonl | wc -l)" >> "$LOG_FILE"
+echo "Storage files: $(ls -l $HOME/.config/cortexgraph/jsonl | wc -l)" >> "$LOG_FILE"
 ```
 
 Schedule with cron:
 ```bash
 # Run daily at 2 AM
-0 2 * * * ~/.config/mnemex/maintenance.sh
+0 2 * * * ~/.config/cortexgraph/maintenance.sh
 ```
 
 ### Weekly GC
@@ -461,14 +461,14 @@ Run garbage collection weekly:
 
 ### Storage Stats
 
-Use `mnemex-search --verbose` or write a small script that uses `JSONLStorage.get_storage_stats()` for counts and compaction hints.
+Use `cortexgraph-search --verbose` or write a small script that uses `JSONLStorage.get_storage_stats()` for counts and compaction hints.
 
 ### Logs
 
 Server logs are written to stderr. Capture with:
 
 ```bash
-mnemex 2>&1 | tee ~/.config/mnemex/server.log
+cortexgraph 2>&1 | tee ~/.config/cortexgraph/server.log
 ```
 
 Or configure in MCP settings with log file output.
@@ -481,7 +481,7 @@ Or configure in MCP settings with log file output.
 
 1. Check Python version: `python --version` (need 3.10+)
 2. Check dependencies: `pip list | grep mcp`
-3. Check storage path exists: `ls -la ~/.config/mnemex/jsonl`
+3. Check storage path exists: `ls -la ~/.config/cortexgraph/jsonl`
 4. Check permissions on storage files
 
 ### Embeddings not working
@@ -500,8 +500,8 @@ Or configure in MCP settings with log file output.
 
 ### Storage issues
 
-1. Restore from `~/.config/mnemex/backups/memories.jsonl.*` and `relations.jsonl.*`.
-2. To rebuild fresh storage, remove `~/.config/mnemex/jsonl` and restart.
+1. Restore from `~/.config/cortexgraph/backups/memories.jsonl.*` and `relations.jsonl.*`.
+2. To rebuild fresh storage, remove `~/.config/cortexgraph/jsonl` and restart.
 
 ---
 
@@ -535,7 +535,7 @@ Typical memory footprint:
 ## Security Considerations
 
 1. **Database**: Contains all short-term memories in plaintext
-   - Store in user-only directory (`chmod 700 ~/.config/mnemex`)
+   - Store in user-only directory (`chmod 700 ~/.config/cortexgraph`)
    - Don't commit database to version control
 
 2. **Obsidian Vault**: Promoted memories written to vault

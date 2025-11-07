@@ -70,7 +70,7 @@ def migrate_data(old_path: Path, new_path: Path, dry_run: bool = False) -> bool:
 
 
 def migrate_env_file(env_path: Path, dry_run: bool = False) -> bool:
-    """Migrate .env file by renaming STM_* variables to MNEMEX_*."""
+    """Migrate .env file by renaming STM_* variables to CORTEXGRAPH_*."""
     if not env_path.exists():
         return False
 
@@ -93,7 +93,7 @@ def migrate_env_file(env_path: Path, dry_run: bool = False) -> bool:
     unique_vars = sorted(set(matches))
     print(f"   Found {len(unique_vars)} variable(s) to rename:")
     for var in unique_vars:
-        print(f"      STM_{var} → MNEMEX_{var}")
+        print(f"      STM_{var} → CORTEXGRAPH_{var}")
 
     if dry_run:
         return True
@@ -103,8 +103,8 @@ def migrate_env_file(env_path: Path, dry_run: bool = False) -> bool:
     shutil.copy2(env_path, backup_path)
     print(f"   💾 Backup created: {backup_path}")
 
-    # Replace all STM_* with MNEMEX_*
-    new_content = re.sub(pattern, r"MNEMEX_\1", content)
+    # Replace all STM_* with CORTEXGRAPH_*
+    new_content = re.sub(pattern, r"CORTEXGRAPH_\1", content)
 
     with open(env_path, "w") as f:
         f.write(new_content)
@@ -147,7 +147,7 @@ Examples:
     parser.add_argument(
         "--migrate-env",
         action="store_true",
-        help="Also migrate .env file (rename STM_* → MNEMEX_*)",
+        help="Also migrate .env file (rename STM_* → CORTEXGRAPH_*)",
     )
     parser.add_argument(
         "--env-path",

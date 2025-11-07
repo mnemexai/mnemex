@@ -6,7 +6,7 @@
 
 Use GitHub's **Private Vulnerability Reporting** feature:
 
-1. Go to the [Security tab](https://github.com/simplemindedbot/mnemex/security)
+1. Go to the [Security tab](https://github.com/simplemindedbot/cortexgraph/security)
 2. Click **"Report a vulnerability"**
 3. Fill out the advisory form with details
 
@@ -38,9 +38,9 @@ Scans run:
 
 🔒 **All data stored locally** - no cloud services, no tracking, no data sharing.
 
-- Short-term memory: `~/.config/mnemex/jsonl/` (JSONL format)
+- Short-term memory: `~/.config/cortexgraph/jsonl/` (JSONL format)
 - Long-term memory: Your Obsidian vault (Markdown)
-- Configuration: `~/.config/mnemex/.env`
+- Configuration: `~/.config/cortexgraph/.env`
 
 ### File Permissions
 
@@ -85,7 +85,7 @@ All user inputs validated:
 
 ## Security Roadmap
 
-Ongoing improvements tracked in [Issue #6](https://github.com/simplemindedbot/mnemex/issues/6):
+Ongoing improvements tracked in [Issue #6](https://github.com/simplemindedbot/cortexgraph/issues/6):
 
 - [ ] SBOM (Software Bill of Materials) generation
 - [ ] Dependency pinning with hashes
@@ -113,13 +113,13 @@ Use GitHub's private reporting feature (link above).
 ## Security Updates
 
 Subscribe to:
-- [GitHub Security Advisories](https://github.com/simplemindedbot/mnemex/security/advisories)
-- [Release notifications](https://github.com/simplemindedbot/mnemex/releases)
+- [GitHub Security Advisories](https://github.com/simplemindedbot/cortexgraph/security/advisories)
+- [Release notifications](https://github.com/simplemindedbot/cortexgraph/releases)
 
 ## License
 
 Security practices follow OWASP guidelines and OSSF best practices.
 
 See also:
-- [SECURITY.md](https://github.com/simplemindedbot/mnemex/blob/main/SECURITY.md) (main policy)
+- [SECURITY.md](https://github.com/simplemindedbot/cortexgraph/blob/main/SECURITY.md) (main policy)
 - [Contributing guidelines](CONTRIBUTING.md)

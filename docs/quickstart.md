@@ -14,11 +14,11 @@ Check that Mnemex is ready:
 
 ```bash
 # Check MCP server
-mnemex --version
+cortexgraph --version
 
 # Check CLI tools
-mnemex-search --help
-mnemex-maintenance --help
+cortexgraph-search --help
+cortexgraph-maintenance --help
 ```
 
 ## Step 2: Start Claude Desktop
@@ -52,13 +52,13 @@ Check what's stored:
 
 ```bash
 # Search all memories
-mnemex-search "TypeScript"
+cortexgraph-search "TypeScript"
 
 # View storage statistics
-mnemex-maintenance stats
+cortexgraph-maintenance stats
 
 # See raw JSONL storage
-cat ~/.config/mnemex/jsonl/memories.jsonl
+cat ~/.config/cortexgraph/jsonl/memories.jsonl
 ```
 
 ## Common Patterns
@@ -88,10 +88,10 @@ When similar memories accumulate:
 
 ```bash
 # Find clusters
-mnemex-consolidate --preview
+cortexgraph-consolidate --preview
 
 # Apply consolidation
-mnemex-consolidate --apply
+cortexgraph-consolidate --apply
 ```
 
 Or let Claude do it automatically when detecting related memories.
@@ -120,10 +120,10 @@ Claude searches memories for `task-tracker` entity and recalls all related decis
 
 ```bash
 # See all memories related to project
-mnemex-search "task-tracker"
+cortexgraph-search "task-tracker"
 
 # Check decay scores
-mnemex-maintenance stats
+cortexgraph-maintenance stats
 ```
 
 ### 5. Promote to Long-Term
@@ -136,10 +136,10 @@ Or manually promote:
 
 ```bash
 # Find high-value memories
-mnemex-promote --dry-run
+cortexgraph-promote --dry-run
 
 # Promote to Obsidian vault
-mnemex-promote
+cortexgraph-promote
 ```
 
 ## CLI Tools
@@ -148,53 +148,53 @@ mnemex-promote
 
 ```bash
 # Basic search
-mnemex-search "Python"
+cortexgraph-search "Python"
 
 # Filter by tags
-mnemex-search "Python" --tags coding,projects
+cortexgraph-search "Python" --tags coding,projects
 
 # Limit results
-mnemex-search "Python" --limit 10
+cortexgraph-search "Python" --limit 10
 ```
 
 ### Maintenance
 
 ```bash
 # View statistics
-mnemex-maintenance stats
+cortexgraph-maintenance stats
 
 # Compact storage (remove deleted entries)
-mnemex-maintenance compact
+cortexgraph-maintenance compact
 
 # Full report
-mnemex-maintenance report
+cortexgraph-maintenance report
 ```
 
 ### Garbage Collection
 
 ```bash
 # Preview what will be deleted
-mnemex-gc --dry-run
+cortexgraph-gc --dry-run
 
 # Delete low-scoring memories
-mnemex-gc
+cortexgraph-gc
 ```
 
 ### Memory Consolidation
 
 ```bash
 # Find similar memory clusters
-mnemex-consolidate --preview --cohesion-threshold 0.75
+cortexgraph-consolidate --preview --cohesion-threshold 0.75
 
 # Apply consolidation
-mnemex-consolidate --apply --cohesion-threshold 0.80
+cortexgraph-consolidate --apply --cohesion-threshold 0.80
 ```
 
 ## Advanced Usage
 
 ### Custom Decay Parameters
 
-Edit `~/.config/mnemex/.env`:
+Edit `~/.config/cortexgraph/.env`:
 
 ```bash
 # Slower decay (memories last longer)
@@ -242,14 +242,14 @@ uv pip install sentence-transformers
 ### No Memories Being Saved
 
 1. Check Claude Desktop logs for MCP errors
-2. Verify `.env` file exists: `cat ~/.config/mnemex/.env`
-3. Check storage directory: `ls ~/.config/mnemex/jsonl/`
+2. Verify `.env` file exists: `cat ~/.config/cortexgraph/.env`
+3. Check storage directory: `ls ~/.config/cortexgraph/jsonl/`
 
 ### Can't Find Memories
 
-1. Check search: `mnemex-search "keyword"`
-2. View all: `cat ~/.config/mnemex/jsonl/memories.jsonl`
-3. Check decay scores: `mnemex-maintenance stats`
+1. Check search: `cortexgraph-search "keyword"`
+2. View all: `cat ~/.config/cortexgraph/jsonl/memories.jsonl`
+3. Check decay scores: `cortexgraph-maintenance stats`
 
 ### Memory Decay Too Fast
 

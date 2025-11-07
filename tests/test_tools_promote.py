@@ -5,8 +5,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from mnemex.storage.models import Memory, MemoryStatus
-from mnemex.tools.promote import promote_memory
+from cortexgraph.storage.models import Memory, MemoryStatus
+from cortexgraph.tools.promote import promote_memory
 from tests.conftest import make_test_uuid
 
 

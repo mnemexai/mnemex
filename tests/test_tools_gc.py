@@ -4,8 +4,8 @@ import time
 
 import pytest
 
-from mnemex.storage.models import Memory, MemoryStatus
-from mnemex.tools.gc import gc
+from cortexgraph.storage.models import Memory, MemoryStatus
+from cortexgraph.tools.gc import gc
 from tests.conftest import make_test_uuid
 
 

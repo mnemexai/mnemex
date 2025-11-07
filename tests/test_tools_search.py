@@ -5,8 +5,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from mnemex.storage.models import Memory, MemoryMetadata
-from mnemex.tools.search import search_memory
+from cortexgraph.storage.models import Memory, MemoryMetadata
+from cortexgraph.tools.search import search_memory
 from tests.conftest import make_test_uuid
 
 

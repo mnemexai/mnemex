@@ -283,7 +283,7 @@ Current gaps (likely):
 
 ```bash
 # Generate coverage report
-pytest --cov=mnemex --cov-report=html
+pytest --cov=cortexgraph --cov-report=html
 open htmlcov/index.html
 
 # Focus on <80% coverage modules
@@ -320,16 +320,16 @@ open htmlcov/index.html
 
 Before:
 ```bash
-git clone https://github.com/simplemindedbot/mnemex.git
-cd mnemex
+git clone https://github.com/simplemindedbot/cortexgraph.git
+cd cortexgraph
 uv pip install -e .
 # Complex MCP config with paths and PYTHONPATH
 ```
 
 After:
 ```bash
-uv tool install git+https://github.com/simplemindedbot/mnemex.git
-# Simple MCP config: {"command": "mnemex"}
+uv tool install git+https://github.com/simplemindedbot/cortexgraph.git
+# Simple MCP config: {"command": "cortexgraph"}
 ```
 
 ### MCP Config Updates
@@ -338,10 +338,10 @@ uv tool install git+https://github.com/simplemindedbot/mnemex.git
 ```json
 {
   "mcpServers": {
-    "mnemex": {
+    "cortexgraph": {
       "command": "uv",
-      "args": ["--directory", "/path/to/mnemex", "run", "mnemex"],
-      "env": {"PYTHONPATH": "/path/to/mnemex/src"}
+      "args": ["--directory", "/path/to/cortexgraph", "run", "cortexgraph"],
+      "env": {"PYTHONPATH": "/path/to/cortexgraph/src"}
     }
   }
 }
@@ -351,8 +351,8 @@ uv tool install git+https://github.com/simplemindedbot/mnemex.git
 ```json
 {
   "mcpServers": {
-    "mnemex": {
-      "command": "mnemex"
+    "cortexgraph": {
+      "command": "cortexgraph"
     }
   }
 }
@@ -364,16 +364,16 @@ For existing users switching from editable install:
 
 ```bash
 # 1. Uninstall editable version
-uv pip uninstall mnemex
+uv pip uninstall cortexgraph
 
 # 2. Install as tool
-uv tool install git+https://github.com/simplemindedbot/mnemex.git
+uv tool install git+https://github.com/simplemindedbot/cortexgraph.git
 
-# 3. Update Claude config to just: {"command": "mnemex"}
+# 3. Update Claude config to just: {"command": "cortexgraph"}
 #    Remove the --directory, run, and PYTHONPATH settings
 ```
 
-**Your data is safe!** This only changes how the command is installed. Your memories in `~/.config/mnemex/` are untouched.
+**Your data is safe!** This only changes how the command is installed. Your memories in `~/.config/cortexgraph/` are untouched.
 
 ---
 
@@ -384,7 +384,7 @@ uv tool install git+https://github.com/simplemindedbot/mnemex.git
 **Completed:** Algorithmic consolidation with preview/apply modes
 
 **Files Added:**
-- `src/mnemex/core/consolidation.py` - Core merging logic
+- `src/cortexgraph/core/consolidation.py` - Core merging logic
 - `tests/test_consolidation.py` - Comprehensive test suite (15 tests, 100% coverage)
 
 **Features:**

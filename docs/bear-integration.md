@@ -37,7 +37,7 @@ MNEMEX_BEAR_API_TOKEN="YOUR_BEAR_API_TOKEN"
 
 # [Optional] A tag prefix for all memories promoted to Bear.
 # This helps organize and identify Mnemex-generated notes.
-MNEMEX_BEAR_TAG_PREFIX="mnemex"
+MNEMEX_BEAR_TAG_PREFIX="cortexgraph"
 ```
 
 ### How to Get Your Bear API Token
@@ -91,12 +91,12 @@ When a memory is promoted, it is formatted as a Markdown note with the following
 - STM ID: mem-12345abc-6789-def0
 - Promoted: 2025-10-17 09:35:00
 
-#mnemex #memory_tag_1 #memory_tag_2
+#cortexgraph #memory_tag_1 #memory_tag_2
 ```
 
 - **Title**: A unique title is generated from the memory's content. If a note with the same title already exists, a timestamp is added to prevent duplicates.
 - **Metadata**: Key information about the memory is preserved for context.
-- **Tags**: The memory's original tags are included, along with the global prefix (`#mnemex` by default).
+- **Tags**: The memory's original tags are included, along with the global prefix (`#cortexgraph` by default).
 
 ## Comparison with Obsidian Integration
 

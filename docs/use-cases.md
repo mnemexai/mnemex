@@ -153,7 +153,7 @@ Based on the repository documentation and architecture, here are the appropriate
 
 ## Configuration for Different Use Cases
 
-From `docs/configuration.md` and `src/mnemex/config.py:1`:
+From `docs/configuration.md` and `src/cortexgraph/config.py:1`:
 
 ### For Development (fast context switching)
 ```json

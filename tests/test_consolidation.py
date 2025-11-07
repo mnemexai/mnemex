@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from mnemex.core.consolidation import (
+from cortexgraph.core.consolidation import (
     calculate_merged_strength,
     execute_consolidation,
     generate_consolidation_preview,
@@ -15,8 +15,8 @@ from mnemex.core.consolidation import (
     merge_metadata,
     merge_tags,
 )
-from mnemex.storage.jsonl_storage import JSONLStorage
-from mnemex.storage.models import Cluster, Memory, MemoryMetadata
+from cortexgraph.storage.jsonl_storage import JSONLStorage
+from cortexgraph.storage.models import Cluster, Memory, MemoryMetadata
 
 
 @pytest.fixture
