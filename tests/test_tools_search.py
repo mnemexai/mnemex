@@ -5,8 +5,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from mnemex.storage.models import Memory, MemoryMetadata
-from mnemex.tools.search import search_memory
+from cortexgraph.storage.models import Memory, MemoryMetadata
+from cortexgraph.tools.search import search_memory
 from tests.conftest import make_test_uuid
 
 
@@ -299,9 +299,9 @@ class TestSearchMemory:
             search_memory(min_score=1.1)
 
     # Embedding tests
-    @patch("mnemex.tools.search.SENTENCE_TRANSFORMERS_AVAILABLE", True)
-    @patch("mnemex.tools.search.get_config")
-    @patch("mnemex.tools.search.SentenceTransformer")
+    @patch("cortexgraph.tools.search.SENTENCE_TRANSFORMERS_AVAILABLE", True)
+    @patch("cortexgraph.tools.search.get_config")
+    @patch("cortexgraph.tools.search.SentenceTransformer")
     def test_search_with_embeddings(self, mock_transformer, mock_config, temp_storage):
         """Test semantic search with embeddings."""
         # Setup mocks
@@ -328,7 +328,7 @@ class TestSearchMemory:
         # Similarity should be calculated
         assert result["results"][0]["similarity"] is not None
 
-    @patch("mnemex.tools.search.get_config")
+    @patch("cortexgraph.tools.search.get_config")
     def test_search_embeddings_disabled(self, mock_config, temp_storage):
         """Test that embeddings not used when disabled."""
         mock_config.return_value.enable_embeddings = False
@@ -343,9 +343,9 @@ class TestSearchMemory:
         if result["count"] > 0:
             assert result["results"][0]["similarity"] is None
 
-    @patch("mnemex.tools.search.SENTENCE_TRANSFORMERS_AVAILABLE", True)
-    @patch("mnemex.tools.search.get_config")
-    @patch("mnemex.tools.search.SentenceTransformer")
+    @patch("cortexgraph.tools.search.SENTENCE_TRANSFORMERS_AVAILABLE", True)
+    @patch("cortexgraph.tools.search.get_config")
+    @patch("cortexgraph.tools.search.SentenceTransformer")
     def test_search_embedding_import_error(self, mock_transformer, mock_config, temp_storage):
         """Test graceful handling of embedding import errors."""
         mock_config.return_value.enable_embeddings = True

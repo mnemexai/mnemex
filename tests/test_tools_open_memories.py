@@ -4,8 +4,8 @@ import time
 
 import pytest
 
-from mnemex.storage.models import Memory, MemoryStatus, Relation
-from mnemex.tools.open_memories import open_memories
+from cortexgraph.storage.models import Memory, MemoryStatus, Relation
+from cortexgraph.tools.open_memories import open_memories
 from tests.conftest import make_test_uuid
 
 

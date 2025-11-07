@@ -1,10 +1,10 @@
 # Configuration
 
-Mnemex is configured via environment variables, typically stored in `~/.config/mnemex/.env`.
+Mnemex is configured via environment variables, typically stored in `~/.config/cortexgraph/.env`.
 
 ## Configuration File
 
-Create `~/.config/mnemex/.env`:
+Create `~/.config/cortexgraph/.env`:
 
 ```bash
 # ============================================
@@ -12,7 +12,7 @@ Create `~/.config/mnemex/.env`:
 # ============================================
 
 # Where short-term memories are stored (JSONL format)
-MNEMEX_STORAGE_PATH=~/.config/mnemex/jsonl
+MNEMEX_STORAGE_PATH=~/.config/cortexgraph/jsonl
 
 # ============================================
 # Decay Model Configuration
@@ -54,7 +54,7 @@ MNEMEX_PROMOTE_THRESHOLD=0.65
 LTM_VAULT_PATH=~/Documents/Obsidian/Vault
 
 # LTM index path (for fast search)
-LTM_INDEX_PATH=~/.config/mnemex/ltm_index.jsonl
+LTM_INDEX_PATH=~/.config/cortexgraph/ltm_index.jsonl
 
 # ============================================
 # Git Backups
@@ -152,8 +152,8 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS)
 ```json
 {
   "mcpServers": {
-    "mnemex": {
-      "command": "mnemex"
+    "cortexgraph": {
+      "command": "cortexgraph"
     }
   }
 }
@@ -170,10 +170,10 @@ For development/testing:
 ```json
 {
   "mcpServers": {
-    "mnemex": {
+    "cortexgraph": {
       "command": "uv",
-      "args": ["--directory", "/absolute/path/to/mnemex", "run", "mnemex"],
-      "env": {"PYTHONPATH": "/absolute/path/to/mnemex/src"}
+      "args": ["--directory", "/absolute/path/to/cortexgraph", "run", "cortexgraph"],
+      "env": {"PYTHONPATH": "/absolute/path/to/cortexgraph/src"}
     }
   }
 }
@@ -185,13 +185,13 @@ Check configuration:
 
 ```bash
 # View current config
-cat ~/.config/mnemex/.env
+cat ~/.config/cortexgraph/.env
 
 # Test MCP server
-mnemex
+cortexgraph
 
 # Check storage
-ls -la ~/.config/mnemex/jsonl/
+ls -la ~/.config/cortexgraph/jsonl/
 ```
 
 ## Next Steps

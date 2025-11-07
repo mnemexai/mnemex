@@ -6,8 +6,8 @@ import time
 
 import pytest
 
-from mnemex.config import Config, set_config
-from mnemex.core.decay import (
+from cortexgraph.config import Config, set_config
+from cortexgraph.core.decay import (
     calculate_decay_lambda,
     calculate_score,
     time_until_threshold,

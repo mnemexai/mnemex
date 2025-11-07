@@ -504,7 +504,7 @@ Common errors:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `MNEMEX_STORAGE_PATH` | `~/.config/mnemex/jsonl` | JSONL storage directory |
+| `MNEMEX_STORAGE_PATH` | `~/.config/cortexgraph/jsonl` | JSONL storage directory |
 | `MNEMEX_DECAY_MODEL` | `power_law` | Decay model (power_law\|exponential\|two_component) |
 | `MNEMEX_PL_HALFLIFE_DAYS` | `3.0` | Power-law half-life in days |
 | `MNEMEX_DECAY_LAMBDA` | `2.673e-6` | Exponential decay constant |
@@ -546,7 +546,7 @@ MNEMEX_FORGET_THRESHOLD=0.01
 
 Use the CLI to manage JSONL storage:
 
-- `mnemex-maintenance stats` — prints `get_storage_stats()` including active counts and compaction hints
-- `mnemex-maintenance compact` — compacts JSONL files to remove tombstones and duplicates
+- `cortexgraph-maintenance stats` — prints `get_storage_stats()` including active counts and compaction hints
+- `cortexgraph-maintenance compact` — compacts JSONL files to remove tombstones and duplicates
 
-Optionally specify a path: `mnemex-maintenance --storage-path ~/.config/mnemex/jsonl stats`
+Optionally specify a path: `cortexgraph-maintenance --storage-path ~/.config/cortexgraph/jsonl stats`

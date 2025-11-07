@@ -2,14 +2,14 @@
 
 import time
 
-from mnemex.core.review import (
+from cortexgraph.core.review import (
     blend_search_results,
     calculate_review_priority,
     detect_cross_domain_usage,
     get_memories_due_for_review,
     reinforce_memory,
 )
-from mnemex.storage.models import Memory, MemoryMetadata
+from cortexgraph.storage.models import Memory, MemoryMetadata
 
 
 class TestCalculateReviewPriority:

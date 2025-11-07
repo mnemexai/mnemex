@@ -2,7 +2,7 @@
 
 import pytest
 
-from mnemex.core.pagination import (
+from cortexgraph.core.pagination import (
     DEFAULT_PAGE_SIZE,
     MAX_PAGE_SIZE,
     PaginatedResult,

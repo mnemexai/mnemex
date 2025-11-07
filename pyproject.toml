@@ -1,14 +1,14 @@
 [project]
-name = "mnemex"
-version = "0.5.6"
-description = "Mnemex: Temporal memory management for AI assistants with human-like dynamics"
+name = "cortexgraph"
+version = "0.1.0"
+description = "CortexGraph: Temporal memory management for AI assistants with human-like dynamics"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
 authors = [
-    {name = "Mnemex"}
+    {name = "Prefrontal Systems"}
 ]
-keywords = ["mcp", "memory", "ai", "llm", "temporal-decay", "mnemonic", "memex"]
+keywords = ["mcp", "memory", "ai", "llm", "temporal-decay", "knowledge-graph", "cortex"]
 
 dependencies = [
     "mcp>=1.2.0",
@@ -34,20 +34,20 @@ dev = [
 ]
 
 [project.scripts]
-mnemex = "mnemex.server:main_sync"
-mnemex-migrate = "mnemex.cli.migrate:main"
-mnemex-index-ltm = "mnemex.storage.ltm_index:main"
-mnemex-backup = "mnemex.backup.git_backup:main"
-mnemex-vault = "mnemex.vault.markdown_writer:main"
-mnemex-search = "mnemex.tools.search_unified:main"
-mnemex-maintenance = "mnemex.storage.maintenance:main"
+cortexgraph = "cortexgraph.server:main_sync"
+cortexgraph-migrate = "cortexgraph.cli.migrate:main"
+cortexgraph-index-ltm = "cortexgraph.storage.ltm_index:main"
+cortexgraph-backup = "cortexgraph.backup.git_backup:main"
+cortexgraph-vault = "cortexgraph.vault.markdown_writer:main"
+cortexgraph-search = "cortexgraph.tools.search_unified:main"
+cortexgraph-maintenance = "cortexgraph.storage.maintenance:main"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/mnemex"]
+packages = ["src/cortexgraph"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -57,7 +57,7 @@ python_functions = ["test_*"]
 asyncio_mode = "auto"
 addopts = [
     "--verbose",
-    "--cov=mnemex",
+    "--cov=cortexgraph",
     "--cov-report=term-missing",
     "--cov-report=html",
 ]
@@ -113,4 +113,4 @@ ignore = [
 ]
 
 [tool.ruff.lint.isort]
-known-first-party = ["mnemex"]
+known-first-party = ["cortexgraph"]

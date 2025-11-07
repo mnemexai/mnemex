@@ -15,7 +15,7 @@ Mnemex is a Model Context Protocol (MCP) server providing human-like memory dyna
 
 ## Project Structure
 
-- `src/mnemex/` - Main Python package
+- `src/cortexgraph/` - Main Python package
   - `server.py` - MCP server entry point
   - `core/` - Decay, scoring, and clustering algorithms
   - `storage/` - JSONL and LTM index management
@@ -46,7 +46,7 @@ Mnemex is a Model Context Protocol (MCP) server providing human-like memory dyna
    - GitPython >= 3.1.40
 
 2. **Workflow**: MCP Server
-   - Command: `PYTHONPATH=/home/runner/workspace/src python -m mnemex.server`
+   - Command: `PYTHONPATH=/home/runner/workspace/src python -m cortexgraph.server`
    - Output: Console (this is a server/CLI tool, not a web app)
 
 ### Running the Server
@@ -54,7 +54,7 @@ Mnemex is a Model Context Protocol (MCP) server providing human-like memory dyna
 The MCP server runs automatically via the configured workflow. It starts on project load and provides:
 
 - 10 MCP tools for AI assistants
-- JSONL storage at `~/.config/mnemex/jsonl/`
+- JSONL storage at `~/.config/cortexgraph/jsonl/`
 - Temporal decay with power-law model (3-day half-life)
 - Memory scoring and automatic garbage collection
 
@@ -63,7 +63,7 @@ The MCP server runs automatically via the configured workflow. It starts on proj
 Configuration is managed through environment variables (see `.env.example`):
 
 - **Decay Model**: `power_law` (default), `exponential`, or `two_component`
-- **Storage Path**: `~/.config/mnemex/jsonl/` (default)
+- **Storage Path**: `~/.config/cortexgraph/jsonl/` (default)
 - **Embeddings**: Optional (disabled by default)
 - **LTM Integration**: Obsidian vault path (optional)
 
@@ -71,19 +71,19 @@ Configuration is managed through environment variables (see `.env.example`):
 
 The package provides 7 CLI commands:
 
-- `mnemex` - Run MCP server
-- `mnemex-migrate` - Migrate from old STM setup
-- `mnemex-index-ltm` - Index Obsidian vault
-- `mnemex-backup` - Git backup operations
-- `mnemex-vault` - Vault markdown operations
-- `mnemex-search` - Unified STM+LTM search
-- `mnemex-maintenance` - JSONL storage stats and compaction
+- `cortexgraph` - Run MCP server
+- `cortexgraph-migrate` - Migrate from old STM setup
+- `cortexgraph-index-ltm` - Index Obsidian vault
+- `cortexgraph-backup` - Git backup operations
+- `cortexgraph-vault` - Vault markdown operations
+- `cortexgraph-search` - Unified STM+LTM search
+- `cortexgraph-maintenance` - JSONL storage stats and compaction
 
 ## Development Notes
 
 ### Code Fixes Applied
 
-1. Fixed missing imports in `src/mnemex/performance.py`:
+1. Fixed missing imports in `src/cortexgraph/performance.py`:
    - Added `Callable`, `ParamSpec`, `TypeVar` from typing module
    - Required for the `time_operation` decorator
 

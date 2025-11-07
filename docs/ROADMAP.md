@@ -23,23 +23,23 @@ This document outlines the development roadmap for Mnemex. For detailed implemen
 
 ### High Priority
 
-- [ ] **Security Hardening** ([#6](https://github.com/simplemindedbot/mnemex/issues/6))
+- [ ] **Security Hardening** ([#6](https://github.com/simplemindedbot/cortexgraph/issues/6))
   - Dependency scanning (Dependabot, safety, pip-audit)
   - Code security scanning (Bandit, Semgrep)
   - Supply chain verification (SBOM)
   - SECURITY.md policy
 
-- [ ] **Fix mypy Type Checking** ([#1](https://github.com/simplemindedbot/mnemex/issues/1))
+- [ ] **Fix mypy Type Checking** ([#1](https://github.com/simplemindedbot/cortexgraph/issues/1))
   - Fix 30+ type errors
   - Re-enable mypy in CI
 
-- [ ] **Improve Test Coverage** ([#7](https://github.com/simplemindedbot/mnemex/issues/7))
+- [ ] **Improve Test Coverage** ([#7](https://github.com/simplemindedbot/cortexgraph/issues/7))
   - Target: 80%+ coverage (currently 40%)
   - CLI tool tests
   - Integration tests
   - Error handling tests
 
-- [ ] **Production Hardening** ([#8](https://github.com/simplemindedbot/mnemex/issues/8))
+- [ ] **Production Hardening** ([#8](https://github.com/simplemindedbot/cortexgraph/issues/8))
   - File corruption handling
   - Graceful degradation
   - File locking for concurrent access
@@ -48,12 +48,12 @@ This document outlines the development roadmap for Mnemex. For detailed implemen
 
 ### Medium Priority
 
-- [ ] **Platform Testing** ([#9](https://github.com/simplemindedbot/mnemex/issues/9))
+- [ ] **Platform Testing** ([#9](https://github.com/simplemindedbot/cortexgraph/issues/9))
   - Windows testing (community help needed)
   - Linux testing (community help needed)
   - Cross-platform bug fixes
 
-- [ ] **Performance Optimizations** ([#4](https://github.com/simplemindedbot/mnemex/issues/4))
+- [ ] **Performance Optimizations** ([#4](https://github.com/simplemindedbot/cortexgraph/issues/4))
   - Benchmark suite
   - Tag/entity indexing
   - Embedding cache
@@ -65,19 +65,19 @@ This document outlines the development roadmap for Mnemex. For detailed implemen
 
 ### High Priority
 
-- [ ] **Spaced Repetition** ([#2](https://github.com/simplemindedbot/mnemex/issues/2))
+- [ ] **Spaced Repetition** ([#2](https://github.com/simplemindedbot/cortexgraph/issues/2))
   - Review scheduling
   - Review queue tool
   - Adaptive intervals (SM-2 inspired)
 
-- [ ] **Adaptive Decay Parameters** ([#3](https://github.com/simplemindedbot/mnemex/issues/3))
+- [ ] **Adaptive Decay Parameters** ([#3](https://github.com/simplemindedbot/cortexgraph/issues/3))
   - Category-based decay profiles
   - Usage-pattern learning
   - Auto-detection from tags/content
 
 ### Low Priority
 
-- [ ] **LLM-Assisted Consolidation** ([#5](https://github.com/simplemindedbot/mnemex/issues/5))
+- [ ] **LLM-Assisted Consolidation** ([#5](https://github.com/simplemindedbot/cortexgraph/issues/5))
   - Optional LLM-powered merge decisions
   - Semantic understanding for better merges
   - Opt-in feature
@@ -99,15 +99,15 @@ This document outlines the development roadmap for Mnemex. For detailed implemen
 
 We welcome contributions! Priority areas:
 
-1. **Platform Testing** - Help test on Windows/Linux ([#9](https://github.com/simplemindedbot/mnemex/issues/9))
-2. **Security** - Implement security hardening ([#6](https://github.com/simplemindedbot/mnemex/issues/6))
-3. **Testing** - Increase coverage ([#7](https://github.com/simplemindedbot/mnemex/issues/7))
+1. **Platform Testing** - Help test on Windows/Linux ([#9](https://github.com/simplemindedbot/cortexgraph/issues/9))
+2. **Security** - Implement security hardening ([#6](https://github.com/simplemindedbot/cortexgraph/issues/6))
+3. **Testing** - Increase coverage ([#7](https://github.com/simplemindedbot/cortexgraph/issues/7))
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ## Links
 
-- [GitHub Issues](https://github.com/simplemindedbot/mnemex/issues)
+- [GitHub Issues](https://github.com/simplemindedbot/cortexgraph/issues)
 - [Detailed Roadmap](docs/future_roadmap.md)
 - [Documentation](docs/)
 - [Contributing Guide](CONTRIBUTING.md)

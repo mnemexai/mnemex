@@ -8,7 +8,7 @@ You're chatting with Claude. You tell it "I prefer TypeScript over JavaScript" o
 
 ## What This Repo Does
 
-This is **Mnemex** - a **memory system for AI assistants like Claude**. It makes Claude remember things you tell it, but in a smart, human-like way:
+This is **CortexGraph** - a **memory system for AI assistants like Claude**. It makes Claude remember things you tell it, but in a smart, human-like way:
 
 - 🧠 **Remembers important stuff** - Preferences, decisions, facts about you
 - ⏰ **Forgets naturally** - Old, unused memories fade away (just like human memory)
@@ -81,25 +81,25 @@ This system is **smart**:
 ### Step 1: Install
 
 ```bash
-# Install Mnemex from PyPI (recommended - fast and easy!)
-uv tool install mnemex
+# Install CortexGraph from PyPI (recommended - fast and easy!)
+uv tool install cortexgraph
 
 # Or using pipx
-pipx install mnemex
+pipx install cortexgraph
 
 # Or using pip (traditional)
-pip install mnemex
+pip install cortexgraph
 ```
 
-This installs `mnemex` and all 7 CLI commands in one step!
+This installs `cortexgraph` and all 7 CLI commands in one step!
 
 ### Step 2: Configure (Optional)
 
-Create `~/.config/mnemex/.env` if you want custom settings:
+Create `~/.config/cortexgraph/.env` if you want custom settings:
 
 ```bash
-# Where to store memories (default: ~/.config/mnemex/jsonl)
-MNEMEX_STORAGE_PATH=~/.config/mnemex/jsonl
+# Where to store memories (default: ~/.config/cortexgraph/jsonl)
+MNEMEX_STORAGE_PATH=~/.config/cortexgraph/jsonl
 
 # How fast memories fade (3 days = default)
 MNEMEX_PL_HALFLIFE_DAYS=3.0
@@ -108,7 +108,7 @@ MNEMEX_PL_HALFLIFE_DAYS=3.0
 LTM_VAULT_PATH=~/Documents/Obsidian/MyVault
 ```
 
-**Note**: Configuration goes in `~/.config/mnemex/.env` - create it if it doesn't exist!
+**Note**: Configuration goes in `~/.config/cortexgraph/.env` - create it if it doesn't exist!
 
 ### Step 3: Connect to Claude
 
@@ -119,8 +119,8 @@ Add this to your Claude Desktop config file:
 ```json
 {
   "mcpServers": {
-    "mnemex": {
-      "command": "mnemex"
+    "cortexgraph": {
+      "command": "cortexgraph"
     }
   }
 }
@@ -130,20 +130,20 @@ That's it! Just one line - no paths, no environment variables.
 
 **Troubleshooting: Command Not Found**
 
-If Claude Desktop shows errors like `spawn mnemex ENOENT`, it can't find the `mnemex` command.
+If Claude Desktop shows errors like `spawn cortexgraph ENOENT`, it can't find the `cortexgraph` command.
 
 This happens because GUI apps on macOS/Linux don't see your shell's PATH. To fix it:
 
 ```bash
-# 1. Find where mnemex is installed
-which mnemex
-# Example: /Users/username/.local/bin/mnemex
+# 1. Find where cortexgraph is installed
+which cortexgraph
+# Example: /Users/username/.local/bin/cortexgraph
 
 # 2. Use the absolute path in your config
 {
   "mcpServers": {
-    "mnemex": {
-      "command": "/Users/username/.local/bin/mnemex"
+    "cortexgraph": {
+      "command": "/Users/username/.local/bin/cortexgraph"
     }
   }
 }
@@ -222,7 +222,7 @@ After use #5, the score is way above 0.65, so it gets **promoted to your Obsidia
 ## Storage: Where Are My Memories?
 
 ### Short-term (JSONL files)
-- **Location**: `~/.config/mnemex/jsonl/` (or whatever you set in `.env`)
+- **Location**: `~/.config/cortexgraph/jsonl/` (or whatever you set in `.env`)
 - **Files**: `memories.jsonl`, `relations.jsonl`
 - **Format**: Human-readable JSON, one memory per line
 - **Git-friendly**: You can version control these files!
@@ -258,22 +258,22 @@ I prefer TypeScript over JavaScript for all new projects.
 
 ```bash
 # Run the memory server for Claude
-mnemex
+cortexgraph
 
 # Search your memories from command line
-mnemex-search "typescript preferences" --tags preferences
+cortexgraph-search "typescript preferences" --tags preferences
 
 # Index your Obsidian vault for search
-mnemex-index-ltm
+cortexgraph-index-ltm
 
 # Check storage stats
-mnemex-maintenance stats
+cortexgraph-maintenance stats
 
 # Clean up old memories (compact storage)
-mnemex-maintenance compact
+cortexgraph-maintenance compact
 
 # Backup memories to git
-mnemex-backup snapshot
+cortexgraph-backup snapshot
 ```
 
 ## Tuning: Make It Work Your Way
@@ -351,15 +351,15 @@ Read the examples in the `examples/` directory or check out:
 
 ## TL;DR
 
-**One sentence**: Mnemex makes Claude remember things you tell it, with memories that fade naturally over time unless you use them frequently, just like human memory.
+**One sentence**: CortexGraph makes Claude remember things you tell it, with memories that fade naturally over time unless you use them frequently, just like human memory.
 
 **Quick start**:
 ```bash
 # Install from PyPI
-uv tool install mnemex
+uv tool install cortexgraph
 
-# Add to Claude config: {"command": "mnemex"}
-# Or use absolute path if needed: {"command": "/path/to/mnemex"}
+# Add to Claude config: {"command": "cortexgraph"}
+# Or use absolute path if needed: {"command": "/path/to/cortexgraph"}
 ```
 
 Then restart Claude Desktop. Done.

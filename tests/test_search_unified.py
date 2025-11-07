@@ -7,11 +7,11 @@ from pathlib import Path
 
 import pytest
 
-from mnemex.config import Config, set_config
-from mnemex.context import db
-from mnemex.storage.ltm_index import LTMIndex
-from mnemex.storage.models import Memory, MemoryMetadata
-from mnemex.tools.search_unified import UnifiedSearchResult, format_results, search_unified
+from cortexgraph.config import Config, set_config
+from cortexgraph.context import db
+from cortexgraph.storage.ltm_index import LTMIndex
+from cortexgraph.storage.models import Memory, MemoryMetadata
+from cortexgraph.tools.search_unified import UnifiedSearchResult, format_results, search_unified
 
 
 class TestUnifiedSearchResult:
@@ -810,7 +810,7 @@ class TestCLI:
 
     def test_main_with_query(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys) -> None:
         """Test main CLI with query argument."""
-        from mnemex.tools.search_unified import main
+        from cortexgraph.tools.search_unified import main
 
         storage_dir = tmp_path / "jsonl"
         cfg = Config(storage_path=storage_dir, enable_embeddings=False)
@@ -839,7 +839,7 @@ class TestCLI:
 
     def test_main_with_tags(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys) -> None:
         """Test main CLI with tags argument."""
-        from mnemex.tools.search_unified import main
+        from cortexgraph.tools.search_unified import main
 
         storage_dir = tmp_path / "jsonl"
         cfg = Config(storage_path=storage_dir, enable_embeddings=False)
@@ -866,7 +866,7 @@ class TestCLI:
 
     def test_main_with_limit(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """Test main CLI with limit argument."""
-        from mnemex.tools.search_unified import main
+        from cortexgraph.tools.search_unified import main
 
         storage_dir = tmp_path / "jsonl"
         cfg = Config(storage_path=storage_dir, enable_embeddings=False)
@@ -890,7 +890,7 @@ class TestCLI:
 
     def test_main_with_weights(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """Test main CLI with weight arguments."""
-        from mnemex.tools.search_unified import main
+        from cortexgraph.tools.search_unified import main
 
         storage_dir = tmp_path / "jsonl"
         cfg = Config(storage_path=storage_dir, enable_embeddings=False)
@@ -916,7 +916,7 @@ class TestCLI:
 
     def test_main_with_window_days(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """Test main CLI with window-days argument."""
-        from mnemex.tools.search_unified import main
+        from cortexgraph.tools.search_unified import main
 
         storage_dir = tmp_path / "jsonl"
         cfg = Config(storage_path=storage_dir, enable_embeddings=False)
@@ -940,7 +940,7 @@ class TestCLI:
 
     def test_main_with_min_score(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         """Test main CLI with min-score argument."""
-        from mnemex.tools.search_unified import main
+        from cortexgraph.tools.search_unified import main
 
         storage_dir = tmp_path / "jsonl"
         cfg = Config(storage_path=storage_dir, enable_embeddings=False)
@@ -964,7 +964,7 @@ class TestCLI:
 
     def test_main_verbose(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys) -> None:
         """Test main CLI with verbose flag."""
-        from mnemex.tools.search_unified import main
+        from cortexgraph.tools.search_unified import main
 
         storage_dir = tmp_path / "jsonl"
         cfg = Config(storage_path=storage_dir, enable_embeddings=False)
@@ -991,7 +991,7 @@ class TestCLI:
 
     def test_main_no_args(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys) -> None:
         """Test main CLI with no query or tags (should print help)."""
-        from mnemex.tools.search_unified import main
+        from cortexgraph.tools.search_unified import main
 
         storage_dir = tmp_path / "jsonl"
         cfg = Config(storage_path=storage_dir, enable_embeddings=False)
@@ -1006,7 +1006,7 @@ class TestCLI:
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys
     ) -> None:
         """Test main CLI error handling."""
-        from mnemex.tools.search_unified import main
+        from cortexgraph.tools.search_unified import main
 
         storage_dir = tmp_path / "jsonl"
         cfg = Config(storage_path=storage_dir, enable_embeddings=False)

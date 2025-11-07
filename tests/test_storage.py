@@ -7,8 +7,8 @@ from pathlib import Path
 
 import pytest
 
-from mnemex.storage.jsonl_storage import JSONLStorage
-from mnemex.storage.models import Memory, MemoryMetadata, MemoryStatus, Relation
+from cortexgraph.storage.jsonl_storage import JSONLStorage
+from cortexgraph.storage.models import Memory, MemoryMetadata, MemoryStatus, Relation
 
 
 @pytest.fixture

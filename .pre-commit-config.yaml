@@ -15,7 +15,7 @@ repos:
      hooks:
        - id: mypy
          name: mypy (src)
-         args: ["--config-file=pyproject.toml", "src/mnemex"]
+         args: ["--config-file=pyproject.toml", "src/cortexgraph"]
          additional_dependencies:
            - "mcp>=1.2.0"
            - "pydantic>=2.0.0"

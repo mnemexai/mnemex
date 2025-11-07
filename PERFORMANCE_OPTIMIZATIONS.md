@@ -1,6 +1,6 @@
-# Mnemex Performance Optimizations
+# CortexGraph Performance Optimizations
 
-This document outlines the performance optimizations implemented in Mnemex to improve bundle size, load times, and overall system performance.
+This document outlines the performance optimizations implemented in CortexGraph to improve bundle size, load times, and overall system performance.
 
 ## 🚀 Key Optimizations Implemented
 
@@ -8,19 +8,19 @@ This document outlines the performance optimizations implemented in Mnemex to im
 - **Problem**: SentenceTransformer models were being reloaded on every request
 - **Solution**: Implemented global model cache to reuse loaded models
 - **Impact**: Eliminates model loading overhead for repeated operations
-- **Files**: `src/mnemex/tools/save.py`, `src/mnemex/tools/search.py`
+- **Files**: `src/cortexgraph/tools/save.py`, `src/cortexgraph/tools/search.py`
 
 ### 2. Lazy Loading for LTM Index
 - **Problem**: LTM index was loaded on every search operation
 - **Solution**: Only load index when it exists and is recent (< 1 hour old)
 - **Impact**: Reduces unnecessary I/O and memory usage
-- **Files**: `src/mnemex/tools/search_unified.py`
+- **Files**: `src/cortexgraph/tools/search_unified.py`
 
 ### 3. Database Connection Pooling & Caching
 - **Problem**: No connection reuse or caching for database operations
 - **Solution**: Added tag indexing and in-memory caching for faster lookups
 - **Impact**: Significantly faster search operations with tag filtering
-- **Files**: `src/mnemex/storage/jsonl_storage.py`
+- **Files**: `src/cortexgraph/storage/jsonl_storage.py`
 
 ### 4. JSONL Storage Optimizations
 - **Problem**: Inefficient file I/O operations
@@ -29,7 +29,7 @@ This document outlines the performance optimizations implemented in Mnemex to im
   - Implemented batch operations for multiple memories
   - Optimized file I/O patterns
 - **Impact**: Reduced I/O overhead and improved write performance
-- **Files**: `src/mnemex/storage/jsonl_storage.py`
+- **Files**: `src/cortexgraph/storage/jsonl_storage.py`
 
 ### 5. Memory-Efficient Search
 - **Problem**: Search operations loaded all memories into memory
@@ -38,13 +38,13 @@ This document outlines the performance optimizations implemented in Mnemex to im
   - Added pagination support
   - Optimized search algorithms with early termination
 - **Impact**: Reduced memory usage and faster search operations
-- **Files**: `src/mnemex/storage/jsonl_storage.py`, `src/mnemex/core/clustering.py`
+- **Files**: `src/cortexgraph/storage/jsonl_storage.py`, `src/cortexgraph/core/clustering.py`
 
 ### 6. Async I/O Support
 - **Problem**: Synchronous I/O operations blocking the main thread
 - **Solution**: Added async versions of storage operations
 - **Impact**: Better concurrency and responsiveness
-- **Files**: `src/mnemex/storage/jsonl_storage.py`
+- **Files**: `src/cortexgraph/storage/jsonl_storage.py`
 
 ### 7. Clustering Algorithm Optimizations
 - **Problem**: Inefficient clustering with redundant similarity calculations
@@ -53,7 +53,7 @@ This document outlines the performance optimizations implemented in Mnemex to im
   - Implemented early termination for large clusters
   - Added cluster size limits
 - **Impact**: Faster clustering operations, especially for large datasets
-- **Files**: `src/mnemex/core/clustering.py`
+- **Files**: `src/cortexgraph/core/clustering.py`
 
 ### 8. Performance Configuration
 - **Problem**: No tunable performance parameters
@@ -63,7 +63,7 @@ This document outlines the performance optimizations implemented in Mnemex to im
   - Async I/O enablement
   - Search timeouts (default: 5s)
 - **Impact**: Allows fine-tuning for different use cases
-- **Files**: `src/mnemex/config.py`
+- **Files**: `src/cortexgraph/config.py`
 
 ### 9. Background Task Management
 - **Problem**: Expensive operations blocking the main thread
@@ -72,7 +72,7 @@ This document outlines the performance optimizations implemented in Mnemex to im
   - Data compaction
   - Large clustering operations
 - **Impact**: Non-blocking execution of expensive operations
-- **Files**: `src/mnemex/background.py`
+- **Files**: `src/cortexgraph/background.py`
 
 ### 10. Performance Monitoring
 - **Problem**: No visibility into system performance
@@ -81,7 +81,7 @@ This document outlines the performance optimizations implemented in Mnemex to im
   - Counter tracking
   - Performance statistics API
 - **Impact**: Enables performance analysis and optimization
-- **Files**: `src/mnemex/performance.py`, `src/mnemex/tools/performance.py`
+- **Files**: `src/cortexgraph/performance.py`, `src/cortexgraph/tools/performance.py`
 
 ## 📊 Performance Improvements
 

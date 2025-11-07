@@ -11,17 +11,17 @@
 The simplest installation method uses UV's tool install feature:
 
 ```bash
-uv tool install git+https://github.com/simplemindedbot/mnemex.git
+uv tool install git+https://github.com/simplemindedbot/cortexgraph.git
 ```
 
 This installs all 7 CLI commands:
-- `mnemex` - MCP server
-- `mnemex-search` - Unified search across STM + LTM
-- `mnemex-maintenance` - Stats and compaction
-- `mnemex-migrate` - Migration from old STM Server
-- `mnemex-consolidate` - Memory consolidation tool
-- `mnemex-gc` - Garbage collection
-- `mnemex-promote` - Promote memories to LTM
+- `cortexgraph` - MCP server
+- `cortexgraph-search` - Unified search across STM + LTM
+- `cortexgraph-maintenance` - Stats and compaction
+- `cortexgraph-migrate` - Migration from old STM Server
+- `cortexgraph-consolidate` - Memory consolidation tool
+- `cortexgraph-gc` - Garbage collection
+- `cortexgraph-promote` - Promote memories to LTM
 
 ## Alternative: Development Install
 
@@ -29,8 +29,8 @@ For contributors who want to modify the code:
 
 ```bash
 # Clone repository
-git clone https://github.com/simplemindedbot/mnemex.git
-cd mnemex
+git clone https://github.com/simplemindedbot/cortexgraph.git
+cd cortexgraph
 
 # Install in editable mode with dev dependencies
 uv pip install -e ".[dev]"
@@ -43,10 +43,10 @@ For development, configure Claude Desktop with:
 ```json
 {
   "mcpServers": {
-    "mnemex": {
+    "cortexgraph": {
       "command": "uv",
-      "args": ["--directory", "/path/to/mnemex", "run", "mnemex"],
-      "env": {"PYTHONPATH": "/path/to/mnemex/src"}
+      "args": ["--directory", "/path/to/cortexgraph", "run", "cortexgraph"],
+      "env": {"PYTHONPATH": "/path/to/cortexgraph/src"}
     }
   }
 }
@@ -57,9 +57,9 @@ For development, configure Claude Desktop with:
 Check that all commands are available:
 
 ```bash
-mnemex --version
-mnemex-search --help
-mnemex-maintenance --help
+cortexgraph --version
+cortexgraph-search --help
+cortexgraph-maintenance --help
 ```
 
 ## Next Steps

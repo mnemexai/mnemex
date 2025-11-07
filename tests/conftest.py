@@ -6,8 +6,19 @@ from pathlib import Path
 
 import pytest
 
-from mnemex.config import Config, set_config
-from mnemex.storage.jsonl_storage import JSONLStorage
+import cortexgraph.context
+import cortexgraph.tools.cluster
+import cortexgraph.tools.consolidate
+import cortexgraph.tools.create_relation
+import cortexgraph.tools.gc
+import cortexgraph.tools.open_memories
+import cortexgraph.tools.promote
+import cortexgraph.tools.read_graph
+import cortexgraph.tools.save
+import cortexgraph.tools.search
+import cortexgraph.tools.touch
+from cortexgraph.config import Config, set_config
+from cortexgraph.storage.jsonl_storage import JSONLStorage
 
 
 def make_test_uuid(name: str) -> str:
@@ -51,30 +62,19 @@ def temp_storage(monkeypatch):
         storage.connect()
 
         # Monkey-patch the global db instance in context and all tool modules
-        import mnemex.context
-        import mnemex.tools.cluster
-        import mnemex.tools.consolidate
-        import mnemex.tools.create_relation
-        import mnemex.tools.gc
-        import mnemex.tools.open_memories
-        import mnemex.tools.promote
-        import mnemex.tools.read_graph
-        import mnemex.tools.save
-        import mnemex.tools.search
-        import mnemex.tools.touch
 
         modules_to_patch = [
-            mnemex.context,
-            mnemex.tools.save,
-            mnemex.tools.search,
-            mnemex.tools.touch,
-            mnemex.tools.gc,
-            mnemex.tools.promote,
-            mnemex.tools.cluster,
-            mnemex.tools.consolidate,
-            mnemex.tools.create_relation,
-            mnemex.tools.open_memories,
-            mnemex.tools.read_graph,
+            cortexgraph.context,
+            cortexgraph.tools.save,
+            cortexgraph.tools.search,
+            cortexgraph.tools.touch,
+            cortexgraph.tools.gc,
+            cortexgraph.tools.promote,
+            cortexgraph.tools.cluster,
+            cortexgraph.tools.consolidate,
+            cortexgraph.tools.create_relation,
+            cortexgraph.tools.open_memories,
+            cortexgraph.tools.read_graph,
         ]
         for module in modules_to_patch:
             monkeypatch.setattr(module, "db", storage)

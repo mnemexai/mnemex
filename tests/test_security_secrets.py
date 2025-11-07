@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from mnemex.security.secrets import (
+from cortexgraph.security.secrets import (
     SecretMatch,
     detect_secrets,
     format_secret_warning,
@@ -639,7 +639,7 @@ class TestFormatSecretWarning:
 
         assert "environment variables" in warning
         assert "secrets manager" in warning
-        assert "MNEMEX_DETECT_SECRETS" in warning
+        assert "CORTEXGRAPH_DETECT_SECRETS" in warning
 
 
 class TestShouldWarnAboutSecrets:

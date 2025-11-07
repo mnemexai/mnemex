@@ -4,13 +4,13 @@ import math
 
 import pytest
 
-from mnemex.core.clustering import (
+from cortexgraph.core.clustering import (
     calculate_centroid,
     cluster_memories_simple,
     cosine_similarity,
     find_duplicate_candidates,
 )
-from mnemex.storage.models import ClusterConfig, Memory
+from cortexgraph.storage.models import ClusterConfig, Memory
 from tests.conftest import make_test_uuid
 
 

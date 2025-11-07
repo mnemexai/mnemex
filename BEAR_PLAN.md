@@ -16,7 +16,7 @@
 - `bear_enabled: bool` - Enable Bear as LTM target (default: False)
 - `bear_db_path: Path | None` - Path to Bear SQLite database (auto-detect from default location)
 - `bear_api_token: str | None` - Bear API token for x-callback-url operations
-- `bear_tag_prefix: str` - Tag prefix for promoted memories (default: "mnemex")
+- `bear_tag_prefix: str` - Tag prefix for promoted memories (default: "cortexgraph")
 - Keep existing Obsidian config fields for backward compatibility
 
 **Environment Variables:**
@@ -91,7 +91,7 @@ bear://x-callback-url/create?title={title}&text={text}&tags={tags}&token={api_to
   - Cache index to avoid repeated database reads
 
 **Storage:**
-- Optional JSONL cache at `~/.config/mnemex/bear-index.jsonl`
+- Optional JSONL cache at `~/.config/cortexgraph/bear-index.jsonl`
 - Refresh on demand or when notes modified
 
 ### 5. Bear Integration (integration/bear_integration.py)
@@ -102,10 +102,10 @@ bear://x-callback-url/create?title={title}&text={text}&tags={tags}&token={api_to
 - `promote_to_bear(memory)` - Create Bear note from Memory object
   - Format memory content as markdown
   - Add metadata in note (created, last_used, use_count, STM ID)
-  - Add tags (combine memory tags + configurable prefix like `#mnemex`)
+  - Add tags (combine memory tags + configurable prefix like `#cortexgraph`)
   - **Ensure unique titles**: Append timestamp or STM ID suffix if title collision detected
   - Return note ID and success status
-- `get_bear_stats()` - Count notes with mnemex tag prefix
+- `get_bear_stats()` - Count notes with cortexgraph tag prefix
 
 **Note Title Strategy:**
 - Primary: Use first 50 chars of content as title
@@ -131,7 +131,7 @@ bear://x-callback-url/create?title={title}&text={text}&tags={tags}&token={api_to
 - STM ID: {uuid}
 - Promoted: {date}
 
-#mnemex #tag1 #tag2
+#cortexgraph #tag1 #tag2
 ```
 
 ### 6. Update Promote Tool (tools/promote.py)

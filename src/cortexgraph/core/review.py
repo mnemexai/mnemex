@@ -7,9 +7,9 @@ creating the "Maslow effect" - natural repetition across contexts.
 
 import time
 
-from mnemex.config import get_config
-from mnemex.core.decay import calculate_score
-from mnemex.storage.models import Memory
+from cortexgraph.config import get_config
+from cortexgraph.core.decay import calculate_score
+from cortexgraph.storage.models import Memory
 
 
 def calculate_review_priority(memory: Memory) -> float:

@@ -2,7 +2,7 @@
 
 import pytest
 
-from mnemex.security.validators import (
+from cortexgraph.security.validators import (
     ALLOWED_RELATION_TYPES,
     ALLOWED_TARGETS,
     MAX_CONTENT_LENGTH,

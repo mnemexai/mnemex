@@ -2,9 +2,9 @@
 
 **Memory persistence for AI assistants with temporal decay**
 
-[![Tests](https://github.com/simplemindedbot/mnemex/actions/workflows/tests.yml/badge.svg)](https://github.com/simplemindedbot/mnemex/actions/workflows/tests.yml)
-[![codecov](https://codecov.io/gh/simplemindedbot/mnemex/branch/main/graph/badge.svg)](https://codecov.io/gh/simplemindedbot/mnemex)
-[![Security](https://github.com/simplemindedbot/mnemex/actions/workflows/security.yml/badge.svg)](https://github.com/simplemindedbot/mnemex/actions/workflows/security.yml)
+[![Tests](https://github.com/simplemindedbot/cortexgraph/actions/workflows/tests.yml/badge.svg)](https://github.com/simplemindedbot/cortexgraph/actions/workflows/tests.yml)
+[![codecov](https://codecov.io/gh/simplemindedbot/cortexgraph/branch/main/graph/badge.svg)](https://codecov.io/gh/simplemindedbot/cortexgraph)
+[![Security](https://github.com/simplemindedbot/cortexgraph/actions/workflows/security.yml/badge.svg)](https://github.com/simplemindedbot/cortexgraph/actions/workflows/security.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 
@@ -35,16 +35,16 @@ Mnemex is a **Model Context Protocol (MCP)** server that gives AI assistants lik
 
 ```bash
 # Recommended: UV tool install
-uv tool install git+https://github.com/simplemindedbot/mnemex.git
+uv tool install git+https://github.com/simplemindedbot/cortexgraph.git
 ```
 
 ### Configuration
 
-Create `~/.config/mnemex/.env`:
+Create `~/.config/cortexgraph/.env`:
 
 ```bash
 # Storage
-MNEMEX_STORAGE_PATH=~/.config/mnemex/jsonl
+MNEMEX_STORAGE_PATH=~/.config/cortexgraph/jsonl
 
 # Decay model (power_law | exponential | two_component)
 MNEMEX_DECAY_MODEL=power_law
@@ -61,8 +61,8 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
-    "mnemex": {
-      "command": "mnemex"
+    "cortexgraph": {
+      "command": "cortexgraph"
     }
   }
 }

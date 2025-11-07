@@ -16,16 +16,16 @@ This is the first production-ready release of Mnemex (formerly STM Research/STM 
 #### Complete Rebranding
 - **Renamed from STM Research/STM Server to Mnemex**
   - Updated all references, paths, and documentation
-  - Changed storage paths from `~/.stm/` to `~/.config/mnemex/` (XDG-compliant)
-  - Updated command names from `stm-*` to `mnemex-*`
+  - Changed storage paths from `~/.stm/` to `~/.config/cortexgraph/` (XDG-compliant)
+  - Updated command names from `stm-*` to `cortexgraph-*`
   - Updated environment variables from `STM_*` to `MNEMEX_*`
-  - Repository moved to https://github.com/simplemindedbot/mnemex
+  - Repository moved to https://github.com/simplemindedbot/cortexgraph
 
 #### Simplified Installation
 - **UV Tool Install Support**
-  - One-command installation: `uv tool install git+https://github.com/simplemindedbot/mnemex.git`
-  - Simplified MCP configuration: `{"command": "mnemex"}` (no more complex paths)
-  - All configuration moved to `~/.config/mnemex/.env` (not MCP config)
+  - One-command installation: `uv tool install git+https://github.com/simplemindedbot/cortexgraph.git`
+  - Simplified MCP configuration: `{"command": "cortexgraph"}` (no more complex paths)
+  - All configuration moved to `~/.config/cortexgraph/.env` (not MCP config)
   - Automatic installation of all 7 CLI commands
 
 #### Memory Consolidation
@@ -49,7 +49,7 @@ This is the first production-ready release of Mnemex (formerly STM Research/STM 
 
 ### 📦 Added
 
-- Migration tool (`mnemex-migrate`) to upgrade from old STM Server installations
+- Migration tool (`cortexgraph-migrate`) to upgrade from old STM Server installations
 - Comprehensive contributing guide with platform-specific instructions
 - Windows/Linux tester recruitment documentation
 - Future roadmap documentation
@@ -59,8 +59,8 @@ This is the first production-ready release of Mnemex (formerly STM Research/STM 
 
 ### 🔄 Changed
 
-- **Storage paths**: Migrated to XDG-compliant `~/.config/mnemex/`
-- **Command names**: All CLI tools renamed from `stm-*` to `mnemex-*`
+- **Storage paths**: Migrated to XDG-compliant `~/.config/cortexgraph/`
+- **Command names**: All CLI tools renamed from `stm-*` to `cortexgraph-*`
 - **Configuration**: Simplified MCP setup, all settings in `.env` file
 - **Installation**: UV tool install as recommended method
 - **Documentation**: Complete overhaul across all files
@@ -100,13 +100,13 @@ This is the first production-ready release of Mnemex (formerly STM Research/STM 
 11. `create_relation` - Create explicit links between memories
 
 **7 CLI Commands:**
-- `mnemex` - MCP server
-- `mnemex-migrate` - Migration from old installations
-- `mnemex-search` - Unified search across STM and LTM
-- `mnemex-maintenance` - Storage stats and compaction
-- `mnemex-index-ltm` - Index Obsidian vault
-- `mnemex-backup` - Git backup operations
-- `mnemex-vault` - Markdown file operations
+- `cortexgraph` - MCP server
+- `cortexgraph-migrate` - Migration from old installations
+- `cortexgraph-search` - Unified search across STM and LTM
+- `cortexgraph-maintenance` - Storage stats and compaction
+- `cortexgraph-index-ltm` - Index Obsidian vault
+- `cortexgraph-backup` - Git backup operations
+- `cortexgraph-vault` - Markdown file operations
 
 ### 💡 Core Innovations
 
@@ -127,8 +127,8 @@ MIT License - Full user control and transparency
 ### Added
 - **ELI5.md** - Simple, beginner-friendly guide explaining what this project does and how to use it.
 - Decay models: power-law (default), exponential, and two-component with configurable parameters.
-- Unified search surfaced as an MCP tool (`search_unified`) alongside the CLI (`mnemex-search`).
-- Maintenance CLI (`mnemex-maintenance`) to show JSONL storage stats and compact files.
+- Unified search surfaced as an MCP tool (`search_unified`) alongside the CLI (`cortexgraph-search`).
+- Maintenance CLI (`cortexgraph-maintenance`) to show JSONL storage stats and compact files.
 - Tests for decay models, LTM index parsing/search, and unified search merging.
 - Deployment docs for decay model configuration and tuning tips.
 - Tuning cheat sheet and model selection guidance in README and scoring docs.

@@ -214,11 +214,11 @@ class Config(BaseModel):
     # Short-Term Memory (STM) Storage Filenames
     stm_memories_filename: str = Field(
         default="memories.jsonl",
-        description="Filename for memories storage (within MNEMEX_STORAGE_PATH)",
+        description="Filename for memories storage (within CORTEXGRAPH_STORAGE_PATH)",
     )
     stm_relations_filename: str = Field(
         default="relations.jsonl",
-        description="Filename for relations storage (within MNEMEX_STORAGE_PATH)",
+        description="Filename for relations storage (within CORTEXGRAPH_STORAGE_PATH)",
     )
 
     # Git Backup
@@ -298,67 +298,67 @@ class Config(BaseModel):
         config_dict: dict[str, object] = {}
 
         # Storage
-        if storage_path := os.getenv("MNEMEX_STORAGE_PATH"):
+        if storage_path := os.getenv("CORTEXGRAPH_STORAGE_PATH"):
             config_dict["storage_path"] = storage_path
 
         # Decay parameters
-        if decay_model := os.getenv("MNEMEX_DECAY_MODEL"):
+        if decay_model := os.getenv("CORTEXGRAPH_DECAY_MODEL"):
             config_dict["decay_model"] = decay_model
-        if decay_lambda := os.getenv("MNEMEX_DECAY_LAMBDA"):
+        if decay_lambda := os.getenv("CORTEXGRAPH_DECAY_LAMBDA"):
             config_dict["decay_lambda"] = float(decay_lambda)
-        if decay_beta := os.getenv("MNEMEX_DECAY_BETA"):
+        if decay_beta := os.getenv("CORTEXGRAPH_DECAY_BETA"):
             config_dict["decay_beta"] = float(decay_beta)
 
         # Power-law
-        if pl_alpha := os.getenv("MNEMEX_PL_ALPHA"):
+        if pl_alpha := os.getenv("CORTEXGRAPH_PL_ALPHA"):
             config_dict["pl_alpha"] = float(pl_alpha)
-        if pl_halflife_days := os.getenv("MNEMEX_PL_HALFLIFE_DAYS"):
+        if pl_halflife_days := os.getenv("CORTEXGRAPH_PL_HALFLIFE_DAYS"):
             config_dict["pl_halflife_days"] = float(pl_halflife_days)
 
         # Two-component
-        if tc_lambda_fast := os.getenv("MNEMEX_TC_LAMBDA_FAST"):
+        if tc_lambda_fast := os.getenv("CORTEXGRAPH_TC_LAMBDA_FAST"):
             config_dict["tc_lambda_fast"] = float(tc_lambda_fast)
-        if tc_lambda_slow := os.getenv("MNEMEX_TC_LAMBDA_SLOW"):
+        if tc_lambda_slow := os.getenv("CORTEXGRAPH_TC_LAMBDA_SLOW"):
             config_dict["tc_lambda_slow"] = float(tc_lambda_slow)
-        if tc_weight_fast := os.getenv("MNEMEX_TC_WEIGHT_FAST"):
+        if tc_weight_fast := os.getenv("CORTEXGRAPH_TC_WEIGHT_FAST"):
             config_dict["tc_weight_fast"] = float(tc_weight_fast)
 
         # Thresholds
-        if forget_threshold := os.getenv("MNEMEX_FORGET_THRESHOLD"):
+        if forget_threshold := os.getenv("CORTEXGRAPH_FORGET_THRESHOLD"):
             config_dict["forget_threshold"] = float(forget_threshold)
-        if promote_threshold := os.getenv("MNEMEX_PROMOTE_THRESHOLD"):
+        if promote_threshold := os.getenv("CORTEXGRAPH_PROMOTE_THRESHOLD"):
             config_dict["promote_threshold"] = float(promote_threshold)
-        if promote_use_count := os.getenv("MNEMEX_PROMOTE_USE_COUNT"):
+        if promote_use_count := os.getenv("CORTEXGRAPH_PROMOTE_USE_COUNT"):
             config_dict["promote_use_count"] = int(promote_use_count)
-        if promote_time_window := os.getenv("MNEMEX_PROMOTE_TIME_WINDOW"):
+        if promote_time_window := os.getenv("CORTEXGRAPH_PROMOTE_TIME_WINDOW"):
             config_dict["promote_time_window"] = int(promote_time_window)
 
         # Embeddings
-        if embed_model := os.getenv("MNEMEX_EMBED_MODEL"):
+        if embed_model := os.getenv("CORTEXGRAPH_EMBED_MODEL"):
             config_dict["embed_model"] = embed_model
-        if enable_embeddings := os.getenv("MNEMEX_ENABLE_EMBEDDINGS"):
+        if enable_embeddings := os.getenv("CORTEXGRAPH_ENABLE_EMBEDDINGS"):
             config_dict["enable_embeddings"] = enable_embeddings.lower() in ("true", "1", "yes")
 
         # Semantic search
-        if semantic_hi := os.getenv("MNEMEX_SEMANTIC_HI"):
+        if semantic_hi := os.getenv("CORTEXGRAPH_SEMANTIC_HI"):
             config_dict["semantic_hi"] = float(semantic_hi)
-        if semantic_lo := os.getenv("MNEMEX_SEMANTIC_LO"):
+        if semantic_lo := os.getenv("CORTEXGRAPH_SEMANTIC_LO"):
             config_dict["semantic_lo"] = float(semantic_lo)
 
         # Clustering
-        if cluster_link_threshold := os.getenv("MNEMEX_CLUSTER_LINK_THRESHOLD"):
+        if cluster_link_threshold := os.getenv("CORTEXGRAPH_CLUSTER_LINK_THRESHOLD"):
             config_dict["cluster_link_threshold"] = float(cluster_link_threshold)
-        if cluster_max_size := os.getenv("MNEMEX_CLUSTER_MAX_SIZE"):
+        if cluster_max_size := os.getenv("CORTEXGRAPH_CLUSTER_MAX_SIZE"):
             config_dict["cluster_max_size"] = int(cluster_max_size)
 
         # Natural spaced repetition
-        if review_blend_ratio := os.getenv("MNEMEX_REVIEW_BLEND_RATIO"):
+        if review_blend_ratio := os.getenv("CORTEXGRAPH_REVIEW_BLEND_RATIO"):
             config_dict["review_blend_ratio"] = float(review_blend_ratio)
-        if review_danger_zone_min := os.getenv("MNEMEX_REVIEW_DANGER_ZONE_MIN"):
+        if review_danger_zone_min := os.getenv("CORTEXGRAPH_REVIEW_DANGER_ZONE_MIN"):
             config_dict["review_danger_zone_min"] = float(review_danger_zone_min)
-        if review_danger_zone_max := os.getenv("MNEMEX_REVIEW_DANGER_ZONE_MAX"):
+        if review_danger_zone_max := os.getenv("CORTEXGRAPH_REVIEW_DANGER_ZONE_MAX"):
             config_dict["review_danger_zone_max"] = float(review_danger_zone_max)
-        if auto_reinforce := os.getenv("MNEMEX_AUTO_REINFORCE"):
+        if auto_reinforce := os.getenv("CORTEXGRAPH_AUTO_REINFORCE"):
             config_dict["auto_reinforce"] = auto_reinforce.lower() in ("true", "1", "yes")
 
         # Long-Term Memory
@@ -372,13 +372,13 @@ class Config(BaseModel):
             config_dict["ltm_index_filename"] = ltm_index_filename
         if ltm_legacy_index_filename := os.getenv("LTM_LEGACY_INDEX_FILENAME"):
             config_dict["ltm_legacy_index_filename"] = ltm_legacy_index_filename
-        if ltm_index_max_age_seconds := os.getenv("MNEMEX_LTM_INDEX_MAX_AGE_SECONDS"):
+        if ltm_index_max_age_seconds := os.getenv("CORTEXGRAPH_LTM_INDEX_MAX_AGE_SECONDS"):
             config_dict["ltm_index_max_age_seconds"] = int(ltm_index_max_age_seconds)
 
         # Short-Term Memory Storage Filenames
-        if stm_memories_filename := os.getenv("MNEMEX_MEMORIES_FILENAME"):
+        if stm_memories_filename := os.getenv("CORTEXGRAPH_MEMORIES_FILENAME"):
             config_dict["stm_memories_filename"] = stm_memories_filename
-        if stm_relations_filename := os.getenv("MNEMEX_RELATIONS_FILENAME"):
+        if stm_relations_filename := os.getenv("CORTEXGRAPH_RELATIONS_FILENAME"):
             config_dict["stm_relations_filename"] = stm_relations_filename
 
         # Git Backup
@@ -400,7 +400,7 @@ class Config(BaseModel):
             config_dict["log_level"] = log_level
 
         # Security
-        if detect_secrets := os.getenv("MNEMEX_DETECT_SECRETS"):
+        if detect_secrets := os.getenv("CORTEXGRAPH_DETECT_SECRETS"):
             config_dict["detect_secrets"] = detect_secrets.lower() in ("true", "1", "yes")
 
         return cls(**cast(dict[str, Any], config_dict))

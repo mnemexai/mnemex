@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from mnemex.storage.ltm_index import LTMDocument, LTMIndex
+from cortexgraph.storage.ltm_index import LTMDocument, LTMIndex
 
 
 def write_md(p: Path, text: str) -> None:
@@ -665,7 +665,7 @@ def test_cli_main_basic(tmp_path: Path, monkeypatch, capsys) -> None:
     vault = tmp_path / "vault"
     write_md(vault / "note.md", "Test content")
 
-    from mnemex.storage.ltm_index import main
+    from cortexgraph.storage.ltm_index import main
 
     monkeypatch.setattr(sys, "argv", ["ltm_index", str(vault)])
     result = main()
@@ -680,7 +680,7 @@ def test_cli_main_with_force(tmp_path: Path, monkeypatch) -> None:
     vault = tmp_path / "vault"
     write_md(vault / "note.md", "Test content")
 
-    from mnemex.storage.ltm_index import main
+    from cortexgraph.storage.ltm_index import main
 
     monkeypatch.setattr(sys, "argv", ["ltm_index", str(vault), "--force"])
     result = main()
@@ -694,7 +694,7 @@ def test_cli_main_with_custom_index_path(tmp_path: Path, monkeypatch) -> None:
     write_md(vault / "note.md", "Test content")
     custom_index = tmp_path / "custom.jsonl"
 
-    from mnemex.storage.ltm_index import main
+    from cortexgraph.storage.ltm_index import main
 
     monkeypatch.setattr(sys, "argv", ["ltm_index", str(vault), "--index-path", str(custom_index)])
     result = main()
@@ -709,7 +709,7 @@ def test_cli_main_with_search(tmp_path: Path, monkeypatch, capsys) -> None:
     write_md(vault / "python.md", "Python programming")
     write_md(vault / "java.md", "Java programming")
 
-    from mnemex.storage.ltm_index import main
+    from cortexgraph.storage.ltm_index import main
 
     monkeypatch.setattr(sys, "argv", ["ltm_index", str(vault), "--search", "python"])
     result = main()
@@ -732,7 +732,7 @@ Content
 """,
     )
 
-    from mnemex.storage.ltm_index import main
+    from cortexgraph.storage.ltm_index import main
 
     monkeypatch.setattr(sys, "argv", ["ltm_index", str(vault), "--tag", "tutorial"])
     result = main()
@@ -754,7 +754,7 @@ Tutorial content
 """,
     )
 
-    from mnemex.storage.ltm_index import main
+    from cortexgraph.storage.ltm_index import main
 
     monkeypatch.setattr(
         sys, "argv", ["ltm_index", str(vault), "--search", "tutorial", "--tag", "python"]
@@ -770,7 +770,7 @@ def test_cli_main_error_handling(tmp_path: Path, monkeypatch, capsys) -> None:
     """Test CLI main handles errors gracefully."""
     vault = tmp_path / "nonexistent_vault"
 
-    from mnemex.storage.ltm_index import main
+    from cortexgraph.storage.ltm_index import main
 
     monkeypatch.setattr(sys, "argv", ["ltm_index", str(vault)])
     result = main()

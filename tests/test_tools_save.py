@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from mnemex.tools.save import save_memory
+from cortexgraph.tools.save import save_memory
 
 
 class TestSaveMemory:
@@ -191,13 +191,13 @@ class TestSaveMemory:
         assert memory.content == content
 
     # Secret detection tests (when enabled)
-    @patch("mnemex.tools.save.get_config")
-    @patch("mnemex.tools.save.detect_secrets")
+    @patch("cortexgraph.tools.save.get_config")
+    @patch("cortexgraph.tools.save.detect_secrets")
     def test_save_warns_about_secrets_when_detected(
         self, mock_detect, mock_config, temp_storage, caplog
     ):
         """Test that secret detection warns but still saves memory."""
-        from mnemex.security.secrets import SecretMatch
+        from cortexgraph.security.secrets import SecretMatch
 
         # Setup mocks
         mock_config.return_value.detect_secrets = True
@@ -215,9 +215,9 @@ class TestSaveMemory:
         assert "Secrets detected" in caplog.text
 
     # Embedding tests
-    @patch("mnemex.tools.save.SENTENCE_TRANSFORMERS_AVAILABLE", True)
-    @patch("mnemex.tools.save.get_config")
-    @patch("mnemex.tools.save.SentenceTransformer")
+    @patch("cortexgraph.tools.save.SENTENCE_TRANSFORMERS_AVAILABLE", True)
+    @patch("cortexgraph.tools.save.get_config")
+    @patch("cortexgraph.tools.save.SentenceTransformer")
     def test_save_memory_with_embeddings_enabled(self, mock_transformer, mock_config, temp_storage):
         """Test that embeddings are generated when enabled."""
         # Setup mocks
@@ -235,7 +235,7 @@ class TestSaveMemory:
         memory = temp_storage.get_memory(result["memory_id"])
         assert memory.embed == [0.1, 0.2, 0.3]
 
-    @patch("mnemex.tools.save.get_config")
+    @patch("cortexgraph.tools.save.get_config")
     def test_save_memory_with_embeddings_disabled(self, mock_config, temp_storage):
         """Test that embeddings are not generated when disabled."""
         mock_config.return_value.enable_embeddings = False
@@ -246,9 +246,9 @@ class TestSaveMemory:
         memory = temp_storage.get_memory(result["memory_id"])
         assert memory.embed is None
 
-    @patch("mnemex.tools.save.SENTENCE_TRANSFORMERS_AVAILABLE", True)
-    @patch("mnemex.tools.save.get_config")
-    @patch("mnemex.tools.save.SentenceTransformer")
+    @patch("cortexgraph.tools.save.SENTENCE_TRANSFORMERS_AVAILABLE", True)
+    @patch("cortexgraph.tools.save.get_config")
+    @patch("cortexgraph.tools.save.SentenceTransformer")
     def test_save_memory_embedding_import_error(self, mock_transformer, mock_config, temp_storage):
         """Test that import error in embedding generation is handled gracefully."""
         mock_config.return_value.enable_embeddings = True

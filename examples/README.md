@@ -4,10 +4,10 @@
 
 **Recommended: UV Tool Install**
 ```bash
-uv tool install git+https://github.com/simplemindedbot/mnemex.git
+uv tool install git+https://github.com/simplemindedbot/cortexgraph.git
 ```
 
-This installs `mnemex` and all CLI commands. Configuration goes in `~/.config/mnemex/.env`.
+This installs `cortexgraph` and all CLI commands. Configuration goes in `~/.config/cortexgraph/.env`.
 
 ## Configuration Files
 
@@ -18,16 +18,16 @@ This shows the **minimal** Claude Desktop configuration needed after installing 
 ~/Library/Application Support/Claude/claude_desktop_config.json
 ```
 
-That's it! Just `{"command": "mnemex"}` - no paths, no environment variables.
+That's it! Just `{"command": "cortexgraph"}` - no paths, no environment variables.
 
 **For development (editable install)**, use:
 ```json
 {
   "mcpServers": {
-    "mnemex": {
+    "cortexgraph": {
       "command": "uv",
-      "args": ["--directory", "/path/to/mnemex", "run", "mnemex"],
-      "env": {"PYTHONPATH": "/path/to/mnemex/src"}
+      "args": ["--directory", "/path/to/cortexgraph", "run", "cortexgraph"],
+      "env": {"PYTHONPATH": "/path/to/cortexgraph/src"}
     }
   }
 }
@@ -35,11 +35,11 @@ That's it! Just `{"command": "mnemex"}` - no paths, no environment variables.
 
 ### All Other Configuration
 
-**All configuration goes in `~/.config/mnemex/.env`**, not in the Claude config:
+**All configuration goes in `~/.config/cortexgraph/.env`**, not in the Claude config:
 
 ```bash
 # Storage paths
-MNEMEX_STORAGE_PATH=~/.config/mnemex/jsonl
+MNEMEX_STORAGE_PATH=~/.config/cortexgraph/jsonl
 LTM_VAULT_PATH=~/Documents/Obsidian/Vault
 
 # Decay model and parameters
