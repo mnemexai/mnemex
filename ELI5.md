@@ -8,7 +8,7 @@ You're chatting with Claude. You tell it "I prefer TypeScript over JavaScript" o
 
 ## What This Repo Does
 
-This is **Mnemex** - a **memory system for AI assistants like Claude**. It makes Claude remember things you tell it, but in a smart, human-like way:
+This is **CortexGraph** - a **memory system for AI assistants like Claude**. It makes Claude remember things you tell it, but in a smart, human-like way:
 
 - 🧠 **Remembers important stuff** - Preferences, decisions, facts about you
 - ⏰ **Forgets naturally** - Old, unused memories fade away (just like human memory)
@@ -81,7 +81,7 @@ This system is **smart**:
 ### Step 1: Install
 
 ```bash
-# Install Mnemex from PyPI (recommended - fast and easy!)
+# Install CortexGraph from PyPI (recommended - fast and easy!)
 uv tool install cortexgraph
 
 # Or using pipx
@@ -351,7 +351,7 @@ Read the examples in the `examples/` directory or check out:
 
 ## TL;DR
 
-**One sentence**: Mnemex makes Claude remember things you tell it, with memories that fade naturally over time unless you use them frequently, just like human memory.
+**One sentence**: CortexGraph makes Claude remember things you tell it, with memories that fade naturally over time unless you use them frequently, just like human memory.
 
 **Quick start**:
 ```bash

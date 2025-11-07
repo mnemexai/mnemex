@@ -1,6 +1,8 @@
-# Mnemex to Memory MCP Converter
+# CortexGraph to Memory MCP Converter
 
-This script converts cortexgraph's JSONL memory format to Anthropic's Memory MCP `memory.json` format, enabling interoperability between the two memory systems.
+This script converts CortexGraph's JSONL memory format to Anthropic's Memory MCP `memory.json` format, enabling interoperability between the two memory systems.
+
+> **Note:** CortexGraph was formerly known as "mnemex". Some field references below still use "Mnemex" when referring to the JSONL format structure.
 
 ## Overview
 

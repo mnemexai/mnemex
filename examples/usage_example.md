@@ -1,4 +1,4 @@
-# Mnemex Usage Examples
+# CortexGraph Usage Examples
 
 ## Basic Workflow
 

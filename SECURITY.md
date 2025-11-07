@@ -50,7 +50,7 @@ Please include:
 
 ## Security Best Practices
 
-For users of Mnemex:
+For users of CortexGraph:
 
 ### File Permissions
 - Configuration files are created with `0600` (user read/write only)
@@ -68,7 +68,7 @@ For users of Mnemex:
 
 ## Security Features
 
-Mnemex includes:
+CortexGraph includes:
 - ✅ Input validation on all MCP tools
 - ✅ Path traversal prevention
 - ✅ No network communication (fully local)

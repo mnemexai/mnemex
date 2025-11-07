@@ -1,6 +1,6 @@
-# Mnemex Performance Optimizations
+# CortexGraph Performance Optimizations
 
-This document outlines the performance optimizations implemented in Mnemex to improve bundle size, load times, and overall system performance.
+This document outlines the performance optimizations implemented in CortexGraph to improve bundle size, load times, and overall system performance.
 
 ## 🚀 Key Optimizations Implemented
 
