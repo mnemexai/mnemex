@@ -1713,11 +1713,11 @@
 <h2 id="step-1-verify-installation">Step 1: Verify Installation<a class="headerlink" href="#step-1-verify-installation" title="Permanent link">&para;</a></h2>
 <p>Check that Mnemex is ready:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Check MCP server</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>mnemex<span class="w"> </span>--version
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>cortexgraph<span class="w"> </span>--version
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># Check CLI tools</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>mnemex-search<span class="w"> </span>--help
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>mnemex-maintenance<span class="w"> </span>--help
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>cortexgraph-search<span class="w"> </span>--help
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>cortexgraph-maintenance<span class="w"> </span>--help
 </code></pre></div>
 <h2 id="step-2-start-claude-desktop">Step 2: Start Claude Desktop<a class="headerlink" href="#step-2-start-claude-desktop" title="Permanent link">&para;</a></h2>
 <p>Restart Claude Desktop to load the Mnemex MCP server.</p>
@@ -1740,13 +1740,13 @@
 <h2 id="step-5-view-your-memories">Step 5: View Your Memories<a class="headerlink" href="#step-5-view-your-memories" title="Permanent link">&para;</a></h2>
 <p>Check what's stored:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Search all memories</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>mnemex-search<span class="w"> </span><span class="s2">&quot;TypeScript&quot;</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>cortexgraph-search<span class="w"> </span><span class="s2">&quot;TypeScript&quot;</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># View storage statistics</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>mnemex-maintenance<span class="w"> </span>stats
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>cortexgraph-maintenance<span class="w"> </span>stats
 <a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
 <a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># See raw JSONL storage</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>cat<span class="w"> </span>~/.config/mnemex/jsonl/memories.jsonl
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>cat<span class="w"> </span>~/.config/cortexgraph/jsonl/memories.jsonl
 </code></pre></div>
 <h2 id="common-patterns">Common Patterns<a class="headerlink" href="#common-patterns" title="Permanent link">&para;</a></h2>
 <h3 id="auto-save-important-information">Auto-Save Important Information<a class="headerlink" href="#auto-save-important-information" title="Permanent link">&para;</a></h3>
@@ -1765,10 +1765,10 @@
 <h3 id="consolidate-similar-memories">Consolidate Similar Memories<a class="headerlink" href="#consolidate-similar-memories" title="Permanent link">&para;</a></h3>
 <p>When similar memories accumulate:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Find clusters</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>mnemex-consolidate<span class="w"> </span>--preview
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>cortexgraph-consolidate<span class="w"> </span>--preview
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Apply consolidation</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>mnemex-consolidate<span class="w"> </span>--apply
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>cortexgraph-consolidate<span class="w"> </span>--apply
 </code></pre></div>
 <p>Or let Claude do it automatically when detecting related memories.</p>
 <h2 id="example-workflow">Example Workflow<a class="headerlink" href="#example-workflow" title="Permanent link">&para;</a></h2>
@@ -1789,10 +1789,10 @@
 <p>Claude searches memories for <code>task-tracker</code> entity and recalls all related decisions.</p>
 <h3 id="4-review-memory-status">4. Review Memory Status<a class="headerlink" href="#4-review-memory-status" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># See all memories related to project</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>mnemex-search<span class="w"> </span><span class="s2">&quot;task-tracker&quot;</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>cortexgraph-search<span class="w"> </span><span class="s2">&quot;task-tracker&quot;</span>
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
 <a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Check decay scores</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>mnemex-maintenance<span class="w"> </span>stats
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>cortexgraph-maintenance<span class="w"> </span>stats
 </code></pre></div>
 <h3 id="5-promote-to-long-term">5. Promote to Long-Term<a class="headerlink" href="#5-promote-to-long-term" title="Permanent link">&para;</a></h3>
 <p>Important memories automatically promote to LTM when:
@@ -1800,49 +1800,49 @@
 - Used 5+ times in 14 days</p>
 <p>Or manually promote:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Find high-value memories</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>mnemex-promote<span class="w"> </span>--dry-run
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>cortexgraph-promote<span class="w"> </span>--dry-run
 <a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
 <a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Promote to Obsidian vault</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>mnemex-promote
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>cortexgraph-promote
 </code></pre></div>
 <h2 id="cli-tools">CLI Tools<a class="headerlink" href="#cli-tools" title="Permanent link">&para;</a></h2>
 <h3 id="search-across-stm-ltm">Search Across STM + LTM<a class="headerlink" href="#search-across-stm-ltm" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Basic search</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>mnemex-search<span class="w"> </span><span class="s2">&quot;Python&quot;</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>cortexgraph-search<span class="w"> </span><span class="s2">&quot;Python&quot;</span>
 <a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
 <a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># Filter by tags</span>
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>mnemex-search<span class="w"> </span><span class="s2">&quot;Python&quot;</span><span class="w"> </span>--tags<span class="w"> </span>coding,projects
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>cortexgraph-search<span class="w"> </span><span class="s2">&quot;Python&quot;</span><span class="w"> </span>--tags<span class="w"> </span>coding,projects
 <a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
 <a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="c1"># Limit results</span>
-<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>mnemex-search<span class="w"> </span><span class="s2">&quot;Python&quot;</span><span class="w"> </span>--limit<span class="w"> </span><span class="m">10</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>cortexgraph-search<span class="w"> </span><span class="s2">&quot;Python&quot;</span><span class="w"> </span>--limit<span class="w"> </span><span class="m">10</span>
 </code></pre></div>
 <h3 id="maintenance">Maintenance<a class="headerlink" href="#maintenance" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># View statistics</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>mnemex-maintenance<span class="w"> </span>stats
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>cortexgraph-maintenance<span class="w"> </span>stats
 <a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
 <a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># Compact storage (remove deleted entries)</span>
-<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>mnemex-maintenance<span class="w"> </span>compact
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>cortexgraph-maintenance<span class="w"> </span>compact
 <a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
 <a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="c1"># Full report</span>
-<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>mnemex-maintenance<span class="w"> </span>report
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>cortexgraph-maintenance<span class="w"> </span>report
 </code></pre></div>
 <h3 id="garbage-collection">Garbage Collection<a class="headerlink" href="#garbage-collection" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Preview what will be deleted</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>mnemex-gc<span class="w"> </span>--dry-run
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>cortexgraph-gc<span class="w"> </span>--dry-run
 <a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
 <a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># Delete low-scoring memories</span>
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>mnemex-gc
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>cortexgraph-gc
 </code></pre></div>
 <h3 id="memory-consolidation">Memory Consolidation<a class="headerlink" href="#memory-consolidation" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Find similar memory clusters</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>mnemex-consolidate<span class="w"> </span>--preview<span class="w"> </span>--cohesion-threshold<span class="w"> </span><span class="m">0</span>.75
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>cortexgraph-consolidate<span class="w"> </span>--preview<span class="w"> </span>--cohesion-threshold<span class="w"> </span><span class="m">0</span>.75
 <a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
 <a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1"># Apply consolidation</span>
-<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>mnemex-consolidate<span class="w"> </span>--apply<span class="w"> </span>--cohesion-threshold<span class="w"> </span><span class="m">0</span>.80
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>cortexgraph-consolidate<span class="w"> </span>--apply<span class="w"> </span>--cohesion-threshold<span class="w"> </span><span class="m">0</span>.80
 </code></pre></div>
 <h2 id="advanced-usage">Advanced Usage<a class="headerlink" href="#advanced-usage" title="Permanent link">&para;</a></h2>
 <h3 id="custom-decay-parameters">Custom Decay Parameters<a class="headerlink" href="#custom-decay-parameters" title="Permanent link">&para;</a></h3>
-<p>Edit <code>~/.config/mnemex/.env</code>:</p>
+<p>Edit <code>~/.config/cortexgraph/.env</code>:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># Slower decay (memories last longer)</span>
 <a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="nv">MNEMEX_PL_HALFLIFE_DAYS</span><span class="o">=</span><span class="m">7</span>.0
 <a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
@@ -1875,14 +1875,14 @@
 <h3 id="no-memories-being-saved">No Memories Being Saved<a class="headerlink" href="#no-memories-being-saved" title="Permanent link">&para;</a></h3>
 <ol>
 <li>Check Claude Desktop logs for MCP errors</li>
-<li>Verify <code>.env</code> file exists: <code>cat ~/.config/mnemex/.env</code></li>
-<li>Check storage directory: <code>ls ~/.config/mnemex/jsonl/</code></li>
+<li>Verify <code>.env</code> file exists: <code>cat ~/.config/cortexgraph/.env</code></li>
+<li>Check storage directory: <code>ls ~/.config/cortexgraph/jsonl/</code></li>
 </ol>
 <h3 id="cant-find-memories">Can't Find Memories<a class="headerlink" href="#cant-find-memories" title="Permanent link">&para;</a></h3>
 <ol>
-<li>Check search: <code>mnemex-search "keyword"</code></li>
-<li>View all: <code>cat ~/.config/mnemex/jsonl/memories.jsonl</code></li>
-<li>Check decay scores: <code>mnemex-maintenance stats</code></li>
+<li>Check search: <code>cortexgraph-search "keyword"</code></li>
+<li>View all: <code>cat ~/.config/cortexgraph/jsonl/memories.jsonl</code></li>
+<li>Check decay scores: <code>cortexgraph-maintenance stats</code></li>
 </ol>
 <h3 id="memory-decay-too-fast">Memory Decay Too Fast<a class="headerlink" href="#memory-decay-too-fast" title="Permanent link">&para;</a></h3>
 <p>Increase half-life in <code>.env</code>:

@@ -2200,7 +2200,7 @@
 <tbody>
 <tr>
 <td><code>MNEMEX_STORAGE_PATH</code></td>
-<td><code>~/.config/mnemex/jsonl</code></td>
+<td><code>~/.config/cortexgraph/jsonl</code></td>
 <td>JSONL storage directory</td>
 </tr>
 <tr>
@@ -2270,10 +2270,10 @@
 <h2 id="maintenance">Maintenance<a class="headerlink" href="#maintenance" title="Permanent link">&para;</a></h2>
 <p>Use the CLI to manage JSONL storage:</p>
 <ul>
-<li><code>mnemex-maintenance stats</code> — prints <code>get_storage_stats()</code> including active counts and compaction hints</li>
-<li><code>mnemex-maintenance compact</code> — compacts JSONL files to remove tombstones and duplicates</li>
+<li><code>cortexgraph-maintenance stats</code> — prints <code>get_storage_stats()</code> including active counts and compaction hints</li>
+<li><code>cortexgraph-maintenance compact</code> — compacts JSONL files to remove tombstones and duplicates</li>
 </ul>
-<p>Optionally specify a path: <code>mnemex-maintenance --storage-path ~/.config/mnemex/jsonl stats</code></p>
+<p>Optionally specify a path: <code>cortexgraph-maintenance --storage-path ~/.config/cortexgraph/jsonl stats</code></p>
 
 
 

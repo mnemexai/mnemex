@@ -2382,13 +2382,13 @@
 <li>Does <code>uv tool install</code> work smoothly?</li>
 <li>Are the setup instructions clear and accurate?</li>
 <li>
-<p>Do the paths work correctly (<code>~/.config/mnemex/</code> on Linux, <code>C:/Users/.../</code> on Windows)?</p>
+<p>Do the paths work correctly (<code>~/.config/cortexgraph/</code> on Linux, <code>C:/Users/.../</code> on Windows)?</p>
 </li>
 <li>
 <p><strong>Running the Server</strong></p>
 </li>
-<li>Does <code>mnemex</code> command work after installation?</li>
-<li>Do all 7 CLI commands work (<code>mnemex-search</code>, <code>mnemex-maintenance</code>, etc.)?</li>
+<li>Does <code>cortexgraph</code> command work after installation?</li>
+<li>Do all 7 CLI commands work (<code>cortexgraph-search</code>, <code>cortexgraph-maintenance</code>, etc.)?</li>
 <li>
 <p>Can you connect via Claude Desktop or other MCP clients?</p>
 </li>
@@ -2405,7 +2405,7 @@
 </li>
 <li>Does JSONL storage work correctly?</li>
 <li>Do file paths with spaces or special characters work?</li>
-<li>Does the maintenance CLI (<code>mnemex-maintenance</code>) work?</li>
+<li>Does the maintenance CLI (<code>cortexgraph-maintenance</code>) work?</li>
 </ol>
 <h4 id="medium-priority">Medium Priority<a class="headerlink" href="#medium-priority" title="Permanent link">&para;</a></h4>
 <ol>
@@ -2426,13 +2426,13 @@
 <h3 id="how-to-help">How to Help<a class="headerlink" href="#how-to-help" title="Permanent link">&para;</a></h3>
 <p><strong>Quick Testing (30 minutes):</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Install and verify</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>git+https://github.com/simplemindedbot/mnemex.git
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>mnemex<span class="w"> </span>--version
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>git+https://github.com/simplemindedbot/cortexgraph.git
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>cortexgraph<span class="w"> </span>--version
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># Run basic tests</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="nb">cd</span><span class="w"> </span><span class="k">$(</span>mktemp<span class="w"> </span>-d<span class="k">)</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>mnemex-maintenance<span class="w"> </span>stats
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>mnemex-search<span class="w"> </span><span class="s2">&quot;test&quot;</span><span class="w"> </span>--verbose
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>cortexgraph-maintenance<span class="w"> </span>stats
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>cortexgraph-search<span class="w"> </span><span class="s2">&quot;test&quot;</span><span class="w"> </span>--verbose
 </code></pre></div>
 <p>Then report:
 - ✅ What worked
@@ -2449,7 +2449,7 @@
 <li>Report your findings</li>
 </ol>
 <h3 id="where-to-report">Where to Report<a class="headerlink" href="#where-to-report" title="Permanent link">&para;</a></h3>
-<p><strong><a href="https://github.com/simplemindedbot/mnemex/issues/new">Open an issue</a></strong> with:</p>
+<p><strong><a href="https://github.com/simplemindedbot/cortexgraph/issues/new">Open an issue</a></strong> with:</p>
 <p><div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="gs">**Platform:**</span> [Windows 11 / Ubuntu 22.04 / etc.]
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="gs">**Test Type:**</span> [Quick / Full]
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
@@ -2562,15 +2562,15 @@
 </code></pre></div>
 <h4 id="4-clone-the-repository">4. Clone the Repository<a class="headerlink" href="#4-clone-the-repository" title="Permanent link">&para;</a></h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c"># Using Command Prompt or PowerShell</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">://</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">simplemindedbot</span><span class="p">/</span><span class="n">mnemex</span><span class="p">.</span><span class="n">git</span>
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="nb">cd </span><span class="n">mnemex</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">://</span><span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">simplemindedbot</span><span class="p">/</span><span class="n">cortexgraph</span><span class="p">.</span><span class="n">git</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="nb">cd </span><span class="n">cortexgraph</span>
 </code></pre></div>
 <h4 id="5-set-up-development-environment">5. Set Up Development Environment<a class="headerlink" href="#5-set-up-development-environment" title="Permanent link">&para;</a></h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c"># Install dependencies (including dev dependencies)</span>
 <a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">uv</span> <span class="n">sync</span> <span class="p">-</span><span class="n">-all-extras</span>
 <a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
 <a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c"># Verify installation</span>
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="n">uv</span> <span class="n">run</span> <span class="n">python</span> <span class="n">-c</span> <span class="s2">&quot;import mnemex; print(&#39;Mnemex installed successfully!&#39;)&quot;</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="n">uv</span> <span class="n">run</span> <span class="n">python</span> <span class="n">-c</span> <span class="s2">&quot;import cortexgraph; print(&#39;Mnemex installed successfully!&#39;)&quot;</span>
 </code></pre></div>
 <h4 id="6-configure-environment">6. Configure Environment<a class="headerlink" href="#6-configure-environment" title="Permanent link">&para;</a></h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c"># Copy example config</span>
@@ -2579,11 +2579,11 @@
 <a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c"># Edit .env with your preferred text editor</span>
 <a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="n">notepad</span> <span class="p">.</span><span class="n">env</span>
 </code></pre></div>
-<p><strong>Windows-specific config (<code>~/.config/mnemex/.env</code> or project <code>.env</code>):</strong></p>
+<p><strong>Windows-specific config (<code>~/.config/cortexgraph/.env</code> or project <code>.env</code>):</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># Use Windows paths with forward slashes or escaped backslashes</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="nv">MNEMEX_STORAGE_PATH</span><span class="o">=</span>C:/Users/YourUsername/.config/mnemex/jsonl
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="nv">MNEMEX_STORAGE_PATH</span><span class="o">=</span>C:/Users/YourUsername/.config/cortexgraph/jsonl
 <a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="c1"># Or with escaped backslashes</span>
-<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="c1"># MNEMEX_STORAGE_PATH=C:\\Users\\YourUsername\\.config\\mnemex\\jsonl</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="c1"># MNEMEX_STORAGE_PATH=C:\\Users\\YourUsername\\.config\\cortexgraph\\jsonl</span>
 <a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>
 <a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="c1"># Optional: LTM vault path</span>
 <a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="nv">LTM_VAULT_PATH</span><span class="o">=</span>C:/Users/YourUsername/Documents/Obsidian/Vault
@@ -2593,7 +2593,7 @@
 <a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">uv</span> <span class="n">run</span> <span class="n">python</span> <span class="n">-m</span> <span class="n">pytest</span>
 <a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
 <a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="c"># Run with coverage</span>
-<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="n">uv</span> <span class="n">run</span> <span class="n">python</span> <span class="n">-m</span> <span class="n">pytest</span> <span class="p">-</span><span class="n">-cov</span><span class="p">=</span><span class="n">mnemex</span> <span class="p">-</span><span class="n">-cov-report</span><span class="p">=</span><span class="n">html</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="n">uv</span> <span class="n">run</span> <span class="n">python</span> <span class="n">-m</span> <span class="n">pytest</span> <span class="p">-</span><span class="n">-cov</span><span class="p">=</span><span class="n">cortexgraph</span> <span class="p">-</span><span class="n">-cov-report</span><span class="p">=</span><span class="n">html</span>
 <a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>
 <a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="c"># Open coverage report</span>
 <a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="nb">start </span><span class="n">htmlcov</span><span class="p">\</span><span class="n">index</span><span class="p">.</span><span class="n">html</span>
@@ -2607,7 +2607,7 @@
 <h4 id="common-windows-issues">Common Windows Issues<a class="headerlink" href="#common-windows-issues" title="Permanent link">&para;</a></h4>
 <p><strong>Issue: <code>ModuleNotFoundError</code></strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c"># Ensure you&#39;re in the project directory</span>
-<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="nb">cd </span><span class="n">path</span><span class="p">\</span><span class="n">to</span><span class="p">\</span><span class="n">mnemex</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="nb">cd </span><span class="n">path</span><span class="p">\</span><span class="n">to</span><span class="p">\</span><span class="n">cortexgraph</span>
 <a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>
 <a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="c"># Reinstall dependencies</span>
 <a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="n">uv</span> <span class="n">sync</span> <span class="p">-</span><span class="n">-all-extras</span>
@@ -2659,15 +2659,15 @@
 <a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a>uv<span class="w"> </span>--version
 </code></pre></div>
 <h4 id="3-clone-the-repository">3. Clone the Repository<a class="headerlink" href="#3-clone-the-repository" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/simplemindedbot/mnemex.git
-<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="nb">cd</span><span class="w"> </span>mnemex
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/simplemindedbot/cortexgraph.git
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="nb">cd</span><span class="w"> </span>cortexgraph
 </code></pre></div>
 <h4 id="4-set-up-development-environment">4. Set Up Development Environment<a class="headerlink" href="#4-set-up-development-environment" title="Permanent link">&para;</a></h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="c1"># Install dependencies (including dev dependencies)</span>
 <a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>uv<span class="w"> </span>sync<span class="w"> </span>--all-extras
 <a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>
 <a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="c1"># Verify installation</span>
-<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import mnemex; print(&#39;Mnemex installed successfully!&#39;)&quot;</span>
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import cortexgraph; print(&#39;Mnemex installed successfully!&#39;)&quot;</span>
 </code></pre></div>
 <h4 id="5-configure-environment">5. Configure Environment<a class="headerlink" href="#5-configure-environment" title="Permanent link">&para;</a></h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="c1"># Copy example config</span>
@@ -2680,9 +2680,9 @@
 <a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="c1"># or</span>
 <a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a>code<span class="w"> </span>.env<span class="w">  </span><span class="c1"># VS Code</span>
 </code></pre></div>
-<p><strong>Linux-specific config (<code>~/.config/mnemex/.env</code> or project <code>.env</code>):</strong></p>
+<p><strong>Linux-specific config (<code>~/.config/cortexgraph/.env</code> or project <code>.env</code>):</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="c1"># Standard XDG paths</span>
-<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="nv">MNEMEX_STORAGE_PATH</span><span class="o">=</span>~/.config/mnemex/jsonl
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="nv">MNEMEX_STORAGE_PATH</span><span class="o">=</span>~/.config/cortexgraph/jsonl
 <a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>
 <a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="c1"># Optional: LTM vault path</span>
 <a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="nv">LTM_VAULT_PATH</span><span class="o">=</span>~/Documents/Obsidian/Vault
@@ -2702,7 +2702,7 @@
 <a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest
 <a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>
 <a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="c1"># Run with coverage</span>
-<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>--cov<span class="o">=</span>mnemex<span class="w"> </span>--cov-report<span class="o">=</span>html
+<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>--cov<span class="o">=</span>cortexgraph<span class="w"> </span>--cov-report<span class="o">=</span>html
 <a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a>
 <a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a><span class="c1"># Open coverage report</span>
 <a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a>xdg-open<span class="w"> </span>htmlcov/index.html
@@ -2722,11 +2722,11 @@
 <a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>chmod<span class="w"> </span>+x<span class="w"> </span>.venv/bin/*
 <a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>
 <a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a><span class="c1"># Or use uv run instead</span>
-<a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a>uv<span class="w"> </span>run<span class="w"> </span>mnemex<span class="w"> </span>--help
+<a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a>uv<span class="w"> </span>run<span class="w"> </span>cortexgraph<span class="w"> </span>--help
 </code></pre></div></p>
 <p><strong>Issue: <code>ModuleNotFoundError</code></strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="c1"># Ensure you&#39;re in the project directory</span>
-<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="nb">cd</span><span class="w"> </span>/path/to/mnemex
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="nb">cd</span><span class="w"> </span>/path/to/cortexgraph
 <a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>
 <a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a><span class="c1"># Reinstall dependencies</span>
 <a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a>uv<span class="w"> </span>sync<span class="w"> </span>--all-extras
@@ -2765,15 +2765,15 @@
 <a id="__codelineno-28-8" name="__codelineno-28-8" href="#__codelineno-28-8"></a>uv<span class="w"> </span>--version
 </code></pre></div>
 <h4 id="4-clone-the-repository_1">4. Clone the Repository<a class="headerlink" href="#4-clone-the-repository_1" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/simplemindedbot/mnemex.git
-<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a><span class="nb">cd</span><span class="w"> </span>mnemex
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/simplemindedbot/cortexgraph.git
+<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a><span class="nb">cd</span><span class="w"> </span>cortexgraph
 </code></pre></div>
 <h4 id="5-set-up-development-environment_1">5. Set Up Development Environment<a class="headerlink" href="#5-set-up-development-environment_1" title="Permanent link">&para;</a></h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="c1"># Install dependencies (including dev dependencies)</span>
 <a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>uv<span class="w"> </span>sync<span class="w"> </span>--all-extras
 <a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>
 <a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a><span class="c1"># Verify installation</span>
-<a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import mnemex; print(&#39;Mnemex installed successfully!&#39;)&quot;</span>
+<a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import cortexgraph; print(&#39;Mnemex installed successfully!&#39;)&quot;</span>
 </code></pre></div>
 <h4 id="6-configure-environment_1">6. Configure Environment<a class="headerlink" href="#6-configure-environment_1" title="Permanent link">&para;</a></h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="c1"># Copy example config</span>
@@ -2784,9 +2784,9 @@
 <a id="__codelineno-31-6" name="__codelineno-31-6" href="#__codelineno-31-6"></a><span class="c1"># or</span>
 <a id="__codelineno-31-7" name="__codelineno-31-7" href="#__codelineno-31-7"></a>open<span class="w"> </span>-e<span class="w"> </span>.env<span class="w">  </span><span class="c1"># TextEdit</span>
 </code></pre></div>
-<p><strong>macOS-specific config (<code>~/.config/mnemex/.env</code> or project <code>.env</code>):</strong></p>
+<p><strong>macOS-specific config (<code>~/.config/cortexgraph/.env</code> or project <code>.env</code>):</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a><span class="c1"># Standard macOS paths</span>
-<a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a><span class="nv">MNEMEX_STORAGE_PATH</span><span class="o">=</span>~/.config/mnemex/jsonl
+<a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a><span class="nv">MNEMEX_STORAGE_PATH</span><span class="o">=</span>~/.config/cortexgraph/jsonl
 <a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a>
 <a id="__codelineno-32-4" name="__codelineno-32-4" href="#__codelineno-32-4"></a><span class="c1"># Optional: LTM vault path</span>
 <a id="__codelineno-32-5" name="__codelineno-32-5" href="#__codelineno-32-5"></a><span class="nv">LTM_VAULT_PATH</span><span class="o">=</span>~/Documents/Obsidian/Vault
@@ -2796,7 +2796,7 @@
 <a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest
 <a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a>
 <a id="__codelineno-33-4" name="__codelineno-33-4" href="#__codelineno-33-4"></a><span class="c1"># Run with coverage</span>
-<a id="__codelineno-33-5" name="__codelineno-33-5" href="#__codelineno-33-5"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>--cov<span class="o">=</span>mnemex<span class="w"> </span>--cov-report<span class="o">=</span>html
+<a id="__codelineno-33-5" name="__codelineno-33-5" href="#__codelineno-33-5"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>--cov<span class="o">=</span>cortexgraph<span class="w"> </span>--cov-report<span class="o">=</span>html
 <a id="__codelineno-33-6" name="__codelineno-33-6" href="#__codelineno-33-6"></a>
 <a id="__codelineno-33-7" name="__codelineno-33-7" href="#__codelineno-33-7"></a><span class="c1"># Open coverage report</span>
 <a id="__codelineno-33-8" name="__codelineno-33-8" href="#__codelineno-33-8"></a>open<span class="w"> </span>htmlcov/index.html
@@ -2831,19 +2831,19 @@
 <a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest
 <a id="__codelineno-35-3" name="__codelineno-35-3" href="#__codelineno-35-3"></a>
 <a id="__codelineno-35-4" name="__codelineno-35-4" href="#__codelineno-35-4"></a><span class="c1"># With coverage</span>
-<a id="__codelineno-35-5" name="__codelineno-35-5" href="#__codelineno-35-5"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>--cov<span class="o">=</span>mnemex
+<a id="__codelineno-35-5" name="__codelineno-35-5" href="#__codelineno-35-5"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>--cov<span class="o">=</span>cortexgraph
 </code></pre></div>
 <ol>
 <li><strong>Run linters:</strong></li>
 </ol>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a><span class="c1"># Check code style</span>
-<a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>src/mnemex<span class="w"> </span>tests
+<a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>src/cortexgraph<span class="w"> </span>tests
 <a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a>
 <a id="__codelineno-36-4" name="__codelineno-36-4" href="#__codelineno-36-4"></a><span class="c1"># Format code</span>
-<a id="__codelineno-36-5" name="__codelineno-36-5" href="#__codelineno-36-5"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>format<span class="w"> </span>src/mnemex<span class="w"> </span>tests
+<a id="__codelineno-36-5" name="__codelineno-36-5" href="#__codelineno-36-5"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>format<span class="w"> </span>src/cortexgraph<span class="w"> </span>tests
 <a id="__codelineno-36-6" name="__codelineno-36-6" href="#__codelineno-36-6"></a>
 <a id="__codelineno-36-7" name="__codelineno-36-7" href="#__codelineno-36-7"></a><span class="c1"># Type checking</span>
-<a id="__codelineno-36-8" name="__codelineno-36-8" href="#__codelineno-36-8"></a>uv<span class="w"> </span>run<span class="w"> </span>mypy<span class="w"> </span>src/mnemex
+<a id="__codelineno-36-8" name="__codelineno-36-8" href="#__codelineno-36-8"></a>uv<span class="w"> </span>run<span class="w"> </span>mypy<span class="w"> </span>src/cortexgraph
 </code></pre></div>
 <ol>
 <li><strong>Commit your changes:</strong></li>
@@ -2965,20 +2965,20 @@
 <li>Critical paths (decay, storage, consolidation) should have <strong>95%+ coverage</strong></li>
 <li>Check coverage with:</li>
 </ul>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-45-1" name="__codelineno-45-1" href="#__codelineno-45-1"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>--cov<span class="o">=</span>mnemex<span class="w"> </span>--cov-report<span class="o">=</span>term-missing
+<div class="highlight"><pre><span></span><code><a id="__codelineno-45-1" name="__codelineno-45-1" href="#__codelineno-45-1"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>--cov<span class="o">=</span>cortexgraph<span class="w"> </span>--cov-report<span class="o">=</span>term-missing
 </code></pre></div>
 <hr />
 <h2 id="code-style">Code Style<a class="headerlink" href="#code-style" title="Permanent link">&para;</a></h2>
 <h3 id="python-style-guidelines">Python Style Guidelines<a class="headerlink" href="#python-style-guidelines" title="Permanent link">&para;</a></h3>
 <p>We use <strong>Ruff</strong> for linting and formatting (no Black):</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-46-1" name="__codelineno-46-1" href="#__codelineno-46-1"></a><span class="c1"># Check for style issues</span>
-<a id="__codelineno-46-2" name="__codelineno-46-2" href="#__codelineno-46-2"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>src/mnemex<span class="w"> </span>tests
+<a id="__codelineno-46-2" name="__codelineno-46-2" href="#__codelineno-46-2"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>src/cortexgraph<span class="w"> </span>tests
 <a id="__codelineno-46-3" name="__codelineno-46-3" href="#__codelineno-46-3"></a>
 <a id="__codelineno-46-4" name="__codelineno-46-4" href="#__codelineno-46-4"></a><span class="c1"># Auto-fix issues</span>
-<a id="__codelineno-46-5" name="__codelineno-46-5" href="#__codelineno-46-5"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>--fix<span class="w"> </span>src/mnemex<span class="w"> </span>tests
+<a id="__codelineno-46-5" name="__codelineno-46-5" href="#__codelineno-46-5"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>--fix<span class="w"> </span>src/cortexgraph<span class="w"> </span>tests
 <a id="__codelineno-46-6" name="__codelineno-46-6" href="#__codelineno-46-6"></a>
 <a id="__codelineno-46-7" name="__codelineno-46-7" href="#__codelineno-46-7"></a><span class="c1"># Format code</span>
-<a id="__codelineno-46-8" name="__codelineno-46-8" href="#__codelineno-46-8"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>format<span class="w"> </span>src/mnemex<span class="w"> </span>tests
+<a id="__codelineno-46-8" name="__codelineno-46-8" href="#__codelineno-46-8"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>format<span class="w"> </span>src/cortexgraph<span class="w"> </span>tests
 </code></pre></div>
 <h3 id="pre-commit-hook">Pre-commit Hook<a class="headerlink" href="#pre-commit-hook" title="Permanent link">&para;</a></h3>
 <p>Install pre-commit (one time):</p>
@@ -3009,7 +3009,7 @@
 <a id="__codelineno-51-8" name="__codelineno-51-8" href="#__codelineno-51-8"></a>    <span class="k">return</span> <span class="p">(</span><span class="n">use_count</span> <span class="o">**</span> <span class="mf">0.6</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.0001</span> <span class="o">*</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span> <span class="o">*</span> <span class="n">strength</span>
 </code></pre></div>
 <p>Run type checker:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-52-1" name="__codelineno-52-1" href="#__codelineno-52-1"></a>uv<span class="w"> </span>run<span class="w"> </span>mypy<span class="w"> </span>src/mnemex
+<div class="highlight"><pre><span></span><code><a id="__codelineno-52-1" name="__codelineno-52-1" href="#__codelineno-52-1"></a>uv<span class="w"> </span>run<span class="w"> </span>mypy<span class="w"> </span>src/cortexgraph
 </code></pre></div>
 <h3 id="docstrings">Docstrings<a class="headerlink" href="#docstrings" title="Permanent link">&para;</a></h3>
 <p>Use Google-style docstrings:</p>
@@ -3065,7 +3065,7 @@
 <p>Hooks configured in <code>.pre-commit-config.yaml</code>:
 - <code>ruff</code> — lint with autofix (<code>--fix</code>)
 - <code>ruff-format</code> — enforce formatting
-- <code>mypy (src)</code> — type-check <code>src/mnemex</code> only
+- <code>mypy (src)</code> — type-check <code>src/cortexgraph</code> only
 - <code>check-toml</code> — validates <code>pyproject.toml</code> parses
 - <code>fs-sanity-duplicates</code> — blocks filenames with trailing numbers (e.g., <code>file 2.md</code>)</p>
 <p>Notes:
@@ -3082,9 +3082,9 @@
 </li>
 <li>
 <p><strong>Check code style:</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-57-1" name="__codelineno-57-1" href="#__codelineno-57-1"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>src/mnemex<span class="w"> </span>tests
-<a id="__codelineno-57-2" name="__codelineno-57-2" href="#__codelineno-57-2"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>format<span class="w"> </span>src/mnemex<span class="w"> </span>tests
-<a id="__codelineno-57-3" name="__codelineno-57-3" href="#__codelineno-57-3"></a>uv<span class="w"> </span>run<span class="w"> </span>mypy<span class="w"> </span>src/mnemex
+<div class="highlight"><pre><span></span><code><a id="__codelineno-57-1" name="__codelineno-57-1" href="#__codelineno-57-1"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>src/cortexgraph<span class="w"> </span>tests
+<a id="__codelineno-57-2" name="__codelineno-57-2" href="#__codelineno-57-2"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>format<span class="w"> </span>src/cortexgraph<span class="w"> </span>tests
+<a id="__codelineno-57-3" name="__codelineno-57-3" href="#__codelineno-57-3"></a>uv<span class="w"> </span>run<span class="w"> </span>mypy<span class="w"> </span>src/cortexgraph
 </code></pre></div></p>
 </li>
 <li>
@@ -3161,7 +3161,7 @@
 <li><strong>Search existing issues</strong> to avoid duplicates</li>
 <li><strong>Try the latest version</strong> - your issue might be fixed</li>
 <li><strong>Gather information:</strong></li>
-<li>Mnemex version (<code>mnemex --version</code> or check <code>pyproject.toml</code>)</li>
+<li>Mnemex version (<code>cortexgraph --version</code> or check <code>pyproject.toml</code>)</li>
 <li>Python version (<code>python --version</code>)</li>
 <li>Operating system and version</li>
 <li>Steps to reproduce</li>
@@ -3212,7 +3212,7 @@
 <h2 id="getting-help">Getting Help<a class="headerlink" href="#getting-help" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Documentation:</strong> <a href="docs/">docs/</a> directory</li>
-<li><strong>Issues:</strong> <a href="https://github.com/simplemindedbot/mnemex/issues">GitHub Issues</a></li>
+<li><strong>Issues:</strong> <a href="https://github.com/simplemindedbot/cortexgraph/issues">GitHub Issues</a></li>
 <li><strong>Roadmap:</strong> <a href="../future_roadmap/">future_roadmap.md</a></li>
 </ul>
 <hr />

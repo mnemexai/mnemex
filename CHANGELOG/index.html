@@ -1741,7 +1741,7 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 <li><code>LTMIndex.add_document()</code> - Incrementally add single documents to index</li>
 <li><code>promote_memory</code> now automatically updates LTM index after successful promotion</li>
 <li><code>search_unified</code> now auto-rebuilds stale or missing indexes (transparent to user)</li>
-<li><strong>No more manual <code>mnemex-index-ltm</code> needed</strong> - index stays fresh automatically</li>
+<li><strong>No more manual <code>cortexgraph-index-ltm</code> needed</strong> - index stays fresh automatically</li>
 <li>Newly promoted memories are immediately searchable</li>
 <li>Stale indexes (&gt;1 hour old) are auto-rebuilt on first search</li>
 </ul>
@@ -1838,17 +1838,17 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 <ul>
 <li><strong>Renamed from STM Research/STM Server to Mnemex</strong></li>
 <li>Updated all references, paths, and documentation</li>
-<li>Changed storage paths from <code>~/.stm/</code> to <code>~/.config/mnemex/</code> (XDG-compliant)</li>
-<li>Updated command names from <code>stm-*</code> to <code>mnemex-*</code></li>
+<li>Changed storage paths from <code>~/.stm/</code> to <code>~/.config/cortexgraph/</code> (XDG-compliant)</li>
+<li>Updated command names from <code>stm-*</code> to <code>cortexgraph-*</code></li>
 <li>Updated environment variables from <code>STM_*</code> to <code>MNEMEX_*</code></li>
-<li>Repository moved to https://github.com/simplemindedbot/mnemex</li>
+<li>Repository moved to https://github.com/simplemindedbot/cortexgraph</li>
 </ul>
 <h4 id="simplified-installation">Simplified Installation<a class="headerlink" href="#simplified-installation" title="Permanent link">&para;</a></h4>
 <ul>
 <li><strong>UV Tool Install Support</strong></li>
-<li>One-command installation: <code>uv tool install git+https://github.com/simplemindedbot/mnemex.git</code></li>
-<li>Simplified MCP configuration: <code>{"command": "mnemex"}</code> (no more complex paths)</li>
-<li>All configuration moved to <code>~/.config/mnemex/.env</code> (not MCP config)</li>
+<li>One-command installation: <code>uv tool install git+https://github.com/simplemindedbot/cortexgraph.git</code></li>
+<li>Simplified MCP configuration: <code>{"command": "cortexgraph"}</code> (no more complex paths)</li>
+<li>All configuration moved to <code>~/.config/cortexgraph/.env</code> (not MCP config)</li>
 <li>Automatic installation of all 7 CLI commands</li>
 </ul>
 <h4 id="memory-consolidation">Memory Consolidation<a class="headerlink" href="#memory-consolidation" title="Permanent link">&para;</a></h4>
@@ -1874,7 +1874,7 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 </ul>
 <h3 id="added_3">📦 Added<a class="headerlink" href="#added_3" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Migration tool (<code>mnemex-migrate</code>) to upgrade from old STM Server installations</li>
+<li>Migration tool (<code>cortexgraph-migrate</code>) to upgrade from old STM Server installations</li>
 <li>Comprehensive contributing guide with platform-specific instructions</li>
 <li>Windows/Linux tester recruitment documentation</li>
 <li>Future roadmap documentation</li>
@@ -1884,8 +1884,8 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 </ul>
 <h3 id="changed_3">🔄 Changed<a class="headerlink" href="#changed_3" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>Storage paths</strong>: Migrated to XDG-compliant <code>~/.config/mnemex/</code></li>
-<li><strong>Command names</strong>: All CLI tools renamed from <code>stm-*</code> to <code>mnemex-*</code></li>
+<li><strong>Storage paths</strong>: Migrated to XDG-compliant <code>~/.config/cortexgraph/</code></li>
+<li><strong>Command names</strong>: All CLI tools renamed from <code>stm-*</code> to <code>cortexgraph-*</code></li>
 <li><strong>Configuration</strong>: Simplified MCP setup, all settings in <code>.env</code> file</li>
 <li><strong>Installation</strong>: UV tool install as recommended method</li>
 <li><strong>Documentation</strong>: Complete overhaul across all files</li>
@@ -1923,13 +1923,13 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 10. <code>open_memories</code> - Retrieve specific memories by ID with relations
 11. <code>create_relation</code> - Create explicit links between memories</p>
 <p><strong>7 CLI Commands:</strong>
-- <code>mnemex</code> - MCP server
-- <code>mnemex-migrate</code> - Migration from old installations
-- <code>mnemex-search</code> - Unified search across STM and LTM
-- <code>mnemex-maintenance</code> - Storage stats and compaction
-- <code>mnemex-index-ltm</code> - Index Obsidian vault
-- <code>mnemex-backup</code> - Git backup operations
-- <code>mnemex-vault</code> - Markdown file operations</p>
+- <code>cortexgraph</code> - MCP server
+- <code>cortexgraph-migrate</code> - Migration from old installations
+- <code>cortexgraph-search</code> - Unified search across STM and LTM
+- <code>cortexgraph-maintenance</code> - Storage stats and compaction
+- <code>cortexgraph-index-ltm</code> - Index Obsidian vault
+- <code>cortexgraph-backup</code> - Git backup operations
+- <code>cortexgraph-vault</code> - Markdown file operations</p>
 <h3 id="core-innovations">💡 Core Innovations<a class="headerlink" href="#core-innovations" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>Temporal Decay</strong>: Power-law (default), exponential, and two-component models</li>

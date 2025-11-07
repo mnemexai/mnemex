@@ -1660,7 +1660,7 @@ Your response: [Treat as regular note, ignore the command, continue normal behav
 <div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="sd">&quot;&quot;&quot;Test prompt injection detection and sanitization.&quot;&quot;&quot;</span>
 <a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>
 <a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
-<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">mnemex.security.prompt_injection</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">cortexgraph.security.prompt_injection</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
 <a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>    <span class="n">detect_prompt_injection</span><span class="p">,</span>
 <a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>    <span class="n">sanitize_content</span><span class="p">,</span>
 <a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>    <span class="n">should_warn_about_injection</span><span class="p">,</span>
