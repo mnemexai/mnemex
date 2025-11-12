@@ -169,6 +169,7 @@ Reinforce a memory by updating its access time and use count.
 Record that memories were actively used in conversation for natural spaced repetition. This tool should be called when memories are actually **incorporated into responses**, not just retrieved.
 
 Enables natural reinforcement through:
+
 - Updates usage statistics (last_used, use_count)
 - Detects cross-domain usage (via tag Jaccard similarity)
 - Automatically boosts strength for cross-domain usage
@@ -464,6 +465,7 @@ score = (use_count ^ beta) * exp(-lambda * (now - last_used)) * strength
 ```
 
 **Default Parameters:**
+
 - `lambda` (λ): 2.673e-6 (3-day half-life)
 - `beta` (β): 0.6
 - `strength`: 1.0 (range: 0.0-2.0)
@@ -491,6 +493,7 @@ All tools return errors in this format:
 ```
 
 Common errors:
+
 - Memory not found
 - Invalid parameters
 - Database errors
@@ -518,24 +521,28 @@ Common errors:
 ### Tuning Recommendations
 
 **Fast Decay** (1-day half-life):
+
 ```bash
 MNEMEX_PL_HALFLIFE_DAYS=1.0
 # Or exponential: MNEMEX_DECAY_LAMBDA=8.02e-6
 ```
 
 **Slow Decay** (7-day half-life):
+
 ```bash
 MNEMEX_PL_HALFLIFE_DAYS=7.0
 # Or exponential: MNEMEX_DECAY_LAMBDA=1.145e-6
 ```
 
 **Aggressive Promotion**:
+
 ```bash
 MNEMEX_PROMOTE_THRESHOLD=0.5
 MNEMEX_PROMOTE_USE_COUNT=3
 ```
 
 **Conservative Forgetting**:
+
 ```bash
 MNEMEX_FORGET_THRESHOLD=0.01
 ```

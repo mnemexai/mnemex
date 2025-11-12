@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.5.5] - 2025-10-30
 
 ### Added
+
 - **Automatic LTM index management** - Major UX improvement for promoted memories
   - `LTMIndex.add_document()` - Incrementally add single documents to index
   - `promote_memory` now automatically updates LTM index after successful promotion
@@ -17,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Stale indexes (>1 hour old) are auto-rebuilt on first search
 
 ### Changed
+
 - **README refactored to eliminate repetition**
   - Removed duplicate "Comprehensive Repository Overview" section (260 lines)
   - Consolidated decay algorithm explanations from 3 separate sections into 1
@@ -25,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Decay formula now explained once in "Core Algorithm", referenced elsewhere
 
 ### Documented
+
 - **LTM (Long-Term Memory) implementation status**
   - Confirmed LTM is fully implemented (not stubbed)
   - ltm_index.py: Complete with build_index, load_index, save_index, search methods
@@ -39,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 This release significantly expands test coverage across critical system modules and establishes a clean baseline for future development.
 
 ### Added
+
 - **Comprehensive security test suite** (4 new test modules, 100+ tests):
   - `test_security_paths.py` - Path traversal and validation tests
   - `test_security_permissions.py` - File permission and access control tests
@@ -54,17 +58,20 @@ This release significantly expands test coverage across critical system modules 
 - Background processing capabilities
 
 ### Changed
+
 - **Repository cleanup**: Removed all stale feature branches (25+ branches deleted)
 - **PR management**: Closed outdated draft PRs, established clean main branch
 - Enhanced test infrastructure with improved fixtures and helpers
 - Improved type hints and optional dependency handling for ML models
 
 ### Fixed
+
 - Resolved lint formatting issues across codebase
 - Fixed Windows path separator handling in tests
 - Corrected type annotations for mypy compliance
 
 ### Notes
+
 - **Test coverage significantly improved** - Comprehensive coverage of core modules
 - **Platform compatibility** - Tests verified on macOS, Linux (Ubuntu), and Windows
 - **Stable baseline established** - Clean state for rollback if needed
@@ -78,11 +85,13 @@ This release significantly expands test coverage across critical system modules 
 This release focuses on build quality, supply-chain visibility, and developer experience.
 
 ### Added
+
 - Security workflow now generates a CycloneDX SBOM (JSON artifact) for every push/PR
 - Security Scanning and SBOM badges in README
 - Pre-commit hooks for Ruff (lint + format) and mypy (src-only)
 
 ### Changed
+
 - CI: Re-enabled mypy in tests workflow; type errors resolved across codebase
 - CI: Bandit runs made non-blocking; results displayed in Security Summary
 - CI: Guard workflow blocks built site artifacts (index.html, assets/, search/) on main
@@ -90,10 +99,12 @@ This release focuses on build quality, supply-chain visibility, and developer ex
 - Docs: CONTRIBUTING adds pre-commit instructions; SECURITY documents SBOM
 
 ### Fixed
+
 - Security workflow SBOM flags corrected to use cyclonedx-py with `--output-format` and `--output-file`
 - Ruff formatting and import order across modules; exception chaining (B904) applied
 
 ### Notes
+
 - No breaking API changes
 - Versioning adjusted to pre-1.0 scheme (0.4.0)
 
@@ -106,14 +117,16 @@ This is the first production-ready release of Mnemex (formerly STM Research/STM 
 ### 🚀 Major Features
 
 #### Complete Rebranding
+
 - **Renamed from STM Research/STM Server to Mnemex**
   - Updated all references, paths, and documentation
   - Changed storage paths from `~/.stm/` to `~/.config/cortexgraph/` (XDG-compliant)
   - Updated command names from `stm-*` to `cortexgraph-*`
   - Updated environment variables from `STM_*` to `MNEMEX_*`
-  - Repository moved to https://github.com/simplemindedbot/cortexgraph
+  - Repository moved to <https://github.com/simplemindedbot/cortexgraph>
 
 #### Simplified Installation
+
 - **UV Tool Install Support**
   - One-command installation: `uv tool install git+https://github.com/simplemindedbot/cortexgraph.git`
   - Simplified MCP configuration: `{"command": "cortexgraph"}` (no more complex paths)
@@ -121,6 +134,7 @@ This is the first production-ready release of Mnemex (formerly STM Research/STM 
   - Automatic installation of all 7 CLI commands
 
 #### Memory Consolidation
+
 - **Algorithmic Memory Consolidation** (`consolidate_memories` tool)
   - Smart content merging with duplicate detection
   - Preview mode to see proposed merges before applying
@@ -132,6 +146,7 @@ This is the first production-ready release of Mnemex (formerly STM Research/STM 
   - 100% test coverage (15 tests)
 
 #### Privacy & Local Storage
+
 - **Emphasized Local-First Design**
   - All data stored locally (no cloud services, no tracking)
   - Human-readable JSONL format for short-term memory
@@ -179,6 +194,7 @@ This is the first production-ready release of Mnemex (formerly STM Research/STM 
 ### 🎯 Implementation Status
 
 **11 MCP Tools Implemented:**
+
 1. `save_memory` - Save memory with entities, tags, optional embeddings
 2. `search_memory` - Search with temporal filtering and semantic similarity
 3. `search_unified` - Unified search across STM and LTM
@@ -192,6 +208,7 @@ This is the first production-ready release of Mnemex (formerly STM Research/STM 
 11. `create_relation` - Create explicit links between memories
 
 **7 CLI Commands:**
+
 - `cortexgraph` - MCP server
 - `cortexgraph-migrate` - Migration from old installations
 - `cortexgraph-search` - Unified search across STM and LTM
@@ -217,6 +234,7 @@ MIT License - Full user control and transparency
 ## [0.3.0] - 2025-10-07
 
 ### Added
+
 - **ELI5.md** - Simple, beginner-friendly guide explaining what this project does and how to use it.
 - Decay models: power-law (default), exponential, and two-component with configurable parameters.
 - Unified search surfaced as an MCP tool (`search_unified`) alongside the CLI (`stm-search`).
@@ -226,11 +244,13 @@ MIT License - Full user control and transparency
 - Tuning cheat sheet and model selection guidance in README and scoring docs.
 
 ### Changed
+
 - JSONL-only storage: removed SQLite and migration tooling.
 - Server logs now include the active decay model and key parameters on startup.
 - Standardized on Ruff for linting and formatting.
 
 ### Removed
+
 - SQLite database implementation and migration modules.
 
 ## [0.2.0] - 2025-01-07

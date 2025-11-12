@@ -24,11 +24,13 @@ python scripts/test_convert_to_memory_mcp.py
 ### Input (Mnemex JSONL)
 
 **memories.jsonl** - One JSON per line:
+
 ```json
 {"id": "mem-123", "content": "...", "meta": {...}, "entities": [...], ...}
 ```
 
 **relations.jsonl** - One JSON per line:
+
 ```json
 {"id": "rel-456", "from_memory_id": "mem-123", "to_memory_id": "mem-789", ...}
 ```
@@ -36,6 +38,7 @@ python scripts/test_convert_to_memory_mcp.py
 ### Output (Memory MCP JSON)
 
 **memory.json** - Single JSON file:
+
 ```json
 {
   "entities": [
@@ -81,18 +84,21 @@ python scripts/test_convert_to_memory_mcp.py
 ## Common Use Cases
 
 ### Migration to Memory MCP
+
 ```bash
 python scripts/convert_to_memory_mcp.py --output memory.json
 # Then configure Memory MCP to use memory.json
 ```
 
 ### Daily Backup
+
 ```bash
 python scripts/convert_to_memory_mcp.py \
   --output "backups/memory_$(date +%Y%m%d).json"
 ```
 
 ### Analysis Export
+
 ```bash
 python scripts/convert_to_memory_mcp.py \
   --output analysis/snapshot.json --verbose
@@ -156,4 +162,4 @@ All tests passed! ✓
 
 - Full guide: [README_CONVERTER.md](README_CONVERTER.md)
 - Mnemex docs: [../README.md](../README.md)
-- Memory MCP: https://github.com/modelcontextprotocol/servers/tree/main/src/memory
+- Memory MCP: <https://github.com/modelcontextprotocol/servers/tree/main/src/memory>

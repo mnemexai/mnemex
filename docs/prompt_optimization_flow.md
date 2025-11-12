@@ -16,35 +16,41 @@ This document describes a sophisticated prompt optimization architecture that in
 ## Architecture Components
 
 ### 1. **Proxy Server**
-   - Central orchestration layer
-   - Handles routing decisions based on complexity
-   - Manages communication between all components
-   - Tracks confidence/similarity thresholds
+
+- Central orchestration layer
+- Handles routing decisions based on complexity
+- Manages communication between all components
+- Tracks confidence/similarity thresholds
 
 ### 2. **Local LLMs**
-   - Primary: Prompt optimization and tagging
-   - Validation: Multiple instances for cross-validation
-   - Can be replaced with cloud providers (OpenAI, Anthropic, etc.)
+
+- Primary: Prompt optimization and tagging
+- Validation: Multiple instances for cross-validation
+- Can be replaced with cloud providers (OpenAI, Anthropic, etc.)
 
 ### 3. **MCP Tool Chain**
-   - **CortexGraph**: Knowledge graph for context retrieval
-   - **STOPPER**: Process control and validation
-   - **Custom Tools**: User-defined extensions
-   - **Gemini Optimizer**: Large context window for final assembly
+
+- **CortexGraph**: Knowledge graph for context retrieval
+- **STOPPER**: Process control and validation
+- **Custom Tools**: User-defined extensions
+- **Gemini Optimizer**: Large context window for final assembly
 
 ### 4. **Validation Layer**
-   - Semantic similarity checks
-   - Confidence scoring
-   - Iterative refinement below thresholds
+
+- Semantic similarity checks
+- Confidence scoring
+- Iterative refinement below thresholds
 
 ## Detailed Flow Description
 
 ### Phase 1: Initial Intake
+
 1. **User Input**: User enters prompt in Claude Code interface
 2. **Proxy Intercept**: Proxy captures the prompt before it reaches Claude
 3. **Complexity Analysis**: NLP-based complexity rating determines routing strategy
 
 ### Phase 2: Intelligent Routing
+
 4. **Simple Path** (Low Complexity):
    - Proxy applies basic formatting rules
    - Routes directly to Claude with minimal processing
@@ -55,6 +61,7 @@ This document describes a sophisticated prompt optimization architecture that in
    - Proceeds to Phase 3
 
 ### Phase 3: Prompt Optimization
+
 6. **Local LLM Processing**:
    - Adds semantic tags to categorize intent
    - Restructures prompt for optimal Claude comprehension
@@ -62,6 +69,7 @@ This document describes a sophisticated prompt optimization architecture that in
    - Extracts key entities and concepts
 
 ### Phase 4: Validation & Refinement
+
 7. **Multi-Model Validation**:
    - Routes optimized prompt to 2-n additional local LLMs
    - Each validator scores the optimization independently
@@ -78,6 +86,7 @@ This document describes a sophisticated prompt optimization architecture that in
    - System suggests relevant MCP tools for the query
 
 ### Phase 5: MCP Tool Chain Execution
+
 10. **CortexGraph Search**:
     - Searches knowledge graph for related concepts
     - Retrieves relevant memories and context
@@ -94,6 +103,7 @@ This document describes a sophisticated prompt optimization architecture that in
     - Tools run in parallel for efficiency
 
 ### Phase 6: Final Assembly
+
 13. **Gemini Optimization**:
     - Combines original prompt + optimizations + tool outputs
     - Leverages Gemini's large context window (2M tokens)
@@ -107,6 +117,7 @@ This document describes a sophisticated prompt optimization architecture that in
     - Appends metadata to prompt
 
 ### Phase 7: Claude Execution
+
 15. **Final Prompt Delivery**:
     - Proxy sends optimized prompt to Claude
     - **First API cost incurred at this step**
@@ -231,23 +242,33 @@ sequenceDiagram
 ## Configuration Options
 
 ### Complexity Thresholds
+
 \`\`\`python
+
 # Proxy configuration
-# Prompts with complexity > COMPLEX_PROMPT_THRESHOLD follow the complex path, otherwise the simple path is used.
+
+# Prompts with complexity > COMPLEX_PROMPT_THRESHOLD follow the complex path, otherwise the simple path is used
+
 COMPLEX_PROMPT_THRESHOLD = 0.4
 \`\`\`
 
 ### Validation Settings
+
 \`\`\`python
+
 # Validation thresholds
+
 CONFIDENCE_THRESHOLD = 0.75       # Minimum confidence to proceed
 SIMILARITY_THRESHOLD = 0.80       # Minimum semantic similarity
 MAX_REFINEMENT_ITERATIONS = 3     # Prevent infinite loops
 \`\`\`
 
 ### Model Selection
+
 \`\`\`python
+
 # Local LLMs (can be replaced with cloud providers)
+
 OPTIMIZER_MODEL = "llama-3.1-70b"           # Primary optimizer
 VALIDATOR_MODELS = [                        # Validation ensemble
     "mixtral-8x7b",
@@ -256,13 +277,19 @@ VALIDATOR_MODELS = [                        # Validation ensemble
 ]
 
 # Example using cloud providers (alternative to local)
+
 # OPTIMIZER_MODEL = "openai:gpt-4"
+
 # VALIDATOR_MODELS = ["anthropic:claude-3-opus", "openai:gpt-4"]
+
 \`\`\`
 
 ### MCP Tools
+
 \`\`\`python
+
 # Tool chain configuration
+
 MCP_TOOLS = {
     "cortex_graph": {
         "enabled": True,
@@ -281,8 +308,11 @@ MCP_TOOLS = {
 \`\`\`
 
 ### Gemini Settings
+
 \`\`\`python
+
 # Final assembly configuration
+
 GEMINI_MODEL = "gemini-2.0-flash-exp"  # Free tier, large context
 GEMINI_MAX_TOKENS = 2000000            # 2M token context window
 GEMINI_TEMPERATURE = 0.3               # Consistent assembly
@@ -305,17 +335,20 @@ GEMINI_TEMPERATURE = 0.3               # Consistent assembly
 ### Cost Analysis
 
 **Traditional Approach** (direct to Claude):
+
 - Every prompt hits Claude API immediately
 - No optimization or context enrichment
 - Cost: $X per request from first token
 
 **Optimized Approach** (this architecture):
+
 - Local LLMs: Free (self-hosted) or cheap (cloud)
 - Gemini: Leverages the generous free tier for final assembly
 - Claude API: Only hit after full optimization
 - Cost: $0 until Claude execution, then same $X but better results
 
 **Net Effect**:
+
 - Same Claude API cost per request
 - Significantly better prompt quality
 - Higher success rate (fewer retries needed)
@@ -324,30 +357,35 @@ GEMINI_TEMPERATURE = 0.3               # Consistent assembly
 ## Implementation Considerations
 
 ### 1. **Local LLM Requirements**
-   - GPU: RTX 4090 or better for 70B models
-   - RAM: 64GB+ recommended
-   - Alternative: Use cloud inference APIs (Groq, Together.ai, OpenRouter)
+
+- GPU: RTX 4090 or better for 70B models
+- RAM: 64GB+ recommended
+- Alternative: Use cloud inference APIs (Groq, Together.ai, OpenRouter)
 
 ### 2. **Proxy Server**
-   - Needs to be MCP-compatible
-   - Should support WebSocket for streaming
-   - Must handle concurrent validation requests
+
+- Needs to be MCP-compatible
+- Should support WebSocket for streaming
+- Must handle concurrent validation requests
 
 ### 3. **Knowledge Graph Integration**
-   - CortexGraph needs to be populated with relevant data
-   - Index must be kept up-to-date
-   - Consider using Mnemex for temporal memory
+
+- CortexGraph needs to be populated with relevant data
+- Index must be kept up-to-date
+- Consider using Mnemex for temporal memory
 
 ### 4. **Error Handling**
-   - Fallback to simple path if optimization fails
-   - Timeout protection (max 5s total processing)
-   - Graceful degradation if tools unavailable
+
+- Fallback to simple path if optimization fails
+- Timeout protection (max 5s total processing)
+- Graceful degradation if tools unavailable
 
 ### 5. **Monitoring & Observability**
-   - Track optimization success rates
-   - Monitor confidence/similarity distributions
-   - Log processing times for each stage
-   - A/B test optimized vs non-optimized prompts
+
+- Track optimization success rates
+- Monitor confidence/similarity distributions
+- Log processing times for each stage
+- A/B test optimized vs non-optimized prompts
 
 ## Future Enhancements
 
@@ -377,28 +415,34 @@ GEMINI_TEMPERATURE = 0.3               # Consistent assembly
 ## Example Workflow
 
 ### Input Prompt
+
 \`\`\`
 "Help me write a Python function to process user data"
 \`\`\`
 
 ### After Optimization
+
 \`\`\`markdown
+
 ## Task: Python Function Development
 
 **User Intent**: Create data processing function
 
 **Context** (from CortexGraph):
+
 - User prefers type hints (from memory: 2025-10-15)
 - Uses pytest for testing (from memory: 2025-10-20)
 - Prefers dataclasses over dicts (from memory: 2025-10-12)
 
 **Requirements**:
+
 1. Function should process user data
 2. Follow user's Python style preferences
 3. Include type hints and docstrings
 4. Consider testing approach
 
 **Metadata**:
+
 - Confidence: 0.87
 - Similarity: 0.92
 - Optimization iterations: 1
@@ -407,6 +451,7 @@ GEMINI_TEMPERATURE = 0.3               # Consistent assembly
 \`\`\`
 
 ### Result
+
 Claude receives a rich, contextualized prompt that produces higher-quality output on the first try, reducing the need for follow-up iterations.
 
 ---

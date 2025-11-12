@@ -35,6 +35,7 @@ The tool is installed and tested successfully.
 **Chosen: dzivkovi/mcp-memory-visualizer**
 
 **Reasons:**
+
 1. **Three modes for different workflows**: Web (quick), Python static (research), Python interactive (deep analysis)
 2. **Easier installation**: Web version = zero install, Python version = `pip install -r requirements.txt`
 3. **Statistical analysis**: NetworkX provides graph metrics (centrality, clusters, redundancy detection)
@@ -49,9 +50,10 @@ mjherich's tool is more polished (React + TypeScript, better UI), but dzivkovi's
 
 **Zero installation required!**
 
-Visit: https://dzivkovi.github.io/mcp-memory-visualizer/
+Visit: <https://dzivkovi.github.io/mcp-memory-visualizer/>
 
 Features:
+
 - Drag & drop memory.json file
 - 100% private (all processing in browser)
 - Interactive graph with physics simulation
@@ -72,6 +74,7 @@ pip install -r requirements.txt
 ```
 
 Dependencies installed:
+
 - networkx (graph analysis)
 - matplotlib (static visualization)
 - pyvis (interactive HTML output)
@@ -80,7 +83,7 @@ Dependencies installed:
 
 ### Option 1: Web Visualizer (Quick Exploration)
 
-1. Navigate to: https://dzivkovi.github.io/mcp-memory-visualizer/
+1. Navigate to: <https://dzivkovi.github.io/mcp-memory-visualizer/>
 2. Locate your memory.json file (see "Finding Your Memory File" below)
 3. Drag & drop the file into the browser
 4. Explore:
@@ -106,6 +109,7 @@ python visualize_memory.py
 ```
 
 **Provides:**
+
 - Network statistics (nodes, edges, connected components)
 - Centrality analysis (most connected entities)
 - Redundancy detection (similar entities, sparse nodes)
@@ -126,6 +130,7 @@ python visualize_memory_interactive.py
 ```
 
 **Provides:**
+
 - Browser-based interactive visualization
 - Hover tooltips with full entity details
 - Physics-based node positioning
@@ -172,6 +177,7 @@ Edit Claude Desktop config to use a persistent location:
 ```
 
 **Recommended locations (macOS):**
+
 - `~/Documents/claude-memory/memory.json`
 - `~/Library/Application Support/claude-memory/memory.json`
 - `~/Dropbox/claude-memory/memory.json` (if you want cloud backup)
@@ -209,18 +215,21 @@ Use this to test the tools before using your own data.
 ## Technical Details
 
 ### Web Visualizer
+
 - **D3.js** for force-directed graph layout
 - **Client-side processing** (privacy-first)
 - **Responsive design** (works on mobile)
 - **No backend required**
 
 ### Python Static Analysis
+
 - **NetworkX** for graph analysis
 - **Matplotlib** for high-res visualization (300 DPI)
 - **Metrics**: degree centrality, betweenness, clustering
 - **Output**: PNG + terminal statistics
 
 ### Python Interactive
+
 - **PyVis** for interactive HTML output
 - **NetworkX** for graph processing
 - **Physics simulation** for natural layout
@@ -229,7 +238,8 @@ Use this to test the tools before using your own data.
 ## Workflow Examples
 
 ### Workflow 1: Quick Check (Web)
-1. Open https://dzivkovi.github.io/mcp-memory-visualizer/
+
+1. Open <https://dzivkovi.github.io/mcp-memory-visualizer/>
 2. Drop your memory.json
 3. Visually scan for:
    - Disconnected entities (isolated nodes)
@@ -237,6 +247,7 @@ Use this to test the tools before using your own data.
    - Clusters (related concepts)
 
 ### Workflow 2: Research Analysis (Python Static)
+
 1. `cd /Users/sc/GitHub/memory-visualizer`
 2. `python visualize_memory.py > analysis.txt`
 3. Review terminal output for:
@@ -246,6 +257,7 @@ Use this to test the tools before using your own data.
 4. Include `memory_graph.png` in your paper/report
 
 ### Workflow 3: Deep Dive (Python Interactive)
+
 1. `cd /Users/sc/GitHub/memory-visualizer`
 2. `python visualize_memory_interactive.py`
 3. Open generated HTML in browser
@@ -253,6 +265,7 @@ Use this to test the tools before using your own data.
 5. Share HTML file with collaborators
 
 ### Workflow 4: Memory Cleanup
+
 1. Run static analysis: `python visualize_memory.py`
 2. Identify:
    - **Sparse nodes**: Entities with <2 observations (candidates for deletion)
@@ -272,21 +285,24 @@ npm install
 npm run dev
 ```
 
-**Live demo**: https://memviz.herich.tech
+**Live demo**: <https://memviz.herich.tech>
 
 **Pros:**
+
 - More polished UI (React + TypeScript + TailwindCSS)
 - Better keyboard shortcuts (documented in CLAUDE.md)
 - Theme system (light/dark modes)
 - More active maintenance (12 stars, recent commits)
 
 **Cons:**
+
 - Requires Node.js build setup (more complex)
 - Only one mode (interactive web)
 - No statistical analysis features
 - No export to PNG/HTML
 
 **When to use mjherich instead:**
+
 - You prefer modern React UI
 - You want theme support
 - You don't need statistical analysis
@@ -321,6 +337,7 @@ pip install -r requirements.txt
 **Solution**: Check file format. Must be JSONL (one JSON object per line), not pretty-printed JSON array.
 
 **Wrong:**
+
 ```json
 [
   {"type": "entity", ...},
@@ -329,6 +346,7 @@ pip install -r requirements.txt
 ```
 
 **Correct:**
+
 ```json
 {"type":"entity",...}
 {"type":"relation",...}
@@ -341,6 +359,7 @@ pip install -r requirements.txt
 ## Future Enhancements
 
 Potential extensions (mentioned in repo):
+
 - Export formats (GraphML, GEXF, JSON)
 - Filtering options (entity types, date ranges)
 - Advanced metrics (betweenness centrality, clustering coefficients)
@@ -348,15 +367,15 @@ Potential extensions (mentioned in repo):
 
 ## Related Tools
 
-- **Anthropic Memory MCP Server**: https://github.com/modelcontextprotocol/servers/tree/main/src/memory
-- **mjherich's visualizer**: https://github.com/mjherich/memory-visualizer
-- **cortexgraph** (your temporal memory system): https://github.com/cortexgraphai/cortexgraph
+- **Anthropic Memory MCP Server**: <https://github.com/modelcontextprotocol/servers/tree/main/src/memory>
+- **mjherich's visualizer**: <https://github.com/mjherich/memory-visualizer>
+- **cortexgraph** (your temporal memory system): <https://github.com/cortexgraphai/cortexgraph>
 
 ## Credits
 
 **Tool**: dzivkovi/mcp-memory-visualizer
-**GitHub**: https://github.com/dzivkovi/mcp-memory-visualizer
-**Live Demo**: https://dzivkovi.github.io/mcp-memory-visualizer/
+**GitHub**: <https://github.com/dzivkovi/mcp-memory-visualizer>
+**Live Demo**: <https://dzivkovi.github.io/mcp-memory-visualizer/>
 **Philosophy**: "Perfection is achieved, not when there is nothing more to add, but when there is nothing left to take away." - Antoine de Saint-Exupéry
 
 ---

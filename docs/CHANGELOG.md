@@ -14,14 +14,16 @@ This is the first production-ready release of Mnemex (formerly STM Research/STM 
 ### 🚀 Major Features
 
 #### Complete Rebranding
+
 - **Renamed from STM Research/STM Server to Mnemex**
   - Updated all references, paths, and documentation
   - Changed storage paths from `~/.stm/` to `~/.config/cortexgraph/` (XDG-compliant)
   - Updated command names from `stm-*` to `cortexgraph-*`
   - Updated environment variables from `STM_*` to `MNEMEX_*`
-  - Repository moved to https://github.com/simplemindedbot/cortexgraph
+  - Repository moved to <https://github.com/simplemindedbot/cortexgraph>
 
 #### Simplified Installation
+
 - **UV Tool Install Support**
   - One-command installation: `uv tool install git+https://github.com/simplemindedbot/cortexgraph.git`
   - Simplified MCP configuration: `{"command": "cortexgraph"}` (no more complex paths)
@@ -29,6 +31,7 @@ This is the first production-ready release of Mnemex (formerly STM Research/STM 
   - Automatic installation of all 7 CLI commands
 
 #### Memory Consolidation
+
 - **Algorithmic Memory Consolidation** (`consolidate_memories` tool)
   - Smart content merging with duplicate detection
   - Preview mode to see proposed merges before applying
@@ -40,6 +43,7 @@ This is the first production-ready release of Mnemex (formerly STM Research/STM 
   - 100% test coverage (15 tests)
 
 #### Privacy & Local Storage
+
 - **Emphasized Local-First Design**
   - All data stored locally (no cloud services, no tracking)
   - Human-readable JSONL format for short-term memory
@@ -87,6 +91,7 @@ This is the first production-ready release of Mnemex (formerly STM Research/STM 
 ### 🎯 Implementation Status
 
 **11 MCP Tools Implemented:**
+
 1. `save_memory` - Save memory with entities, tags, optional embeddings
 2. `search_memory` - Search with temporal filtering and semantic similarity
 3. `search_unified` - Unified search across STM and LTM
@@ -100,6 +105,7 @@ This is the first production-ready release of Mnemex (formerly STM Research/STM 
 11. `create_relation` - Create explicit links between memories
 
 **7 CLI Commands:**
+
 - `cortexgraph` - MCP server
 - `cortexgraph-migrate` - Migration from old installations
 - `cortexgraph-search` - Unified search across STM and LTM
@@ -125,6 +131,7 @@ MIT License - Full user control and transparency
 ## [0.3.0] - 2025-10-07
 
 ### Added
+
 - **ELI5.md** - Simple, beginner-friendly guide explaining what this project does and how to use it.
 - Decay models: power-law (default), exponential, and two-component with configurable parameters.
 - Unified search surfaced as an MCP tool (`search_unified`) alongside the CLI (`cortexgraph-search`).
@@ -134,11 +141,13 @@ MIT License - Full user control and transparency
 - Tuning cheat sheet and model selection guidance in README and scoring docs.
 
 ### Changed
+
 - JSONL-only storage: removed SQLite and migration tooling.
 - Server logs now include the active decay model and key parameters on startup.
 - Standardized on Ruff for linting and formatting.
 
 ### Removed
+
 - SQLite database implementation and migration modules.
 
 ## [0.2.0] - 2025-01-07

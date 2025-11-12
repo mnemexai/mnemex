@@ -15,6 +15,7 @@ A clear and concise description of the feature you'd like to see.
 Explain why this feature would be useful. What problem does it solve?
 
 **Example scenarios:**
+
 - As a user, I want to...
 - When working with..., I need to...
 - Currently I have to..., but it would be better if...
@@ -38,6 +39,7 @@ Are there any existing features this relates to or builds upon?
 ## Implementation Complexity
 
 Do you think this would be:
+
 - [ ] Simple (a few hours of work)
 - [ ] Medium (a few days of work)
 - [ ] Complex (significant effort)

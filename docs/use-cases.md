@@ -5,6 +5,7 @@ Based on the repository documentation and architecture, here are the appropriate
 ## 1. **Personal AI Assistant Memory**
 
 **Scenario**: You regularly chat with Claude about various topics
+
 - Remember your **preferences** (coding style, communication preferences, dietary restrictions)
 - Recall **past decisions** and their reasoning
 - Track **ongoing projects** and their status
@@ -17,6 +18,7 @@ Based on the repository documentation and architecture, here are the appropriate
 ## 2. **Software Development Assistant**
 
 **Scenario**: Using Claude for coding across multiple projects
+
 - Remember **architecture decisions** and rationale
 - Track **bugs you've encountered** and solutions
 - Recall **library preferences** and why you chose them
@@ -30,6 +32,7 @@ Based on the repository documentation and architecture, here are the appropriate
 ## 3. **Context Switching for Developers**
 
 **Scenario**: Jumping between multiple codebases/projects
+
 - **Aggressive forgetting** for ephemeral context
 - Quick recall of **project-specific conventions**
 - Remember **which commands to run** for each project
@@ -42,6 +45,7 @@ Based on the repository documentation and architecture, here are the appropriate
 ## 4. **Research & Learning**
 
 **Scenario**: Using Claude to learn new topics or conduct research
+
 - Build a **knowledge graph** of concepts and their relationships
 - Remember **key insights** from papers/articles
 - Track **questions to explore** later
@@ -55,6 +59,7 @@ Based on the repository documentation and architecture, here are the appropriate
 ## 5. **Writing & Content Creation**
 
 **Scenario**: Working on long-form content with Claude
+
 - Remember **style guidelines** and tone preferences
 - Track **character details** for fiction writing
 - Recall **research findings** relevant to your topic
@@ -68,6 +73,7 @@ Based on the repository documentation and architecture, here are the appropriate
 ## 6. **Personal Knowledge Management (PKM)**
 
 **Scenario**: Building a second brain with Obsidian integration
+
 - **Auto-generate Obsidian notes** from conversations
 - Link memories to your **existing note structure**
 - Automatic **tagging and entity extraction**
@@ -81,6 +87,7 @@ Based on the repository documentation and architecture, here are the appropriate
 ## 7. **Preference-Heavy Applications**
 
 **Scenario**: Any domain where user preferences matter a lot
+
 - **Design preferences** (color schemes, layouts)
 - **Workflow preferences** (automation preferences, tool choices)
 - **Communication style** (formal vs casual, emoji usage)
@@ -93,6 +100,7 @@ Based on the repository documentation and architecture, here are the appropriate
 ## 8. **Long-Term Projects & Planning**
 
 **Scenario**: Multi-month projects with Claude as a collaborator
+
 - Track **project goals** and evolution
 - Remember **stakeholder feedback**
 - Recall **past iterations** and why they changed
@@ -106,6 +114,7 @@ Based on the repository documentation and architecture, here are the appropriate
 ## 9. **Team Knowledge Sharing**
 
 **Scenario**: Shared memory store for team AI interactions
+
 - Document **team conventions** and decisions
 - Build **institutional knowledge** graph
 - Remember **common problems** and solutions
@@ -119,6 +128,7 @@ Based on the repository documentation and architecture, here are the appropriate
 ## 10. **Domain-Specific Expertise**
 
 **Scenario**: Using Claude in specialized domains
+
 - **Medical/Healthcare**: Remember patient interaction patterns (anonymized)
 - **Legal**: Track case precedents and reasoning
 - **Education**: Remember student learning patterns
@@ -132,6 +142,7 @@ Based on the repository documentation and architecture, here are the appropriate
 ## 11. **Adaptive AI Behavior**
 
 **Scenario**: You want Claude's behavior to adapt over time
+
 - **Natural spaced repetition** - memories in danger of forgetting surface naturally
 - **Cross-context detection** - memories used in multiple domains get stronger
 - **Automatic importance weighting** - frequently-used memories survive
@@ -156,6 +167,7 @@ Based on the repository documentation and architecture, here are the appropriate
 From `docs/configuration.md` and `src/cortexgraph/config.py:1`:
 
 ### For Development (fast context switching)
+
 ```json
 {
   "decay_half_life_hours": 24,
@@ -165,6 +177,7 @@ From `docs/configuration.md` and `src/cortexgraph/config.py:1`:
 ```
 
 ### For Research/Archival (long retention)
+
 ```json
 {
   "decay_half_life_hours": 168,
@@ -174,6 +187,7 @@ From `docs/configuration.md` and `src/cortexgraph/config.py:1`:
 ```
 
 ### For Personal Assistant (balanced)
+
 ```json
 {
   "decay_half_life_hours": 72,

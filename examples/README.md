@@ -3,6 +3,7 @@
 ## Installation
 
 **Recommended: UV Tool Install**
+
 ```bash
 uv tool install git+https://github.com/simplemindedbot/cortexgraph.git
 ```
@@ -14,6 +15,7 @@ This installs `cortexgraph` and all CLI commands. Configuration goes in `~/.conf
 ### `claude_desktop_config.json`
 
 This shows the **minimal** Claude Desktop configuration needed after installing via `uv tool install`. Copy this to:
+
 ```
 ~/Library/Application Support/Claude/claude_desktop_config.json
 ```
@@ -21,6 +23,7 @@ This shows the **minimal** Claude Desktop configuration needed after installing 
 That's it! Just `{"command": "cortexgraph"}` - no paths, no environment variables.
 
 **For development (editable install)**, use:
+
 ```json
 {
   "mcpServers": {

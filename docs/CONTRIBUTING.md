@@ -25,6 +25,7 @@ Thank you for your interest in contributing to Mnemex! This guide will help you 
 ### Why This Matters
 
 While I've written platform-specific instructions based on best practices, **I can't personally test**:
+
 - Windows installation and setup
 - Windows path handling and environment variables
 - Linux distributions (Ubuntu, Fedora, Arch, etc.)
@@ -83,6 +84,7 @@ cortexgraph-search "test" --verbose
 ```
 
 Then report:
+
 - ✅ What worked
 - ❌ What failed (with error messages)
 - ⚠️ Any warnings or unexpected behavior
@@ -120,7 +122,9 @@ Follow the platform-specific setup guide in this file, then:
 
 **Logs:**
 ```
+
 [paste relevant error messages or logs]
+
 ```
 
 **Suggestions:**
@@ -251,6 +255,7 @@ uv run python -m pytest -k "test_merge" -v
 #### Common Windows Issues
 
 **Issue: `ModuleNotFoundError`**
+
 ```powershell
 # Ensure you're in the project directory
 cd path\to\cortexgraph
@@ -260,6 +265,7 @@ uv sync --all-extras
 ```
 
 **Issue: Path too long errors**
+
 ```powershell
 # Enable long paths in Windows 10/11
 # Run as Administrator:
@@ -267,6 +273,7 @@ reg add HKLM\SYSTEM\CurrentControlSet\Control\FileSystem /v LongPathsEnabled /t 
 ```
 
 **Issue: Permission errors**
+
 ```powershell
 # Run PowerShell as Administrator or use:
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
@@ -279,6 +286,7 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 #### 1. Install Python
 
 **Ubuntu/Debian:**
+
 ```bash
 sudo apt update
 sudo apt install python3.10 python3.10-venv python3-pip git
@@ -288,6 +296,7 @@ python3 --version
 ```
 
 **Fedora/RHEL:**
+
 ```bash
 sudo dnf install python3.10 python3-pip git
 
@@ -296,6 +305,7 @@ python3 --version
 ```
 
 **Arch Linux:**
+
 ```bash
 sudo pacman -S python python-pip git
 
@@ -397,6 +407,7 @@ uv run python -m pytest -n auto
 #### Common Linux Issues
 
 **Issue: Permission denied**
+
 ```bash
 # Make sure scripts are executable
 chmod +x .venv/bin/*
@@ -406,6 +417,7 @@ uv run cortexgraph --help
 ```
 
 **Issue: `ModuleNotFoundError`**
+
 ```bash
 # Ensure you're in the project directory
 cd /path/to/cortexgraph
@@ -415,6 +427,7 @@ uv sync --all-extras
 ```
 
 **Issue: Can't find Python 3.10+**
+
 ```bash
 # Ubuntu: Use deadsnakes PPA
 sudo add-apt-repository ppa:deadsnakes/ppa
@@ -576,6 +589,7 @@ Use conventional commits:
 - `perf:` - Performance improvements
 
 **Examples:**
+
 ```
 feat: add spaced repetition scheduling
 fix: handle empty cluster in consolidation
@@ -606,6 +620,7 @@ tests/
 Follow these guidelines when writing tests:
 
 1. **Use descriptive names:**
+
 ```python
 def test_merge_content_preserves_unique_information():
     """Test that content merging keeps unique info from all memories."""
@@ -613,6 +628,7 @@ def test_merge_content_preserves_unique_information():
 ```
 
 2. **Use fixtures for common setup:**
+
 ```python
 @pytest.fixture
 def sample_memories():
@@ -628,6 +644,7 @@ def test_something(sample_memories):
 ```
 
 3. **Test edge cases:**
+
 ```python
 def test_merge_content_empty():
     """Test merging with empty list."""
@@ -642,6 +659,7 @@ def test_merge_content_single():
 ```
 
 4. **Use parametrize for multiple cases:**
+
 ```python
 @pytest.mark.parametrize("use_count,expected", [
     (1, 1.0),
@@ -764,6 +782,7 @@ def merge_content_smart(memories: list[Memory]) -> str:
 - **4-space indentation** (no tabs)
 - **Line length: 100 characters max**
 - **Module organization:**
+
   ```python
   # Standard library imports
   import time
@@ -784,11 +803,13 @@ def merge_content_smart(memories: list[Memory]) -> str:
 ### Before Submitting
 
 1. **Ensure all tests pass:**
+
 ```bash
 uv run python -m pytest
 ```
 
 2. **Check code style:**
+
 ```bash
 uv run ruff check src/cortexgraph tests
 uv run ruff format src/cortexgraph tests
@@ -805,6 +826,7 @@ uv run mypy src/cortexgraph
 ### Creating a Pull Request
 
 1. **Push your branch:**
+
 ```bash
 git push origin feature/your-feature-name
 ```
@@ -889,7 +911,9 @@ What actually happened.
 
 **Logs/Screenshots**
 ```
+
 [Paste any error messages or logs here]
+
 ```
 
 **Additional context**

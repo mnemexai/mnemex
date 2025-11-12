@@ -27,10 +27,12 @@ python scripts/convert_to_memory_mcp.py
 ```
 
 This reads from:
+
 - `~/.config/cortexgraph/jsonl/memories.jsonl`
 - `~/.config/cortexgraph/jsonl/relations.jsonl`
 
 And writes to:
+
 - `memory.json` (in current directory)
 
 ### Custom Paths
@@ -259,6 +261,7 @@ python scripts/test_convert_to_memory_mcp.py
 ```
 
 Tests cover:
+
 - Memory to entity conversion
 - Relation conversion
 - Output validation
@@ -289,11 +292,13 @@ All tests passed! ✓
 The script validates both input and output:
 
 ### Input Validation
+
 - Checks file existence
 - Handles malformed JSON (skips invalid lines with warnings)
 - Supports empty files (produces valid empty output)
 
 ### Output Validation
+
 - Ensures all required fields are present
 - Validates data types (arrays, strings)
 - Reports specific validation errors
@@ -315,11 +320,13 @@ Validation error: Output validation failed:
 After conversion, use the output file with Anthropic's Memory MCP server:
 
 1. **Convert cortexgraph data:**
+
    ```bash
    python scripts/convert_to_memory_mcp.py --output memory.json
    ```
 
 2. **Configure Memory MCP** to use the generated file:
+
    ```json
    {
      "mcpServers": {
@@ -335,6 +342,7 @@ After conversion, use the output file with Anthropic's Memory MCP server:
    ```
 
 3. **Use both systems** (if desired):
+
    ```json
    {
      "mcpServers": {
@@ -523,4 +531,4 @@ MIT License (same as cortexgraph)
 
 ## Questions?
 
-File issues on GitHub: https://github.com/simplemindedbot/cortexgraph/issues
+File issues on GitHub: <https://github.com/simplemindedbot/cortexgraph/issues>

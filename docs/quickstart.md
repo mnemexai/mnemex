@@ -26,6 +26,7 @@ cortexgraph-maintenance --help
 Restart Claude Desktop to load the Mnemex MCP server.
 
 Verify Mnemex is available:
+
 1. Start a new conversation
 2. Look for the 🔌 icon (MCP tools available)
 3. Mnemex should appear in the available servers
@@ -66,6 +67,7 @@ cat ~/.config/cortexgraph/jsonl/memories.jsonl
 ### Auto-Save Important Information
 
 Claude automatically saves when you share:
+
 - Personal preferences
 - Project decisions
 - Important facts
@@ -74,6 +76,7 @@ Claude automatically saves when you share:
 ### Auto-Recall Context
 
 Claude automatically searches memory when you:
+
 - Reference past topics
 - Ask about previous decisions
 - Continue earlier conversations
@@ -110,7 +113,7 @@ Claude saves this as a memory with entities: `task-tracker`, `FastAPI`, `Postgre
 
 Claude saves this decision and links it to the project entity.
 
-### 3. Days Later...
+### 3. Days Later
 
 > "What decisions did I make for task-tracker?"
 
@@ -129,6 +132,7 @@ cortexgraph-maintenance stats
 ### 5. Promote to Long-Term
 
 Important memories automatically promote to LTM when:
+
 - Score >= 0.65 (high value)
 - Used 5+ times in 14 days
 
@@ -233,6 +237,7 @@ MNEMEX_EMBED_MODEL=all-MiniLM-L6-v2
 ```
 
 Install dependencies:
+
 ```bash
 uv pip install sentence-transformers
 ```
@@ -254,6 +259,7 @@ uv pip install sentence-transformers
 ### Memory Decay Too Fast
 
 Increase half-life in `.env`:
+
 ```bash
 MNEMEX_PL_HALFLIFE_DAYS=7.0  # Increase from 3.0
 ```

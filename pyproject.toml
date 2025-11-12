@@ -17,6 +17,7 @@ dependencies = [
     "python-frontmatter>=1.1.0",
     "markdown>=3.5.0",
     "GitPython>=3.1.40",
+    "rake-nltk>=1.0.6",
 ]
 
 [project.optional-dependencies]
@@ -91,6 +92,10 @@ ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = "git.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "rake_nltk.*"
 ignore_missing_imports = true
 
 [tool.ruff]

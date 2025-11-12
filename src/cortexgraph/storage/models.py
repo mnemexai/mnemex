@@ -268,3 +268,157 @@ class KnowledgeGraph(BaseModel):
     memories: list[Memory] = Field(description="All memories in the graph")
     relations: list[Relation] = Field(description="All relations between memories")
     stats: dict[str, Any] = Field(default_factory=dict, description="Statistics about the graph")
+
+
+# === Natural Language Activation Models (v0.6.0+) ===
+
+
+class ActivationContext(BaseModel):
+    """Context for activating memories based on a conversation message.
+
+    Created by ActivationMiddleware for each incoming user message.
+    Contains extracted keywords, conversation state, and session tracking.
+    """
+
+    message: str = Field(..., description="Original user message text")
+    keywords: list[str] = Field(
+        default_factory=list, description="Keywords extracted from message", max_length=20
+    )
+    session_id: str | None = Field(
+        default=None, description="Optional session ID for tracking conversation context"
+    )
+    already_activated: set[str] = Field(
+        default_factory=set,
+        description="Memory IDs already activated in this session (prevent duplicates)",
+    )
+    max_memories: int = Field(default=10, ge=1, le=100, description="Maximum memories to activate")
+    activation_threshold: float = Field(
+        default=0.5, ge=0.0, le=1.0, description="Minimum activation score to include memory"
+    )
+    enable_spreading: bool = Field(default=True, description="Whether to use spreading activation")
+
+    class Config:
+        frozen = False  # Allow modification during processing
+
+
+class ActivationSource(str, Enum):
+    """How a memory was activated."""
+
+    DIRECT = "direct"  # Matched query keywords/embeddings
+    SPREAD_1HOP = "spread_1hop"  # Activated via 1 relation
+    SPREAD_2HOP = "spread_2hop"  # Activated via 2 relations
+    SPREAD_3HOP = "spread_3hop"  # Activated via 3+ relations
+
+
+class ActivationScore(BaseModel):
+    """Activation score for a single memory.
+
+    Combines keyword matching, temporal decay, and spreading activation
+    to determine if a memory should surface in conversation context.
+    """
+
+    memory_id: str = Field(..., description="Memory being scored")
+    base_relevance: float = Field(..., ge=0.0, le=1.0, description="Keyword/embedding match score")
+    temporal_score: float = Field(
+        ..., ge=0.0, le=1.0, description="Decay score from scoring.py (recency + frequency)"
+    )
+    spreading_score: float = Field(
+        default=0.0, ge=0.0, le=1.0, description="Activation from related memories"
+    )
+    final_score: float = Field(
+        ..., ge=0.0, le=1.0, description="Combined score for ranking (weighted average)"
+    )
+    source: ActivationSource = Field(..., description="How this memory was activated")
+    matched_keywords: list[str] = Field(
+        default_factory=list, description="Query keywords that matched this memory"
+    )
+
+    class Config:
+        frozen = True  # Immutable once calculated
+
+    @classmethod
+    def calculate(
+        cls,
+        memory_id: str,
+        base_relevance: float,
+        temporal_score: float,
+        spreading_score: float = 0.0,
+        source: ActivationSource = ActivationSource.DIRECT,
+        matched_keywords: list[str] | None = None,
+    ) -> "ActivationScore":
+        """Calculate final combined score.
+
+        Formula: final = (0.5 * base) + (0.3 * temporal) + (0.2 * spreading)
+        Weights: base=50%, temporal=30%, spreading=20%
+        """
+        final = 0.5 * base_relevance + 0.3 * temporal_score + 0.2 * spreading_score
+
+        return cls(
+            memory_id=memory_id,
+            base_relevance=base_relevance,
+            temporal_score=temporal_score,
+            spreading_score=spreading_score,
+            final_score=min(final, 1.0),  # Cap at 1.0
+            source=source,
+            matched_keywords=matched_keywords or [],
+        )
+
+
+class ActivationResult(BaseModel):
+    """Output of memory activation process.
+
+    Delivered via enriched context injection - activated memories are
+    automatically added to the AI assistant's conversation context.
+    """
+
+    activated_memories: list[str] = Field(
+        default_factory=list, description="Memory IDs activated (in rank order)"
+    )
+    activation_scores: dict[str, ActivationScore] = Field(
+        default_factory=dict, description="Map: memory_id -> ActivationScore"
+    )
+    direct_matches: list[str] = Field(
+        default_factory=list, description="Memory IDs from direct keyword/embedding match"
+    )
+    spread_matches: list[str] = Field(
+        default_factory=list, description="Memory IDs from spreading activation"
+    )
+    total_candidates: int = Field(
+        default=0, ge=0, description="Total memories evaluated during activation"
+    )
+    activation_latency_ms: float = Field(
+        default=0.0, ge=0.0, description="Time spent on activation (milliseconds)"
+    )
+    timing_breakdown: dict[str, float] = Field(
+        default_factory=dict,
+        description="Latency by stage: extraction, matching, spreading, ranking",
+    )
+    fallback_tier: str = Field(
+        default="full",
+        description="Which activation tier succeeded: full, keyword_only, or failed",
+    )
+
+    class Config:
+        frozen = True  # Immutable result
+
+    def format_for_context(self, memories: list[Memory]) -> str:
+        """Format activated memories for injection into conversation context.
+
+        Returns: Human-readable summary for AI assistant.
+        """
+        if not self.activated_memories:
+            return ""
+
+        lines = ["=== Relevant Memories ==="]
+        for memory_id in self.activated_memories[:5]:  # Top 5 only
+            memory = next((m for m in memories if m.id == memory_id), None)
+            if not memory:
+                continue
+
+            score = self.activation_scores[memory_id]
+            lines.append(f"\n**Memory** (relevance: {score.final_score:.2f}):")
+            lines.append(f"  {memory.content[:200]}...")  # Truncate long content
+            if memory.meta.tags:
+                lines.append(f"  Tags: {', '.join(memory.meta.tags[:5])}")
+
+        return "\n".join(lines)

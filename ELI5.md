@@ -23,6 +23,7 @@ Think of it like your own memory:
 - **Long-term memory** is like remembering your best friend's name. You use it all the time, so it never fades.
 
 This system works the same way:
+
 - New memories start in **short-term storage** with a 3-day "half-life"
 - If you keep using them, they get **stronger and last longer**
 - Really important memories get **promoted to permanent storage** (your Obsidian notes)
@@ -67,10 +68,12 @@ Claude will save these with high importance and promote them to permanent storag
 ## What Makes This Different?
 
 Most memory systems are dumb:
+
 - **Time-based expiration (TTL)**: "Delete after 7 days" - doesn't care if you used it 100 times
 - **LRU cache**: "Keep last 100 items" - dumps important stuff just because it's old
 
 This system is **smart**:
+
 - Combines **recency** (when did I last use this?), **frequency** (how often do I use this?), and **importance** (did I mark this as critical?)
 - Memories fade naturally over time (like human memory)
 - Frequently used memories stick around longer
@@ -158,6 +161,7 @@ Now Claude has memory.
 ## What Happens Now?
 
 Claude will automatically:
+
 - **Save** things you tell it (preferences, decisions, project info)
 - **Recall** them when relevant to the conversation
 - **Reinforce** memories you use frequently
@@ -167,6 +171,7 @@ Claude will automatically:
 You don't have to think about it. It just works.
 
 You can also **manually save** things permanently:
+
 ```
 You: "Make a note: I'm allergic to shellfish"
 You: "Never forget this: my API key rotation schedule is monthly"
@@ -222,22 +227,26 @@ After use #5, the score is way above 0.65, so it gets **promoted to your Obsidia
 ## Storage: Where Are My Memories?
 
 ### Short-term (JSONL files)
+
 - **Location**: `~/.config/cortexgraph/jsonl/` (or whatever you set in `.env`)
 - **Files**: `memories.jsonl`, `relations.jsonl`
 - **Format**: Human-readable JSON, one memory per line
 - **Git-friendly**: You can version control these files!
 
 Example memory:
+
 ```json
 {"id":"mem-abc123","content":"I prefer TypeScript over JavaScript","tags":["preferences","typescript"],"created_at":"2025-10-07T10:00:00Z","last_used":"2025-10-07T10:00:00Z","use_count":1,"strength":1.0,"entities":["TypeScript","JavaScript"]}
 ```
 
 ### Long-term (Markdown files)
+
 - **Location**: Your Obsidian vault (configurable in `.env`)
 - **Format**: Markdown files with YAML frontmatter
 - **Permanent**: Never forgotten unless you delete them
 
 Example promoted memory:
+
 ```markdown
 ---
 created: 2025-10-07
@@ -279,18 +288,21 @@ cortexgraph-backup snapshot
 ## Tuning: Make It Work Your Way
 
 ### Fast-paced work (forget quickly)
+
 ```bash
 MNEMEX_PL_HALFLIFE_DAYS=1.0  # 1-day half-life
 MNEMEX_FORGET_THRESHOLD=0.10  # More aggressive forgetting
 ```
 
 ### Research/archival (remember longer)
+
 ```bash
 MNEMEX_PL_HALFLIFE_DAYS=7.0  # 7-day half-life
 MNEMEX_FORGET_THRESHOLD=0.02  # Keep things longer
 ```
 
 ### Preference-heavy assistant
+
 ```bash
 # Save preferences with higher importance
 # In your code: save_memory(..., strength=1.5)
@@ -300,6 +312,7 @@ MNEMEX_FORGET_THRESHOLD=0.02  # Keep things longer
 
 **Q: Does this work with ChatGPT or other AI assistants?**
 A: This uses the Model Context Protocol (MCP), which is supported by most modern AI clients:
+
 - ✅ **Claude Desktop** - Full support
 - ✅ **CLI clients** (like Cline, Aider, etc.) - Full support
 - ✅ **Most desktop clients** - Full support
@@ -310,6 +323,7 @@ A: No. Everything is stored locally on your computer. Anthropic never sees your 
 
 **Q: What if I want to keep something forever?**
 A: Three ways:
+
 1. **Use it frequently** so it gets auto-promoted
 2. **Ask Claude directly**: "Never forget this..." or "Make a note that..."
 3. **Set high strength manually** when saving (strength=1.5-2.0)
@@ -325,6 +339,7 @@ A: No! Obsidian integration is optional. You can use just short-term memory with
 
 **Q: This sounds complicated...**
 A: It's actually simple once it's set up:
+
 1. Clone the repo
 2. Install it
 3. Add it to Claude's config (just the command, paths go in `.env`)
@@ -345,6 +360,7 @@ Most importantly: **It feels natural.** You don't think about memory management.
 ## Still Confused?
 
 Read the examples in the `examples/` directory or check out:
+
 - [docs/scoring_algorithm.md](docs/scoring_algorithm.md) - The math behind memory decay
 - [docs/architecture.md](docs/architecture.md) - How the system is built
 - [docs/api.md](docs/api.md) - All available commands
@@ -354,6 +370,7 @@ Read the examples in the `examples/` directory or check out:
 **One sentence**: CortexGraph makes Claude remember things you tell it, with memories that fade naturally over time unless you use them frequently, just like human memory.
 
 **Quick start**:
+
 ```bash
 # Install from PyPI
 uv tool install cortexgraph

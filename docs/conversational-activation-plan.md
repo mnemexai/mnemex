@@ -28,6 +28,7 @@ Memory saves in cortexgraph depend entirely on the LLM explicitly calling the `s
 ### Root Cause Analysis
 
 The LLM must simultaneously:
+
 - Conduct natural conversation with the user
 - Decide when to save information to memory
 - Extract entities from conversation
@@ -40,11 +41,13 @@ The LLM must simultaneously:
 ### Why This Matters
 
 From user perspective:
+
 - "I told you I prefer TypeScript, why did you forget?"
 - "I said 'remember this' but you didn't save it"
 - Inconsistent experience undermines trust
 
 From system perspective:
+
 - cortexgraph has excellent temporal memory foundations (decay, spaced repetition, knowledge graph)
 - Activation is the bottleneck preventing production readiness
 - Reliability cannot depend solely on LLM consistency
@@ -56,6 +59,7 @@ From system perspective:
 ### Current cortexgraph Architecture
 
 **Core Components Analyzed**:
+
 - **MCP Server** (`server.py`): FastMCP-based with 13 tools
 - **Storage Layer** (`storage/jsonl_storage.py`): JSONL with in-memory indexes
 - **Memory Models** (`storage/models.py`): Pydantic models with temporal fields
@@ -73,27 +77,32 @@ From system perspective:
 ### State-of-the-Art Research (2024-2025)
 
 **1. Mem0 Architecture (ArXiv 2504.19413v1)**
+
 - Two-phase pipeline: Extraction → Update
 - 26% accuracy boost over OpenAI's memory feature
 - 91% lower latency vs. full-context approach
 - Still LLM-driven but uses multi-message context
 
 **2. Knowledge Graph Construction with LLMs**
+
 - Hybrid LLM + structured NLP pipelines outperform pure LLM
 - Dedicated entity extraction filters reduce noise
 - Domain-specific pre-training enhances NER sensitivity
 
 **3. Intent Detection with Transformers**
+
 - BERT-based models achieve 85%+ accuracy
 - Fine-tuning on small datasets (100-500 examples) is effective
 - Enables automatic triggering of memory operations
 
 **4. Entity Linking and Relationship Extraction**
+
 - Multi-stage pipelines: NER → Linking → Relation Extraction
 - spaCy provides production-ready NER with minimal setup
 - Transformers models (REBEL, Relik) for relation extraction
 
 **5. Personal Knowledge Management Trends**
+
 - Zero-effort capture expectation (Mem.ai, MyMind)
 - AI-powered automatic tagging
 - Conversational interfaces over manual organization
@@ -178,6 +187,7 @@ Activation Signals + Pre-filled Parameters
 **Purpose**: Detect explicit memory requests with 100% reliability
 
 **Implementation**:
+
 ```python
 # src/cortexgraph/preprocessing/phrase_detector.py
 
@@ -226,6 +236,7 @@ class PhraseDetector:
 **Integration Point**: Run before LLM receives message, add signals to system context
 
 **Test Coverage**:
+
 - 20+ trigger patterns
 - Case-insensitive matching
 - False positive rate target: <1%
@@ -236,6 +247,7 @@ class PhraseDetector:
 **Purpose**: Automatically populate `entities` field for better search and graph quality
 
 **Implementation**:
+
 ```python
 # src/cortexgraph/preprocessing/entity_extractor.py
 
@@ -259,10 +271,12 @@ class EntityExtractor:
 ```
 
 **Dependencies**:
+
 - `spacy >= 3.7`
 - `en_core_web_sm` model (17MB download)
 
 **Test Coverage**:
+
 - Sample messages with known entities
 - Entity type filtering validation
 - Deduplication verification
@@ -272,6 +286,7 @@ class EntityExtractor:
 **Purpose**: Provide consistent `strength` values based on linguistic cues
 
 **Implementation**:
+
 ```python
 # src/cortexgraph/preprocessing/importance_scorer.py
 
@@ -320,6 +335,7 @@ class ImportanceScorer:
 ```
 
 **Test Coverage**:
+
 - Keyword → strength mapping validation
 - Intent-based base strength verification
 - Clamping to valid range [0.0, 2.0]
@@ -336,6 +352,7 @@ class ImportanceScorer:
 - ✅ Integration with MCP server entry point
 
 **Success Criteria**:
+
 - ✅ 0% missed explicit save requests ("remember this")
 - ✅ Entities automatically populated in 80%+ of saves
 - ✅ Consistent importance scores (no more arbitrary values)
@@ -353,6 +370,7 @@ class ImportanceScorer:
 **Purpose**: Detect user intent to trigger appropriate memory operations
 
 **Intents**:
+
 - `SAVE_PREFERENCE`: "I prefer X", "I like Y", "I always use Z"
 - `SAVE_DECISION`: "I decided to A", "Going with B", "I'll use C"
 - `SAVE_FACT`: "My D is E", "The F is G", "H is located at I"
@@ -361,6 +379,7 @@ class ImportanceScorer:
 - `QUESTION`: General question (default, no memory action)
 
 **Model Architecture**:
+
 ```python
 # src/cortexgraph/preprocessing/intent_classifier.py
 
@@ -401,11 +420,13 @@ class IntentClassifier:
 ```
 
 **Model Choice**: DistilBERT (66M parameters, 6-layer distilled BERT)
+
 - Fast inference (~20-30ms on CPU)
 - Good accuracy with limited data
 - Small model size (~250MB)
 
 **Training Data Requirements**:
+
 - 100-500 examples per intent class
 - Total: 600-3000 examples
 - Sources:
@@ -414,6 +435,7 @@ class IntentClassifier:
   - Augmentation techniques (paraphrasing)
 
 **Training Process**:
+
 ```bash
 # scripts/train_intent_classifier.py
 
@@ -425,6 +447,7 @@ class IntentClassifier:
 ```
 
 **Hyperparameters**:
+
 - Learning rate: 2e-5
 - Batch size: 16
 - Epochs: 3-5
@@ -436,6 +459,7 @@ class IntentClassifier:
 **Purpose**: Connect intent classifier to MCP server and system prompt
 
 **MCP Server Hook**:
+
 ```python
 # src/cortexgraph/server.py
 
@@ -481,6 +505,7 @@ async def preprocess_message(message: str) -> Dict:
 ```
 
 **System Prompt Enhancement**:
+
 ```markdown
 # docs/prompts/memory_system_prompt.md (new section)
 
@@ -508,6 +533,7 @@ When action is MUST_SAVE or SHOULD_SAVE, you will receive:
 ```
 
 **Configuration**:
+
 ```python
 # src/cortexgraph/config.py (new section)
 
@@ -532,6 +558,7 @@ MNEMEX_SPACY_MODEL = os.getenv("MNEMEX_SPACY_MODEL", "en_core_web_sm")
 - ✅ Performance evaluation report (accuracy, precision, recall per class)
 
 **Success Criteria**:
+
 - ✅ 85%+ intent classification accuracy on test set
 - ✅ Implicit preferences detected (e.g., "I prefer X" → auto-save suggested)
 - ✅ 70-80% overall improvement in activation reliability (user testing)
@@ -551,6 +578,7 @@ MNEMEX_SPACY_MODEL = os.getenv("MNEMEX_SPACY_MODEL", "en_core_web_sm")
 **Approaches**:
 
 **1. Keyword Extraction (KeyBERT)**:
+
 ```python
 # src/cortexgraph/preprocessing/tag_suggester.py
 
@@ -571,6 +599,7 @@ class TagSuggester:
 ```
 
 **2. Zero-Shot Classification** (for predefined categories):
+
 ```python
 from transformers import pipeline
 
@@ -583,11 +612,13 @@ def classify_into_categories(text: str, categories: List[str]) -> List[str]:
 ```
 
 **3. Hybrid Approach**:
+
 - Extract keywords via KeyBERT (content-specific)
 - Classify into categories via zero-shot (broad themes)
 - Combine and rank by relevance
 
 **Integration**:
+
 - Pre-fill `tags` parameter for `save_memory`
 - LLM reviews and adjusts as needed
 - User feedback loop: Track accepted vs. rejected suggestions
@@ -597,6 +628,7 @@ def classify_into_categories(text: str, categories: List[str]) -> List[str]:
 **Purpose**: Improve extraction of implicit preferences from conversation history
 
 **Implementation**:
+
 ```python
 # src/cortexgraph/preprocessing/context_manager.py
 
@@ -620,6 +652,7 @@ class ConversationContext:
 ```
 
 **Use Cases**:
+
 - User states preference across multiple messages
 - Decision emerges from discussion (not single statement)
 - Fact mentioned indirectly, then clarified later
@@ -631,6 +664,7 @@ class ConversationContext:
 **Purpose**: Prevent redundant saves by detecting similar existing memories
 
 **Implementation**:
+
 ```python
 # src/cortexgraph/preprocessing/dedup_checker.py
 
@@ -674,11 +708,13 @@ class DeduplicationChecker:
 ```
 
 **Integration**:
+
 - Run before calling `save_memory`
 - If duplicate detected, prompt LLM: "Similar memory exists (score: 0.92). Options: 1) Merge, 2) Save as new, 3) Skip"
 - LLM decides based on context
 
 **Relation to Existing Tools**:
+
 - Complements existing `consolidate_memories` tool (proactive vs. reactive)
 - Uses same similarity logic as `cluster_memories`
 
@@ -693,6 +729,7 @@ class DeduplicationChecker:
 - ✅ Documentation updates
 
 **Success Criteria**:
+
 - ✅ Tags automatically suggested and accepted 70%+ of time
 - ✅ Multi-message context improves implicit preference detection by 20%+
 - ✅ Near-duplicate detection prevents redundant saves (false positive rate <5%)
@@ -705,6 +742,7 @@ class DeduplicationChecker:
 ### Unit Tests
 
 **Phase 1 Components**:
+
 ```python
 # tests/preprocessing/test_phrase_detector.py
 
@@ -730,6 +768,7 @@ def test_case_insensitivity():
 ```
 
 **Phase 2 Components**:
+
 ```python
 # tests/preprocessing/test_intent_classifier.py
 
@@ -788,6 +827,7 @@ async def test_end_to_end_activation():
 ### User Acceptance Testing (UAT)
 
 **A/B Test Design**:
+
 - **Control Group**: Current cortexgraph (LLM-only activation)
 - **Treatment Group**: New cortexgraph (preprocessing + LLM)
 - **Sample Size**: 20-30 users, 2 weeks of usage
@@ -798,6 +838,7 @@ async def test_end_to_end_activation():
   - False negative rate (missed important information)
 
 **Success Criteria**:
+
 - Treatment group: 85-90% save rate on save-worthy content
 - Control group: ~40% save rate (baseline)
 - User satisfaction: 8/10 or higher
@@ -813,6 +854,7 @@ async def test_end_to_end_activation():
 **File**: `src/cortexgraph/server.py`
 
 **Changes**:
+
 ```python
 from .preprocessing import (
     PhraseDetector,
@@ -878,6 +920,7 @@ async def preprocess_message(message: str, role: str = "user") -> Dict:
 **File**: `docs/prompts/memory_system_prompt.md`
 
 **New Section** (to be appended):
+
 ```markdown
 ---
 
@@ -941,6 +984,7 @@ If similar memory exists:
 **File**: `src/cortexgraph/config.py`
 
 **New Section**:
+
 ```python
 # ============================================================================
 # Conversational Activation Configuration
@@ -976,6 +1020,7 @@ MNEMEX_DEDUP_SIMILARITY_THRESHOLD = float(os.getenv("MNEMEX_DEDUP_SIMILARITY_THR
 ### Python Packages
 
 **Phase 1**:
+
 ```toml
 # pyproject.toml additions
 
@@ -985,12 +1030,14 @@ spacy = "^3.7.0"
 ```
 
 **Installation**:
+
 ```bash
 pip install spacy
 python -m spacy download en_core_web_sm
 ```
 
 **Phase 2**:
+
 ```toml
 transformers = "^4.35.0"
 torch = "^2.1.0"  # or tensorflow
@@ -998,6 +1045,7 @@ scikit-learn = "^1.3.0"
 ```
 
 **Phase 3**:
+
 ```toml
 keybert = "^0.8.0"
 sentence-transformers = "^2.2.0"
@@ -1006,6 +1054,7 @@ sentence-transformers = "^2.2.0"
 ### Model Storage
 
 **Models to download/train**:
+
 - `en_core_web_sm`: 17MB (spaCy English model)
 - Intent classifier: ~250MB (fine-tuned DistilBERT)
 - Tag suggester: ~120MB (KeyBERT with sentence-transformers backend)
@@ -1014,6 +1063,7 @@ sentence-transformers = "^2.2.0"
 **Total storage**: ~470MB
 
 **Inference Requirements**:
+
 - CPU: Sufficient (all models optimized for CPU inference)
 - RAM: +300-500MB when all models loaded
 - Latency: <100ms total preprocessing time
@@ -1027,6 +1077,7 @@ sentence-transformers = "^2.2.0"
 **Target**: <100ms total preprocessing time (avoid blocking conversation flow)
 
 **Breakdown**:
+
 - Phrase detection: ~1ms (regex)
 - Entity extraction: ~20-30ms (spaCy)
 - Intent classification: ~20-30ms (DistilBERT on CPU)
@@ -1035,6 +1086,7 @@ sentence-transformers = "^2.2.0"
 - Deduplication check: ~20-30ms (embedding + similarity, Phase 3)
 
 **Optimization Strategies**:
+
 1. **Lazy Loading**: Load models only when first needed
 2. **Caching**: Cache recent entity/intent results for similar messages
 3. **Async Processing**: Run non-blocking preprocessing in background
@@ -1044,11 +1096,13 @@ sentence-transformers = "^2.2.0"
 ### Memory Management
 
 **Model Loading**:
+
 - Load on first use, not at startup
 - Share models across requests (singleton pattern)
 - Option to run preprocessing in separate process/container
 
 **Configuration Option**:
+
 ```python
 MNEMEX_PREPROCESSING_MODE = "inline"  # or "async" or "separate_process"
 ```
@@ -1062,6 +1116,7 @@ MNEMEX_PREPROCESSING_MODE = "inline"  # or "async" or "separate_process"
 **Impact**: Medium - Lower accuracy reduces reliability gains
 
 **Mitigation**:
+
 - Start with rule-based fallback for low-confidence predictions
 - Collect user feedback: "Was this save appropriate?"
 - Active learning: Retrain with corrected examples
@@ -1072,6 +1127,7 @@ MNEMEX_PREPROCESSING_MODE = "inline"  # or "async" or "separate_process"
 **Impact**: Medium - Clutters memory store, annoys users
 
 **Mitigation**:
+
 - Conservative confidence thresholds (0.8 for auto-save)
 - LLM still has final say (can reject preprocessing suggestion)
 - User feedback loop: "Was this save unnecessary?"
@@ -1082,6 +1138,7 @@ MNEMEX_PREPROCESSING_MODE = "inline"  # or "async" or "separate_process"
 **Impact**: Low - Could slow conversation if >200ms
 
 **Mitigation**:
+
 - Use lightweight models (DistilBERT, not full BERT)
 - Async processing (don't block LLM response)
 - Cache recent results
@@ -1093,6 +1150,7 @@ MNEMEX_PREPROCESSING_MODE = "inline"  # or "async" or "separate_process"
 **Impact**: Low - Adds code complexity and maintenance burden
 
 **Mitigation**:
+
 - Clear separation of concerns (preprocessing layer is modular)
 - Each component independently testable
 - Configuration to disable features if not needed
@@ -1103,6 +1161,7 @@ MNEMEX_PREPROCESSING_MODE = "inline"  # or "async" or "separate_process"
 **Impact**: Medium - Poor training data → poor intent classifier
 
 **Mitigation**:
+
 - Use GPT-4/Claude for synthetic data generation (high quality)
 - Manual review of training examples
 - Balance classes (equal examples per intent)
@@ -1116,6 +1175,7 @@ MNEMEX_PREPROCESSING_MODE = "inline"  # or "async" or "separate_process"
 ### Quantitative Metrics
 
 **Activation Reliability** (Primary Metric):
+
 - **Baseline**: ~40% (current, LLM-only)
 - **Phase 1 Target**: 60-70%
 - **Phase 2 Target**: 75-85%
@@ -1124,29 +1184,35 @@ MNEMEX_PREPROCESSING_MODE = "inline"  # or "async" or "separate_process"
 **Measurement**: % of save-worthy content that results in actual saves (human-annotated test set)
 
 **Intent Classification Accuracy**:
+
 - **Target**: 85%+ on held-out test set
 - **Per-Class Precision/Recall**: >80% for each intent
 
 **False Positive Rate**:
+
 - **Target**: <10% (saves that shouldn't have happened)
 - **Measurement**: User feedback + manual review
 
 **False Negative Rate**:
+
 - **Target**: <5% (missed important information)
 - **Measurement**: User reports "you forgot X"
 
 **Latency**:
+
 - **Target**: <100ms preprocessing time
 - **Measurement**: Average time from message receipt to preprocessing complete
 
 ### Qualitative Metrics
 
 **User Satisfaction**:
+
 - Survey: "Does the system remember important information?" (8/10 target)
 - Survey: "How often does the system miss something important?" (Rarely/Never target)
 - Survey: "Are saves appropriate and relevant?" (7/10 target)
 
 **Developer Experience**:
+
 - Code maintainability (modular, well-tested)
 - Ease of adding new intents or patterns
 - Configuration flexibility
@@ -1158,16 +1224,19 @@ MNEMEX_PREPROCESSING_MODE = "inline"  # or "async" or "separate_process"
 ### Short-Term (Next 6 Months)
 
 **1. Custom Entity Types**
+
 - Fine-tune spaCy for domain-specific entities
 - Technology stack entities (Python → TECHNOLOGY)
 - Preference entities (TypeScript → PREFERENCE:LANGUAGE)
 
 **2. Reinforcement Learning from User Corrections**
+
 - Track when users override preprocessing suggestions
 - Retrain models with correction data
 - Personalized models per user
 
 **3. Multi-Language Support**
+
 - Add spaCy models for other languages
 - Multi-lingual intent classification
 - Language detection + routing
@@ -1175,16 +1244,19 @@ MNEMEX_PREPROCESSING_MODE = "inline"  # or "async" or "separate_process"
 ### Medium-Term (6-12 Months)
 
 **4. Active Learning Pipeline**
+
 - Identify low-confidence predictions
 - Request user labels for uncertain cases
 - Continuously improve models with feedback
 
 **5. Personalized Intent Models**
+
 - Per-user fine-tuning based on usage patterns
 - Adaptive confidence thresholds
 - Preference learning (user prefers high/low activation rate)
 
 **6. Cross-Turn Conversation Understanding**
+
 - Dialog state tracking
 - Coreference resolution ("it", "that", etc.)
 - Multi-turn decision detection
@@ -1192,16 +1264,19 @@ MNEMEX_PREPROCESSING_MODE = "inline"  # or "async" or "separate_process"
 ### Long-Term (12+ Months)
 
 **7. Automatic Relation Inference**
+
 - Detect relationships between entities
 - Populate `create_relation` automatically
 - Build richer knowledge graph structure
 
 **8. Temporal Reasoning**
+
 - Understand time references ("last week", "in the future")
 - Auto-populate temporal metadata
 - Query by time periods
 
 **9. Explainability Dashboard**
+
 - Show why system saved/didn't save
 - Visualize confidence scores and signals
 - Allow users to adjust preprocessing behavior
@@ -1225,6 +1300,7 @@ MNEMEX_PREPROCESSING_MODE = "inline"  # or "async" or "separate_process"
 This architectural plan transforms cortexgraph from **sporadic, LLM-dependent activation** to **reliable, preprocessing-assisted activation**. By adding a preprocessing layer that detects patterns, extracts entities, classifies intent, and scores importance, we reduce LLM cognitive load while preserving flexibility.
 
 **Key Principles**:
+
 1. **Hybrid Architecture**: Deterministic preprocessing + LLM judgment
 2. **Progressive Enhancement**: Each component adds independent value
 3. **Research-Backed**: Built on 2024-2025 state-of-the-art approaches
@@ -1237,12 +1313,14 @@ This architectural plan transforms cortexgraph from **sporadic, LLM-dependent ac
 ## References
 
 ### Academic Papers
+
 - ArXiv 2504.19413v1: "Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory"
 - Wiley Expert Systems (2025): "Intent detection for task-oriented conversational agents"
 - MDPI Applied Sciences (2025): "Knowledge Graph Construction: Extraction, Learning, and Evaluation"
 - Frontiers in Computer Science (2025): "Knowledge Graph Construction with LLMs"
 
 ### Industry Tools
+
 - Mem0: github.com/mem0ai/mem0
 - spaCy: spacy.io
 - Transformers (Hugging Face): huggingface.co/transformers
@@ -1250,6 +1328,7 @@ This architectural plan transforms cortexgraph from **sporadic, LLM-dependent ac
 - Sentence-Transformers: github.com/UKPLab/sentence-transformers
 
 ### cortexgraph Documentation
+
 - Architecture: `docs/architecture.md`
 - API Reference: `docs/api.md`
 - Smart Prompting (current): `docs/prompts/memory_system_prompt.md`

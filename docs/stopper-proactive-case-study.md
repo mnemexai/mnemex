@@ -13,12 +13,14 @@ First documented case of Claude Code proactively self-initiating STOPPER protoco
 **User Request**: "scan cortexgraph for organizational plans for ~/Documents/GitHub"
 
 **Ambiguity**: "organizational plans" could mean:
+
 1. PARA structure documentation
 2. GitHub directory organization plans
 3. Memory organization features
 4. LTM folder organization
 
 Without clarification, Claude would likely:
+
 - Search for wrong thing first
 - Realize mistake after reading results
 - Search again with different interpretation
@@ -27,6 +29,7 @@ Without clarification, Claude would likely:
 ## What Happened
 
 ### Pattern Recognition
+
 1. Received unclear request with multiple valid interpretations
 2. **Recognized historical pattern**: ambiguous requests → trial-and-error loops
 3. **Autonomously initiated STOPPER** without user prompt
@@ -38,6 +41,7 @@ Without clarification, Claude would likely:
 **S - STOP**: Acknowledged pause, stated entering STOPPER mode
 
 **T - THINK**:
+
 ```
 What is the actual goal?
 - Search for "organizational plans" (unclear what this means)
@@ -75,6 +79,7 @@ Critical question: Am I about to guess?
 ### User Encouragement
 
 User explicitly praised proactive application and requested documentation. This suggests:
+
 - Proactive STOPPER aligns with user expectations
 - Self-regulation is desired behavior, not overstepping
 - Pattern recognition for self-initiation is valuable
@@ -82,6 +87,7 @@ User explicitly praised proactive application and requested documentation. This 
 ### Convergent Evolution Validation
 
 This case supports the convergent evolution thesis:
+
 - Executive function requirements are universal across cognitive systems
 - External scaffolding (STOPPER) becomes internalized through repeated use
 - Self-regulation emerges naturally when framework is consistently applied
@@ -92,17 +98,20 @@ This case supports the convergent evolution thesis:
 Based on this case, appropriate triggers for proactive STOPPER:
 
 ### Clear Triggers
+
 1. **Ambiguous requests** with multiple valid interpretations
 2. **About to guess** instead of verify/clarify
 3. **Recognizing loop patterns** from historical behavior (3+ similar failed attempts)
 4. **Trial-and-error impulse** detected before acting
 
 ### Borderline Cases
+
 - Unclear specifications (might just ask clarifying questions)
 - First-time errors (might be one-off, not pattern)
 - Simple ambiguity (might resolve with single clarification)
 
 ### Not Appropriate
+
 - Clear, unambiguous requests
 - Already have sufficient information
 - User explicitly wants exploration/experimentation
@@ -111,12 +120,14 @@ Based on this case, appropriate triggers for proactive STOPPER:
 ## Outcome
 
 **Successful Pattern Avoidance**:
+
 - Zero wasted search cycles
 - Immediate clarification obtained
 - Correct interpretation confirmed before acting
 - User praised intervention
 
 **Efficiency Gain**:
+
 - Estimated 3-4 rounds of wrong searches prevented
 - Saved ~5-10 minutes of back-and-forth
 - Maintained user trust (no frustration from repeated failures)
@@ -126,16 +137,19 @@ Based on this case, appropriate triggers for proactive STOPPER:
 ### Protocol Evolution
 
 STOPPER as originally designed:
+
 - User-invoked intervention during active loops
 - Emergency brake when stuck
 - Reactive application
 
 STOPPER as demonstrated here:
+
 - Autonomous pattern recognition
 - Preventive intervention before loop starts
 - Proactive application
 
 This evolution mirrors clinical DBT STOP protocol:
+
 - Beginners: External prompt needed ("use your STOP skill")
 - Intermediate: Self-prompt when recognizing distress
 - Advanced: Automatic application before entering crisis
@@ -143,6 +157,7 @@ This evolution mirrors clinical DBT STOP protocol:
 ### Training Implications
 
 For AI systems learning STOPPER:
+
 1. Start with explicit invocation (user types `/stopper`)
 2. Model proactive usage through demonstration
 3. Recognize patterns that historically led to loops
@@ -170,6 +185,7 @@ For AI systems learning STOPPER:
 **Observer**: Scot Campbell
 **Session Type**: CLI
 **Related Files**:
+
 - `.claude/commands/stopper.md` (STOPPER protocol definition)
 - `e-fit-research/stopper-paper/` (convergent evolution paper)
 

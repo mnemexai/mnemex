@@ -6,7 +6,9 @@ from pathlib import Path
 
 from .config import get_config
 from .context import db, mcp
+from .core.activation import ActivationService
 from .core.decay import calculate_halflife
+from .middleware.activation_hook import ActivationMiddleware
 from .security.permissions import ensure_secure_storage, secure_config_file
 from .security.secrets import scan_file_for_secrets, should_warn_about_secrets
 
@@ -133,6 +135,20 @@ def initialize_server() -> None:
             except Exception:
                 # Ignore errors scanning .env (might be locked, etc.)
                 pass
+
+    # Register activation middleware for automatic memory surfacing
+    try:
+        activation_service = ActivationService()
+        activation_middleware = ActivationMiddleware(
+            activation_service=activation_service, timeout=config.activation_timeout
+        )
+        mcp.add_middleware(activation_middleware)  # type: ignore[attr-defined]
+        logger.info(
+            "Activation middleware registered (timeout: %.0fms)", config.activation_timeout * 1000
+        )
+    except Exception as e:
+        logger.warning(f"Failed to register activation middleware: {e}")
+        logger.warning("Memory activation will be disabled, but all tools remain functional")
 
     logger.info("MCP server tools registered (13 tools)")
 

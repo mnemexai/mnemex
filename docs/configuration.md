@@ -139,6 +139,7 @@ MNEMEX_EMBED_MODEL=all-MiniLM-L6-v2
 ```
 
 Requires additional dependencies:
+
 ```bash
 uv pip install sentence-transformers
 ```

@@ -5,6 +5,7 @@ Mnemex can use the [Bear note-taking app](https://bear.app/) as a long-term memo
 ## Overview
 
 The Bear integration uses a hybrid architecture for optimal performance and safety:
+
 - **Fast Reads**: It reads directly from Bear's local SQLite database for high-speed searching and indexing.
 - **Safe Writes**: It uses Bear's official `x-callback-url` API for creating and modifying notes, ensuring full compatibility with iCloud sync.
 
@@ -15,6 +16,7 @@ The Bear integration uses a hybrid architecture for optimal performance and safe
 To enable the Bear integration, you need to configure a few settings in your `.env` file.
 
 First, copy the example environment file if you haven't already:
+
 ```bash
 cp .env.example .env
 ```
@@ -42,11 +44,11 @@ MNEMEX_BEAR_TAG_PREFIX="cortexgraph"
 
 ### How to Get Your Bear API Token
 
-1.  Open the Bear app on your Mac.
-2.  Go to the **Help** menu.
-3.  Navigate to **Advanced**.
-4.  Click on **API Token**.
-5.  Copy the token and paste it into your `.env` file.
+1. Open the Bear app on your Mac.
+2. Go to the **Help** menu.
+3. Navigate to **Advanced**.
+4. Click on **API Token**.
+5. Copy the token and paste it into your `.env` file.
 
 ## Usage
 
@@ -57,6 +59,7 @@ Once configured, you can promote memories to Bear using the `promote_memory` too
 To promote a memory, specify `"bear"` as the `target`.
 
 **MCP Tool Request:**
+
 ```json
 {
   "tool_name": "promote_memory",

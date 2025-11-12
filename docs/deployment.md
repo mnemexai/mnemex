@@ -86,6 +86,7 @@ pytest -v
 ### Claude Desktop (macOS)
 
 Configuration file location:
+
 ```
 ~/Library/Application Support/Claude/claude_desktop_config.json
 ```
@@ -123,6 +124,7 @@ Configuration file location:
 If Claude Desktop shows `spawn cortexgraph ENOENT` errors, the `cortexgraph` command isn't in Claude Desktop's PATH.
 
 GUI applications on macOS/Linux don't inherit shell PATH configurations (`.zshrc`, `.bashrc`, etc.). Claude Desktop only searches:
+
 - `/usr/local/bin`
 - `/opt/homebrew/bin` (macOS)
 - `/usr/bin`, `/bin`, `/usr/sbin`, `/sbin`
@@ -164,6 +166,7 @@ Restart Claude Desktop after configuration.
 ### Claude Desktop (Windows)
 
 Configuration file location:
+
 ```
 %APPDATA%\Claude\claude_desktop_config.json
 ```
@@ -308,6 +311,7 @@ MNEMEX_PROMOTE_TIME_WINDOW=14
 ```
 
 Tuning tips:
+
 - Power-Law has a heavier tail; consider a slightly higher `MNEMEX_FORGET_THRESHOLD` (e.g., 0.06–0.08) or reduce `MNEMEX_PL_HALFLIFE_DAYS` to maintain GC budget.
 - Two-Component forgets very recent items faster; validate promotion and GC rates and adjust thresholds as needed.
 
@@ -432,6 +436,7 @@ echo "Storage files: $(ls -l $HOME/.config/cortexgraph/jsonl | wc -l)" >> "$LOG_
 ```
 
 Schedule with cron:
+
 ```bash
 # Run daily at 2 AM
 0 2 * * * ~/.config/cortexgraph/maintenance.sh
@@ -526,6 +531,7 @@ MNEMEX_EMBED_MODEL=paraphrase-MiniLM-L3-v2
 ### Memory Usage
 
 Typical memory footprint:
+
 - Base server: ~20-30MB
 - With embeddings model: ~70-100MB
 - Storage index in memory: ~1KB per memory (typical)

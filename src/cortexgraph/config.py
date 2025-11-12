@@ -283,6 +283,42 @@ class Config(BaseModel):
         le=60.0,
     )
 
+    # Activation settings (natural language memory surfacing)
+    activation_timeout: float = Field(
+        default=0.05,
+        description="Timeout for activation middleware in seconds (default 50ms)",
+        ge=0.01,
+        le=1.0,
+    )
+    activation_threshold: float = Field(
+        default=0.5,
+        description="Minimum activation score for memory surfacing (0.0-1.0)",
+        ge=0.0,
+        le=1.0,
+    )
+    activation_max_memories: int = Field(
+        default=10,
+        description="Maximum memories to activate per query",
+        ge=1,
+        le=50,
+    )
+    activation_enable_spreading: bool = Field(
+        default=True,
+        description="Enable spreading activation through memory graph",
+    )
+    activation_max_hops: int = Field(
+        default=3,
+        description="Maximum hops for spreading activation (1-5)",
+        ge=1,
+        le=5,
+    )
+    activation_decay_per_hop: float = Field(
+        default=0.5,
+        description="Exponential decay factor per hop (0.1-1.0)",
+        ge=0.1,
+        le=1.0,
+    )
+
     @field_validator("storage_path", "ltm_vault_path", "ltm_index_path", mode="before")
     @classmethod
     def expand_path(cls, v: str | Path | None) -> Path | None:
@@ -402,6 +438,24 @@ class Config(BaseModel):
         # Security
         if detect_secrets := os.getenv("CORTEXGRAPH_DETECT_SECRETS"):
             config_dict["detect_secrets"] = detect_secrets.lower() in ("true", "1", "yes")
+
+        # Activation settings
+        if activation_timeout := os.getenv("CORTEXGRAPH_ACTIVATION_TIMEOUT"):
+            config_dict["activation_timeout"] = float(activation_timeout)
+        if activation_threshold := os.getenv("CORTEXGRAPH_ACTIVATION_THRESHOLD"):
+            config_dict["activation_threshold"] = float(activation_threshold)
+        if activation_max_memories := os.getenv("CORTEXGRAPH_ACTIVATION_MAX_MEMORIES"):
+            config_dict["activation_max_memories"] = int(activation_max_memories)
+        if activation_enable_spreading := os.getenv("CORTEXGRAPH_ACTIVATION_ENABLE_SPREADING"):
+            config_dict["activation_enable_spreading"] = activation_enable_spreading.lower() in (
+                "true",
+                "1",
+                "yes",
+            )
+        if activation_max_hops := os.getenv("CORTEXGRAPH_ACTIVATION_MAX_HOPS"):
+            config_dict["activation_max_hops"] = int(activation_max_hops)
+        if activation_decay_per_hop := os.getenv("CORTEXGRAPH_ACTIVATION_DECAY_PER_HOP"):
+            config_dict["activation_decay_per_hop"] = float(activation_decay_per_hop)
 
         return cls(**cast(dict[str, Any], config_dict))
 

@@ -38,6 +38,7 @@ $$
 $$
 
 Where:
+
 - $n_{\text{use}}$: Number of times the memory has been accessed (touches)
 - $\beta$ (beta): Use count weight exponent (default: 0.6)
 - $\lambda$ (lambda): Decay constant (default: $2.673 \times 10^{-6}$ for 3-day half-life)
@@ -70,6 +71,7 @@ Where:
 **Purpose:** Reward frequently accessed memories.
 
 **Why Exponent?**
+
 - Linear growth ($\beta=1.0$) over-rewards high use counts
 - Sub-linear ($\beta<1.0$) provides diminishing returns
 - Default $\beta=0.6$ balances reward vs. diminishing returns
@@ -84,6 +86,7 @@ Where:
 | 50        | 11.45     | 11.4x        |
 
 **Tuning Guidelines:**
+
 - **Higher $\beta$** (0.8-1.0): Strongly favor frequently used memories
 - **Lower $\beta$** (0.3-0.5): Reduce impact of use count, emphasize recency
 - **$\beta=0.0$**: Disable use count entirely (pure temporal decay)
@@ -93,6 +96,7 @@ Where:
 **Purpose:** Exponential decay over time ([Ebbinghaus forgetting curve](https://en.wikipedia.org/wiki/Forgetting_curve)).
 
 **Why Exponential?**
+
 - Models human memory better than linear decay
 - Creates natural "forgetting" behavior
 - Continuous and smooth (no sudden drops)
@@ -126,6 +130,7 @@ Time Since Last Use | Score Multiplier (λ=3-day half-life)
 ```
 
 **Tuning Guidelines:**
+
 - **1-day half-life** ($\lambda=8.02 \times 10^{-6}$): Aggressive decay, forget quickly
 - **3-day half-life** ($\lambda=2.67 \times 10^{-6}$): Default, balanced retention
 - **7-day half-life** ($\lambda=1.15 \times 10^{-6}$): Gentle decay, longer retention
@@ -136,11 +141,13 @@ Time Since Last Use | Score Multiplier (λ=3-day half-life)
 **Purpose:** Boost or dampen specific memories based on importance.
 
 **Range:** 0.0 to 2.0
+
 - **0.0-0.5**: Low priority, ephemeral
 - **1.0**: Normal (default)
 - **1.5-2.0**: High priority, critical
 
 **Use Cases:**
+
 ```python
 # Security credentials - critical
 strength = 2.0
@@ -156,6 +163,7 @@ strength = 0.5
 ```
 
 **Strength Over Time:**
+
 - Can be increased via `touch_memory(boost_strength=True)`
 - Caps at 2.0 to prevent runaway growth
 - Only way to "permanently" resist decay (besides re-touching)
@@ -167,6 +175,7 @@ strength = 0.5
 **Purpose:** Delete memories with very low scores.
 
 **Rationale:**
+
 - Below 5% of original score → likely irrelevant
 - Prevents database bloat
 
@@ -196,10 +205,12 @@ Since $0.001 < 0.05$ → **FORGET**
 **Purpose:** Move high-value memories to long-term storage (LTM).
 
 **Dual Criteria (OR logic):**
+
 1. **Score-based:** $\text{score} \geq 0.65$
 2. **Usage-based:** $n_{\text{use}} \geq 5$ within 14 days
 
 **Rationale:**
+
 - Score-based: Catches quickly-important info (e.g., high strength + recent)
 - Usage-based: Catches frequently referenced info (even if not recent)
 
@@ -384,6 +395,7 @@ Score
 ## Tuning for Different Use Cases
 
 ### Personal Assistant (Balanced)
+
 ```env
 MNEMEX_DECAY_LAMBDA=2.673e-6  # 3-day half-life
 MNEMEX_DECAY_BETA=0.6
@@ -392,6 +404,7 @@ MNEMEX_PROMOTE_THRESHOLD=0.65
 ```
 
 ### Development Environment (Aggressive)
+
 ```env
 MNEMEX_DECAY_LAMBDA=8.02e-6   # 1-day half-life
 MNEMEX_DECAY_BETA=0.8
@@ -400,6 +413,7 @@ MNEMEX_PROMOTE_THRESHOLD=0.70
 ```
 
 ### Research / Archival (Conservative)
+
 ```env
 MNEMEX_DECAY_LAMBDA=5.73e-7   # 14-day half-life
 MNEMEX_DECAY_BETA=0.4
@@ -408,6 +422,7 @@ MNEMEX_PROMOTE_THRESHOLD=0.50
 ```
 
 ### Meeting Notes (High Velocity)
+
 ```env
 MNEMEX_DECAY_LAMBDA=1.60e-5   # 12-hour half-life
 MNEMEX_DECAY_BETA=0.9
@@ -420,6 +435,7 @@ MNEMEX_PROMOTE_THRESHOLD=0.75
 ### Precision
 
 Use floating-point for all calculations:
+
 ```python
 # Good
 time_delta = float(now - last_used)
@@ -433,6 +449,7 @@ score = use_count ** beta * math.exp(-lambda_ * time_delta) * strength
 ### Caching
 
 Scores change over time. Either:
+
 1. Calculate on-demand (accurate but slower)
 2. Cache with TTL (faster but approximate)
 
@@ -441,6 +458,7 @@ STM uses on-demand calculation for accuracy.
 ### Batch Operations
 
 For garbage collection, calculate scores in batch:
+
 ```python
 now = int(time.time())
 memories_to_delete = []

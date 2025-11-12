@@ -1,9 +1,5 @@
 # CortexGraph: Temporal Memory for AI
 
-<div align="center">
-  <img src="cortexgraph_logo.png" alt="CortexGraph Logo" width="400">
-</div>
-
 <!-- mcp-name: io.github.prefrontal-systems/cortexgraph -->
 
 A Model Context Protocol (MCP) server providing **human-like memory dynamics** for AI assistants. Memories naturally fade over time unless reinforced through use, mimicking the [Ebbinghaus forgetting curve](https://en.wikipedia.org/wiki/Forgetting_curve).
@@ -23,6 +19,7 @@ A Model Context Protocol (MCP) server providing **human-like memory dynamics** f
 > **Version numbering starts at 0.1.0** for the cortexgraph package to signal a fresh start under the new name, while acknowledging the mature, well-tested codebase (791 tests, 98%+ coverage) inherited from mnemex. The mnemex package remains frozen at v0.6.0 on PyPI.
 >
 > This versioning approach:
+
 > - Signals "new package" to PyPI users discovering cortexgraph
 > - Gives room to evolve the brand, API, and organizational integration before 1.0
 > - Maintains continuity: users can migrate from `pip install mnemex` → `pip install cortexgraph`
@@ -71,10 +68,12 @@ CortexGraph makes AI assistants **remember things naturally**, just like human m
 ### Why It's Different
 
 Most memory systems are dumb:
+
 - ❌ "Delete after 7 days" (doesn't care if you used it 100 times)
 - ❌ "Keep last 100 items" (throws away important stuff just because it's old)
 
 CortexGraph is smart:
+
 - ✅ Combines **recency** (when?), **frequency** (how often?), and **importance** (how critical?)
 - ✅ Memories fade naturally like human memory
 - ✅ Frequently used memories stick around longer
@@ -175,23 +174,23 @@ Unlike traditional caching (TTL, LRU), Mnemex scores memories continuously by co
 
 Patterns for making AI assistants use memory naturally:
 
-**Auto-Save**
+#### Auto-Save
 
-```
+```text
 User: "I prefer TypeScript over JavaScript"
 → Automatically saved with tags: [preferences, typescript, programming]
 ```
 
-**Auto-Recall**
+#### Auto-Recall
 
-```
+```text
 User: "Can you help with another TypeScript project?"
 → Automatically retrieves preferences and conventions
 ```
 
-**Auto-Reinforce**
+#### Auto-Reinforce
 
-```
+```text
 User: "Yes, still using TypeScript"
 → Memory strength increased, decay slowed
 ```
@@ -213,7 +212,7 @@ Inspired by how concepts naturally reinforce across different contexts (the "Mas
 
 **Usage pattern:**
 
-```
+```bash
 User: "Can you help with authentication in my API?"
 → System searches, retrieves JWT preference memory
 → System uses memory to answer question
@@ -236,7 +235,7 @@ See `docs/prompts/` for LLM system prompt templates that enable natural memory u
 
 ### 4. Two-Layer Architecture
 
-```
+```text
 ┌─────────────────────────────────────┐
 │   Short-term memory                 │
 │   - JSONL storage                   │
@@ -253,12 +252,11 @@ See `docs/prompts/` for LLM system prompt templates that enable natural memory u
 └─────────────────────────────────────┘
 ```
 
-
 ## Quick Start
 
 ### Installation
 
-**Recommended: UV Tool Install (from PyPI)**
+#### Recommended: UV Tool Install (from PyPI)
 
 ```bash
 # Install from PyPI (recommended - fast, isolated, includes all 7 CLI commands)
@@ -267,7 +265,7 @@ uv tool install cortexgraph
 
 This installs `cortexgraph` and all 7 CLI commands in an isolated environment.
 
-**Alternative Installation Methods**
+#### Alternative Installation Methods
 
 ```bash
 # Using pipx (similar isolation to uv)
@@ -280,7 +278,7 @@ pip install cortexgraph
 uv tool install git+https://github.com/simplemindedbot/cortexgraph.git
 ```
 
-**For Development (Editable Install)**
+#### For Development (Editable Install)
 
 ```bash
 # Clone and install in editable mode
@@ -293,7 +291,7 @@ uv pip install -e ".[dev]"
 
 **IMPORTANT**: Configuration location depends on installation method:
 
-**Method 1: .env file (Works for all installation methods)**
+#### Method 1: .env file (Works for all installation methods)
 
 Create `~/.config/cortexgraph/.env`:
 
@@ -341,7 +339,7 @@ MNEMEX_PROMOTE_THRESHOLD=0.65
 LTM_VAULT_PATH=~/Documents/Obsidian/Vault
 ```
 
-**Method 2: Environment variables in Claude Desktop config**
+#### Method 2: Environment variables in Claude Desktop config
 
 Add environment variables directly to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 
@@ -363,6 +361,7 @@ Add environment variables directly to `~/Library/Application Support/Claude/clau
 ```
 
 **Where cortexgraph looks for .env files:**
+
 1. **Primary**: `~/.config/cortexgraph/.env` ← Use this for `uv tool install` / `uvx`
 2. **Fallback**: `./.env` (current directory) ← Only works for editable installs
 
@@ -402,9 +401,10 @@ Configuration can be loaded from `./.env` in the project directory OR `~/.config
 
 If Claude Desktop shows `spawn cortexgraph ENOENT` errors, the `cortexgraph` command isn't in Claude Desktop's PATH.
 
-**macOS/Linux: GUI apps don't inherit shell PATH**
+#### macOS/Linux: GUI apps don't inherit shell PATH
 
 GUI applications on macOS and Linux don't see your shell's PATH configuration (`.zshrc`, `.bashrc`, etc.). Claude Desktop only searches:
+
 - `/usr/local/bin`
 - `/opt/homebrew/bin` (macOS)
 - `/usr/bin`
@@ -414,7 +414,7 @@ GUI applications on macOS and Linux don't see your shell's PATH configuration (`
 
 If `uv tool install` placed `cortexgraph` in `~/.local/bin/` or another custom location, Claude Desktop can't find it.
 
-**Solution: Use absolute path**
+#### Solution: Use absolute path
 
 ```bash
 # Find where cortexgraph is installed
@@ -436,7 +436,7 @@ Update your Claude config with the absolute path:
 
 Replace `/Users/username/.local/bin/cortexgraph` with your actual path from `which cortexgraph`.
 
-**Alternative: System-wide install**
+#### Alternative: System-wide install
 
 You can also install to a system location that Claude Desktop searches:
 
@@ -478,29 +478,6 @@ uv tool install git+https://github.com/simplemindedbot/cortexgraph.git
 
 **Your data is safe!** This only changes how the command is installed. Your memories in `~/.config/cortexgraph/` are untouched.
 
-### Migrating from STM Server
-
-If you previously used this project as "STM Server", use the migration tool:
-
-```bash
-# Preview what will be migrated
-cortexgraph-migrate --dry-run
-
-# Migrate data files from ~/.stm/ to ~/.config/cortexgraph/
-cortexgraph-migrate --data-only
-
-# Also migrate .env file (rename STM_* variables to MNEMEX_*)
-cortexgraph-migrate --migrate-env --env-path ./.env
-```
-
-The migration tool will:
-- Copy JSONL files from `~/.stm/jsonl/` to `~/.config/cortexgraph/jsonl/`
-- Optionally rename environment variables (STM_* → MNEMEX_*)
-- Create backups before making changes
-- Provide clear next-step instructions
-
-After migration, update your Claude Desktop config to use `cortexgraph` instead of `stm`.
-
 ## CLI Commands
 
 The server includes 7 command-line tools:
@@ -539,6 +516,7 @@ python scripts/visualize_graph.py --memories ~/data/memories.jsonl --relations ~
 ```
 
 **Features:**
+
 - Interactive network graph with pan/zoom
 - Node colors by status (active=blue, promoted=green, archived=gray)
 - Node size based on use count
@@ -658,6 +636,7 @@ Apply consolidation to detected clusters:
 ```
 
 The tool will:
+
 - Merge content intelligently (preserving unique information)
 - Combine tags and entities (union)
 - Calculate strength based on cluster cohesion
@@ -729,9 +708,14 @@ MIT License - See [LICENSE](LICENSE) for details.
 Clean-room implementation. No AGPL dependencies.
 
 ### Knowledge & Memory
-*   [mem0ai/mem0-mcp](https://github.com/mem0ai/mem0-mcp) (Python) - A MCP server that provides a smart memory for AI to manage and reference past conversations, user preferences, and key details.
-*   [cortexgraph](https://github.com/simplemindedbot/cortexgraph) (Python) - A Python-based MCP server that provides a human-like short-term working memory (JSONL) and long-term memory (Markdown) system for AI assistants. The core of the project is a temporal decay algorithm that causes memories to fade over time unless they are reinforced through use.
-*   [modelcontextprotocol/server-memory](https://github.com/modelcontextprotocol/server-memory) (TypeScript) - A knowledge graph-based persistent memory system for AI.
+
+- [mem0ai/mem0-mcp](https://github.com/mem0ai/mem0-mcp) (Python) - A MCP server that provides a smart memory for AI
+  to manage and reference past conversations, user preferences, and key details.
+- [cortexgraph](https://github.com/simplemindedbot/cortexgraph) (Python) - A Python-based MCP server that provides a
+  human-like short-term working memory (JSONL) and long-term memory (Markdown) system for AI assistants. The core of
+  the project is a temporal decay algorithm that causes memories to fade over time unless they are reinforced through use.
+- [modelcontextprotocol/server-memory](https://github.com/modelcontextprotocol/server-memory) (TypeScript) - A knowledge
+  graph-based persistent memory system for AI.
 
 ## Related Work
 

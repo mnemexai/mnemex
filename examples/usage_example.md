@@ -316,6 +316,7 @@ STM_PROMOTE_THRESHOLD=0.70    # Higher bar for promotion
 ```
 
 Run GC more frequently:
+
 ```json
 // Daily GC
 {

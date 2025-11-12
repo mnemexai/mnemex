@@ -15,6 +15,7 @@ score(t) = (use_count^β) * exp(-λ * Δt) * strength
 ```
 
 Where:
+
 - `Δt = now - last_used` (time since last access)
 - `λ` (lambda): Decay constant controlling decay rate
 - `β` (beta): Exponent weighting the importance of use_count
@@ -35,6 +36,7 @@ This means a memory's score will drop to 50% of its current value after 3 days w
 ### Reinforcement
 
 Each time a memory is accessed:
+
 1. `last_used` is updated to current time (resets decay)
 2. `use_count` is incremented (increases base score)
 3. Optionally, `strength` can be boosted (max 2.0)
@@ -52,6 +54,7 @@ OR
 **Usage-based**: `use_count >= N` (default: 5) within time window (default: 14 days)
 
 Once promoted, the memory is:
+
 1. Written to Obsidian vault as a Markdown note
 2. Marked as `PROMOTED` in the database
 3. Retained with a redirect pointer to the vault location
@@ -100,6 +103,7 @@ def calculate_review_priority(memory: Memory) -> float:
 ```
 
 **Danger zone defaults:**
+
 - Lower bound: 0.15 (memories decaying rapidly)
 - Upper bound: 0.35 (memories still reasonably strong)
 - Peak priority: 0.25 (midpoint - maximum urgency)
@@ -130,6 +134,7 @@ def detect_cross_domain_usage(memory: Memory, context_tags: list[str]) -> bool:
 ```
 
 **Example:**
+
 - Memory tags: `[security, jwt, preferences]`
 - Context tags: `[api, auth, backend]`
 - Jaccard similarity: 0.0 (no overlap) → **Cross-domain detected**
@@ -189,6 +194,7 @@ The `search_memory` tool automatically blends review candidates into search resu
    - Configurable via `MNEMEX_REVIEW_BLEND_RATIO`
 
 **Example flow:**
+
 ```
 User searches for "typescript preferences"
 → Primary results: 7 matches (sorted by relevance × decay score)
@@ -267,6 +273,7 @@ The natural spaced repetition system works entirely through conversation:
 Each memory is stored as a JSON object, one per line, in `memories.jsonl`. Relations in `relations.jsonl`.
 
 Example line:
+
 ```
 {"id":"...","content":"...","meta":{"tags":["..."]},"created_at":1736275200,"last_used":1736275200,"use_count":0,"strength":1.0,"status":"active"}
 ```
@@ -425,11 +432,13 @@ For semantic search and clustering:
 ### Scaling
 
 Current design targets:
+
 - 1,000-10,000 active memories
 - Single user, single machine
 - Local-first architecture
 
 For larger scales, consider:
+
 - External databases (e.g., PostgreSQL) are out of scope for this project
 - Vector database (e.g., Qdrant, Weaviate)
 - Distributed MCP architecture

@@ -16,6 +16,7 @@ The knowledge graph provides:
 ### Memories as Nodes
 
 Each memory is a node in the graph with:
+
 - **Content**: The actual information stored
 - **Entities**: Named entities mentioned (e.g., people, projects, concepts)
 - **Metadata**: Tags, source, context
@@ -25,6 +26,7 @@ Each memory is a node in the graph with:
 ### Relations as Edges
 
 Relations connect memories with:
+
 - **Type**: The nature of the relationship (e.g., "references", "similar_to", "follows_from")
 - **Direction**: From one memory to another
 - **Strength**: Weight of the relationship (0.0-1.0)
@@ -67,6 +69,7 @@ Relations connect memories with:
 Get the complete knowledge graph.
 
 **Use Cases:**
+
 - Visualize the entire memory network
 - Export memories for analysis
 - Understand memory structure
@@ -123,6 +126,7 @@ Get the complete knowledge graph.
 Retrieve specific memories with their relations.
 
 **Use Cases:**
+
 - Get detailed info about specific memories
 - Navigate the graph by following relations
 - Context assembly for LLM
@@ -180,6 +184,7 @@ Retrieve specific memories with their relations.
 Create an explicit directed link between two memories.
 
 **Use Cases:**
+
 - Manual linking of related information
 - Building knowledge graphs explicitly
 - Documenting dependencies
@@ -188,6 +193,7 @@ Create an explicit directed link between two memories.
 **Relation Types:**
 
 Common relation types:
+
 - `references`: One memory mentions/cites another
 - `follows_from`: Temporal sequence (this came after that)
 - `similar_to`: Semantic similarity
@@ -383,6 +389,7 @@ memories_above_threshold = [m for m in result if m["score"] > 0.3]
 ### 3. Promotion Preserves Relations
 
 When promoting a memory to Obsidian:
+
 - Relations are recorded in note frontmatter
 - Links to other memories (if also promoted) become wiki-links
 - Un-promoted relation targets are noted as STM references
@@ -448,12 +455,14 @@ def get_neighbors(memory_id, graph, hops=2):
    - Recommended: 5-10 core types
 
 3. **Bidirectional Relations**: Create both directions if needed
+
    ```python
    create_relation({"from": "A", "to": "B", "type": "references"})
    create_relation({"from": "B", "to": "A", "type": "referenced_by"})
    ```
 
 4. **Metadata**: Use relation metadata for context
+
    ```python
    {
      "metadata": {

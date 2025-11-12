@@ -24,6 +24,7 @@ Mnemex uses multiple security scanning tools:
 - **CodeQL**: Semantic code analysis
 
 Scans run:
+
 - On every push/PR
 - Weekly scheduled scans (Mondays 10:00 UTC)
 - Manual workflow dispatch
@@ -113,6 +114,7 @@ Use GitHub's private reporting feature (link above).
 ## Security Updates
 
 Subscribe to:
+
 - [GitHub Security Advisories](https://github.com/simplemindedbot/cortexgraph/security/advisories)
 - [Release notifications](https://github.com/simplemindedbot/cortexgraph/releases)
 
@@ -121,5 +123,6 @@ Subscribe to:
 Security practices follow OWASP guidelines and OSSF best practices.
 
 See also:
+
 - [SECURITY.md](https://github.com/simplemindedbot/cortexgraph/blob/main/SECURITY.md) (main policy)
 - [Contributing guidelines](CONTRIBUTING.md)

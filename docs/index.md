@@ -23,6 +23,7 @@ Mnemex is a **Model Context Protocol (MCP)** server that gives AI assistants lik
 🔒 **Privacy First**: All data stored locally on your machine - no cloud, no tracking, no data sharing
 
 📁 **Human-Readable**:
+
 - Short-term memory in JSONL format (one JSON object per line)
 - Long-term memory in Markdown with YAML frontmatter
 - Both formats are easy to inspect, edit, and version control

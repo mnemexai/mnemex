@@ -15,6 +15,7 @@ uv tool install git+https://github.com/simplemindedbot/cortexgraph.git
 ```
 
 This installs all 7 CLI commands:
+
 - `cortexgraph` - MCP server
 - `cortexgraph-search` - Unified search across STM + LTM
 - `cortexgraph-maintenance` - Stats and compaction

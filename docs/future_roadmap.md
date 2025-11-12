@@ -7,6 +7,7 @@ This document outlines potential future improvements and implementation approach
 **What it is:** A learning technique where review intervals increase exponentially (e.g., SuperMemo, Anki algorithms).
 
 **Current State in Mnemex:**
+
 - You have `touch_memory()` which reinforces memories
 - Decay algorithm reduces scores over time
 - But there's no **proactive suggestion** of when to review
@@ -23,6 +24,7 @@ intervals = [1 day, 3 days, 7 days, 14 days, 30 days, ...]
 ```
 
 **Features to add:**
+
 1. **Review scheduling** - Track `next_review_at` timestamp
 2. **Review queue tool** - `get_review_queue()` returns memories due for review
 3. **Review outcome tracking** - Easy/medium/hard adjusts next interval
@@ -35,6 +37,7 @@ intervals = [1 day, 3 days, 7 days, 14 days, 30 days, ...]
 ## 2. Adaptive Decay Parameters
 
 **The Problem:** Current λ (decay rate) and β (use weight) are fixed. But different memory types should decay differently:
+
 - Preferences: slow decay
 - Project context: medium decay
 - Random facts: fast decay
@@ -80,6 +83,7 @@ elif memory.use_count < 3 and time_since_last_use > 7_days:
 ## 3. Clustering & Consolidation: LLM vs Algorithmic?
 
 **Current clustering (algorithmic):**
+
 - ✅ Embeddings-based similarity (cosine distance)
 - ✅ Duplicate detection (high threshold like 0.88+)
 - ✅ Cluster formation (medium threshold like 0.78-0.83)
@@ -158,6 +162,7 @@ def consolidate_interactive(cluster):
 ### **Recommendation:**
 
 Start with **Option C (Algorithmic + Human Review)** because:
+
 1. **Safe** - No automatic deletions, user confirms
 2. **Fast** - No LLM calls needed
 3. **Flexible** - User can edit merged content
@@ -274,6 +279,7 @@ def benchmark_compaction():
 ### A. Testing Coverage
 
 Current gaps (likely):
+
 - Edge cases in decay models
 - LTM index updates
 - Git backup failures
@@ -319,6 +325,7 @@ open htmlcov/index.html
 **Installation Simplified:**
 
 Before:
+
 ```bash
 git clone https://github.com/simplemindedbot/cortexgraph.git
 cd cortexgraph
@@ -327,6 +334,7 @@ uv pip install -e .
 ```
 
 After:
+
 ```bash
 uv tool install git+https://github.com/simplemindedbot/cortexgraph.git
 # Simple MCP config: {"command": "cortexgraph"}
@@ -335,6 +343,7 @@ uv tool install git+https://github.com/simplemindedbot/cortexgraph.git
 ### MCP Config Updates
 
 **Before:**
+
 ```json
 {
   "mcpServers": {
@@ -348,6 +357,7 @@ uv tool install git+https://github.com/simplemindedbot/cortexgraph.git
 ```
 
 **After:**
+
 ```json
 {
   "mcpServers": {
@@ -384,10 +394,12 @@ uv tool install git+https://github.com/simplemindedbot/cortexgraph.git
 **Completed:** Algorithmic consolidation with preview/apply modes
 
 **Files Added:**
+
 - `src/cortexgraph/core/consolidation.py` - Core merging logic
 - `tests/test_consolidation.py` - Comprehensive test suite (15 tests, 100% coverage)
 
 **Features:**
+
 - Smart content merging (preserves unique information, detects duplicates)
 - Tag and entity merging (union of all values)
 - Strength calculation based on cluster cohesion
@@ -397,6 +409,7 @@ uv tool install git+https://github.com/simplemindedbot/cortexgraph.git
 - Preview mode (dry-run to inspect before applying)
 
 **Usage:**
+
 ```python
 # Auto-detect and preview
 consolidate_memories(auto_detect=True, mode="preview", cohesion_threshold=0.75)
@@ -407,6 +420,7 @@ consolidate_memories(auto_detect=True, mode="apply", cohesion_threshold=0.80)
 
 **Test Results:**
 All 15 tests passing:
+
 - `test_merge_tags`, `test_merge_entities`, `test_merge_metadata`
 - `test_merge_content_duplicates`, `test_merge_content_distinct`
 - `test_calculate_merged_strength`

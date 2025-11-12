@@ -18,6 +18,7 @@ When you tell a friend "I prefer tea over coffee," they remember without saying 
 ### 1. Auto-Save (Capture Important Information)
 
 **When to trigger:**
+
 - User shares preferences or personal information
 - User makes decisions or plans
 - User provides corrections or feedback
@@ -39,6 +40,7 @@ User: "I've decided to go with the monorepo approach"
 ```
 
 **Implementation Pattern:**
+
 ```python
 # Detect information-sharing patterns
 if is_preference(message) or is_decision(message) or is_factual(message):
@@ -57,6 +59,7 @@ if is_preference(message) or is_decision(message) or is_factual(message):
 ### 2. Auto-Recall (Retrieve Relevant Context)
 
 **When to trigger:**
+
 - User asks about past topics
 - User references previous conversations ("as we discussed")
 - User asks for recommendations based on preferences
@@ -80,6 +83,7 @@ User: "Which approach did we agree on?"
 ```
 
 **Implementation Pattern:**
+
 ```python
 # Detect recall triggers
 if is_question_about_past(message) or references_previous_context(message):
@@ -96,6 +100,7 @@ if is_question_about_past(message) or references_previous_context(message):
 ### 3. Auto-Reinforce (Strengthen Frequently Used Memories)
 
 **When to trigger:**
+
 - User revisits a previously discussed topic
 - User builds upon previous information
 - User confirms or updates existing memories
@@ -114,6 +119,7 @@ User: "Can you update that database location?"
 ```
 
 **Implementation Pattern:**
+
 ```python
 # After successful recall
 if memory_was_helpful(recalled_memory, user_feedback):
@@ -126,6 +132,7 @@ if memory_was_helpful(recalled_memory, user_feedback):
 ### 4. Auto-Consolidate (Merge Similar Memories)
 
 **When to trigger:**
+
 - Cluster analysis detects high similarity (>0.85)
 - User provides updated information about existing memory
 - Conflicting information detected
@@ -144,6 +151,7 @@ System: Detected 3 similar memories about "database config"
 ```
 
 **Implementation Pattern:**
+
 ```python
 # Periodic consolidation check
 clusters = await cluster_memories(threshold=0.85)
@@ -159,6 +167,7 @@ for cluster in clusters:
 ### 5. Explicit Memory Requests (User-Initiated)
 
 **When to trigger:**
+
 - User explicitly asks you to remember something
 - User wants to ensure something is saved
 - User requests recall of specific information
@@ -180,6 +189,7 @@ User: "What did I tell you about my database setup?"
 ```
 
 **Implementation Pattern:**
+
 ```python
 # Detect explicit memory requests
 explicit_save_phrases = [
@@ -206,6 +216,7 @@ if matches_explicit_recall(message):
 ```
 
 **Key Points:**
+
 - Honor explicit requests immediately
 - Use higher strength (1.5-2.0) for explicit saves
 - Acknowledge briefly: "Got it" or "I'll remember that"
@@ -214,6 +225,7 @@ if matches_explicit_recall(message):
 ### 6. Direct to Long-Term Storage (Permanent Memory)
 
 **When to trigger:**
+
 - User explicitly requests permanent/permanent storage
 - User uses emphatic language about never forgetting
 - User wants to make a formal note for future reference
@@ -300,6 +312,7 @@ Bad:
 ### 4. Auto-Observe (Natural Spaced Repetition) **NEW in v0.5.1**
 
 **When to trigger:**
+
 - After retrieving memories via search
 - When you **actually use** memories to inform your response
 - After incorporating memory content into your answer
@@ -359,6 +372,7 @@ if used_memory_ids:
 ```
 
 **When to Observe:**
+
 - ✅ After using memory content in your response
 - ✅ After building on previous context
 - ✅ After confirming user preferences still apply
@@ -367,12 +381,14 @@ if used_memory_ids:
 - ❌ NOT when memory wasn't relevant to answer
 
 **Benefits:**
+
 - **Cross-domain reinforcement:** Memories used in different contexts get stronger
 - **Natural review:** Search automatically includes review candidates (30% of results)
 - **No interruptions:** No "flashcard" style review sessions
 - **Danger zone targeting:** Memories at risk (0.15-0.35 score) surface naturally
 
 **Configuration:**
+
 ```bash
 MNEMEX_AUTO_REINFORCE=true              # Enable auto-reinforcement (default)
 MNEMEX_REVIEW_BLEND_RATIO=0.3           # 30% review candidates in search
