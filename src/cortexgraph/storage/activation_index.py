@@ -13,14 +13,11 @@ from cortexgraph.storage.models import Memory, Relation
 
 if TYPE_CHECKING:
     import numpy as np  # type: ignore[import-not-found]
-    import numpy.typing as npt  # type: ignore[import-not-found]
 else:
     try:
         import numpy as np
-        import numpy.typing as npt  # type: ignore[import-not-found]
     except ImportError:
         np = None  # type: ignore[assignment]
-        npt = None  # type: ignore[assignment]
 
 
 class ActivationGraph(BaseModel):
