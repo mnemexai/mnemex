@@ -2,10 +2,10 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Run Mnemex MCP Server",
+      "name": "Run CortexGraph MCP Server",
       "type": "debugpy",
       "request": "launch",
-      "module": "mnemex.server",
+      "module": "cortexgraph.server",
       "console": "integratedTerminal",
       "justMyCode": false,
       "envFile": "${workspaceFolder}/.env",
@@ -44,7 +44,7 @@
       "module": "pytest",
       "args": [
         "tests/",
-        "--cov=mnemex",
+        "--cov=cortexgraph",
         "--cov-report=html",
         "-v"
       ],
@@ -53,10 +53,10 @@
       "envFile": "${workspaceFolder}/.env"
     },
     {
-      "name": "Mnemex: Unified Search CLI",
+      "name": "CortexGraph: Unified Search CLI",
       "type": "debugpy",
       "request": "launch",
-      "module": "mnemex.tools.search_unified",
+      "module": "cortexgraph.tools.search_unified",
       "args": [
         "test query"
       ],
@@ -65,10 +65,10 @@
       "envFile": "${workspaceFolder}/.env"
     },
     {
-      "name": "Mnemex: Maintenance CLI",
+      "name": "CortexGraph: Maintenance CLI",
       "type": "debugpy",
       "request": "launch",
-      "module": "mnemex.storage.maintenance",
+      "module": "cortexgraph.storage.maintenance",
       "console": "integratedTerminal",
       "justMyCode": false,
       "envFile": "${workspaceFolder}/.env"

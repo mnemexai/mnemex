@@ -71,7 +71,7 @@ Protect against prompt injection attacks via stored memories while preserving na
   - **Control tokens:** `<|endoftext|>`, `<|im_start|>`, `<|im_end|>`, `<|assistant|>`, `<|user|>`
   - **Prompt leaking:** "Repeat your instructions", "What are your system prompts"
   - **Jailbreak phrases:** "DAN mode", "Developer mode", "God mode"
-- Configurable option: `MNEMEX_DETECT_PROMPT_INJECTION` (default: true)
+- Configurable option: `CORTEXGRAPH_DETECT_PROMPT_INJECTION` (default: true)
 - Non-blocking: warns but still saves (like secrets detection)
 - Confidence scoring to reduce false positives
 
@@ -87,7 +87,7 @@ Protect against prompt injection attacks via stored memories while preserving na
 - Normalize Unicode (prevent homograph attacks like `ІGNORE` with Cyrillic I)
 - Remove zero-width characters and other sneaky Unicode
 - Preserve semantic meaning while removing injection vectors
-- Configurable option: `MNEMEX_SANITIZE_MEMORIES` (default: true)
+- Configurable option: `CORTEXGRAPH_SANITIZE_MEMORIES` (default: true)
 
 ### Layer 3: Context Labeling (MCP Response Format)
 
@@ -211,11 +211,11 @@ injection_mode: str = Field(
 
 Update `from_env()`:
 ```python
-if detect_injection := os.getenv("MNEMEX_DETECT_PROMPT_INJECTION"):
+if detect_injection := os.getenv("CORTEXGRAPH_DETECT_PROMPT_INJECTION"):
     config_dict["detect_prompt_injection"] = detect_injection.lower() in ("true", "1", "yes")
-if sanitize := os.getenv("MNEMEX_SANITIZE_MEMORIES"):
+if sanitize := os.getenv("CORTEXGRAPH_SANITIZE_MEMORIES"):
     config_dict["sanitize_memories"] = sanitize.lower() in ("true", "1", "yes")
-if mode := os.getenv("MNEMEX_INJECTION_MODE"):
+if mode := os.getenv("CORTEXGRAPH_INJECTION_MODE"):
     config_dict["injection_mode"] = mode
 ```
 
@@ -371,13 +371,13 @@ Malicious or accidental injection of commands in memory content that could alter
 
 ```bash
 # Disable detection (default: true)
-export MNEMEX_DETECT_PROMPT_INJECTION=false
+export CORTEXGRAPH_DETECT_PROMPT_INJECTION=false
 
 # Disable sanitization (default: true)
-export MNEMEX_SANITIZE_MEMORIES=false
+export CORTEXGRAPH_SANITIZE_MEMORIES=false
 
 # Set defense mode (warn | sanitize | strict)
-export MNEMEX_INJECTION_MODE=sanitize
+export CORTEXGRAPH_INJECTION_MODE=sanitize
 ```
 
 **Defense Modes:**
@@ -545,9 +545,9 @@ pytest tests/test_prompt_injection.py -v
 ### Mode 1: Warn Only (Default - Least Invasive)
 
 ```bash
-export MNEMEX_INJECTION_MODE=warn
-export MNEMEX_DETECT_PROMPT_INJECTION=true
-export MNEMEX_SANITIZE_MEMORIES=false
+export CORTEXGRAPH_INJECTION_MODE=warn
+export CORTEXGRAPH_DETECT_PROMPT_INJECTION=true
+export CORTEXGRAPH_SANITIZE_MEMORIES=false
 ```
 
 **Behavior:**
@@ -559,9 +559,9 @@ export MNEMEX_SANITIZE_MEMORIES=false
 ### Mode 2: Sanitize (Balanced)
 
 ```bash
-export MNEMEX_INJECTION_MODE=sanitize
-export MNEMEX_DETECT_PROMPT_INJECTION=true
-export MNEMEX_SANITIZE_MEMORIES=true
+export CORTEXGRAPH_INJECTION_MODE=sanitize
+export CORTEXGRAPH_DETECT_PROMPT_INJECTION=true
+export CORTEXGRAPH_SANITIZE_MEMORIES=true
 ```
 
 **Behavior:**
@@ -573,9 +573,9 @@ export MNEMEX_SANITIZE_MEMORIES=true
 ### Mode 3: Strict (Maximum Security)
 
 ```bash
-export MNEMEX_INJECTION_MODE=strict
-export MNEMEX_DETECT_PROMPT_INJECTION=true
-export MNEMEX_SANITIZE_MEMORIES=true
+export CORTEXGRAPH_INJECTION_MODE=strict
+export CORTEXGRAPH_DETECT_PROMPT_INJECTION=true
+export CORTEXGRAPH_SANITIZE_MEMORIES=true
 ```
 
 **Behavior:**

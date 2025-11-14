@@ -1,5 +1,5 @@
 name: Bug Report
-description: Report a bug or unexpected behavior in Mnemex
+description: Report a bug or unexpected behavior in CortexGraph
 title: "[Bug]: "
 labels: ["bug"]
 body:
@@ -23,7 +23,7 @@ body:
       label: Steps to Reproduce
       description: How can we reproduce this issue?
       placeholder: |
-        1. Install mnemex with 'uv tool install git+https://github.com/simplemindedbot/mnemex.git'
+        1. Install cortexgraph with 'uv tool install git+https://github.com/simplemindedbot/cortexgraph.git'
         2. Configure with '...'
         3. Run command '...'
         4. See error
@@ -73,10 +73,10 @@ body:
       required: true
 
   - type: input
-    id: mnemex-version
+    id: cortexgraph-version
     attributes:
-      label: Mnemex Version
-      description: Run `mnemex --version` or check your installation
+      label: CortexGraph Version
+      description: Run `cortexgraph --version` or check your installation
       placeholder: "e.g., 1.0.0"
     validations:
       required: true
@@ -85,7 +85,7 @@ body:
     id: installation
     attributes:
       label: Installation Method
-      description: How did you install Mnemex?
+      description: How did you install CortexGraph?
       options:
         - UV tool install (recommended)
         - UV pip install -e . (development)
@@ -100,8 +100,8 @@ body:
       label: Configuration
       description: Share relevant parts of your `.env` configuration (REDACT any sensitive information)
       placeholder: |
-        MNEMEX_DECAY_MODEL=power_law
-        MNEMEX_PL_HALFLIFE_DAYS=3.0
+        CORTEXGRAPH_DECAY_MODEL=power_law
+        CORTEXGRAPH_PL_HALFLIFE_DAYS=3.0
         # ... other relevant settings
       render: bash
 

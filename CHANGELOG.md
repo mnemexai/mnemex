@@ -110,7 +110,7 @@ This is the first production-ready release of Mnemex (formerly STM Research/STM 
   - Updated all references, paths, and documentation
   - Changed storage paths from `~/.stm/` to `~/.config/cortexgraph/` (XDG-compliant)
   - Updated command names from `stm-*` to `cortexgraph-*`
-  - Updated environment variables from `STM_*` to `MNEMEX_*`
+  - Updated environment variables from `STM_*` to `CORTEXGRAPH_*`
   - Repository moved to https://github.com/simplemindedbot/cortexgraph
 
 #### Simplified Installation

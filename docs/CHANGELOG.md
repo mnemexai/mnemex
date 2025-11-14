@@ -18,7 +18,7 @@ This is the first production-ready release of CortexGraph (formerly CortexGraph)
   - Updated all references, paths, and documentation
   - Changed storage paths from `~/.stm/` to `~/.config/cortexgraph/` (XDG-compliant)
   - Updated command names from `stm-*` to `cortexgraph-*`
-  - Updated environment variables from MNEMEX_* to CORTEXGRAPH_*
+  - Updated environment variables from CORTEXGRAPH_* to CORTEXGRAPH_*
   - Repository moved to https://github.com/prefrontal-systems/cortexgraph
 
 #### Simplified Installation

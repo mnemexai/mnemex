@@ -197,7 +197,7 @@ class Config(BaseModel):
     )
     ltm_index_path: Path | None = Field(
         default=None,
-        description="Path to LTM index file (default: vault/.mnemex-index.jsonl)",
+        description="Path to LTM index file (default: vault/.cortexgraph-index.jsonl)",
     )
     ltm_promoted_folder: str | None = Field(
         default=None,

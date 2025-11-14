@@ -221,9 +221,9 @@ notepad .env
 
 ```bash
 # Use Windows paths with forward slashes or escaped backslashes
-MNEMEX_STORAGE_PATH=C:/Users/YourUsername/.config/cortexgraph/jsonl
+CORTEXGRAPH_STORAGE_PATH=C:/Users/YourUsername/.config/cortexgraph/jsonl
 # Or with escaped backslashes
-# MNEMEX_STORAGE_PATH=C:\\Users\\YourUsername\\.config\\cortexgraph\\jsonl
+# CORTEXGRAPH_STORAGE_PATH=C:\\Users\\YourUsername\\.config\\cortexgraph\\jsonl
 
 # Optional: LTM vault path
 LTM_VAULT_PATH=C:/Users/YourUsername/Documents/Obsidian/Vault
@@ -356,20 +356,20 @@ code .env  # VS Code
 
 ```bash
 # Standard XDG paths
-MNEMEX_STORAGE_PATH=~/.config/cortexgraph/jsonl
+CORTEXGRAPH_STORAGE_PATH=~/.config/cortexgraph/jsonl
 
 # Optional: LTM vault path
 LTM_VAULT_PATH=~/Documents/Obsidian/Vault
 
 # Decay parameters
-MNEMEX_DECAY_MODEL=power_law
-MNEMEX_PL_ALPHA=1.1
-MNEMEX_PL_HALFLIFE_DAYS=3.0
-MNEMEX_DECAY_BETA=0.6
+CORTEXGRAPH_DECAY_MODEL=power_law
+CORTEXGRAPH_PL_ALPHA=1.1
+CORTEXGRAPH_PL_HALFLIFE_DAYS=3.0
+CORTEXGRAPH_DECAY_BETA=0.6
 
 # Thresholds
-MNEMEX_FORGET_THRESHOLD=0.05
-MNEMEX_PROMOTE_THRESHOLD=0.65
+CORTEXGRAPH_FORGET_THRESHOLD=0.05
+CORTEXGRAPH_PROMOTE_THRESHOLD=0.65
 ```
 
 #### 6. Running Tests on Linux
@@ -493,7 +493,7 @@ open -e .env  # TextEdit
 
 ```bash
 # Standard macOS paths
-MNEMEX_STORAGE_PATH=~/.config/cortexgraph/jsonl
+CORTEXGRAPH_STORAGE_PATH=~/.config/cortexgraph/jsonl
 
 # Optional: LTM vault path
 LTM_VAULT_PATH=~/Documents/Obsidian/Vault
