@@ -78,7 +78,6 @@ def analyze_for_recall(message: str) -> dict[str, Any]:
 
     # Determine if search is recommended
     should_search = False
-    confidence = 0.0
     reasoning_parts = []
     suggested_query = ""
 
