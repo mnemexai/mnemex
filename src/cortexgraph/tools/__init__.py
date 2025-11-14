@@ -1,6 +1,7 @@
 """MCP tools for Mnemex."""
 
 from . import (
+    analyze_for_recall,
     analyze_message,
     cluster,
     consolidate,
@@ -17,6 +18,7 @@ from . import (
 
 __all__ = [
     "analyze_message",
+    "analyze_for_recall",
     "save",
     "search",
     "touch",
