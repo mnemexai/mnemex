@@ -118,50 +118,92 @@ From system perspective:
 
 ## Solution Architecture
 
-### Hybrid Preprocessing + LLM Confirmation Model
+### MCP Architectural Constraints (CRITICAL)
+
+**Important**: The Model Context Protocol (MCP) does NOT allow message interception before the LLM sees user input. The architecture is:
+
+```
+User Message → Claude LLM (ALWAYS FIRST) → MCP Tools → Results → Claude
+```
+
+**NOT possible**:
+```
+User Message → Preprocessing → Claude LLM   ❌ IMPOSSIBLE IN MCP
+```
+
+This means we **cannot** intercept and enrich messages before Claude sees them. We can only:
+1. ✅ Auto-enrich tool parameters when tools are called
+2. ✅ Provide helper tools (analyze_message) that Claude can call
+3. ✅ Enhance system prompts to guide Claude's behavior
+4. ❌ Intercept user messages before Claude receives them
+
+For true pre-LLM preprocessing, you would need:
+- HTTP proxy (like claude-llm-proxy for Claude Code CLI) - works, but only for HTTP API
+- Modified Claude Desktop client (not practical)
+- Custom MCP host application (significant engineering effort)
+
+### Realistic MCP Architecture
 
 ```
 User Message
      ↓
-┌─────────────────────────────────────┐
-│  [NEW] Preprocessing Layer          │
-│  ┌────────────────────────────────┐ │
-│  │ 1. Phrase Detector             │ │
-│  │    (Regex for explicit trigger)│ │
-│  └────────────────────────────────┘ │
-│  ┌────────────────────────────────┐ │
-│  │ 2. Intent Classifier           │ │
-│  │    (BERT-based, 6 intents)     │ │
-│  └────────────────────────────────┘ │
-│  ┌────────────────────────────────┐ │
-│  │ 3. Entity Extractor (spaCy)    │ │
-│  │    (NER: PERSON, ORG, TECH)    │ │
-│  └────────────────────────────────┘ │
-│  ┌────────────────────────────────┐ │
-│  │ 4. Importance Scorer           │ │
-│  │    (Heuristics + keywords)     │ │
-│  └────────────────────────────────┘ │
-└─────────────────────────────────────┘
+Claude LLM (receives message first)
      ↓
-Activation Signals + Pre-filled Parameters
+Claude decides to call MCP tool
      ↓
-┌─────────────────────────────────────┐
-│  [EXISTING] LLM + MCP Tools         │
-│  - Receives enriched context        │
-│  - Confirms/adjusts parameters      │
-│  - Calls save_memory/search_memory  │
-└─────────────────────────────────────┘
+┌─────────────────────────────────────────────┐
+│  MCP Tool Call (e.g., save_memory)          │
+│                                             │
+│  [PREPROCESSING HAPPENS HERE]               │
+│  ┌────────────────────────────────────┐    │
+│  │ 1. Phrase Detector                 │    │
+│  │    Auto-detect importance markers  │    │
+│  └────────────────────────────────────┘    │
+│  ┌────────────────────────────────────┐    │
+│  │ 2. Entity Extractor (spaCy)        │    │
+│  │    Auto-populate entities field    │    │
+│  └────────────────────────────────────┘    │
+│  ┌────────────────────────────────────┐    │
+│  │ 3. Importance Scorer               │    │
+│  │    Auto-calculate strength         │    │
+│  └────────────────────────────────────┘    │
+│                                             │
+│  Parameters enriched, memory saved          │
+└─────────────────────────────────────────────┘
      ↓
-[EXISTING] Storage Layer (JSONL → Markdown)
+Result returned to Claude
+     ↓
+Claude responds to user
+
+ADDITIONAL TOOL:
+┌─────────────────────────────────────────────┐
+│  analyze_message(message)                   │
+│  - Helper tool Claude can call              │
+│  - Returns preprocessing signals            │
+│  - Helps Claude decide whether to save      │
+└─────────────────────────────────────────────┘
 ```
+
+### Two-Track Approach
+
+**Track 1: Auto-Enrichment** (in save_memory tool)
+- LLM calls: `save_memory(content="I prefer TypeScript")`
+- Tool automatically populates: `entities=["typescript"]`, `strength=1.0`
+- No extra tool calls needed
+
+**Track 2: Decision Helper** (analyze_message tool)
+- LLM uncertain? Call: `analyze_message("I prefer TypeScript")`
+- Returns: `{should_save: true, entities: ["typescript"], strength: 1.0}`
+- LLM uses signals to decide whether to call save_memory
 
 ### Design Principles
 
-1. **Deterministic + Flexible**: Preprocessing provides reliable signals, LLM has final say
-2. **Low Latency**: Lightweight models (DistilBERT, spaCy) for real-time inference
-3. **Graceful Degradation**: System works even if preprocessing fails
-4. **Progressive Enhancement**: Each component adds value independently
-5. **Configurable**: Enable/disable features, tune thresholds
+1. **Work Within MCP Constraints**: No impossible pre-LLM interception
+2. **Deterministic + Flexible**: Preprocessing provides reliable defaults, LLM can override
+3. **Low Latency**: Lightweight models (spaCy, regex) for real-time inference
+4. **Graceful Degradation**: System works even if preprocessing fails
+5. **Progressive Enhancement**: Each component adds value independently
+6. **Configurable**: Enable/disable features, tune thresholds
 
 ---
 
@@ -324,21 +366,159 @@ class ImportanceScorer:
 - Intent-based base strength verification
 - Clamping to valid range [0.0, 2.0]
 
+#### Component 1.4: Integration with save_memory Tool
+
+**Purpose**: Auto-enrich save_memory parameters using preprocessing
+
+**Implementation**:
+```python
+# src/cortexgraph/tools/save.py (MODIFIED)
+
+from ..preprocessing import PhraseDetector, EntityExtractor, ImportanceScorer
+
+# Lazy initialization
+_preprocessing_components = None
+
+def get_preprocessing():
+    global _preprocessing_components
+    if _preprocessing_components is None:
+        _preprocessing_components = {
+            "phrase": PhraseDetector(),
+            "entity": EntityExtractor(),
+            "importance": ImportanceScorer()
+        }
+    return _preprocessing_components
+
+@mcp.tool()
+async def save_memory(
+    content: str,
+    tags: list[str] | None = None,
+    entities: list[str] | None = None,
+    strength: float | None = None,
+    source: str | None = None,
+    context: str | None = None,
+    meta: dict | None = None,
+) -> dict:
+    """Save a memory with automatic preprocessing."""
+
+    prep = get_preprocessing()
+
+    # AUTO-POPULATE entities if not provided
+    if entities is None:
+        entities = prep["entity"].extract(content)
+
+    # AUTO-CALCULATE strength if not provided
+    if strength is None:
+        phrase_signals = prep["phrase"].detect(content)
+        strength = prep["importance"].score(
+            content,
+            importance_marker=phrase_signals["importance_marker"]
+        )
+
+    # Continue with existing save logic...
+    memory = Memory(
+        content=content,
+        entities=entities or [],
+        tags=tags or [],
+        strength=strength,
+        source=source,
+        context=context,
+        meta=meta or {},
+    )
+
+    db.save_memory(memory)
+    return {"success": True, "memory_id": memory.id}
+```
+
+#### Component 1.5: analyze_message Helper Tool
+
+**Purpose**: Provide preprocessing signals to help Claude decide whether to save
+
+**Implementation**:
+```python
+# src/cortexgraph/tools/analyze.py (NEW FILE)
+
+from ..context import mcp
+from ..preprocessing import PhraseDetector, EntityExtractor, ImportanceScorer
+
+phrase_detector = PhraseDetector()
+entity_extractor = EntityExtractor()
+importance_scorer = ImportanceScorer()
+
+@mcp.tool()
+async def analyze_message(message: str) -> dict:
+    """
+    Analyze a message to determine if it contains memory-worthy content.
+
+    Returns activation signals and suggested parameters for save_memory.
+
+    Args:
+        message: The message to analyze
+
+    Returns:
+        {
+            "should_save": bool,
+            "confidence": float (0.0-1.0),
+            "suggested_entities": list[str],
+            "suggested_tags": list[str],
+            "suggested_strength": float,
+            "reasoning": str
+        }
+    """
+    phrase_signals = phrase_detector.detect(message)
+    entities = entity_extractor.extract(message)
+    strength = importance_scorer.score(
+        message,
+        importance_marker=phrase_signals["importance_marker"]
+    )
+
+    # Determine if save is recommended
+    should_save = (
+        phrase_signals["save_request"] or
+        phrase_signals["importance_marker"] or
+        len(entities) >= 2
+    )
+
+    confidence = 0.9 if phrase_signals["save_request"] else 0.6
+
+    reasoning_parts = []
+    if phrase_signals["save_request"]:
+        reasoning_parts.append(f"Explicit save request: {phrase_signals['matched_phrases']}")
+    if phrase_signals["importance_marker"]:
+        reasoning_parts.append("Importance marker detected")
+    if len(entities) >= 2:
+        reasoning_parts.append(f"Multiple entities detected: {entities}")
+
+    return {
+        "should_save": should_save,
+        "confidence": confidence,
+        "suggested_entities": entities,
+        "suggested_tags": [],  # Phase 3: Tag suggester
+        "suggested_strength": strength,
+        "reasoning": "; ".join(reasoning_parts) if reasoning_parts else "No strong signals detected"
+    }
+```
+
 #### Phase 1 Deliverables
 
+- ✅ `src/cortexgraph/preprocessing/__init__.py`
 - ✅ `src/cortexgraph/preprocessing/phrase_detector.py`
 - ✅ `src/cortexgraph/preprocessing/entity_extractor.py`
 - ✅ `src/cortexgraph/preprocessing/importance_scorer.py`
+- ✅ `src/cortexgraph/tools/analyze.py` (NEW: analyze_message tool)
+- ✅ Modified `src/cortexgraph/tools/save.py` (auto-enrichment)
 - ✅ `tests/preprocessing/test_phrase_detector.py`
 - ✅ `tests/preprocessing/test_entity_extractor.py`
 - ✅ `tests/preprocessing/test_importance_scorer.py`
-- ✅ Updated system prompt with activation signals
-- ✅ Integration with MCP server entry point
+- ✅ `tests/tools/test_analyze_message.py`
+- ✅ Updated system prompt with usage guidelines
+- ✅ Updated dependencies (spaCy)
 
 **Success Criteria**:
 - ✅ 0% missed explicit save requests ("remember this")
-- ✅ Entities automatically populated in 80%+ of saves
+- ✅ Entities automatically populated in 80%+ of saves (when not manually provided)
 - ✅ Consistent importance scores (no more arbitrary values)
+- ✅ analyze_message tool provides actionable signals to Claude
 
 ---
 
@@ -431,80 +611,110 @@ class IntentClassifier:
 - Warmup steps: 100
 - Weight decay: 0.01
 
-#### Component 2.2: Integration
+#### Component 2.2: Integration with analyze_message
 
-**Purpose**: Connect intent classifier to MCP server and system prompt
+**Purpose**: Enhance analyze_message tool with intent classification
 
-**MCP Server Hook**:
+**Implementation**:
 ```python
-# src/cortexgraph/server.py
+# src/cortexgraph/tools/analyze.py (ENHANCED)
 
-from .preprocessing import PhraseDetector, EntityExtractor, ImportanceScorer, IntentClassifier
+from ..preprocessing import PhraseDetector, EntityExtractor, ImportanceScorer, IntentClassifier
 
-# Initialize preprocessing components
 phrase_detector = PhraseDetector()
 entity_extractor = EntityExtractor()
 importance_scorer = ImportanceScorer()
-intent_classifier = IntentClassifier()
+intent_classifier = IntentClassifier()  # NEW
 
-@mcp.before_completion()
-async def preprocess_message(message: str) -> Dict:
+@mcp.tool()
+async def analyze_message(message: str) -> dict:
     """
-    Run preprocessing before LLM receives message.
-    Returns activation signals to be injected into system context.
+    Analyze a message with intent classification.
+
+    NOW INCLUDES:
+    - Intent classification (SAVE_PREFERENCE, SAVE_DECISION, etc.)
+    - Confidence scores for each intent
+    - Action recommendations (MUST_SAVE, SHOULD_SAVE, SHOULD_SEARCH)
     """
     phrase_signals = phrase_detector.detect(message)
-    intent_result = intent_classifier.classify(message)
+    intent_result = intent_classifier.classify(message)  # NEW
     entities = entity_extractor.extract(message)
-    importance = importance_scorer.score(message, intent_result["intent"])
+    strength = importance_scorer.score(
+        message,
+        intent=intent_result["intent"]  # Intent-aware scoring
+    )
 
-    # Construct activation signals
-    signals = {
-        "phrase_matches": phrase_signals,
-        "intent": intent_result["intent"],
-        "intent_confidence": intent_result["confidence"],
-        "entities": entities,
-        "suggested_strength": importance,
-    }
-
-    # Generate activation recommendation
+    # Generate action recommendation
+    action_recommendation = "NONE"
     if phrase_signals["save_request"]:
-        signals["action_recommendation"] = "MUST_SAVE"
+        action_recommendation = "MUST_SAVE"
     elif intent_result["intent"] in ["SAVE_PREFERENCE", "SAVE_DECISION", "SAVE_FACT"] and intent_result["confidence"] > 0.8:
-        signals["action_recommendation"] = "SHOULD_SAVE"
+        action_recommendation = "SHOULD_SAVE"
     elif intent_result["intent"] == "RECALL_INFO" and intent_result["confidence"] > 0.7:
-        signals["action_recommendation"] = "SHOULD_SEARCH"
-    else:
-        signals["action_recommendation"] = "NONE"
+        action_recommendation = "SHOULD_SEARCH"
 
-    return signals
+    should_save = action_recommendation in ["MUST_SAVE", "SHOULD_SAVE"]
+
+    return {
+        "should_save": should_save,
+        "action_recommendation": action_recommendation,
+        "confidence": intent_result["confidence"],
+        "intent": intent_result["intent"],
+        "suggested_entities": entities,
+        "suggested_tags": [],  # Phase 3
+        "suggested_strength": strength,
+        "reasoning": f"Intent: {intent_result['intent']} (confidence: {intent_result['confidence']:.2f})"
+    }
 ```
 
 **System Prompt Enhancement**:
 ```markdown
-# docs/prompts/memory_system_prompt.md (new section)
+# docs/prompts/memory_system_prompt.md (updated)
 
-## Activation Signals
+## Using analyze_message for Decision Support
 
-You will receive preprocessing signals with each user message:
+When the user shares information and you're uncertain whether to save it,
+call `analyze_message()` to get preprocessing signals:
 
 **Action Recommendations**:
-- `MUST_SAVE`: User explicitly requested save ("remember this") - you MUST call save_memory
-- `SHOULD_SAVE`: High-confidence detection of save-worthy content (preference, decision, fact) - you SHOULD call save_memory
-- `SHOULD_SEARCH`: User asking for past information - you SHOULD call search_memory
-- `NONE`: No strong signal, use your judgment
+- `MUST_SAVE`: Explicit save request ("remember this") → Always call save_memory
+- `SHOULD_SAVE`: High-confidence save-worthy content → Usually call save_memory
+- `SHOULD_SEARCH`: User asking about past info → Call search_memory
+- `NONE`: No strong signal → Use your judgment
 
-**Pre-filled Parameters**:
-When action is MUST_SAVE or SHOULD_SAVE, you will receive:
-- `entities`: Extracted entities (you can add/remove)
-- `suggested_strength`: Importance score (you can adjust)
-- `intent`: Content type (PREFERENCE, DECISION, FACT)
+**Intent Types**:
+- `SAVE_PREFERENCE`: User preference ("I prefer X")
+- `SAVE_DECISION`: Decision made ("We decided to...")
+- `SAVE_FACT`: Important fact ("The API key is...")
+- `RECALL_INFO`: Asking about past ("What did I say about...")
+- `GENERAL_QUESTION`: General query
+- `GREETING`: Social interaction
 
-**Your Role**:
-1. Review preprocessing signals
-2. Confirm or adjust parameters based on context
-3. Call appropriate tool (save_memory, search_memory, etc.)
-4. If uncertain, use your judgment - preprocessing is assistance, not mandate
+**Example Workflow**:
+```
+User: "I prefer TypeScript over JavaScript for new projects"
+
+You: analyze_message("I prefer TypeScript over JavaScript for new projects")
+
+Result: {
+  "action_recommendation": "SHOULD_SAVE",
+  "intent": "SAVE_PREFERENCE",
+  "confidence": 0.87,
+  "suggested_entities": ["typescript", "javascript"],
+  "suggested_strength": 1.2
+}
+
+You: save_memory(
+  content="I prefer TypeScript over JavaScript for new projects",
+  entities=["typescript", "javascript"],  # From analyze_message
+  strength=1.2,  # From analyze_message
+  tags=["preference", "programming"]
+)
+```
+
+**Auto-Enrichment Fallback**:
+If you don't call analyze_message first, save_memory will still auto-populate
+entities and strength, but without intent-aware optimization.
 ```
 
 **Configuration**:
@@ -525,16 +735,29 @@ MNEMEX_SPACY_MODEL = os.getenv("MNEMEX_SPACY_MODEL", "en_core_web_sm")
 - ✅ Training script (`scripts/train_intent_classifier.py`)
 - ✅ Trained DistilBERT model checkpoint
 - ✅ `src/cortexgraph/preprocessing/intent_classifier.py`
-- ✅ Integration with MCP server (`before_completion` hook)
-- ✅ Enhanced system prompt with activation signals
+- ✅ Enhanced `src/cortexgraph/tools/analyze.py` with intent classification
+- ✅ Updated system prompt with action recommendations and intent types
 - ✅ Configuration options in `config.py`
 - ✅ `tests/preprocessing/test_intent_classifier.py`
+- ✅ `tests/tools/test_analyze_message_with_intent.py`
 - ✅ Performance evaluation report (accuracy, precision, recall per class)
 
 **Success Criteria**:
 - ✅ 85%+ intent classification accuracy on test set
-- ✅ Implicit preferences detected (e.g., "I prefer X" → auto-save suggested)
-- ✅ 70-80% overall improvement in activation reliability (user testing)
+- ✅ Implicit preferences detected (e.g., "I prefer X" → SAVE_PREFERENCE intent)
+- ✅ analyze_message provides SHOULD_SAVE recommendation for 90%+ of save-worthy content
+- ✅ 60-70% improvement in overall activation reliability (still LLM-dependent for "when to call")
+
+**Note on Reliability Ceiling**:
+Within MCP constraints, we cannot achieve 85-90% reliability for automatic saves because:
+- Claude must still decide when to call analyze_message or save_memory
+- We cannot intercept messages before Claude sees them
+- System prompt guidance can only achieve ~70-80% consistency
+
+For higher reliability, consider:
+- HTTP proxy approach (like claude-llm-proxy for Claude Code CLI)
+- MCP-to-MCP proxy server (future enhancement)
+- Custom MCP host application
 
 ---
 
@@ -828,6 +1051,7 @@ from .preprocessing import (
 _preprocessing_components = None
 
 def get_preprocessing_components():
+    """Get or initialize preprocessing components."""
     global _preprocessing_components
     if _preprocessing_components is None:
         _preprocessing_components = {
@@ -837,40 +1061,124 @@ def get_preprocessing_components():
             "intent_classifier": IntentClassifier() if config.MNEMEX_ENABLE_PREPROCESSING else None,
             "tag_suggester": TagSuggester() if config.MNEMEX_ENABLE_PREPROCESSING else None,
             "context_manager": ConversationContext(),
-            "dedup_checker": DeduplicationChecker(storage),
+            "dedup_checker": DeduplicationChecker(db),
         }
     return _preprocessing_components
 
-@mcp.before_completion()
-async def preprocess_message(message: str, role: str = "user") -> Dict:
+# REALISTIC MCP INTEGRATION: Enhanced analyze_message tool
+@mcp.tool()
+async def analyze_message(
+    message: str,
+    include_dedup_check: bool = True
+) -> dict:
     """
-    Preprocessing hook called before LLM receives message.
-    Returns activation signals to be injected into system context.
+    Comprehensive message analysis with all preprocessing components.
+
+    This is the REALISTIC implementation within MCP constraints.
+    Claude calls this tool when uncertain whether to save.
+
+    Returns:
+        Complete preprocessing signals including:
+        - Action recommendation (MUST_SAVE, SHOULD_SAVE, etc.)
+        - Intent classification
+        - Entity extraction
+        - Tag suggestions
+        - Importance scoring
+        - Duplicate detection
     """
     if not config.MNEMEX_ENABLE_PREPROCESSING:
-        return {}
+        return {"error": "Preprocessing disabled"}
 
     components = get_preprocessing_components()
 
-    # Add message to conversation context
-    components["context_manager"].add_message(role, message)
+    # Add to conversation context for multi-message analysis
+    components["context_manager"].add_message("user", message)
 
-    # Run preprocessing pipeline
+    # Run full preprocessing pipeline
     phrase_signals = components["phrase_detector"].detect(message)
-    intent_result = components["intent_classifier"].classify(message)
+    intent_result = components["intent_classifier"].classify(message) if components["intent_classifier"] else {"intent": "UNKNOWN", "confidence": 0.0}
     entities = components["entity_extractor"].extract(message)
-    importance = components["importance_scorer"].score(message, intent_result["intent"])
+    importance = components["importance_scorer"].score(message, intent_result.get("intent"))
     tags = components["tag_suggester"].suggest_tags(message) if components["tag_suggester"] else []
 
     # Check for duplicates if save is recommended
     dedup_result = {}
-    if intent_result["intent"].startswith("SAVE_"):
+    if include_dedup_check and intent_result.get("intent", "").startswith("SAVE_"):
         dedup_result = components["dedup_checker"].check_before_save(message, entities)
 
-    # Construct activation signals
-    return construct_activation_signals(
-        phrase_signals, intent_result, entities, importance, tags, dedup_result
+    # Generate action recommendation
+    action_recommendation = "NONE"
+    if phrase_signals["save_request"]:
+        action_recommendation = "MUST_SAVE"
+    elif intent_result.get("intent") in ["SAVE_PREFERENCE", "SAVE_DECISION", "SAVE_FACT"] and intent_result.get("confidence", 0) > 0.8:
+        if dedup_result.get("is_duplicate"):
+            action_recommendation = "DUPLICATE_DETECTED"
+        else:
+            action_recommendation = "SHOULD_SAVE"
+    elif intent_result.get("intent") == "RECALL_INFO" and intent_result.get("confidence", 0) > 0.7:
+        action_recommendation = "SHOULD_SEARCH"
+
+    should_save = action_recommendation in ["MUST_SAVE", "SHOULD_SAVE"]
+
+    return {
+        "should_save": should_save,
+        "action_recommendation": action_recommendation,
+        "confidence": intent_result.get("confidence", 0.0),
+        "intent": intent_result.get("intent", "UNKNOWN"),
+        "suggested_entities": entities,
+        "suggested_tags": tags,
+        "suggested_strength": importance,
+        "deduplication": dedup_result,
+        "reasoning": _construct_reasoning(phrase_signals, intent_result, entities, dedup_result)
+    }
+
+def _construct_reasoning(phrase_signals, intent_result, entities, dedup_result):
+    """Build human-readable reasoning string."""
+    parts = []
+    if phrase_signals.get("save_request"):
+        parts.append(f"Explicit save: {phrase_signals.get('matched_phrases')}")
+    if intent_result.get("intent"):
+        parts.append(f"Intent: {intent_result['intent']} ({intent_result.get('confidence', 0):.2f})")
+    if entities:
+        parts.append(f"Entities: {', '.join(entities)}")
+    if dedup_result.get("is_duplicate"):
+        parts.append(f"Duplicate of: {dedup_result.get('similar_memory_id')}")
+    return "; ".join(parts) if parts else "No strong signals detected"
+
+# AUTO-ENRICHMENT: save_memory with preprocessing
+@mcp.tool()
+async def save_memory(
+    content: str,
+    tags: list[str] | None = None,
+    entities: list[str] | None = None,
+    strength: float | None = None,
+    # ... other params
+) -> dict:
+    """Save memory with automatic preprocessing."""
+    components = get_preprocessing_components()
+
+    # Auto-populate if not provided
+    if entities is None:
+        entities = components["entity_extractor"].extract(content)
+    if tags is None and components["tag_suggester"]:
+        tags = components["tag_suggester"].suggest_tags(content)
+    if strength is None:
+        phrase_signals = components["phrase_detector"].detect(content)
+        strength = components["importance_scorer"].score(
+            content,
+            importance_marker=phrase_signals.get("importance_marker", False)
+        )
+
+    # Save with enriched data
+    memory = Memory(
+        content=content,
+        entities=entities or [],
+        tags=tags or [],
+        strength=strength,
+        # ...
     )
+    db.save_memory(memory)
+    return {"success": True, "memory_id": memory.id}
 ```
 
 ### 2. System Prompt Enhancement
@@ -1212,11 +1520,13 @@ MNEMEX_PREPROCESSING_MODE = "inline"  # or "async" or "separate_process"
 
 | Phase | Duration | Components | Expected Impact |
 |-------|----------|------------|-----------------|
-| **Phase 1** | 1 week | Phrase Detector, Entity Extractor, Importance Scorer | 40-50% improvement |
-| **Phase 2** | 3 weeks | Intent Classifier, Integration, System Prompt Updates | 70-80% improvement |
-| **Phase 3** | 4 weeks | Tag Suggester, Multi-Message Context, Deduplication | 85-90% improvement |
+| **Phase 1** | 1 week | Phrase Detector, Entity Extractor, Importance Scorer, analyze_message tool, save_memory auto-enrichment | 40-50% improvement in consistency |
+| **Phase 2** | 3 weeks | Intent Classifier, Enhanced analyze_message, System Prompt Updates | 60-70% improvement (MCP ceiling) |
+| **Phase 3** | 4 weeks | Tag Suggester, Multi-Message Context, Deduplication | 70-80% improvement (realistic max) |
 | **Testing & Deployment** | 1 week | UAT, Performance Tuning, Documentation | Production-ready |
-| **Total** | **9 weeks** | All components integrated and tested | **85-90% activation reliability** |
+| **Total** | **9 weeks** | All components integrated and tested | **70-80% activation reliability** |
+
+**Note**: 70-80% is the realistic ceiling within MCP constraints. For 85-90%+ reliability, would require HTTP proxy (claude-llm-proxy pattern) or custom MCP host.
 
 ---
 
@@ -1225,12 +1535,24 @@ MNEMEX_PREPROCESSING_MODE = "inline"  # or "async" or "separate_process"
 This architectural plan transforms cortexgraph from **sporadic, LLM-dependent activation** to **reliable, preprocessing-assisted activation**. By adding a preprocessing layer that detects patterns, extracts entities, classifies intent, and scores importance, we reduce LLM cognitive load while preserving flexibility.
 
 **Key Principles**:
-1. **Hybrid Architecture**: Deterministic preprocessing + LLM judgment
-2. **Progressive Enhancement**: Each component adds independent value
-3. **Research-Backed**: Built on 2024-2025 state-of-the-art approaches
-4. **Production-Ready**: Optimized for latency, maintainability, configurability
+1. **Work Within MCP Constraints**: Realistic architecture, no impossible pre-LLM interception
+2. **Two-Track Approach**: Auto-enrichment (save_memory) + Decision Helper (analyze_message)
+3. **Progressive Enhancement**: Each component adds independent value
+4. **Research-Backed**: Built on 2024-2025 state-of-the-art approaches
+5. **Production-Ready**: Optimized for latency, maintainability, configurability
 
-**Expected Outcome**: 85-90% activation reliability, dramatically improving user experience and trust in cortexgraph as a production memory system.
+**Expected Outcome**:
+- **Within MCP**: 70-80% activation reliability (realistic ceiling)
+- **Parameter Quality**: 100% consistent entities, tags, strength scores (auto-populated)
+- **User Experience**: Dramatically improved trust in cortexgraph memory system
+
+**For Higher Reliability (85-90%+)**:
+If 70-80% isn't sufficient, consider:
+- **HTTP Proxy Approach**: Adapt claude-llm-proxy for Claude Code CLI (pre-LLM preprocessing possible)
+- **MCP-to-MCP Proxy**: Build custom proxy MCP server that forwards to cortexgraph
+- **Dual Integration**: Use HTTP proxy for Claude Code, direct MCP for Claude Desktop
+
+The MCP architecture is fundamentally LLM-first, which limits automatic activation. This plan maximizes what's possible within that constraint.
 
 ---
 
@@ -1255,10 +1577,26 @@ This architectural plan transforms cortexgraph from **sporadic, LLM-dependent ac
 - Smart Prompting (current): `docs/prompts/memory_system_prompt.md`
 - Scoring Algorithm: `docs/scoring_algorithm.md`
 
+### Related Projects
+- **claude-llm-proxy**: HTTP proxy for Claude Code CLI with context injection
+  - Location: `../claude-llm-proxy/`
+  - Pattern: Intercept HTTP API requests → inject preprocessing → forward to Claude
+  - **Key Insight**: This pattern works for HTTP API but NOT for MCP (stdio-based)
+  - Use case: If you need pre-LLM preprocessing for Claude Code CLI (non-MCP)
+
 ---
 
-**Document Version**: 1.0
-**Last Updated**: 2025-11-04
+**Document Version**: 2.0 (Updated for MCP Architecture Reality)
+**Last Updated**: 2025-11-14
 **Author**: Claude (Sonnet 4.5) with STOPPER Protocol
-**Approved By**: Scot Campbell
+**Approved By**: Scot Campbell (v1.0), Pending approval for v2.0
 **Next Review**: After Phase 1 completion
+
+**Major Changes in v2.0**:
+- ❌ Removed impossible `@mcp.before_completion()` hook (doesn't exist in FastMCP)
+- ✅ Added MCP Architectural Constraints section explaining why pre-LLM interception is impossible
+- ✅ Updated Solution Architecture to two-track approach (auto-enrichment + analyze_message)
+- ✅ Adjusted reliability targets: 70-80% realistic ceiling (was 85-90% aspirational)
+- ✅ Updated all Phase 2 integration code to use realistic MCP tools
+- ✅ Added claude-llm-proxy reference for HTTP proxy alternative
+- ✅ Clarified that 85-90%+ requires HTTP proxy or custom MCP host
