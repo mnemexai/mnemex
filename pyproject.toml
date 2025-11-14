@@ -93,6 +93,10 @@ ignore_missing_imports = true
 module = "git.*"
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+module = "spacy.*"
+ignore_missing_imports = true
+
 [tool.ruff]
 line-length = 100
 target-version = "py310"

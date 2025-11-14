@@ -80,21 +80,29 @@ def save_memory(
     source: str | None = None,
     context: str | None = None,
     meta: dict[str, Any] | None = None,
+    strength: float | None = None,
 ) -> dict[str, Any]:
     """
-    Save a new memory to short-term storage.
+    Save a new memory to short-term storage with automatic preprocessing.
 
     The memory will have temporal decay applied and will be forgotten if not used
     regularly. Frequently accessed memories may be promoted to long-term storage
     automatically.
 
+    **Auto-enrichment (v0.6.0)**: If entities or strength are not provided, they will
+    be automatically extracted/calculated from the content using natural language
+    preprocessing. This makes save_memory "just work" for conversational use.
+
     Args:
         content: The content to remember (max 50,000 chars).
         tags: Tags for categorization (max 50 tags, each max 100 chars).
         entities: Named entities in this memory (max 100 entities).
+                  If None, automatically extracted from content.
         source: Source of the memory (max 500 chars).
         context: Context when memory was created (max 1,000 chars).
         meta: Additional custom metadata.
+        strength: Base strength multiplier (1.0-2.0). If None, automatically
+                  calculated based on content importance.
 
     Raises:
         ValueError: If any input fails validation.
@@ -117,6 +125,41 @@ def save_memory(
 
     if context is not None:
         context = cast(str, validate_string_length(context, 1000, "context", allow_none=True))
+
+    # Auto-enrichment preprocessing (v0.6.0)
+    config = get_config()
+    enrichment_applied = False
+
+    if config.enable_preprocessing:
+        from ..preprocessing import EntityExtractor, ImportanceScorer, PhraseDetector
+
+        # Initialize preprocessing components (cached at module level)
+        phrase_detector = PhraseDetector()
+        entity_extractor = EntityExtractor()
+        importance_scorer = ImportanceScorer()
+
+        # Detect importance signals
+        phrase_signals = phrase_detector.detect(content)
+
+        # Auto-extract entities if not provided
+        if entities is None:
+            entities = entity_extractor.extract(content)
+            enrichment_applied = True
+
+        # Auto-calculate strength if not provided
+        if strength is None:
+            strength = importance_scorer.score(
+                content, entities=entities, importance_marker=phrase_signals["importance_marker"]
+            )
+            enrichment_applied = True
+    else:
+        # Default strength if preprocessing disabled
+        if strength is None:
+            strength = 1.0
+
+    # Validate strength
+    if strength is not None and (strength < 1.0 or strength > 2.0):
+        raise ValueError("strength must be between 1.0 and 2.0")
 
     # Secrets detection (if enabled)
     config = get_config()
@@ -150,6 +193,7 @@ def save_memory(
         use_count=0,
         embed=embed,
         entities=entities or [],
+        strength=strength if strength is not None else 1.0,
     )
 
     # Save to database
@@ -160,4 +204,7 @@ def save_memory(
         "memory_id": memory_id,
         "message": f"Memory saved with ID: {memory_id}",
         "has_embedding": embed is not None,
+        "enrichment_applied": enrichment_applied,
+        "auto_entities": len(entities or []) if enrichment_applied else 0,
+        "calculated_strength": strength,
     }

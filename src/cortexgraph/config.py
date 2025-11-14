@@ -147,6 +147,12 @@ class Config(BaseModel):
         le=1,
     )
 
+    # Natural language preprocessing (v0.6.0)
+    enable_preprocessing: bool = Field(
+        default=True,
+        description="Enable automatic entity extraction and importance scoring",
+    )
+
     # Clustering
     cluster_link_threshold: float = Field(
         default=0.83,
