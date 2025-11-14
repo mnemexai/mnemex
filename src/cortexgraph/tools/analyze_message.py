@@ -89,7 +89,6 @@ def analyze_message(message: str) -> dict[str, Any]:
     # - High strength score (>= 1.4)
 
     should_save = False
-    confidence = 0.0
     reasoning_parts = []
 
     if phrase_signals["save_request"]:
