@@ -397,7 +397,34 @@ Add environment variables directly to `~/Library/Application Support/Claude/clau
 
 ### MCP Configuration
 
-**Standard installation (uv tool install / pipx / pip):**
+**Recommended: Use absolute path (works everywhere)**
+
+Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "cortexgraph": {
+      "command": "/Users/yourusername/.local/bin/cortexgraph"
+    }
+  }
+}
+```
+
+**Find your actual path:**
+
+```bash
+which cortexgraph
+# Example output: /Users/yourusername/.local/bin/cortexgraph
+```
+
+Use that path in your config. Replace `yourusername` with your actual username.
+
+**Why absolute path?** GUI apps like Claude Desktop don't inherit your shell's PATH configuration (`.zshrc`, `.bashrc`). Using the full path ensures it always works.
+
+**Alternative: Simple command (only if cortexgraph is in system PATH)**
+
+If you've symlinked cortexgraph to `/usr/local/bin` or `/opt/homebrew/bin`:
 
 ```json
 {

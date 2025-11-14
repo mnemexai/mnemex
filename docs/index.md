@@ -63,11 +63,18 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 {
   "mcpServers": {
     "cortexgraph": {
-      "command": "cortexgraph"
+      "command": "/Users/yourusername/.local/bin/cortexgraph"
     }
   }
 }
 ```
+
+**Find your path:**
+```bash
+which cortexgraph
+```
+
+Use the full path from that command. GUI apps don't see shell PATH, so absolute paths work best.
 
 Restart Claude Desktop and you're ready!
 
