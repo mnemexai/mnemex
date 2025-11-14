@@ -15,8 +15,9 @@ Mnemex is a **Model Context Protocol (MCP)** server that gives AI assistants lik
 - **Short-term memory (STM)** with temporal decay (like human working memory)
 - **Long-term memory (LTM)** for permanent storage in Obsidian-compatible Markdown
 - **Knowledge graph** with entities, relations, and context tracking
+- **Natural language activation** (v0.6.0+) - Conversational memory without explicit commands
 - **Smart consolidation** to merge related memories
-- **11 MCP tools** and **7 CLI commands**
+- **13 MCP tools** and **7 CLI commands**
 
 ### Why Mnemex?
 
@@ -106,12 +107,22 @@ Search across both STM and LTM:
 - **Entity matching**: Find related concepts
 - **Tag filtering**: Narrow results by category
 
+### 💬 Natural Language Activation (v0.6.0+)
+
+Conversational memory without explicit commands:
+
+- **Auto-enrichment**: Automatic entity extraction and importance scoring
+- **Phrase detection**: "remember this", "what did I say about"
+- **Decision support**: Tools help Claude decide when to save/recall
+- **70-80% reliability**: Realistic MCP architecture ceiling
+
 ## Documentation
 
 - [Architecture](architecture.md) - System design and components
-- [API Reference](api.md) - All 11 MCP tools documented
+- [API Reference](api.md) - All 13 MCP tools documented (v0.6.0+)
 - [Knowledge Graph](graph_features.md) - Entity and relation system
 - [Scoring Algorithm](scoring_algorithm.md) - How temporal decay works
+- [Natural Language Activation](conversational-activation-plan.md) - Phase 1 implementation guide
 - [Deployment Guide](deployment.md) - Production setup
 
 ## Contributing
