@@ -12,6 +12,8 @@ from .security.secrets import scan_file_for_secrets, should_warn_about_secrets
 
 # Import tools to register them with the decorator
 from .tools import (
+    analyze_for_recall,
+    analyze_message,
     cluster,
     consolidate,
     create_relation,
@@ -28,6 +30,8 @@ from .tools import (
 
 # Explicitly reference imports to satisfy linters (these register MCP tools via decorators)
 _TOOL_MODULES = (
+    analyze_for_recall,
+    analyze_message,
     cluster,
     consolidate,
     create_relation,
@@ -134,7 +138,7 @@ def initialize_server() -> None:
                 # Ignore errors scanning .env (might be locked, etc.)
                 pass
 
-    logger.info("MCP server tools registered (13 tools)")
+    logger.info("MCP server tools registered (15 tools)")
 
 
 def main_sync() -> None:

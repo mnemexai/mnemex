@@ -11,8 +11,16 @@ from cortexgraph.tools.save import save_memory
 class TestSaveMemory:
     """Test suite for save_memory tool."""
 
-    def test_save_basic_memory(self, temp_storage):
+    @patch("cortexgraph.tools.save.get_config")
+    def test_save_basic_memory(self, mock_config, temp_storage):
         """Test saving a basic memory with just content."""
+        from cortexgraph.config import get_config
+
+        # Disable preprocessing for this test (expects old behavior)
+        config = get_config()
+        config.enable_preprocessing = False
+        mock_config.return_value = config
+
         result = save_memory(content="This is a test memory")
 
         assert result["success"] is True
@@ -170,8 +178,16 @@ class TestSaveMemory:
         memory = temp_storage.get_memory(result["memory_id"])
         assert memory.meta.tags == []
 
-    def test_save_memory_with_none_entities(self, temp_storage):
+    @patch("cortexgraph.tools.save.get_config")
+    def test_save_memory_with_none_entities(self, mock_config, temp_storage):
         """Test that None entities are converted to empty list."""
+        from cortexgraph.config import get_config
+
+        # Disable preprocessing for this test (expects old behavior)
+        config = get_config()
+        config.enable_preprocessing = False
+        mock_config.return_value = config
+
         result = save_memory(content="Test", entities=None)
         memory = temp_storage.get_memory(result["memory_id"])
         assert memory.entities == []
