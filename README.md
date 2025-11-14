@@ -171,22 +171,45 @@ See detailed parameter reference, model selection, and worked examples in docs/s
 
 Unlike traditional caching (TTL, LRU), Mnemex scores memories continuously by combining **recency** (exponential decay), **frequency** (sub-linear use count), and **importance** (adjustable strength). See [Core Algorithm](#core-algorithm) for the mathematical formula. This creates memory dynamics that closely mimic human cognition.
 
-### 2. Smart Prompting System
+### 2. Smart Prompting System + Natural Language Activation (v0.6.0+)
 
-Patterns for making AI assistants use memory naturally:
+Patterns for making AI assistants use memory naturally, now enhanced with **automatic entity extraction and importance scoring**:
+
+**Auto-Enrichment (NEW in v0.6.0)**
+
+When you save memories, CortexGraph automatically:
+- Extracts entities (people, technologies, organizations) using spaCy NER
+- Calculates importance/strength based on content markers
+- Detects save/recall intent from natural language phrases
+
+```python
+# Before v0.6.0 - manual entity specification
+save_memory(content="Use JWT for auth", entities=["JWT", "auth"])
+
+# v0.6.0+ - automatic extraction
+save_memory(content="Use JWT for auth")
+# Entities auto-extracted: ["jwt", "auth"]
+# Strength auto-calculated based on content
+```
 
 **Auto-Save**
 
 ```
-User: "I prefer TypeScript over JavaScript"
-→ Automatically saved with tags: [preferences, typescript, programming]
+User: "Remember: I prefer TypeScript over JavaScript"
+→ Detected save phrase: "Remember"
+→ Automatically saved with:
+   - Entities: [typescript, javascript]
+   - Strength: 1.5 (importance marker detected)
+   - Tags: [preferences, programming]
 ```
 
 **Auto-Recall**
 
 ```
-User: "Can you help with another TypeScript project?"
-→ Automatically retrieves preferences and conventions
+User: "What did I say about TypeScript?"
+→ Detected recall phrase: "what did I say about"
+→ Automatically searches for TypeScript memories
+→ Retrieves preferences and conventions
 ```
 
 **Auto-Reinforce**
@@ -195,6 +218,12 @@ User: "Can you help with another TypeScript project?"
 User: "Yes, still using TypeScript"
 → Memory strength increased, decay slowed
 ```
+
+**Decision Support Tools (v0.6.0+)**
+
+Two new tools help Claude decide when to save/recall:
+- `analyze_message` - Detects memory-worthy content, suggests entities and strength
+- `analyze_for_recall` - Detects recall intent, suggests search queries
 
 No explicit memory commands needed - just natural conversation.
 
@@ -550,15 +579,17 @@ The visualization reads directly from your JSONL files and creates a standalone 
 
 ## MCP Tools
 
-11 tools for AI assistants to manage memories:
+13 tools for AI assistants to manage memories:
 
 | Tool | Purpose |
 |------|---------|
-| `save_memory` | Save new memory with tags, entities |
+| `save_memory` | Save new memory with tags, entities (auto-enrichment in v0.6.0+) |
 | `search_memory` | Search with filters and scoring (includes review candidates) |
 | `search_unified` | Unified search across STM + LTM |
 | `touch_memory` | Reinforce memory (boost strength) |
 | `observe_memory_usage` | Record memory usage for natural spaced repetition |
+| `analyze_message` | ✨ **NEW v0.6.0** - Detect memory-worthy content, suggest entities/strength |
+| `analyze_for_recall` | ✨ **NEW v0.6.0** - Detect recall intent, suggest search queries |
 | `gc` | Garbage collect low-scoring memories |
 | `promote_memory` | Move to long-term storage |
 | `cluster_memories` | Find similar memories |

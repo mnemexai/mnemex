@@ -6,7 +6,14 @@ Complete reference for all MCP tools provided by Mnemex.
 
 ### save_memory
 
-Save a new memory to short-term storage.
+Save a new memory to short-term storage with optional auto-enrichment (v0.6.0+).
+
+**Auto-Enrichment (NEW in v0.6.0):**
+
+When `enable_preprocessing=true` (default), this tool automatically:
+- Extracts entities from content if `entities=None` using spaCy NER
+- Calculates importance/strength if `strength=None` based on content markers
+- No manual entity specification needed - just provide natural language content
 
 **Parameters:**
 
@@ -14,9 +21,11 @@ Save a new memory to short-term storage.
 |------|------|----------|-------------|
 | `content` | string | Yes | The content to remember |
 | `tags` | array[string] | No | Tags for categorization |
+| `entities` | array[string] | No | Named entities (auto-extracted if None) **v0.6.0+** |
 | `source` | string | No | Source of the memory |
 | `context` | string | No | Context when memory was created |
 | `meta` | object | No | Additional custom metadata |
+| `strength` | float (1.0-2.0) | No | Importance multiplier (auto-calculated if None) **v0.6.0+** |
 
 **Returns:**
 
@@ -25,20 +34,48 @@ Save a new memory to short-term storage.
   "success": true,
   "memory_id": "abc-123-def-456",
   "message": "Memory saved with ID: abc-123-def-456",
-  "has_embedding": false
+  "has_embedding": false,
+  "enrichment_applied": true
 }
 ```
 
-**Example:**
+**Example (v0.6.0+ with auto-enrichment):**
+
+```json
+{
+  "content": "Use JWT tokens for authentication in all new APIs"
+}
+```
+
+Auto-enriched result:
+- `entities`: ["jwt", "authentication", "apis"] (auto-extracted)
+- `strength`: 1.0 (auto-calculated, no importance markers)
+
+**Example (explicit parameters):**
 
 ```json
 {
   "content": "The project deadline is December 15th",
   "tags": ["project", "deadline"],
+  "entities": ["project", "december"],
   "source": "team meeting",
-  "context": "Q4 planning discussion"
+  "context": "Q4 planning discussion",
+  "strength": 1.5
 }
 ```
+
+**Strength Parameter (v0.6.0+):**
+
+Controls memory retention:
+- `1.0` (default) - Normal importance
+- `1.3-1.5` - Important information, preferences
+- `1.8-2.0` - Critical decisions, never-forget facts
+
+Auto-calculation considers:
+- Content length
+- Entity count
+- Importance markers ("important", "critical", "remember")
+- Questions (slightly lower strength)
 
 ---
 
@@ -246,6 +283,135 @@ MNEMEX_AUTO_REINFORCE=true
   "reason": "auto_reinforce is disabled in config",
   "count": 0
 }
+```
+
+---
+
+### analyze_message
+
+**NEW in v0.6.0** - Analyze a message to determine if it contains memory-worthy content. Provides decision support for Claude to decide whether to call `save_memory`.
+
+This tool automatically:
+- Detects save-related phrases ("remember this", "don't forget", "keep in mind")
+- Extracts entities using spaCy NER
+- Calculates importance/strength based on content markers
+- Provides confidence scores and reasoning
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | string | Yes | User message to analyze for memory-worthy content |
+
+**Returns:**
+
+```json
+{
+  "should_save": true,
+  "confidence": 0.9,
+  "suggested_entities": ["typescript", "javascript", "preferences"],
+  "suggested_tags": [],
+  "suggested_strength": 1.5,
+  "reasoning": "Detected: ['remember'] importance_marker: True entities_found: 3"
+}
+```
+
+**Example:**
+
+```json
+{
+  "message": "Remember: I prefer TypeScript over JavaScript for all new projects"
+}
+```
+
+**Confidence Levels:**
+
+| Confidence | Interpretation | Recommended Action |
+|------------|----------------|-------------------|
+| > 0.7 | High confidence | Automatically save memory |
+| 0.4 - 0.7 | Medium confidence | Ask user first |
+| < 0.4 | Low confidence | Don't save unless user explicitly requests |
+
+**Use Case:**
+
+```
+User: "Remember: I prefer dark mode in all my apps"
+→ Claude calls analyze_message
+→ Response: should_save=true, confidence=0.9, strength=1.5
+→ Claude automatically calls save_memory with suggested parameters
+→ No explicit commands needed - natural conversation
+```
+
+---
+
+### analyze_for_recall
+
+**NEW in v0.6.0** - Analyze a message to detect recall/search intent. Provides decision support for Claude to decide whether to call `search_memory`.
+
+This tool automatically:
+- Detects recall-related phrases ("what did I say about", "do you remember")
+- Extracts query terms from the message
+- Suggests entities to filter by
+- Provides confidence scores and reasoning
+
+**Parameters:**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | string | Yes | User message to analyze for recall intent |
+
+**Returns:**
+
+```json
+{
+  "should_search": true,
+  "confidence": 0.9,
+  "suggested_query": "TypeScript preferences",
+  "suggested_tags": [],
+  "suggested_entities": ["typescript"],
+  "reasoning": "Detected: ['what did i say about'] entities_found: 1"
+}
+```
+
+**Example:**
+
+```json
+{
+  "message": "What did I say about TypeScript?"
+}
+```
+
+**Confidence Levels:**
+
+| Confidence | Interpretation | Recommended Action |
+|------------|----------------|-------------------|
+| > 0.7 | High confidence | Automatically search memory |
+| 0.4 - 0.7 | Medium confidence | Ask user first |
+| < 0.4 | Low confidence | Don't search unless user explicitly requests |
+
+**Use Case:**
+
+```
+User: "What did I say about my API preferences?"
+→ Claude calls analyze_for_recall
+→ Response: should_search=true, confidence=0.9, query="API preferences"
+→ Claude automatically calls search_memory with suggested query
+→ Retrieves and uses relevant memories in response
+```
+
+**Combined Workflow (v0.6.0):**
+
+```
+1. User: "Remember: I prefer JWT for authentication"
+   → analyze_message: should_save=true, strength=1.5, entities=["jwt", "authentication"]
+   → save_memory auto-called with auto-enrichment
+
+2. User: "What did I say about authentication?"
+   → analyze_for_recall: should_search=true, query="authentication"
+   → search_memory auto-called
+   → JWT preference retrieved and used in response
+
+3. Result: Natural conversation without explicit memory commands
 ```
 
 ---
