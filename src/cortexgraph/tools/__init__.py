@@ -1,4 +1,4 @@
-"""MCP tools for Mnemex."""
+"""MCP tools for CortexGraph."""
 
 from . import (
     analyze_for_recall,

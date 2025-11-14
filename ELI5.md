@@ -99,10 +99,10 @@ Create `~/.config/cortexgraph/.env` if you want custom settings:
 
 ```bash
 # Where to store memories (default: ~/.config/cortexgraph/jsonl)
-MNEMEX_STORAGE_PATH=~/.config/cortexgraph/jsonl
+CORTEXGRAPH_STORAGE_PATH=~/.config/cortexgraph/jsonl
 
 # How fast memories fade (3 days = default)
-MNEMEX_PL_HALFLIFE_DAYS=3.0
+CORTEXGRAPH_PL_HALFLIFE_DAYS=3.0
 
 # Where to save important memories permanently (optional)
 LTM_VAULT_PATH=~/Documents/Obsidian/MyVault
@@ -280,14 +280,14 @@ cortexgraph-backup snapshot
 
 ### Fast-paced work (forget quickly)
 ```bash
-MNEMEX_PL_HALFLIFE_DAYS=1.0  # 1-day half-life
-MNEMEX_FORGET_THRESHOLD=0.10  # More aggressive forgetting
+CORTEXGRAPH_PL_HALFLIFE_DAYS=1.0  # 1-day half-life
+CORTEXGRAPH_FORGET_THRESHOLD=0.10  # More aggressive forgetting
 ```
 
 ### Research/archival (remember longer)
 ```bash
-MNEMEX_PL_HALFLIFE_DAYS=7.0  # 7-day half-life
-MNEMEX_FORGET_THRESHOLD=0.02  # Keep things longer
+CORTEXGRAPH_PL_HALFLIFE_DAYS=7.0  # 7-day half-life
+CORTEXGRAPH_FORGET_THRESHOLD=0.02  # Keep things longer
 ```
 
 ### Preference-heavy assistant

@@ -154,7 +154,7 @@ wheels = [
 
 [[package]]
 name = "cortexgraph"
-version = "0.2.1"
+version = "0.6.5"
 source = { editable = "." }
 dependencies = [
     { name = "gitpython" },

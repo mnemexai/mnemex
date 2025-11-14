@@ -1,4 +1,4 @@
-"""Backup module for Mnemex."""
+"""Backup module for CortexGraph."""
 
 from .git_backup import GitBackup
 

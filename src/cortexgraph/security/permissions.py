@@ -93,7 +93,7 @@ def secure_directory(
         PermissionError: If unable to change permissions
 
     Examples:
-        >>> secure_directory(Path("~/.config/mnemex"), recursive=True)
+        >>> secure_directory(Path("~/.config/cortexgraph"), recursive=True)
         # Sets permissions to rwx------ (0o700) on all directories
     """
     dir_path = Path(dir_path)
@@ -151,7 +151,7 @@ def ensure_secure_storage(
         PermissionError: If unable to secure some files (partial success)
 
     Examples:
-        >>> ensure_secure_storage(Path("~/.config/mnemex/jsonl"))
+        >>> ensure_secure_storage(Path("~/.config/cortexgraph/jsonl"))
         {'files': 5, 'directories': 2, 'errors': 0}
     """
     storage_path = Path(storage_path).expanduser().resolve()
@@ -311,7 +311,7 @@ def main() -> int:
     import argparse
     import sys
 
-    parser = argparse.ArgumentParser(description="Secure file permissions for Mnemex storage")
+    parser = argparse.ArgumentParser(description="Secure file permissions for CortexGraph storage")
     parser.add_argument("path", type=Path, help="Path to secure")
     parser.add_argument(
         "--check",

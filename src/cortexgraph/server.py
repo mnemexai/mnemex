@@ -1,4 +1,4 @@
-"""MCP Server entry point for Mnemex."""
+"""MCP Server entry point for CortexGraph."""
 
 import logging
 import sys
@@ -58,7 +58,7 @@ def initialize_server() -> None:
     config = get_config()
     logging.getLogger().setLevel(config.log_level)
 
-    logger.info("Initializing Mnemex")
+    logger.info("Initializing CortexGraph")
     logger.info(f"Storage (JSONL): {config.storage_path}")
 
     model = config.decay_model
@@ -109,7 +109,7 @@ def initialize_server() -> None:
             logger.warning(f"Unable to secure .env file: {e}")
 
     # Check XDG config directory .env
-    xdg_env = Path.home() / ".config" / "mnemex" / ".env"
+    xdg_env = Path.home() / ".config" / "cortexgraph" / ".env"
     if xdg_env.exists() and xdg_env != env_path.resolve():
         try:
             secure_config_file(xdg_env)

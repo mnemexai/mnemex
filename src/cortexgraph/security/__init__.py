@@ -1,4 +1,4 @@
-"""Security utilities for Mnemex."""
+"""Security utilities for CortexGraph."""
 
 from .paths import (
     ensure_within_directory,

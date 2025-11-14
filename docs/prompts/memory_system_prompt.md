@@ -5,13 +5,13 @@
 
 ## Overview
 
-Mnemex’s true power lies not in its MCP tools alone, but in how LLMs are taught to use them naturally. This document describes the smart prompting system — patterns and techniques for making AI assistants remember things like humans do, without explicit commands.
+CortexGraph’s true power lies not in its MCP tools alone, but in how LLMs are taught to use them naturally. This document describes the smart prompting system — patterns and techniques for making AI assistants remember things like humans do, without explicit commands.
 
 ## Core Principle
 
 > **Memory operations should be invisible to the user.**
 
-When you tell a friend "I prefer tea over coffee," they remember without saying "OK, I'm saving that to my memory database." Mnemex enables AI assistants to do the same through carefully designed system prompts.
+When you tell a friend "I prefer tea over coffee," they remember without saying "OK, I'm saving that to my memory database." CortexGraph enables AI assistants to do the same through carefully designed system prompts.
 
 ## Auto-Detection Patterns
 
@@ -306,7 +306,7 @@ Bad:
 
 **The "Maslow Effect":**
 
-Just like humans remember Maslow's hierarchy better when it appears across multiple classes (history, economics, sociology), Mnemex reinforces memories through natural cross-domain usage.
+Just like humans remember Maslow's hierarchy better when it appears across multiple classes (history, economics, sociology), CortexGraph reinforces memories through natural cross-domain usage.
 
 **Key Principle:** Only observe memories you actually **use**, not just retrieve.
 
@@ -374,20 +374,20 @@ if used_memory_ids:
 
 **Configuration:**
 ```bash
-MNEMEX_AUTO_REINFORCE=true              # Enable auto-reinforcement (default)
-MNEMEX_REVIEW_BLEND_RATIO=0.3           # 30% review candidates in search
-MNEMEX_REVIEW_DANGER_ZONE_MIN=0.15      # Lower bound
-MNEMEX_REVIEW_DANGER_ZONE_MAX=0.35      # Upper bound
+CORTEXGRAPH_AUTO_REINFORCE=true              # Enable auto-reinforcement (default)
+CORTEXGRAPH_REVIEW_BLEND_RATIO=0.3           # 30% review candidates in search
+CORTEXGRAPH_REVIEW_DANGER_ZONE_MIN=0.15      # Lower bound
+CORTEXGRAPH_REVIEW_DANGER_ZONE_MAX=0.35      # Upper bound
 ```
 
 ## System Prompt Template
 
-### For AI Assistants Using Mnemex
+### For AI Assistants Using CortexGraph
 
 ```markdown
 # Memory System Instructions
 
-You have access to Mnemex short‑term memory (STM) with temporal decay. Use it to remember important information about the user naturally.
+You have access to CortexGraph short‑term memory (STM) with temporal decay. Use it to remember important information about the user naturally.
 
 ## Automatic Behaviors
 

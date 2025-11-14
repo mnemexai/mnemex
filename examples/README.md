@@ -1,4 +1,4 @@
-# Mnemex Examples
+# CortexGraph Examples
 
 ## Installation
 
@@ -39,21 +39,21 @@ That's it! Just `{"command": "cortexgraph"}` - no paths, no environment variable
 
 ```bash
 # Storage paths
-MNEMEX_STORAGE_PATH=~/.config/cortexgraph/jsonl
+CORTEXGRAPH_STORAGE_PATH=~/.config/cortexgraph/jsonl
 LTM_VAULT_PATH=~/Documents/Obsidian/Vault
 
 # Decay model and parameters
-MNEMEX_DECAY_MODEL=power_law
-MNEMEX_PL_ALPHA=1.1
-MNEMEX_PL_HALFLIFE_DAYS=3.0
-MNEMEX_DECAY_BETA=0.6
+CORTEXGRAPH_DECAY_MODEL=power_law
+CORTEXGRAPH_PL_ALPHA=1.1
+CORTEXGRAPH_PL_HALFLIFE_DAYS=3.0
+CORTEXGRAPH_DECAY_BETA=0.6
 
 # Thresholds
-MNEMEX_FORGET_THRESHOLD=0.05
-MNEMEX_PROMOTE_THRESHOLD=0.65
+CORTEXGRAPH_FORGET_THRESHOLD=0.05
+CORTEXGRAPH_PROMOTE_THRESHOLD=0.65
 
 # Optional
-MNEMEX_ENABLE_EMBEDDINGS=false
+CORTEXGRAPH_ENABLE_EMBEDDINGS=false
 LOG_LEVEL=INFO
 ```
 

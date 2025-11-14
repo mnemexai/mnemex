@@ -722,11 +722,11 @@ entities and strength, but without intent-aware optimization.
 # src/cortexgraph/config.py (new section)
 
 # Conversational Activation
-MNEMEX_ENABLE_PREPROCESSING = os.getenv("MNEMEX_ENABLE_PREPROCESSING", "true").lower() == "true"
-MNEMEX_INTENT_MODEL_PATH = os.getenv("MNEMEX_INTENT_MODEL_PATH", "./models/intent_classifier")
-MNEMEX_INTENT_CONFIDENCE_THRESHOLD = float(os.getenv("MNEMEX_INTENT_CONFIDENCE_THRESHOLD", "0.7"))
-MNEMEX_AUTO_SAVE_CONFIDENCE_THRESHOLD = float(os.getenv("MNEMEX_AUTO_SAVE_CONFIDENCE_THRESHOLD", "0.8"))
-MNEMEX_SPACY_MODEL = os.getenv("MNEMEX_SPACY_MODEL", "en_core_web_sm")
+CORTEXGRAPH_ENABLE_PREPROCESSING = os.getenv("CORTEXGRAPH_ENABLE_PREPROCESSING", "true").lower() == "true"
+CORTEXGRAPH_INTENT_MODEL_PATH = os.getenv("CORTEXGRAPH_INTENT_MODEL_PATH", "./models/intent_classifier")
+CORTEXGRAPH_INTENT_CONFIDENCE_THRESHOLD = float(os.getenv("CORTEXGRAPH_INTENT_CONFIDENCE_THRESHOLD", "0.7"))
+CORTEXGRAPH_AUTO_SAVE_CONFIDENCE_THRESHOLD = float(os.getenv("CORTEXGRAPH_AUTO_SAVE_CONFIDENCE_THRESHOLD", "0.8"))
+CORTEXGRAPH_SPACY_MODEL = os.getenv("CORTEXGRAPH_SPACY_MODEL", "en_core_web_sm")
 ```
 
 #### Phase 2 Deliverables
@@ -1058,8 +1058,8 @@ def get_preprocessing_components():
             "phrase_detector": PhraseDetector(),
             "entity_extractor": EntityExtractor(),
             "importance_scorer": ImportanceScorer(),
-            "intent_classifier": IntentClassifier() if config.MNEMEX_ENABLE_PREPROCESSING else None,
-            "tag_suggester": TagSuggester() if config.MNEMEX_ENABLE_PREPROCESSING else None,
+            "intent_classifier": IntentClassifier() if config.CORTEXGRAPH_ENABLE_PREPROCESSING else None,
+            "tag_suggester": TagSuggester() if config.CORTEXGRAPH_ENABLE_PREPROCESSING else None,
             "context_manager": ConversationContext(),
             "dedup_checker": DeduplicationChecker(db),
         }
@@ -1086,7 +1086,7 @@ async def analyze_message(
         - Importance scoring
         - Duplicate detection
     """
-    if not config.MNEMEX_ENABLE_PREPROCESSING:
+    if not config.CORTEXGRAPH_ENABLE_PREPROCESSING:
         return {"error": "Preprocessing disabled"}
 
     components = get_preprocessing_components()
@@ -1255,26 +1255,26 @@ If similar memory exists:
 # ============================================================================
 
 # Enable/disable preprocessing layer
-MNEMEX_ENABLE_PREPROCESSING = os.getenv("MNEMEX_ENABLE_PREPROCESSING", "true").lower() == "true"
+CORTEXGRAPH_ENABLE_PREPROCESSING = os.getenv("CORTEXGRAPH_ENABLE_PREPROCESSING", "true").lower() == "true"
 
 # Intent Classification
-MNEMEX_INTENT_MODEL_PATH = os.getenv("MNEMEX_INTENT_MODEL_PATH", "./models/intent_classifier")
-MNEMEX_INTENT_CONFIDENCE_THRESHOLD = float(os.getenv("MNEMEX_INTENT_CONFIDENCE_THRESHOLD", "0.7"))
-MNEMEX_AUTO_SAVE_CONFIDENCE_THRESHOLD = float(os.getenv("MNEMEX_AUTO_SAVE_CONFIDENCE_THRESHOLD", "0.8"))
+CORTEXGRAPH_INTENT_MODEL_PATH = os.getenv("CORTEXGRAPH_INTENT_MODEL_PATH", "./models/intent_classifier")
+CORTEXGRAPH_INTENT_CONFIDENCE_THRESHOLD = float(os.getenv("CORTEXGRAPH_INTENT_CONFIDENCE_THRESHOLD", "0.7"))
+CORTEXGRAPH_AUTO_SAVE_CONFIDENCE_THRESHOLD = float(os.getenv("CORTEXGRAPH_AUTO_SAVE_CONFIDENCE_THRESHOLD", "0.8"))
 
 # Entity Extraction
-MNEMEX_SPACY_MODEL = os.getenv("MNEMEX_SPACY_MODEL", "en_core_web_sm")
+CORTEXGRAPH_SPACY_MODEL = os.getenv("CORTEXGRAPH_SPACY_MODEL", "en_core_web_sm")
 
 # Tag Suggestion
-MNEMEX_ENABLE_TAG_SUGGESTION = os.getenv("MNEMEX_ENABLE_TAG_SUGGESTION", "true").lower() == "true"
-MNEMEX_TAG_SUGGESTION_TOP_K = int(os.getenv("MNEMEX_TAG_SUGGESTION_TOP_K", "5"))
+CORTEXGRAPH_ENABLE_TAG_SUGGESTION = os.getenv("CORTEXGRAPH_ENABLE_TAG_SUGGESTION", "true").lower() == "true"
+CORTEXGRAPH_TAG_SUGGESTION_TOP_K = int(os.getenv("CORTEXGRAPH_TAG_SUGGESTION_TOP_K", "5"))
 
 # Conversation Context
-MNEMEX_CONTEXT_WINDOW_SIZE = int(os.getenv("MNEMEX_CONTEXT_WINDOW_SIZE", "10"))
+CORTEXGRAPH_CONTEXT_WINDOW_SIZE = int(os.getenv("CORTEXGRAPH_CONTEXT_WINDOW_SIZE", "10"))
 
 # Deduplication
-MNEMEX_ENABLE_DEDUP_CHECK = os.getenv("MNEMEX_ENABLE_DEDUP_CHECK", "true").lower() == "true"
-MNEMEX_DEDUP_SIMILARITY_THRESHOLD = float(os.getenv("MNEMEX_DEDUP_SIMILARITY_THRESHOLD", "0.85"))
+CORTEXGRAPH_ENABLE_DEDUP_CHECK = os.getenv("CORTEXGRAPH_ENABLE_DEDUP_CHECK", "true").lower() == "true"
+CORTEXGRAPH_DEDUP_SIMILARITY_THRESHOLD = float(os.getenv("CORTEXGRAPH_DEDUP_SIMILARITY_THRESHOLD", "0.85"))
 ```
 
 ---
@@ -1358,7 +1358,7 @@ sentence-transformers = "^2.2.0"
 
 **Configuration Option**:
 ```python
-MNEMEX_PREPROCESSING_MODE = "inline"  # or "async" or "separate_process"
+CORTEXGRAPH_PREPROCESSING_MODE = "inline"  # or "async" or "separate_process"
 ```
 
 ---

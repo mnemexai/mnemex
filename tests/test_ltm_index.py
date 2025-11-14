@@ -144,7 +144,7 @@ def test_ltm_index_with_default_path(tmp_path: Path) -> None:
     vault.mkdir()
 
     index = LTMIndex(vault_path=vault)
-    assert index.index_path == vault / ".mnemex-index.jsonl"
+    assert index.index_path == vault / ".cortexgraph-index.jsonl"
 
 
 def test_ltm_index_legacy_path_fallback(tmp_path: Path) -> None:
@@ -167,7 +167,7 @@ def test_ltm_index_prefers_new_path_over_legacy(tmp_path: Path) -> None:
     vault.mkdir()
 
     # Create both index files
-    new_index = vault / ".mnemex-index.jsonl"
+    new_index = vault / ".cortexgraph-index.jsonl"
     legacy_index = vault / ".stm-index.jsonl"
     new_index.write_text('{"_stats": {"total_documents": 0}}\n')
     legacy_index.write_text('{"_stats": {"total_documents": 0}}\n')
@@ -378,7 +378,7 @@ def test_load_index_with_empty_lines(tmp_path: Path) -> None:
     vault.mkdir()
 
     # Create index file with empty lines
-    index_file = vault / ".mnemex-index.jsonl"
+    index_file = vault / ".cortexgraph-index.jsonl"
     index_file.write_text(
         '{"_stats": {"total_documents": 1, "total_wikilinks": 0, "last_indexed": 0, "index_time_ms": 0}}\n'
         "\n"  # Empty line

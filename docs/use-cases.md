@@ -1,6 +1,6 @@
-# Mnemex Use Cases
+# CortexGraph Use Cases
 
-Based on the repository documentation and architecture, here are the appropriate use cases for Mnemex:
+Based on the repository documentation and architecture, here are the appropriate use cases for CortexGraph:
 
 ## 1. **Personal AI Assistant Memory**
 
@@ -141,7 +141,7 @@ Based on the repository documentation and architecture, here are the appropriate
 
 ---
 
-## When NOT to Use Mnemex
+## When NOT to Use CortexGraph
 
 ❌ **High-security secrets** - Use proper secret management (see `docs/security.md`)
 ❌ **Regulated data (PHI, PII)** - Compliance concerns unless properly configured
@@ -186,6 +186,6 @@ From `docs/configuration.md` and `src/cortexgraph/config.py:1`:
 
 ## Bottom Line
 
-Mnemex is best for **individual knowledge workers** who want their AI assistant to remember context across conversations, with memory dynamics that feel natural rather than robotic. It's particularly powerful when combined with **Obsidian** for building a hybrid ephemeral/permanent knowledge base.
+CortexGraph is best for **individual knowledge workers** who want their AI assistant to remember context across conversations, with memory dynamics that feel natural rather than robotic. It's particularly powerful when combined with **Obsidian** for building a hybrid ephemeral/permanent knowledge base.
 
 The temporal decay ensures Claude doesn't get confused by outdated context, while the reinforcement mechanics ensure important information naturally persists.

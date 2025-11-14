@@ -1,12 +1,12 @@
-# Future Roadmap for Mnemex
+# Future Roadmap for CortexGraph
 
-This document outlines potential future improvements and implementation approaches for Mnemex.
+This document outlines potential future improvements and implementation approaches for CortexGraph.
 
 ## 1. Spaced Repetition
 
 **What it is:** A learning technique where review intervals increase exponentially (e.g., SuperMemo, Anki algorithms).
 
-**Current State in Mnemex:**
+**Current State in CortexGraph:**
 - You have `touch_memory()` which reinforces memories
 - Decay algorithm reduces scores over time
 - But there's no **proactive suggestion** of when to review

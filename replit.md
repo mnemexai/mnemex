@@ -1,8 +1,8 @@
-# Mnemex - Temporal Memory for AI
+# CortexGraph - Temporal Memory for AI
 
 ## Project Overview
 
-Mnemex is a Model Context Protocol (MCP) server providing human-like memory dynamics for AI assistants. It implements temporal decay algorithms based on cognitive science, allowing memories to naturally fade over time unless reinforced through use.
+CortexGraph is a Model Context Protocol (MCP) server providing human-like memory dynamics for AI assistants. It implements temporal decay algorithms based on cognitive science, allowing memories to naturally fade over time unless reinforced through use.
 
 ### Key Features
 
@@ -137,7 +137,7 @@ See the main [README.md](README.md) for detailed documentation.
 - All tests passing with improved reliability
 
 **2024-10-18**: Environment Variable Configuration Enhancement
-- Added environment variable support for `MNEMEX_LTM_INDEX_MAX_AGE_SECONDS`
+- Added environment variable support for `CORTEXGRAPH_LTM_INDEX_MAX_AGE_SECONDS`
 - Created regression tests with proper monkeypatch cleanup
 - All tests passing reliably with isolated fixtures
 

@@ -80,7 +80,7 @@ class LTMIndex:
 
         Args:
             vault_path: Path to Obsidian vault directory
-            index_path: Path to index JSONL file (default: vault_path/.mnemex-index.jsonl)
+            index_path: Path to index JSONL file (default: vault_path/.cortexgraph-index.jsonl)
         """
         self.vault_path = vault_path
         self.config = get_config()
@@ -462,7 +462,7 @@ def main() -> int:
     parser.add_argument(
         "--index-path",
         type=Path,
-        help="Path to index file (default: vault/.mnemex-index.jsonl; legacy .stm-index.jsonl supported)",
+        help="Path to index file (default: vault/.cortexgraph-index.jsonl; legacy .stm-index.jsonl supported)",
     )
     parser.add_argument(
         "--force",

@@ -1,6 +1,6 @@
-# Mnemex API Reference
+# CortexGraph API Reference
 
-Complete reference for all MCP tools provided by Mnemex.
+Complete reference for all MCP tools provided by CortexGraph.
 
 ## Core Memory Tools
 
@@ -275,7 +275,7 @@ User asks: "Can you help with authentication in my API?"
 
 ```bash
 # Enable/disable automatic reinforcement
-MNEMEX_AUTO_REINFORCE=true
+CORTEXGRAPH_AUTO_REINFORCE=true
 
 # If disabled, returns:
 {
@@ -670,40 +670,40 @@ Common errors:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `MNEMEX_STORAGE_PATH` | `~/.config/cortexgraph/jsonl` | JSONL storage directory |
-| `MNEMEX_DECAY_MODEL` | `power_law` | Decay model (power_law\|exponential\|two_component) |
-| `MNEMEX_PL_HALFLIFE_DAYS` | `3.0` | Power-law half-life in days |
-| `MNEMEX_DECAY_LAMBDA` | `2.673e-6` | Exponential decay constant |
-| `MNEMEX_DECAY_BETA` | `0.6` | Use count exponent |
-| `MNEMEX_FORGET_THRESHOLD` | `0.05` | Forgetting threshold |
-| `MNEMEX_PROMOTE_THRESHOLD` | `0.65` | Promotion threshold |
-| `MNEMEX_PROMOTE_USE_COUNT` | `5` | Use count for promotion |
-| `MNEMEX_ENABLE_EMBEDDINGS` | `false` | Enable semantic search |
+| `CORTEXGRAPH_STORAGE_PATH` | `~/.config/cortexgraph/jsonl` | JSONL storage directory |
+| `CORTEXGRAPH_DECAY_MODEL` | `power_law` | Decay model (power_law\|exponential\|two_component) |
+| `CORTEXGRAPH_PL_HALFLIFE_DAYS` | `3.0` | Power-law half-life in days |
+| `CORTEXGRAPH_DECAY_LAMBDA` | `2.673e-6` | Exponential decay constant |
+| `CORTEXGRAPH_DECAY_BETA` | `0.6` | Use count exponent |
+| `CORTEXGRAPH_FORGET_THRESHOLD` | `0.05` | Forgetting threshold |
+| `CORTEXGRAPH_PROMOTE_THRESHOLD` | `0.65` | Promotion threshold |
+| `CORTEXGRAPH_PROMOTE_USE_COUNT` | `5` | Use count for promotion |
+| `CORTEXGRAPH_ENABLE_EMBEDDINGS` | `false` | Enable semantic search |
 | `LTM_VAULT_PATH` | - | Obsidian vault path |
 
 ### Tuning Recommendations
 
 **Fast Decay** (1-day half-life):
 ```bash
-MNEMEX_PL_HALFLIFE_DAYS=1.0
-# Or exponential: MNEMEX_DECAY_LAMBDA=8.02e-6
+CORTEXGRAPH_PL_HALFLIFE_DAYS=1.0
+# Or exponential: CORTEXGRAPH_DECAY_LAMBDA=8.02e-6
 ```
 
 **Slow Decay** (7-day half-life):
 ```bash
-MNEMEX_PL_HALFLIFE_DAYS=7.0
-# Or exponential: MNEMEX_DECAY_LAMBDA=1.145e-6
+CORTEXGRAPH_PL_HALFLIFE_DAYS=7.0
+# Or exponential: CORTEXGRAPH_DECAY_LAMBDA=1.145e-6
 ```
 
 **Aggressive Promotion**:
 ```bash
-MNEMEX_PROMOTE_THRESHOLD=0.5
-MNEMEX_PROMOTE_USE_COUNT=3
+CORTEXGRAPH_PROMOTE_THRESHOLD=0.5
+CORTEXGRAPH_PROMOTE_USE_COUNT=3
 ```
 
 **Conservative Forgetting**:
 ```bash
-MNEMEX_FORGET_THRESHOLD=0.01
+CORTEXGRAPH_FORGET_THRESHOLD=0.01
 ```
 
 ---

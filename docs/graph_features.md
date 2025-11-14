@@ -1,6 +1,6 @@
 # Knowledge Graph Features
 
-Mnemex now includes comprehensive knowledge graph capabilities inspired by the reference MCP memory server, adapted for temporal memory management.
+CortexGraph now includes comprehensive knowledge graph capabilities inspired by the reference MCP memory server, adapted for temporal memory management.
 
 ## Overview
 
@@ -423,7 +423,7 @@ def get_neighbors(memory_id, graph, hops=2):
 
 ## Comparison to Reference Memory Server
 
-| Feature | Reference Memory | Mnemex |
+| Feature | Reference Memory | CortexGraph |
 |---------|-----------------|------------|
 | **Primary Unit** | Entity (person, org) | Memory (time-bound info) |
 | **Observations** | Attached to entities | N/A (content is primary) |

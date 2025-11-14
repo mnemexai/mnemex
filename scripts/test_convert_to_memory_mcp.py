@@ -19,7 +19,7 @@ from convert_to_memory_mcp import (
 
 def test_convert_memory_to_entity():
     """Test memory to entity conversion."""
-    # Sample mnemex memory
+    # Sample cortexgraph memory
     memory = {
         "id": "mem-123",
         "content": "User prefers TypeScript over JavaScript",

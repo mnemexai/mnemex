@@ -20,10 +20,10 @@
 - Keep existing Obsidian config fields for backward compatibility
 
 **Environment Variables:**
-- `MNEMEX_BEAR_ENABLED` - Enable Bear integration
-- `MNEMEX_BEAR_DB_PATH` - Override default database path
-- `MNEMEX_BEAR_API_TOKEN` - API token for write operations
-- `MNEMEX_BEAR_TAG_PREFIX` - Tag prefix
+- `CORTEXGRAPH_BEAR_ENABLED` - Enable Bear integration
+- `CORTEXGRAPH_BEAR_DB_PATH` - Override default database path
+- `CORTEXGRAPH_BEAR_API_TOKEN` - API token for write operations
+- `CORTEXGRAPH_BEAR_TAG_PREFIX` - Tag prefix
 
 ### 2. Bear Database Reader (storage/bear_reader.py)
 **Purpose**: Fast read-only access to Bear's SQLite database

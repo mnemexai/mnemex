@@ -1,16 +1,16 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
-  "name": "io.github.simplemindedbot/mnemex",
+  "name": "io.github.prefrontal-systems/cortexgraph",
   "description": "Temporal memory for AI with decay and reinforcement. Two-layer storage (JSONL + Markdown).",
   "repository": {
-    "url": "https://github.com/simplemindedbot/mnemex",
+    "url": "https://github.com/prefrontal-systems/cortexgraph",
     "source": "github"
   },
   "version": "0.5.2",
   "packages": [
     {
       "registryType": "pypi",
-      "identifier": "mnemex",
+      "identifier": "cortexgraph",
       "version": "0.5.2",
       "transport": {
         "type": "stdio"
@@ -21,8 +21,8 @@
           "isRequired": false,
           "format": "string",
           "isSecret": false,
-          "name": "MNEMEX_STORAGE_PATH",
-          "default": "~/.config/mnemex/jsonl"
+          "name": "CORTEXGRAPH_STORAGE_PATH",
+          "default": "~/.config/cortexgraph/jsonl"
         },
         {
           "description": "Path to Obsidian vault for long-term memory",
@@ -36,7 +36,7 @@
           "isRequired": false,
           "format": "string",
           "isSecret": false,
-          "name": "MNEMEX_DECAY_MODEL",
+          "name": "CORTEXGRAPH_DECAY_MODEL",
           "default": "power_law"
         },
         {
@@ -44,7 +44,7 @@
           "isRequired": false,
           "format": "number",
           "isSecret": false,
-          "name": "MNEMEX_PL_HALFLIFE_DAYS",
+          "name": "CORTEXGRAPH_PL_HALFLIFE_DAYS",
           "default": "3.0"
         }
       ]

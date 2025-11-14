@@ -5,11 +5,11 @@
 
 ## Overview
 
-Mnemex uses a novel temporal decay algorithm that mimics human memory dynamics. Memories naturally fade over time unless reinforced through use. This document explains the mathematical model, parameter tuning, and design rationale.
+CortexGraph uses a novel temporal decay algorithm that mimics human memory dynamics. Memories naturally fade over time unless reinforced through use. This document explains the mathematical model, parameter tuning, and design rationale.
 
 ## Model Selection
 
-Mnemex supports three decay models. Choose per use case via `MNEMEX_DECAY_MODEL`:
+CortexGraph supports three decay models. Choose per use case via `CORTEXGRAPH_DECAY_MODEL`:
 
 1. Power‑Law (default):
    $$ f(\Delta t) = \left(1 + \frac{\Delta t}{t_0}\right)^{-\alpha} $$
@@ -385,34 +385,34 @@ Score
 
 ### Personal Assistant (Balanced)
 ```env
-MNEMEX_DECAY_LAMBDA=2.673e-6  # 3-day half-life
-MNEMEX_DECAY_BETA=0.6
-MNEMEX_FORGET_THRESHOLD=0.05
-MNEMEX_PROMOTE_THRESHOLD=0.65
+CORTEXGRAPH_DECAY_LAMBDA=2.673e-6  # 3-day half-life
+CORTEXGRAPH_DECAY_BETA=0.6
+CORTEXGRAPH_FORGET_THRESHOLD=0.05
+CORTEXGRAPH_PROMOTE_THRESHOLD=0.65
 ```
 
 ### Development Environment (Aggressive)
 ```env
-MNEMEX_DECAY_LAMBDA=8.02e-6   # 1-day half-life
-MNEMEX_DECAY_BETA=0.8
-MNEMEX_FORGET_THRESHOLD=0.10
-MNEMEX_PROMOTE_THRESHOLD=0.70
+CORTEXGRAPH_DECAY_LAMBDA=8.02e-6   # 1-day half-life
+CORTEXGRAPH_DECAY_BETA=0.8
+CORTEXGRAPH_FORGET_THRESHOLD=0.10
+CORTEXGRAPH_PROMOTE_THRESHOLD=0.70
 ```
 
 ### Research / Archival (Conservative)
 ```env
-MNEMEX_DECAY_LAMBDA=5.73e-7   # 14-day half-life
-MNEMEX_DECAY_BETA=0.4
-MNEMEX_FORGET_THRESHOLD=0.03
-MNEMEX_PROMOTE_THRESHOLD=0.50
+CORTEXGRAPH_DECAY_LAMBDA=5.73e-7   # 14-day half-life
+CORTEXGRAPH_DECAY_BETA=0.4
+CORTEXGRAPH_FORGET_THRESHOLD=0.03
+CORTEXGRAPH_PROMOTE_THRESHOLD=0.50
 ```
 
 ### Meeting Notes (High Velocity)
 ```env
-MNEMEX_DECAY_LAMBDA=1.60e-5   # 12-hour half-life
-MNEMEX_DECAY_BETA=0.9
-MNEMEX_FORGET_THRESHOLD=0.15
-MNEMEX_PROMOTE_THRESHOLD=0.75
+CORTEXGRAPH_DECAY_LAMBDA=1.60e-5   # 12-hour half-life
+CORTEXGRAPH_DECAY_BETA=0.9
+CORTEXGRAPH_FORGET_THRESHOLD=0.15
+CORTEXGRAPH_PROMOTE_THRESHOLD=0.75
 ```
 
 ## Implementation Notes

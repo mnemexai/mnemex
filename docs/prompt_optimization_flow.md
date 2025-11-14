@@ -336,7 +336,7 @@ GEMINI_TEMPERATURE = 0.3               # Consistent assembly
 ### 3. **Knowledge Graph Integration**
    - CortexGraph needs to be populated with relevant data
    - Index must be kept up-to-date
-   - Consider using Mnemex for temporal memory
+   - Consider using CortexGraph for temporal memory
 
 ### 4. **Error Handling**
    - Fallback to simple path if optimization fails
@@ -369,7 +369,7 @@ GEMINI_TEMPERATURE = 0.3               # Consistent assembly
 
 ## Related Documentation
 
-- [Mnemex Architecture](architecture.md) - Integration with temporal memory
+- [CortexGraph Architecture](architecture.md) - Integration with temporal memory
 - [CortexGraph Documentation](graph_features.md) - Knowledge graph features
 - [MCP Specification](https://github.com/modelcontextprotocol/specification) - Tool protocol details
 - [Prompt Injection Prevention](prompt_injection.md) - Security best practices

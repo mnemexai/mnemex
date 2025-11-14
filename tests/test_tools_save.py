@@ -38,11 +38,11 @@ class TestSaveMemory:
 
     def test_save_memory_with_tags(self, temp_storage):
         """Test saving memory with tags."""
-        result = save_memory(content="Tagged memory", tags=["python", "testing", "mnemex"])
+        result = save_memory(content="Tagged memory", tags=["python", "testing", "cortexgraph"])
 
         assert result["success"] is True
         memory = temp_storage.get_memory(result["memory_id"])
-        assert memory.meta.tags == ["python", "testing", "mnemex"]
+        assert memory.meta.tags == ["python", "testing", "cortexgraph"]
 
     def test_save_memory_with_entities(self, temp_storage):
         """Test saving memory with entities."""
@@ -67,7 +67,7 @@ class TestSaveMemory:
 
     def test_save_memory_with_custom_metadata(self, temp_storage):
         """Test saving memory with custom metadata."""
-        custom_meta = {"priority": "high", "project": "mnemex"}
+        custom_meta = {"priority": "high", "project": "cortexgraph"}
         result = save_memory(content="Memory with custom meta", meta=custom_meta)
 
         assert result["success"] is True

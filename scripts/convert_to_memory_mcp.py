@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
-"""Convert mnemex JSONL format to Anthropic Memory MCP format.
+"""Convert cortexgraph JSONL format to Anthropic Memory MCP format.
 
-This script converts mnemex memories and relations to the memory.json format
+This script converts cortexgraph memories and relations to the memory.json format
 used by Anthropic's Memory MCP server.
 
 Conversion Logic:
 -----------------
-1. Each mnemex memory becomes a Memory MCP entity:
+1. Each cortexgraph memory becomes a Memory MCP entity:
    - name: memory.id (unique identifier)
    - entityType: "memory"
    - observations: [content, tags as formatted strings, entities as formatted strings]
 
-2. Each mnemex relation becomes a Memory MCP relation:
+2. Each cortexgraph relation becomes a Memory MCP relation:
    - from: relation.from_memory_id
    - to: relation.to_memory_id
    - relationType: relation.relation_type
 
-Input Format (mnemex):
+Input Format (cortexgraph):
 ---------------------
 memories.jsonl:
 {
@@ -75,8 +75,8 @@ Usage:
 
     # Specify custom input/output paths
     python convert_to_memory_mcp.py \\
-        --memories-input ~/.config/mnemex/jsonl/memories.jsonl \\
-        --relations-input ~/.config/mnemex/jsonl/relations.jsonl \\
+        --memories-input ~/.config/cortexgraph/jsonl/memories.jsonl \\
+        --relations-input ~/.config/cortexgraph/jsonl/relations.jsonl \\
         --output memory.json
 
     # Dry run to preview conversion
@@ -87,7 +87,7 @@ Usage:
 
 Examples:
 ---------
-    # Convert default mnemex storage to memory.json
+    # Convert default cortexgraph storage to memory.json
     $ python convert_to_memory_mcp.py
     Converted 42 memories and 17 relations to memory.json
 
@@ -115,10 +115,10 @@ from typing import Any
 
 
 def convert_memory_to_entity(memory: dict[str, Any]) -> dict[str, Any]:
-    """Convert a mnemex memory to a Memory MCP entity.
+    """Convert a cortexgraph memory to a Memory MCP entity.
 
     Args:
-        memory: Dictionary containing mnemex memory data
+        memory: Dictionary containing cortexgraph memory data
 
     Returns:
         Dictionary in Memory MCP entity format with name, entityType, and observations
@@ -185,10 +185,10 @@ def convert_memory_to_entity(memory: dict[str, Any]) -> dict[str, Any]:
 
 
 def convert_relation(relation: dict[str, Any]) -> dict[str, Any]:
-    """Convert a mnemex relation to a Memory MCP relation.
+    """Convert a cortexgraph relation to a Memory MCP relation.
 
     Args:
-        relation: Dictionary containing mnemex relation data
+        relation: Dictionary containing cortexgraph relation data
 
     Returns:
         Dictionary in Memory MCP relation format with from, to, and relationType
@@ -288,7 +288,7 @@ def convert(
     dry_run: bool = False,
     verbose: bool = False,
 ) -> dict[str, Any]:
-    """Convert mnemex JSONL files to Memory MCP format.
+    """Convert cortexgraph JSONL files to Memory MCP format.
 
     Args:
         memories_path: Path to memories.jsonl
@@ -359,7 +359,7 @@ def convert(
 
 
 def get_default_paths() -> tuple[Path, Path]:
-    """Get default paths for mnemex storage.
+    """Get default paths for cortexgraph storage.
 
     Returns:
         Tuple of (memories_path, relations_path)
@@ -367,7 +367,7 @@ def get_default_paths() -> tuple[Path, Path]:
     # Try to read from environment or use default
     import os
 
-    storage_path = os.getenv("CORTEXGRAPH_STORAGE_PATH", "~/.config/mnemex/jsonl")
+    storage_path = os.getenv("CORTEXGRAPH_STORAGE_PATH", "~/.config/cortexgraph/jsonl")
     storage_path = Path(storage_path).expanduser()
 
     return (
@@ -379,7 +379,7 @@ def get_default_paths() -> tuple[Path, Path]:
 def main():
     """CLI entry point."""
     parser = argparse.ArgumentParser(
-        description="Convert mnemex JSONL format to Anthropic Memory MCP format",
+        description="Convert cortexgraph JSONL format to Anthropic Memory MCP format",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:

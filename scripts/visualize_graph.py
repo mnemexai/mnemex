@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Visualize mnemex memory graph using PyVis.
+Visualize cortexgraph memory graph using PyVis.
 
 This script reads memories and relations from JSONL files and creates
 an interactive HTML visualization using PyVis and NetworkX.
@@ -17,7 +17,7 @@ Examples:
     visualize_graph.py --memories ~/data/memories.jsonl --output graph.html
 
     # Specify only output location
-    visualize_graph.py --output ~/Desktop/mnemex_graph.html
+    visualize_graph.py --output ~/Desktop/cortexgraph_graph.html
 """
 
 import argparse
@@ -248,13 +248,13 @@ def get_default_paths() -> tuple[Path, Path]:
     Returns:
         Tuple of (memories_path, relations_path)
     """
-    # Try ~/.config/mnemex/jsonl/ first (new default)
-    config_dir = Path.home() / ".config" / "mnemex" / "jsonl"
+    # Try ~/.config/cortexgraph/jsonl/ first (new default)
+    config_dir = Path.home() / ".config" / "cortexgraph" / "jsonl"
     if config_dir.exists():
         return (config_dir / "memories.jsonl", config_dir / "relations.jsonl")
 
-    # Fallback to ~/.local/share/mnemex/
-    share_dir = Path.home() / ".local" / "share" / "mnemex"
+    # Fallback to ~/.local/share/cortexgraph/
+    share_dir = Path.home() / ".local" / "share" / "cortexgraph"
     return (share_dir / "memories.jsonl", share_dir / "relations.jsonl")
 
 
@@ -263,7 +263,7 @@ def parse_args() -> argparse.Namespace:
     memories_default, relations_default = get_default_paths()
 
     parser = argparse.ArgumentParser(
-        description="Visualize mnemex memory graph using PyVis",
+        description="Visualize cortexgraph memory graph using PyVis",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -290,8 +290,8 @@ Examples:
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("mnemex_graph.html"),
-        help="Path to output HTML file (default: mnemex_graph.html)",
+        default=Path("cortexgraph_graph.html"),
+        help="Path to output HTML file (default: cortexgraph_graph.html)",
     )
 
     return parser.parse_args()

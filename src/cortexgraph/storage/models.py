@@ -1,4 +1,4 @@
-"""Data models for Mnemex short‑term memory (STM)."""
+"""Data models for CortexGraph short‑term memory (STM)."""
 
 import time
 from enum import Enum

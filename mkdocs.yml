@@ -1,10 +1,10 @@
-site_name: Mnemex Documentation
+site_name: CortexGraph Documentation
 site_description: Memory persistence for AI assistants with temporal decay
-site_author: simplemindedbot
-site_url: https://mnemex.dev/
+site_author: prefrontal-systems
+site_url: https://cortexgraph.dev/
 
-repo_name: simplemindedbot/mnemex
-repo_url: https://github.com/simplemindedbot/mnemex
+repo_name: prefrontal-systems/cortexgraph
+repo_url: https://github.com/prefrontal-systems/cortexgraph
 edit_uri: edit/main/docs/
 
 theme:
@@ -74,9 +74,9 @@ plugins:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/simplemindedbot/mnemex
+      link: https://github.com/prefrontal-systems/cortexgraph
     - icon: fontawesome/solid/comments
-      link: https://github.com/simplemindedbot/mnemex/discussions
+      link: https://github.com/prefrontal-systems/cortexgraph/discussions
 
 nav:
   - Home: index.md
