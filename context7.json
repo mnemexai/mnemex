@@ -1,7 +1,7 @@
 {
   "$schema": "https://context7.com/schema/context7.json",
-  "projectTitle": "Mnemex",
-  "description": "Mnemex is a Model Context Protocol (MCP) server providing AI assistants with human-like, temporal memory dynamics that naturally fade unless reinforced, utilizing a two-layer architecture for local short and long-term storage.",
+  "projectTitle": "CortexGraph",
+  "description": "CortexGraph is a Model Context Protocol (MCP) server providing AI assistants with human-like, temporal memory dynamics that naturally fade unless reinforced, utilizing a two-layer architecture for local short and long-term storage.",
   "branch": "main",
   "excludeFolders": [
     "archive",

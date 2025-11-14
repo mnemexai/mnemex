@@ -1,1 +1,1 @@
-"""Tests for Mnemex."""
+"""Tests for CortexGraph."""

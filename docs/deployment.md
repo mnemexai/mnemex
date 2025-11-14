@@ -26,7 +26,7 @@ pipx install cortexgraph
 pip install cortexgraph
 
 # From GitHub (latest development version)
-uv tool install git+https://github.com/simplemindedbot/cortexgraph.git
+uv tool install git+https://github.com/prefrontal-systems/cortexgraph.git
 ```
 
 All methods install `cortexgraph` and all 7 CLI commands. Configuration goes in `~/.config/cortexgraph/.env`.
@@ -47,7 +47,7 @@ All methods install `cortexgraph` and all 7 CLI commands. Configuration goes in 
 
 ```bash
 # Clone the repository
-git clone https://github.com/simplemindedbot/cortexgraph.git
+git clone https://github.com/prefrontal-systems/cortexgraph.git
 cd cortexgraph
 
 # Install with uv (recommended)
@@ -156,7 +156,7 @@ Update Claude config with the absolute path:
 sudo ln -s ~/.local/bin/cortexgraph /usr/local/bin/cortexgraph
 
 # Option 2: Install with UV to system location (requires admin)
-sudo uv tool install git+https://github.com/simplemindedbot/cortexgraph.git
+sudo uv tool install git+https://github.com/prefrontal-systems/cortexgraph.git
 ```
 
 Restart Claude Desktop after configuration.
@@ -232,10 +232,10 @@ Use for information that's only relevant for a day or two.
 
 ```bash
 # .env
-MNEMEX_DECAY_LAMBDA=8.02e-6  # 1-day half-life
-MNEMEX_FORGET_THRESHOLD=0.03
-MNEMEX_PROMOTE_THRESHOLD=0.7
-MNEMEX_PROMOTE_USE_COUNT=3
+CORTEXGRAPH_DECAY_LAMBDA=8.02e-6  # 1-day half-life
+CORTEXGRAPH_FORGET_THRESHOLD=0.03
+CORTEXGRAPH_PROMOTE_THRESHOLD=0.7
+CORTEXGRAPH_PROMOTE_USE_COUNT=3
 ```
 
 ### Profile 2: Standard (Default)
@@ -244,10 +244,10 @@ Balanced for general use.
 
 ```bash
 # .env
-MNEMEX_DECAY_LAMBDA=2.673e-6  # 3-day half-life
-MNEMEX_FORGET_THRESHOLD=0.05
-MNEMEX_PROMOTE_THRESHOLD=0.65
-MNEMEX_PROMOTE_USE_COUNT=5
+CORTEXGRAPH_DECAY_LAMBDA=2.673e-6  # 3-day half-life
+CORTEXGRAPH_FORGET_THRESHOLD=0.05
+CORTEXGRAPH_PROMOTE_THRESHOLD=0.65
+CORTEXGRAPH_PROMOTE_USE_COUNT=5
 ```
 
 ### Profile 3: Long-Term STM (Weekly)
@@ -256,10 +256,10 @@ For information that should persist longer.
 
 ```bash
 # .env
-MNEMEX_DECAY_LAMBDA=1.145e-6  # 7-day half-life
-MNEMEX_FORGET_THRESHOLD=0.08
-MNEMEX_PROMOTE_THRESHOLD=0.6
-MNEMEX_PROMOTE_USE_COUNT=7
+CORTEXGRAPH_DECAY_LAMBDA=1.145e-6  # 7-day half-life
+CORTEXGRAPH_FORGET_THRESHOLD=0.08
+CORTEXGRAPH_PROMOTE_THRESHOLD=0.6
+CORTEXGRAPH_PROMOTE_USE_COUNT=7
 ```
 
 ### Profile 4: With Embeddings
@@ -268,11 +268,11 @@ Enable semantic search and clustering.
 
 ```bash
 # .env
-MNEMEX_ENABLE_EMBEDDINGS=true
-MNEMEX_EMBED_MODEL=all-MiniLM-L6-v2
-MNEMEX_SEMANTIC_HI=0.88
-MNEMEX_SEMANTIC_LO=0.78
-MNEMEX_CLUSTER_LINK_THRESHOLD=0.83
+CORTEXGRAPH_ENABLE_EMBEDDINGS=true
+CORTEXGRAPH_EMBED_MODEL=all-MiniLM-L6-v2
+CORTEXGRAPH_SEMANTIC_HI=0.88
+CORTEXGRAPH_SEMANTIC_LO=0.78
+CORTEXGRAPH_CLUSTER_LINK_THRESHOLD=0.83
 ```
 
 **Note**: First run will download the model (~50MB).
@@ -281,34 +281,34 @@ MNEMEX_CLUSTER_LINK_THRESHOLD=0.83
 
 ## Decay Model Configuration
 
-Select decay behavior via `MNEMEX_DECAY_MODEL`:
+Select decay behavior via `CORTEXGRAPH_DECAY_MODEL`:
 
 ```bash
 # 1) Power-Law (default; heavier tail, most human)
-MNEMEX_DECAY_MODEL=power_law
-MNEMEX_PL_ALPHA=1.1              # shape (typical 1.0–1.2)
-MNEMEX_PL_HALFLIFE_DAYS=3.0      # target half-life used to derive t0
+CORTEXGRAPH_DECAY_MODEL=power_law
+CORTEXGRAPH_PL_ALPHA=1.1              # shape (typical 1.0–1.2)
+CORTEXGRAPH_PL_HALFLIFE_DAYS=3.0      # target half-life used to derive t0
 
 # 2) Exponential (lighter tail, forgets sooner)
-MNEMEX_DECAY_MODEL=exponential
-MNEMEX_DECAY_LAMBDA=2.673e-6     # ~3-day half-life (ln(2)/(3*86400))
+CORTEXGRAPH_DECAY_MODEL=exponential
+CORTEXGRAPH_DECAY_LAMBDA=2.673e-6     # ~3-day half-life (ln(2)/(3*86400))
 
 # 3) Two-Component (fast early forgetting + heavier tail)
-MNEMEX_DECAY_MODEL=two_component
-MNEMEX_TC_LAMBDA_FAST=1.603e-5   # ~12-hour half-life
-MNEMEX_TC_LAMBDA_SLOW=1.147e-6   # ~7-day half-life
-MNEMEX_TC_WEIGHT_FAST=0.7        # weight of fast component (0–1)
+CORTEXGRAPH_DECAY_MODEL=two_component
+CORTEXGRAPH_TC_LAMBDA_FAST=1.603e-5   # ~12-hour half-life
+CORTEXGRAPH_TC_LAMBDA_SLOW=1.147e-6   # ~7-day half-life
+CORTEXGRAPH_TC_WEIGHT_FAST=0.7        # weight of fast component (0–1)
 
 # Shared parameters
-MNEMEX_DECAY_BETA=0.6            # sub-linear use count weight
-MNEMEX_FORGET_THRESHOLD=0.05     # GC threshold
-MNEMEX_PROMOTE_THRESHOLD=0.65    # promotion threshold
-MNEMEX_PROMOTE_USE_COUNT=5
-MNEMEX_PROMOTE_TIME_WINDOW=14
+CORTEXGRAPH_DECAY_BETA=0.6            # sub-linear use count weight
+CORTEXGRAPH_FORGET_THRESHOLD=0.05     # GC threshold
+CORTEXGRAPH_PROMOTE_THRESHOLD=0.65    # promotion threshold
+CORTEXGRAPH_PROMOTE_USE_COUNT=5
+CORTEXGRAPH_PROMOTE_TIME_WINDOW=14
 ```
 
 Tuning tips:
-- Power-Law has a heavier tail; consider a slightly higher `MNEMEX_FORGET_THRESHOLD` (e.g., 0.06–0.08) or reduce `MNEMEX_PL_HALFLIFE_DAYS` to maintain GC budget.
+- Power-Law has a heavier tail; consider a slightly higher `CORTEXGRAPH_FORGET_THRESHOLD` (e.g., 0.06–0.08) or reduce `CORTEXGRAPH_PL_HALFLIFE_DAYS` to maintain GC budget.
 - Two-Component forgets very recent items faster; validate promotion and GC rates and adjust thresholds as needed.
 
 ---
@@ -319,7 +319,7 @@ Tuning tips:
 
 Default directory: `~/.config/cortexgraph/jsonl/`
 
-Custom location via `MNEMEX_STORAGE_PATH` environment variable.
+Custom location via `CORTEXGRAPH_STORAGE_PATH` environment variable.
 
 ### Backup
 
@@ -488,7 +488,7 @@ Or configure in MCP settings with log file output.
 
 1. Install embeddings support: `pip install sentence-transformers`
 2. Check model downloads: `~/.cache/torch/sentence_transformers/`
-3. Verify `MNEMEX_ENABLE_EMBEDDINGS=true` in config
+3. Verify `CORTEXGRAPH_ENABLE_EMBEDDINGS=true` in config
 4. Check logs for model loading errors
 
 ### Promotion fails
@@ -510,17 +510,17 @@ Or configure in MCP settings with log file output.
 ### For Large Stores (> 5000 memories)
 
 ```bash
-Use `JSONLStorage.compact()` periodically to reclaim space from tombstones and duplicates. Consider a higher `MNEMEX_FORGET_THRESHOLD` for aggressive GC.
+Use `JSONLStorage.compact()` periodically to reclaim space from tombstones and duplicates. Consider a higher `CORTEXGRAPH_FORGET_THRESHOLD` for aggressive GC.
 ```
 
 ### For Semantic Search
 
 ```bash
 # Use lighter model
-MNEMEX_EMBED_MODEL=all-MiniLM-L6-v2
+CORTEXGRAPH_EMBED_MODEL=all-MiniLM-L6-v2
 
 # Or faster model (less accurate)
-MNEMEX_EMBED_MODEL=paraphrase-MiniLM-L3-v2
+CORTEXGRAPH_EMBED_MODEL=paraphrase-MiniLM-L3-v2
 ```
 
 ### Memory Usage

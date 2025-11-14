@@ -29,7 +29,7 @@ class BasicMemoryIntegration:
         if self.vault_path is None:
             return (
                 "LTM_VAULT_PATH is not configured.\n\n"
-                "To enable memory promotion, add this to ~/.config/mnemex/.env:\n"
+                "To enable memory promotion, add this to ~/.config/cortexgraph/.env:\n"
                 "  LTM_VAULT_PATH=~/Documents/Obsidian/Vault\n\n"
                 "Replace with your actual Obsidian vault path."
             )
@@ -38,7 +38,7 @@ class BasicMemoryIntegration:
                 f"LTM vault path does not exist: {self.vault_path}\n\n"
                 f"Please create the directory:\n"
                 f"  mkdir -p {self.vault_path}\n\n"
-                f"Or update LTM_VAULT_PATH in ~/.config/mnemex/.env to point to your Obsidian vault."
+                f"Or update LTM_VAULT_PATH in ~/.config/cortexgraph/.env to point to your Obsidian vault."
             )
         elif not self.vault_path.is_dir():
             return (
@@ -48,7 +48,7 @@ class BasicMemoryIntegration:
         elif self.promoted_folder is None:
             return (
                 "LTM_PROMOTED_FOLDER is not configured.\n\n"
-                "To enable memory promotion, add this to ~/.config/mnemex/.env:\n"
+                "To enable memory promotion, add this to ~/.config/cortexgraph/.env:\n"
                 "  LTM_PROMOTED_FOLDER=stm-promoted\n\n"
                 "This is the subfolder within your vault where promoted memories will be stored."
             )

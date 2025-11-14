@@ -7,19 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.0] - 2025-10-09
 
-🎉 **Production Release: Mnemex v1.0.0**
+🎉 **Production Release: CortexGraph v1.0.0**
 
-This is the first production-ready release of Mnemex (formerly STM Research/STM Server), a temporal memory management system for AI assistants with human-like memory dynamics.
+This is the first production-ready release of CortexGraph (formerly CortexGraph), a temporal memory management system for AI assistants with human-like memory dynamics.
 
 ### 🚀 Major Features
 
 #### Complete Rebranding
-- **Renamed from STM Research/STM Server to Mnemex**
+- **Renamed from CortexGraph to CortexGraph**
   - Updated all references, paths, and documentation
   - Changed storage paths from `~/.stm/` to `~/.config/cortexgraph/` (XDG-compliant)
   - Updated command names from `stm-*` to `cortexgraph-*`
-  - Updated environment variables from `STM_*` to `MNEMEX_*`
-  - Repository moved to https://github.com/simplemindedbot/cortexgraph
+  - Updated environment variables from CORTEXGRAPH_* to CORTEXGRAPH_*
+  - Repository moved to https://github.com/prefrontal-systems/cortexgraph
 
 #### Simplified Installation
 - **UV Tool Install Support**

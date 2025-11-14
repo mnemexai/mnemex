@@ -13,14 +13,14 @@ def _get_config_dir() -> Path:
     """Get XDG-compliant config directory."""
     xdg_config = os.getenv("XDG_CONFIG_HOME")
     if xdg_config:
-        return Path(xdg_config) / "mnemex"
-    return Path.home() / ".config" / "mnemex"
+        return Path(xdg_config) / "cortexgraph"
+    return Path.home() / ".config" / "cortexgraph"
 
 
 # Load environment variables from .env file (XDG paths first, then local)
 _config_dir = _get_config_dir()
 _env_paths = [
-    _config_dir / ".env",  # Primary: ~/.config/mnemex/.env
+    _config_dir / ".env",  # Primary: ~/.config/cortexgraph/.env
     Path(".env"),  # Fallback: ./env (for development)
 ]
 
@@ -36,9 +36,9 @@ if not _env_file_found:
     import logging
 
     logging.warning(
-        "No .env file found. Mnemex will use default configuration.\n"
+        "No .env file found. CortexGraph will use default configuration.\n"
         f"To customize settings, create: {_config_dir / '.env'}\n"
-        f"See .env.example in the mnemex repository for all available options."
+        f"See .env.example in the cortexgraph repository for all available options."
     )
 
 
@@ -197,14 +197,14 @@ class Config(BaseModel):
     )
     ltm_index_path: Path | None = Field(
         default=None,
-        description="Path to LTM index file (default: vault/.mnemex-index.jsonl)",
+        description="Path to LTM index file (default: vault/.cortexgraph-index.jsonl)",
     )
     ltm_promoted_folder: str | None = Field(
         default=None,
         description="Folder within vault for promoted memories (required for promotion)",
     )
     ltm_index_filename: str = Field(
-        default=".mnemex-index.jsonl",
+        default=".cortexgraph-index.jsonl",
         description="Filename for LTM index (within vault)",
     )
     ltm_legacy_index_filename: str = Field(

@@ -1,4 +1,4 @@
-"""JSONL-based storage interface for Mnemex.
+"""JSONL-based storage interface for CortexGraph.
 
 Human-readable, git-friendly storage with in-memory indexing for fast queries.
 """

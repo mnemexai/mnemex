@@ -156,9 +156,9 @@ See detailed parameter reference, model selection, and worked examples in docs/s
 - Aggressive space control
   - Raise τ_forget to 0.08–0.12 and/or shorten half-life; schedule weekly GC
 - Environment template
-  - MNEMEX_DECAY_LAMBDA=2.673e-6, MNEMEX_DECAY_BETA=0.6
-  - MNEMEX_FORGET_THRESHOLD=0.05, MNEMEX_PROMOTE_THRESHOLD=0.65
-  - MNEMEX_PROMOTE_USE_COUNT=5, MNEMEX_PROMOTE_TIME_WINDOW=14
+  - CORTEXGRAPH_DECAY_LAMBDA=2.673e-6, CORTEXGRAPH_DECAY_BETA=0.6
+  - CORTEXGRAPH_FORGET_THRESHOLD=0.05, CORTEXGRAPH_PROMOTE_THRESHOLD=0.65
+  - CORTEXGRAPH_PROMOTE_USE_COUNT=5, CORTEXGRAPH_PROMOTE_TIME_WINDOW=14
 
 **Decision thresholds:**
 
@@ -255,10 +255,10 @@ User: "Can you help with authentication in my API?"
 **Configuration:**
 
 ```bash
-MNEMEX_REVIEW_BLEND_RATIO=0.3           # 30% review candidates in search
-MNEMEX_REVIEW_DANGER_ZONE_MIN=0.15      # Lower bound of danger zone
-MNEMEX_REVIEW_DANGER_ZONE_MAX=0.35      # Upper bound of danger zone
-MNEMEX_AUTO_REINFORCE=true              # Auto-reinforce on observe
+CORTEXGRAPH_REVIEW_BLEND_RATIO=0.3           # 30% review candidates in search
+CORTEXGRAPH_REVIEW_DANGER_ZONE_MIN=0.15      # Lower bound of danger zone
+CORTEXGRAPH_REVIEW_DANGER_ZONE_MAX=0.35      # Upper bound of danger zone
+CORTEXGRAPH_AUTO_REINFORCE=true              # Auto-reinforce on observe
 ```
 
 See `docs/prompts/` for LLM system prompt templates that enable natural memory usage.
@@ -341,30 +341,30 @@ Edit `~/.config/cortexgraph/.env` with your settings:
 
 ```bash
 # Storage
-MNEMEX_STORAGE_PATH=~/.config/cortexgraph/jsonl
+CORTEXGRAPH_STORAGE_PATH=~/.config/cortexgraph/jsonl
 
 # Decay model (power_law | exponential | two_component)
-MNEMEX_DECAY_MODEL=power_law
+CORTEXGRAPH_DECAY_MODEL=power_law
 
 # Power-law parameters (default model)
-MNEMEX_PL_ALPHA=1.1
-MNEMEX_PL_HALFLIFE_DAYS=3.0
+CORTEXGRAPH_PL_ALPHA=1.1
+CORTEXGRAPH_PL_HALFLIFE_DAYS=3.0
 
 # Exponential (if selected)
-# MNEMEX_DECAY_LAMBDA=2.673e-6  # 3-day half-life
+# CORTEXGRAPH_DECAY_LAMBDA=2.673e-6  # 3-day half-life
 
 # Two-component (if selected)
-# MNEMEX_TC_LAMBDA_FAST=1.603e-5  # ~12h
-# MNEMEX_TC_LAMBDA_SLOW=1.147e-6  # ~7d
-# MNEMEX_TC_WEIGHT_FAST=0.7
+# CORTEXGRAPH_TC_LAMBDA_FAST=1.603e-5  # ~12h
+# CORTEXGRAPH_TC_LAMBDA_SLOW=1.147e-6  # ~7d
+# CORTEXGRAPH_TC_WEIGHT_FAST=0.7
 
 # Common parameters
-MNEMEX_DECAY_LAMBDA=2.673e-6
-MNEMEX_DECAY_BETA=0.6
+CORTEXGRAPH_DECAY_LAMBDA=2.673e-6
+CORTEXGRAPH_DECAY_BETA=0.6
 
 # Thresholds
-MNEMEX_FORGET_THRESHOLD=0.05
-MNEMEX_PROMOTE_THRESHOLD=0.65
+CORTEXGRAPH_FORGET_THRESHOLD=0.05
+CORTEXGRAPH_PROMOTE_THRESHOLD=0.65
 
 # Long-term memory (optional)
 LTM_VAULT_PATH=~/Documents/Obsidian/Vault
@@ -380,10 +380,10 @@ Add environment variables directly to `~/Library/Application Support/Claude/clau
     "cortexgraph": {
       "command": "cortexgraph",
       "env": {
-        "MNEMEX_STORAGE_PATH": "~/.config/cortexgraph/jsonl",
-        "MNEMEX_DECAY_MODEL": "power_law",
-        "MNEMEX_PL_ALPHA": "1.1",
-        "MNEMEX_PL_HALFLIFE_DAYS": "3.0",
+        "CORTEXGRAPH_STORAGE_PATH": "~/.config/cortexgraph/jsonl",
+        "CORTEXGRAPH_DECAY_MODEL": "power_law",
+        "CORTEXGRAPH_PL_ALPHA": "1.1",
+        "CORTEXGRAPH_PL_HALFLIFE_DAYS": "3.0",
         "LTM_VAULT_PATH": "~/Documents/Obsidian/Vault"
       }
     }
@@ -545,13 +545,13 @@ cortexgraph-migrate --dry-run
 # Migrate data files from ~/.stm/ to ~/.config/cortexgraph/
 cortexgraph-migrate --data-only
 
-# Also migrate .env file (rename STM_* variables to MNEMEX_*)
+# Also migrate .env file (rename STM_* variables to CORTEXGRAPH_*)
 cortexgraph-migrate --migrate-env --env-path ./.env
 ```
 
 The migration tool will:
 - Copy JSONL files from `~/.stm/jsonl/` to `~/.config/cortexgraph/jsonl/`
-- Optionally rename environment variables (STM_* → MNEMEX_*)
+- Optionally rename environment variables (STM_* → CORTEXGRAPH_*)
 - Create backups before making changes
 - Provide clear next-step instructions
 

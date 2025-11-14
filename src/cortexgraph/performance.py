@@ -1,4 +1,4 @@
-"""Performance monitoring and metrics for Mnemex."""
+"""Performance monitoring and metrics for CortexGraph."""
 
 import time
 from collections import defaultdict

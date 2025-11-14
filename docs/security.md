@@ -6,7 +6,7 @@
 
 Use GitHub's **Private Vulnerability Reporting** feature:
 
-1. Go to the [Security tab](https://github.com/simplemindedbot/cortexgraph/security)
+1. Go to the [Security tab](https://github.com/prefrontal-systems/cortexgraph/security)
 2. Click **"Report a vulnerability"**
 3. Fill out the advisory form with details
 
@@ -16,7 +16,7 @@ Expected response time: **48 hours**
 
 ### Automated Scanning
 
-Mnemex uses multiple security scanning tools:
+CortexGraph uses multiple security scanning tools:
 
 - **Dependabot**: Automated dependency updates
 - **pip-audit**: Official PyPA vulnerability scanner
@@ -85,7 +85,7 @@ All user inputs validated:
 
 ## Security Roadmap
 
-Ongoing improvements tracked in [Issue #6](https://github.com/simplemindedbot/cortexgraph/issues/6):
+Ongoing improvements tracked in [Issue #6](https://github.com/prefrontal-systems/cortexgraph/issues/6):
 
 - [ ] SBOM (Software Bill of Materials) generation
 - [ ] Dependency pinning with hashes
@@ -113,13 +113,13 @@ Use GitHub's private reporting feature (link above).
 ## Security Updates
 
 Subscribe to:
-- [GitHub Security Advisories](https://github.com/simplemindedbot/cortexgraph/security/advisories)
-- [Release notifications](https://github.com/simplemindedbot/cortexgraph/releases)
+- [GitHub Security Advisories](https://github.com/prefrontal-systems/cortexgraph/security/advisories)
+- [Release notifications](https://github.com/prefrontal-systems/cortexgraph/releases)
 
 ## License
 
 Security practices follow OWASP guidelines and OSSF best practices.
 
 See also:
-- [SECURITY.md](https://github.com/simplemindedbot/cortexgraph/blob/main/SECURITY.md) (main policy)
+- [SECURITY.md](https://github.com/prefrontal-systems/cortexgraph/blob/main/SECURITY.md) (main policy)
 - [Contributing guidelines](CONTRIBUTING.md)

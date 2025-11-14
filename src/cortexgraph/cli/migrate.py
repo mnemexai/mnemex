@@ -1,4 +1,4 @@
-"""Migration tool for upgrading from STM to Mnemex."""
+"""Migration tool for upgrading from STM to CortexGraph."""
 
 import argparse
 import os
@@ -20,12 +20,12 @@ def get_old_stm_path() -> Path | None:
     return None
 
 
-def get_new_mnemex_path() -> Path:
-    """Get new Mnemex data directory (XDG-compliant)."""
+def get_new_cortexgraph_path() -> Path:
+    """Get new CortexGraph data directory (XDG-compliant)."""
     xdg_config = os.getenv("XDG_CONFIG_HOME")
     if xdg_config:
-        return Path(xdg_config) / "mnemex" / "jsonl"
-    return Path.home() / ".config" / "mnemex" / "jsonl"
+        return Path(xdg_config) / "cortexgraph" / "jsonl"
+    return Path.home() / ".config" / "cortexgraph" / "jsonl"
 
 
 def migrate_data(old_path: Path, new_path: Path, dry_run: bool = False) -> bool:
@@ -116,21 +116,21 @@ def migrate_env_file(env_path: Path, dry_run: bool = False) -> bool:
 def main() -> None:
     """Main migration entry point."""
     parser = argparse.ArgumentParser(
-        description="Migrate from STM to Mnemex",
+        description="Migrate from STM to CortexGraph",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
   # Preview what will be migrated (dry run)
-  mnemex-migrate --dry-run
+  cortexgraph-migrate --dry-run
 
   # Migrate data only
-  mnemex-migrate --data-only
+  cortexgraph-migrate --data-only
 
   # Migrate data and .env file
-  mnemex-migrate --migrate-env
+  cortexgraph-migrate --migrate-env
 
   # Full migration with custom paths
-  mnemex-migrate --old-path ~/.stm/jsonl --new-path ~/.config/mnemex/jsonl
+  cortexgraph-migrate --old-path ~/.stm/jsonl --new-path ~/.config/cortexgraph/jsonl
         """,
     )
 
@@ -152,7 +152,7 @@ Examples:
     parser.add_argument(
         "--env-path",
         type=Path,
-        help="Path to .env file to migrate (default: ./.env or ~/.config/mnemex/.env)",
+        help="Path to .env file to migrate (default: ./.env or ~/.config/cortexgraph/.env)",
     )
     parser.add_argument(
         "--old-path",
@@ -162,12 +162,12 @@ Examples:
     parser.add_argument(
         "--new-path",
         type=Path,
-        help="New Mnemex data directory (default: ~/.config/mnemex/jsonl)",
+        help="New CortexGraph data directory (default: ~/.config/cortexgraph/jsonl)",
     )
 
     args = parser.parse_args()
 
-    print("🔄 Mnemex Migration Tool")
+    print("🔄 CortexGraph Migration Tool")
     print("=" * 50)
 
     # Detect old STM path
@@ -180,8 +180,8 @@ Examples:
         print("\nIf your data is elsewhere, use --old-path to specify it.")
         sys.exit(1)
 
-    # Get new Mnemex path
-    new_path = args.new_path or get_new_mnemex_path()
+    # Get new CortexGraph path
+    new_path = args.new_path or get_new_cortexgraph_path()
 
     # Migrate data
     data_migrated = migrate_data(old_path, new_path, dry_run=args.dry_run)
@@ -194,7 +194,7 @@ Examples:
             # Try common locations
             candidates = [
                 Path(".env"),
-                Path.home() / ".config" / "mnemex" / ".env",
+                Path.home() / ".config" / "cortexgraph" / ".env",
             ]
             for candidate in candidates:
                 if candidate.exists():
@@ -219,7 +219,7 @@ Examples:
             print("📝 .env file updated")
 
         print("\nNext steps:")
-        print("1. Update your Claude Desktop config to use 'mnemex' instead of 'stm'")
+        print("1. Update your Claude Desktop config to use 'cortexgraph' instead of 'stm'")
         print("2. Verify PYTHONPATH points to the new installation")
         print("3. Restart Claude Desktop")
         print("\nSee README.md for updated configuration examples.")

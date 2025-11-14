@@ -1,6 +1,6 @@
 # Bear Integration for Long-Term Memory
 
-Mnemex can use the [Bear note-taking app](https://bear.app/) as a long-term memory (LTM) store, providing a powerful alternative to the default Obsidian integration. This guide explains how to set it up and use it.
+CortexGraph can use the [Bear note-taking app](https://bear.app/) as a long-term memory (LTM) store, providing a powerful alternative to the default Obsidian integration. This guide explains how to set it up and use it.
 
 ## Overview
 
@@ -25,19 +25,19 @@ Next, add the following variables to your `.env` file:
 # --- Bear LTM Integration ---
 
 # Enable Bear as an LTM target (default: false)
-MNEMEX_BEAR_ENABLED=true
+CORTEXGRAPH_BEAR_ENABLED=true
 
 # Bear API Token (required for writing notes)
 # See instructions below on how to get your token.
-MNEMEX_BEAR_API_TOKEN="YOUR_BEAR_API_TOKEN"
+CORTEXGRAPH_BEAR_API_TOKEN="YOUR_BEAR_API_TOKEN"
 
 # [Optional] Override the default path to Bear's database.
 # The system auto-detects the path, so this is usually not needed.
-# MNEMEX_BEAR_DB_PATH="/path/to/your/database.sqlite"
+# CORTEXGRAPH_BEAR_DB_PATH="/path/to/your/database.sqlite"
 
 # [Optional] A tag prefix for all memories promoted to Bear.
-# This helps organize and identify Mnemex-generated notes.
-MNEMEX_BEAR_TAG_PREFIX="cortexgraph"
+# This helps organize and identify CortexGraph-generated notes.
+CORTEXGRAPH_BEAR_TAG_PREFIX="cortexgraph"
 ```
 
 ### How to Get Your Bear API Token
@@ -71,7 +71,7 @@ This will create a new note in Bear with the memory's content and associated met
 
 ### Unified Search
 
-When `MNEMEX_BEAR_ENABLED` is set to `true`, the `search_unified` tool will automatically include Bear notes in its search results, alongside short-term memories and Obsidian notes.
+When `CORTEXGRAPH_BEAR_ENABLED` is set to `true`, the `search_unified` tool will automatically include Bear notes in its search results, alongside short-term memories and Obsidian notes.
 
 ## Note Format in Bear
 

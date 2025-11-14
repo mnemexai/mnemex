@@ -1,4 +1,4 @@
-"""Storage layer for Mnemex (JSONL-only)."""
+"""Storage layer for CortexGraph (JSONL-only)."""
 
 from .jsonl_storage import JSONLStorage
 from .models import Memory, MemoryMetadata, MemoryStatus

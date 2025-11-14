@@ -1,16 +1,16 @@
-# Mnemex
+# CortexGraph
 
 **Memory persistence for AI assistants with temporal decay**
 
-[![Tests](https://github.com/simplemindedbot/cortexgraph/actions/workflows/tests.yml/badge.svg)](https://github.com/simplemindedbot/cortexgraph/actions/workflows/tests.yml)
-[![codecov](https://codecov.io/gh/simplemindedbot/cortexgraph/branch/main/graph/badge.svg)](https://codecov.io/gh/simplemindedbot/cortexgraph)
-[![Security](https://github.com/simplemindedbot/cortexgraph/actions/workflows/security.yml/badge.svg)](https://github.com/simplemindedbot/cortexgraph/actions/workflows/security.yml)
+[![Tests](https://github.com/prefrontal-systems/cortexgraph/actions/workflows/tests.yml/badge.svg)](https://github.com/prefrontal-systems/cortexgraph/actions/workflows/tests.yml)
+[![codecov](https://codecov.io/gh/prefrontal-systems/cortexgraph/branch/main/graph/badge.svg)](https://codecov.io/gh/prefrontal-systems/cortexgraph)
+[![Security](https://github.com/prefrontal-systems/cortexgraph/actions/workflows/security.yml/badge.svg)](https://github.com/prefrontal-systems/cortexgraph/actions/workflows/security.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 
-## What is Mnemex?
+## What is CortexGraph?
 
-Mnemex is a **Model Context Protocol (MCP)** server that gives AI assistants like Claude a memory system with:
+CortexGraph is a **Model Context Protocol (MCP)** server that gives AI assistants like Claude a memory system with:
 
 - **Short-term memory (STM)** with temporal decay (like human working memory)
 - **Long-term memory (LTM)** for permanent storage in Obsidian-compatible Markdown
@@ -19,7 +19,7 @@ Mnemex is a **Model Context Protocol (MCP)** server that gives AI assistants lik
 - **Smart consolidation** to merge related memories
 - **13 MCP tools** and **7 CLI commands**
 
-### Why Mnemex?
+### Why CortexGraph?
 
 🔒 **Privacy First**: All data stored locally on your machine - no cloud, no tracking, no data sharing
 
@@ -36,7 +36,7 @@ Mnemex is a **Model Context Protocol (MCP)** server that gives AI assistants lik
 
 ```bash
 # Recommended: UV tool install
-uv tool install git+https://github.com/simplemindedbot/cortexgraph.git
+uv tool install git+https://github.com/prefrontal-systems/cortexgraph.git
 ```
 
 ### Configuration
@@ -45,11 +45,11 @@ Create `~/.config/cortexgraph/.env`:
 
 ```bash
 # Storage
-MNEMEX_STORAGE_PATH=~/.config/cortexgraph/jsonl
+CORTEXGRAPH_STORAGE_PATH=~/.config/cortexgraph/jsonl
 
 # Decay model (power_law | exponential | two_component)
-MNEMEX_DECAY_MODEL=power_law
-MNEMEX_PL_HALFLIFE_DAYS=3.0
+CORTEXGRAPH_DECAY_MODEL=power_law
+CORTEXGRAPH_PL_HALFLIFE_DAYS=3.0
 
 # Long-term memory
 LTM_VAULT_PATH=~/Documents/Obsidian/Vault

@@ -1,8 +1,8 @@
-# Mnemex Architecture
+# CortexGraph Architecture
 
 ## Overview
 
-Mnemex implements a biologically-inspired memory system with temporal decay and reinforcement, designed to give AI assistants human-like memory dynamics.
+CortexGraph implements a biologically-inspired memory system with temporal decay and reinforcement, designed to give AI assistants human-like memory dynamics.
 
 ## Core Concepts
 
@@ -66,7 +66,7 @@ This prevents indefinite accumulation of unused memories.
 
 ## Natural Spaced Repetition
 
-Mnemex implements a natural spaced repetition system inspired by how humans remember concepts better when they appear across different contexts - the "Maslow effect" (remembering Maslow's hierarchy better when it appears in history, economics, and sociology classes).
+CortexGraph implements a natural spaced repetition system inspired by how humans remember concepts better when they appear across different contexts - the "Maslow effect" (remembering Maslow's hierarchy better when it appears in history, economics, and sociology classes).
 
 **Key principle:** No flashcards, no explicit review sessions. Reinforcement happens naturally through conversation.
 
@@ -186,7 +186,7 @@ The `search_memory` tool automatically blends review candidates into search resu
 3. **Filter for relevance**: Remove review candidates not relevant to query
 4. **Blend results**: Interleave primary results with review candidates
    - Default: 70% primary results, 30% review candidates
-   - Configurable via `MNEMEX_REVIEW_BLEND_RATIO`
+   - Configurable via `CORTEXGRAPH_REVIEW_BLEND_RATIO`
 
 **Example flow:**
 ```
@@ -204,10 +204,10 @@ This ensures memories needing reinforcement naturally surface during relevant se
 
 ```bash
 # Natural Spaced Repetition
-MNEMEX_REVIEW_BLEND_RATIO=0.3           # 30% review candidates in search
-MNEMEX_REVIEW_DANGER_ZONE_MIN=0.15      # Lower bound of danger zone
-MNEMEX_REVIEW_DANGER_ZONE_MAX=0.35      # Upper bound of danger zone
-MNEMEX_AUTO_REINFORCE=true              # Auto-reinforce on observe
+CORTEXGRAPH_REVIEW_BLEND_RATIO=0.3           # 30% review candidates in search
+CORTEXGRAPH_REVIEW_DANGER_ZONE_MIN=0.15      # Lower bound of danger zone
+CORTEXGRAPH_REVIEW_DANGER_ZONE_MAX=0.35      # Upper bound of danger zone
+CORTEXGRAPH_AUTO_REINFORCE=true              # Auto-reinforce on observe
 ```
 
 ### Memory Model Extensions

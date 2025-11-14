@@ -1,6 +1,6 @@
-# Contributing to Mnemex
+# Contributing to CortexGraph
 
-Thank you for your interest in contributing to Mnemex! This guide will help you get started with development on Windows, Linux, or macOS.
+Thank you for your interest in contributing to CortexGraph! This guide will help you get started with development on Windows, Linux, or macOS.
 
 ## Table of Contents
 
@@ -20,7 +20,7 @@ Thank you for your interest in contributing to Mnemex! This guide will help you 
 
 ## 🚨 Help Needed: Windows & Linux Testers
 
-**I develop Mnemex on macOS and need help testing on Windows and Linux!**
+**I develop CortexGraph on macOS and need help testing on Windows and Linux!**
 
 ### Why This Matters
 
@@ -73,7 +73,7 @@ While I've written platform-specific instructions based on best practices, **I c
 
 ```bash
 # Install and verify
-uv tool install git+https://github.com/simplemindedbot/cortexgraph.git
+uv tool install git+https://github.com/prefrontal-systems/cortexgraph.git
 cortexgraph --version
 
 # Run basic tests
@@ -100,7 +100,7 @@ Follow the platform-specific setup guide in this file, then:
 
 ### Where to Report
 
-**[Open an issue](https://github.com/simplemindedbot/cortexgraph/issues/new)** with:
+**[Open an issue](https://github.com/prefrontal-systems/cortexgraph/issues/new)** with:
 
 ```markdown
 **Platform:** [Windows 11 / Ubuntu 22.04 / etc.]
@@ -137,7 +137,7 @@ Follow the platform-specific setup guide in this file, then:
 | **Linux (Fedora)** | ❓ Untested | ❓ Unknown | ❓ Unknown | ❓ Unknown | **Need testers!** |
 | **Linux (Arch)** | ❓ Untested | ❓ Unknown | ❓ Unknown | ❓ Unknown | **Need testers!** |
 
-**Thank you for helping make Mnemex work reliably across all platforms!** 🙏
+**Thank you for helping make CortexGraph work reliably across all platforms!** 🙏
 
 ---
 
@@ -193,7 +193,7 @@ uv --version
 
 ```powershell
 # Using Command Prompt or PowerShell
-git clone https://github.com/simplemindedbot/cortexgraph.git
+git clone https://github.com/prefrontal-systems/cortexgraph.git
 cd cortexgraph
 ```
 
@@ -204,7 +204,7 @@ cd cortexgraph
 uv sync --all-extras
 
 # Verify installation
-uv run python -c "import cortexgraph; print('Mnemex installed successfully!')"
+uv run python -c "import cortexgraph; print('CortexGraph installed successfully!')"
 ```
 
 #### 6. Configure Environment
@@ -221,9 +221,9 @@ notepad .env
 
 ```bash
 # Use Windows paths with forward slashes or escaped backslashes
-MNEMEX_STORAGE_PATH=C:/Users/YourUsername/.config/cortexgraph/jsonl
+CORTEXGRAPH_STORAGE_PATH=C:/Users/YourUsername/.config/cortexgraph/jsonl
 # Or with escaped backslashes
-# MNEMEX_STORAGE_PATH=C:\\Users\\YourUsername\\.config\\cortexgraph\\jsonl
+# CORTEXGRAPH_STORAGE_PATH=C:\\Users\\YourUsername\\.config\\cortexgraph\\jsonl
 
 # Optional: LTM vault path
 LTM_VAULT_PATH=C:/Users/YourUsername/Documents/Obsidian/Vault
@@ -324,7 +324,7 @@ uv --version
 #### 3. Clone the Repository
 
 ```bash
-git clone https://github.com/simplemindedbot/cortexgraph.git
+git clone https://github.com/prefrontal-systems/cortexgraph.git
 cd cortexgraph
 ```
 
@@ -335,7 +335,7 @@ cd cortexgraph
 uv sync --all-extras
 
 # Verify installation
-uv run python -c "import cortexgraph; print('Mnemex installed successfully!')"
+uv run python -c "import cortexgraph; print('CortexGraph installed successfully!')"
 ```
 
 #### 5. Configure Environment
@@ -356,20 +356,20 @@ code .env  # VS Code
 
 ```bash
 # Standard XDG paths
-MNEMEX_STORAGE_PATH=~/.config/cortexgraph/jsonl
+CORTEXGRAPH_STORAGE_PATH=~/.config/cortexgraph/jsonl
 
 # Optional: LTM vault path
 LTM_VAULT_PATH=~/Documents/Obsidian/Vault
 
 # Decay parameters
-MNEMEX_DECAY_MODEL=power_law
-MNEMEX_PL_ALPHA=1.1
-MNEMEX_PL_HALFLIFE_DAYS=3.0
-MNEMEX_DECAY_BETA=0.6
+CORTEXGRAPH_DECAY_MODEL=power_law
+CORTEXGRAPH_PL_ALPHA=1.1
+CORTEXGRAPH_PL_HALFLIFE_DAYS=3.0
+CORTEXGRAPH_DECAY_BETA=0.6
 
 # Thresholds
-MNEMEX_FORGET_THRESHOLD=0.05
-MNEMEX_PROMOTE_THRESHOLD=0.65
+CORTEXGRAPH_FORGET_THRESHOLD=0.05
+CORTEXGRAPH_PROMOTE_THRESHOLD=0.65
 ```
 
 #### 6. Running Tests on Linux
@@ -463,7 +463,7 @@ uv --version
 #### 4. Clone the Repository
 
 ```bash
-git clone https://github.com/simplemindedbot/cortexgraph.git
+git clone https://github.com/prefrontal-systems/cortexgraph.git
 cd cortexgraph
 ```
 
@@ -474,7 +474,7 @@ cd cortexgraph
 uv sync --all-extras
 
 # Verify installation
-uv run python -c "import cortexgraph; print('Mnemex installed successfully!')"
+uv run python -c "import cortexgraph; print('CortexGraph installed successfully!')"
 ```
 
 #### 6. Configure Environment
@@ -493,7 +493,7 @@ open -e .env  # TextEdit
 
 ```bash
 # Standard macOS paths
-MNEMEX_STORAGE_PATH=~/.config/cortexgraph/jsonl
+CORTEXGRAPH_STORAGE_PATH=~/.config/cortexgraph/jsonl
 
 # Optional: LTM vault path
 LTM_VAULT_PATH=~/Documents/Obsidian/Vault
@@ -857,7 +857,7 @@ None - this is a new feature with no API changes.
 1. **Search existing issues** to avoid duplicates
 2. **Try the latest version** - your issue might be fixed
 3. **Gather information:**
-   - Mnemex version (`cortexgraph --version` or check `pyproject.toml`)
+   - CortexGraph version (`cortexgraph --version` or check `pyproject.toml`)
    - Python version (`python --version`)
    - Operating system and version
    - Steps to reproduce
@@ -870,7 +870,7 @@ A clear description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce:
-1. Install Mnemex with `uv tool install...`
+1. Install CortexGraph with `uv tool install...`
 2. Configure with these settings: ...
 3. Run command `...`
 4. See error
@@ -884,7 +884,7 @@ What actually happened.
 **Environment:**
 - OS: [e.g., Windows 11, Ubuntu 22.04, macOS 14]
 - Python version: [e.g., 3.10.13]
-- Mnemex version: [e.g., 1.0.0]
+- CortexGraph version: [e.g., 1.0.0]
 - Installation method: [uv tool install / editable]
 
 **Logs/Screenshots**
@@ -917,7 +917,7 @@ Other approaches you've thought about.
 ## Getting Help
 
 - **Documentation:** [docs/](docs/) directory
-- **Issues:** [GitHub Issues](https://github.com/simplemindedbot/cortexgraph/issues)
+- **Issues:** [GitHub Issues](https://github.com/prefrontal-systems/cortexgraph/issues)
 - **Roadmap:** [docs/future_roadmap.md](docs/future_roadmap.md)
 
 ---
@@ -926,4 +926,4 @@ Other approaches you've thought about.
 
 By contributing, you agree that your contributions will be licensed under the MIT License.
 
-Thank you for contributing to Mnemex! 🎉
+Thank you for contributing to CortexGraph! 🎉

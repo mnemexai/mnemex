@@ -1,16 +1,16 @@
 # Quick Start
 
-Get up and running with Mnemex in 5 minutes.
+Get up and running with CortexGraph in 5 minutes.
 
 ## Prerequisites
 
-- ✅ Mnemex installed ([Installation Guide](installation.md))
+- ✅ CortexGraph installed ([Installation Guide](installation.md))
 - ✅ Configuration file created ([Configuration Guide](configuration.md))
 - ✅ Claude Desktop configured with MCP server
 
 ## Step 1: Verify Installation
 
-Check that Mnemex is ready:
+Check that CortexGraph is ready:
 
 ```bash
 # Check MCP server
@@ -23,12 +23,12 @@ cortexgraph-maintenance --help
 
 ## Step 2: Start Claude Desktop
 
-Restart Claude Desktop to load the Mnemex MCP server.
+Restart Claude Desktop to load the CortexGraph MCP server.
 
-Verify Mnemex is available:
+Verify CortexGraph is available:
 1. Start a new conversation
 2. Look for the 🔌 icon (MCP tools available)
-3. Mnemex should appear in the available servers
+3. CortexGraph should appear in the available servers
 
 ## Step 3: Save Your First Memory
 
@@ -198,10 +198,10 @@ Edit `~/.config/cortexgraph/.env`:
 
 ```bash
 # Slower decay (memories last longer)
-MNEMEX_PL_HALFLIFE_DAYS=7.0
+CORTEXGRAPH_PL_HALFLIFE_DAYS=7.0
 
 # Faster decay (more aggressive forgetting)
-MNEMEX_PL_HALFLIFE_DAYS=1.0
+CORTEXGRAPH_PL_HALFLIFE_DAYS=1.0
 ```
 
 Restart Claude Desktop to apply changes.
@@ -228,8 +228,8 @@ open_memories(["mem_project_xyz"])  # Get memory with relations
 Enable in `.env`:
 
 ```bash
-MNEMEX_ENABLE_EMBEDDINGS=true
-MNEMEX_EMBED_MODEL=all-MiniLM-L6-v2
+CORTEXGRAPH_ENABLE_EMBEDDINGS=true
+CORTEXGRAPH_EMBED_MODEL=all-MiniLM-L6-v2
 ```
 
 Install dependencies:
@@ -255,12 +255,12 @@ uv pip install sentence-transformers
 
 Increase half-life in `.env`:
 ```bash
-MNEMEX_PL_HALFLIFE_DAYS=7.0  # Increase from 3.0
+CORTEXGRAPH_PL_HALFLIFE_DAYS=7.0  # Increase from 3.0
 ```
 
 ## Next Steps
 
 - [API Reference](api.md) - Learn all 11 MCP tools
-- [Architecture](architecture.md) - Understand how Mnemex works
+- [Architecture](architecture.md) - Understand how CortexGraph works
 - [Knowledge Graph](graph_features.md) - Build connected concepts
 - [Scoring Algorithm](scoring_algorithm.md) - Deep dive into decay

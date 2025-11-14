@@ -1,1 +1,1 @@
-"""CLI utilities for Mnemex."""
+"""CLI utilities for CortexGraph."""
