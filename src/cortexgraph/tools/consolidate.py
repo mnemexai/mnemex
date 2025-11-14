@@ -4,7 +4,11 @@ from typing import Any
 
 from ..context import db, mcp
 from ..core.clustering import cluster_memories_simple
-from ..core.consolidation import execute_consolidation, generate_consolidation_preview
+from ..core.consolidation import (
+    execute_consolidation,
+    generate_consolidation_preview,
+    link_cluster_memories,
+)
 from ..security.validators import validate_score, validate_uuid
 from ..storage.models import ClusterConfig, MemoryStatus
 
@@ -17,26 +21,34 @@ def consolidate_memories(
     cohesion_threshold: float = 0.75,
 ) -> dict[str, Any]:
     """
-    Consolidate similar memories using algorithmic merging.
+    Consolidate similar memories using algorithmic merging or linking.
 
-    This tool intelligently merges similar memories by:
-    1. Combining content (preserving unique information)
-    2. Merging tags and entities (union)
-    3. Calculating appropriate strength based on cohesion
-    4. Preserving earliest created_at and latest last_used timestamps
+    This tool handles clusters in three ways:
+    1. MERGE (mode="apply"): Combine memories into one (high cohesion ≥0.75)
+    2. LINK (mode="link"): Create 'related' relations without merging (medium cohesion 0.40-0.75)
+    3. PREVIEW (mode="preview"): Show what would happen without making changes
+
+    Merging intelligently:
+    - Combines content (preserving unique information)
+    - Merges tags and entities (union)
+    - Calculates appropriate strength based on cohesion
+    - Preserves earliest created_at and latest last_used timestamps
+
+    Linking creates bidirectional 'related' relations to form knowledge graph connections.
 
     Modes:
     - "preview": Generate merge preview without making changes
-    - "apply": Execute the consolidation (requires cluster_id)
+    - "apply": Execute the consolidation/merge (requires cluster_id or auto_detect)
+    - "link": Create relations between cluster members without merging
 
     Args:
-        cluster_id: Specific cluster ID to consolidate (valid UUID, required for apply mode).
-        mode: Operation mode - "preview" or "apply".
+        cluster_id: Specific cluster ID to act on (valid UUID, required unless auto_detect=True).
+        mode: Operation mode - "preview", "apply", or "link".
         auto_detect: If True, automatically find high-cohesion clusters.
         cohesion_threshold: Minimum cohesion for auto-detection (0.0-1.0, default: 0.75).
 
     Returns:
-        Consolidation preview or execution results.
+        Consolidation/linking preview or execution results.
 
     Raises:
         ValueError: If cluster_id is invalid or cohesion_threshold is out of range.
@@ -47,8 +59,8 @@ def consolidate_memories(
 
     cohesion_threshold = validate_score(cohesion_threshold, "cohesion_threshold")
 
-    if mode not in ("preview", "apply"):
-        raise ValueError(f"mode must be 'preview' or 'apply', got: {mode}")
+    if mode not in ("preview", "apply", "link"):
+        raise ValueError(f"mode must be 'preview', 'apply', or 'link', got: {mode}")
 
     # Auto-detect mode: find clusters worth consolidating
     if auto_detect:
@@ -83,7 +95,7 @@ def consolidate_memories(
                 "previews": previews,
                 "message": f"Found {len(candidates)} clusters ready for consolidation",
             }
-        else:
+        elif mode == "apply":
             # Apply consolidation to all candidates
             results = []
             for cluster in candidates:
@@ -99,6 +111,23 @@ def consolidate_memories(
                 "total_memories_saved": total_saved,
                 "results": results,
                 "message": f"Consolidated {len(results)} clusters, saved {total_saved} memory slots",
+            }
+        else:  # mode == "link"
+            # Link all candidates without merging
+            results = []
+            for cluster in candidates:
+                result = link_cluster_memories(cluster, db)
+                results.append(result)
+
+            total_relations = sum(r.get("relations_created", 0) for r in results)
+
+            return {
+                "success": True,
+                "mode": "auto_detect_link",
+                "linked_clusters": len(results),
+                "total_relations_created": total_relations,
+                "results": results,
+                "message": f"Linked {len(results)} clusters with {total_relations} relations",
             }
 
     # Specific cluster mode
@@ -147,9 +176,17 @@ def consolidate_memories(
             **result,
         }
 
+    elif mode == "link":
+        result = link_cluster_memories(target_cluster, db)
+        return {
+            "success": True,
+            "mode": "link",
+            **result,
+        }
+
     else:
         return {
             "success": False,
             "error": f"Unknown mode: {mode}",
-            "valid_modes": ["preview", "apply"],
+            "valid_modes": ["preview", "apply", "link"],
         }

@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any, cast
 
 from ..config import get_config
 from ..context import db, mcp
-from ..core.clustering import cosine_similarity
+from ..core.clustering import cosine_similarity, text_similarity
 from ..core.decay import calculate_score
 from ..core.pagination import paginate_list, validate_pagination_params
 from ..core.review import blend_search_results, get_memories_due_for_review
@@ -177,14 +177,16 @@ def search_memory(
 
         similarity = None
         if query_embed and memory.embed:
+            # Semantic similarity using embeddings
             similarity = cosine_similarity(query_embed, memory.embed)
 
         relevance = 1.0
         if query and not use_embeddings:
-            if query.lower() in memory.content.lower():
-                relevance = 2.0
-            elif any(word in memory.content.lower() for word in query.lower().split()):
-                relevance = 1.5
+            # Fallback: Use Jaccard similarity for better semantic matching
+            # This matches the sophisticated fallback in clustering.py
+            text_sim = text_similarity(query, memory.content)
+            # Scale to 1.0-2.0 range (0.0 similarity = 1.0 relevance, 1.0 similarity = 2.0 relevance)
+            relevance = 1.0 + text_sim
 
         final_score = score * relevance
         if similarity is not None:
@@ -207,16 +209,21 @@ def search_memory(
         # Filter review candidates for relevance to query
         relevant_reviews = []
         for mem in review_queue:
-            # Simple relevance check
-            if query.lower() in mem.content.lower():
-                relevant_reviews.append(mem)
-            elif any(word in mem.content.lower() for word in query.lower().split()):
-                relevant_reviews.append(mem)
-            # Also check semantic similarity if available
-            elif query_embed and mem.embed:
+            is_relevant = False
+
+            # Check semantic similarity if embeddings available
+            if query_embed and mem.embed:
                 sim = cosine_similarity(query_embed, mem.embed)
                 if sim and sim > 0.6:  # Somewhat relevant
-                    relevant_reviews.append(mem)
+                    is_relevant = True
+            # Fallback: Use Jaccard similarity for text matching
+            elif query:
+                text_sim = text_similarity(query, mem.content)
+                if text_sim > 0.3:  # Some token overlap
+                    is_relevant = True
+
+            if is_relevant:
+                relevant_reviews.append(mem)
 
         # Blend primary results with review candidates
         if relevant_reviews:

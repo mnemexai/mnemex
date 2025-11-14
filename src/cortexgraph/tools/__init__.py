@@ -3,6 +3,7 @@
 from . import (
     analyze_for_recall,
     analyze_message,
+    backfill_embeddings,
     cluster,
     consolidate,
     create_relation,
@@ -19,6 +20,7 @@ from . import (
 __all__ = [
     "analyze_message",
     "analyze_for_recall",
+    "backfill_embeddings",
     "save",
     "search",
     "touch",
