@@ -109,7 +109,7 @@ class TestConversationAnalyzer:
         analyzer = ConversationAnalyzer()
 
         message = (
-            "I'm implementing the STOPPER protocol. " "Should I add timing windows for the phases?"
+            "I'm implementing the STOPPER protocol. Should I add timing windows for the phases?"
         )
         should_trigger = analyzer.should_trigger_recall(message)
 
