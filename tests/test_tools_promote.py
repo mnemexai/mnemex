@@ -45,16 +45,21 @@ class TestPromoteMemory:
         assert "promoted_to" in result
 
     def test_promote_memory_not_meeting_criteria(self, temp_storage):
-        """Test that low-scoring memory cannot be promoted without force."""
+        """Test that low-scoring memory cannot be promoted without force.
+
+        Note: With use_count+1 formula, even use_count=0 gives score of 1.0 when fresh.
+        Need old memory (20 days) to decay below promotion threshold (0.65).
+        """
         now = int(time.time())
+        twenty_days_ago = now - (20 * 86400)
 
         test_id = make_test_uuid("mem-low")
         low_score_mem = Memory(
             id=test_id,
             content="Low score memory",
-            use_count=0,
-            last_used=now,
-            created_at=now,
+            use_count=0,  # With +1 formula: (0+1)^0.6 = 1.0, but will decay
+            last_used=twenty_days_ago,  # Old enough to decay below 0.65
+            created_at=twenty_days_ago,
             strength=1.0,
         )
         temp_storage.save_memory(low_score_mem)
@@ -141,14 +146,23 @@ class TestPromoteMemory:
         assert mem.status == MemoryStatus.ACTIVE
 
     def test_promote_auto_detect_no_candidates(self, temp_storage):
-        """Test auto-detect when no memories meet criteria."""
-        now = int(time.time())
+        """Test auto-detect when no memories meet criteria.
 
-        # Create only low-scoring memories
+        Note: With use_count+1 formula, fresh memories have score=1.0.
+        Need old memories (20 days) to decay below promotion threshold.
+        """
+        now = int(time.time())
+        twenty_days_ago = now - (20 * 86400)
+
+        # Create only low-scoring memories (old enough to decay below 0.65)
         for i in range(3):
             test_id = make_test_uuid(f"mem-{i}")
             mem = Memory(
-                id=test_id, content=f"Low score {i}", use_count=0, last_used=now, created_at=now
+                id=test_id,
+                content=f"Low score {i}",
+                use_count=0,
+                last_used=twenty_days_ago,  # Old enough to decay
+                created_at=twenty_days_ago,
             )
             temp_storage.save_memory(mem)
 

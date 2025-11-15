@@ -60,16 +60,23 @@ class TestCalculateReviewPriority:
         assert priority <= 1.0
 
     def test_midpoint_highest_priority(self):
-        """Priority should peak at midpoint of danger zone."""
-        # Create memories at different points in danger zone
+        """Priority should peak at midpoint of danger zone.
+
+        Note: With use_count+1 formula and 3-day half-life:
+        - use_count=0 gives multiplier of (0+1)^0.6 = 1.0
+        - Danger zone: 0.15-0.35
+        - 6-8 days old: scores fall in danger zone
+        - 10+ days: scores < 0.15 (below danger zone)
+        """
+        # Create memories spanning the danger zone (scores 0.15-0.35)
         priorities = []
-        for days_ago in [3, 4, 5, 6, 7]:
+        for days_ago in [5, 6, 7, 8, 9]:  # Adjusted range to hit danger zone
             mem = Memory(
                 id=f"test-{days_ago}",
                 content="Test memory",
                 created_at=int(time.time()) - days_ago * 86400,
                 last_used=int(time.time()) - days_ago * 86400,
-                use_count=2,
+                use_count=0,  # With +1 formula: (0+1)^0.6 = 1.0
                 strength=1.0,
             )
             priorities.append(calculate_review_priority(mem))
@@ -77,7 +84,7 @@ class TestCalculateReviewPriority:
         # Priority should increase, peak, then decrease (inverted parabola)
         # This is approximate due to decay dynamics
         max_priority = max(priorities)
-        assert max_priority > 0
+        assert max_priority > 0, f"All priorities were 0: {priorities}"
 
 
 class TestGetMemoriesDueForReview:
