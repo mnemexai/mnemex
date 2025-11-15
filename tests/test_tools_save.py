@@ -264,7 +264,7 @@ class TestSaveMemory:
 
     @patch("cortexgraph.tools.save.SENTENCE_TRANSFORMERS_AVAILABLE", True)
     @patch("cortexgraph.tools.save.get_config")
-    @patch("cortexgraph.tools.save.SentenceTransformer")
+    @patch("cortexgraph.tools.save._SentenceTransformer")
     def test_save_memory_embedding_import_error(self, mock_transformer, mock_config, temp_storage):
         """Test that import error in embedding generation is handled gracefully."""
         mock_config.return_value.enable_embeddings = True

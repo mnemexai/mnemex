@@ -345,7 +345,7 @@ class TestSearchMemory:
 
     @patch("cortexgraph.tools.search.SENTENCE_TRANSFORMERS_AVAILABLE", True)
     @patch("cortexgraph.tools.search.get_config")
-    @patch("cortexgraph.tools.search.SentenceTransformer")
+    @patch("cortexgraph.tools.search._SentenceTransformer")
     def test_search_embedding_import_error(self, mock_transformer, mock_config, temp_storage):
         """Test graceful handling of embedding import errors."""
         mock_config.return_value.enable_embeddings = True
