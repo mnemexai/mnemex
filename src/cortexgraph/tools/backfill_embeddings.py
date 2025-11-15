@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from sentence_transformers import SentenceTransformer
 
 # Optional dependency for embeddings
-_SentenceTransformer: type[SentenceTransformer] | None
+_SentenceTransformer: "type[SentenceTransformer] | None"
 try:
     from sentence_transformers import SentenceTransformer
 
