@@ -8,16 +8,22 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from .jsonl_storage import JSONLStorage
 
+if TYPE_CHECKING:
+    from sentence_transformers import SentenceTransformer
+
 # Optional dependency for embeddings
+_SentenceTransformer: type[SentenceTransformer] | None
 try:
     from sentence_transformers import SentenceTransformer
 
+    _SentenceTransformer = SentenceTransformer
     SENTENCE_TRANSFORMERS_AVAILABLE = True
 except ImportError:
-    SentenceTransformer = None
+    _SentenceTransformer = None
     SENTENCE_TRANSFORMERS_AVAILABLE = False
 
 
@@ -95,8 +101,12 @@ def cmd_backfill_embeddings(
         return 0
 
     # Load model
+    if _SentenceTransformer is None:
+        print("ERROR: sentence-transformers not available")
+        return 1
+
     print(f"Loading model: {model}...")
-    embedding_model = SentenceTransformer(model)
+    embedding_model = _SentenceTransformer(model)
 
     # Process memories
     processed = 0

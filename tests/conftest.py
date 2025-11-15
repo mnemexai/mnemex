@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 
 import cortexgraph.context
+import cortexgraph.tools.auto_recall_tool
 import cortexgraph.tools.cluster
 import cortexgraph.tools.consolidate
 import cortexgraph.tools.create_relation
@@ -75,6 +76,7 @@ def temp_storage(monkeypatch):
             cortexgraph.tools.create_relation,
             cortexgraph.tools.open_memories,
             cortexgraph.tools.read_graph,
+            cortexgraph.tools.auto_recall_tool,
         ]
         for module in modules_to_patch:
             monkeypatch.setattr(module, "db", storage)

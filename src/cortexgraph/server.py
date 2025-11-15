@@ -14,6 +14,7 @@ from .security.secrets import scan_file_for_secrets, should_warn_about_secrets
 from .tools import (
     analyze_for_recall,
     analyze_message,
+    auto_recall_tool,
     cluster,
     consolidate,
     create_relation,
@@ -32,6 +33,7 @@ from .tools import (
 _TOOL_MODULES = (
     analyze_for_recall,
     analyze_message,
+    auto_recall_tool,
     cluster,
     consolidate,
     create_relation,

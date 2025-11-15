@@ -27,12 +27,14 @@ if TYPE_CHECKING:
     from sentence_transformers import SentenceTransformer
 
 # Optional dependency for embeddings
+_SentenceTransformer: type[SentenceTransformer] | None
 try:
     from sentence_transformers import SentenceTransformer
 
+    _SentenceTransformer = SentenceTransformer
     SENTENCE_TRANSFORMERS_AVAILABLE = True
 except ImportError:
-    SentenceTransformer = None
+    _SentenceTransformer = None
     SENTENCE_TRANSFORMERS_AVAILABLE = False
 
 # Global model cache to avoid reloading on every request
@@ -41,16 +43,16 @@ _model_cache: dict[str, Any] = {}
 
 def _get_embedding_model(model_name: str) -> SentenceTransformer | None:
     """Get cached embedding model or create new one."""
-    if not SENTENCE_TRANSFORMERS_AVAILABLE:
+    if not SENTENCE_TRANSFORMERS_AVAILABLE or _SentenceTransformer is None:
         return None
 
     if model_name not in _model_cache:
         try:
-            _model_cache[model_name] = SentenceTransformer(model_name)
+            _model_cache[model_name] = _SentenceTransformer(model_name)
         except Exception:
             return None
 
-    return _model_cache[model_name]
+    return cast("SentenceTransformer", _model_cache[model_name])
 
 
 def _generate_query_embedding(query: str) -> list[float] | None:
