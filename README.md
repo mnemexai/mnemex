@@ -1,14 +1,10 @@
 # CortexGraph: Temporal Memory for AI
 
-<div align="center">
-  <img src="cortexgraph_logo.png" alt="CortexGraph Logo" width="400">
-</div>
-
 <!-- mcp-name: io.github.prefrontal-systems/cortexgraph -->
 
 A Model Context Protocol (MCP) server providing **human-like memory dynamics** for AI assistants. Memories naturally fade over time unless reinforced through use, mimicking the [Ebbinghaus forgetting curve](https://en.wikipedia.org/wiki/Forgetting_curve).
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL%203.0-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![Tests](https://github.com/prefrontal-systems/cortexgraph/actions/workflows/tests.yml/badge.svg)](https://github.com/prefrontal-systems/cortexgraph/actions/workflows/tests.yml)
 [![Security Scanning](https://github.com/prefrontal-systems/cortexgraph/actions/workflows/security.yml/badge.svg)](https://github.com/prefrontal-systems/cortexgraph/actions/workflows/security.yml)
@@ -782,9 +778,9 @@ Frequent access significantly extends retention.
 
 ## License
 
-MIT License - See [LICENSE](LICENSE) for details.
+AGPL-3.0 License - See [LICENSE](LICENSE) for details.
 
-Clean-room implementation. No AGPL dependencies.
+This project uses the GNU Affero General Public License v3.0, which requires that modifications to this software be made available as source code when used to provide a network service.
 
 ### Knowledge & Memory
 *   [mem0ai/mem0-mcp](https://github.com/mem0ai/mem0-mcp) (Python) - A MCP server that provides a smart memory for AI to manage and reference past conversations, user preferences, and key details.
