@@ -190,6 +190,33 @@ class Config(BaseModel):
         ge=1,
     )
 
+    # Auto-recall (conversational memory reinforcement)
+    auto_recall_enabled: bool = Field(
+        default=True,
+        description="Enable automatic memory recall during conversation",
+    )
+    auto_recall_mode: str = Field(
+        default="silent",
+        description="Auto-recall mode: silent | subtle | interactive",
+    )
+    auto_recall_relevance_threshold: float = Field(
+        default=0.3,
+        description="Minimum relevance score for auto-recall (0.0-1.0). Lower than explicit search to capture more context.",
+        ge=0,
+        le=1,
+    )
+    auto_recall_max_results: int = Field(
+        default=3,
+        description="Maximum memories to recall per trigger",
+        ge=1,
+        le=10,
+    )
+    auto_recall_min_interval: int = Field(
+        default=300,
+        description="Minimum seconds between auto-recall triggers (cooldown)",
+        ge=0,
+    )
+
     # Long-Term Memory (LTM) Integration
     ltm_vault_path: Path | None = Field(
         default=None,
@@ -366,6 +393,20 @@ class Config(BaseModel):
             config_dict["review_danger_zone_max"] = float(review_danger_zone_max)
         if auto_reinforce := os.getenv("CORTEXGRAPH_AUTO_REINFORCE"):
             config_dict["auto_reinforce"] = auto_reinforce.lower() in ("true", "1", "yes")
+
+        # Auto-recall
+        if auto_recall_enabled := os.getenv("CORTEXGRAPH_AUTO_RECALL_ENABLED"):
+            config_dict["auto_recall_enabled"] = auto_recall_enabled.lower() in ("true", "1", "yes")
+        if auto_recall_mode := os.getenv("CORTEXGRAPH_AUTO_RECALL_MODE"):
+            config_dict["auto_recall_mode"] = auto_recall_mode
+        if auto_recall_relevance_threshold := os.getenv(
+            "CORTEXGRAPH_AUTO_RECALL_RELEVANCE_THRESHOLD"
+        ):
+            config_dict["auto_recall_relevance_threshold"] = float(auto_recall_relevance_threshold)
+        if auto_recall_max_results := os.getenv("CORTEXGRAPH_AUTO_RECALL_MAX_RESULTS"):
+            config_dict["auto_recall_max_results"] = int(auto_recall_max_results)
+        if auto_recall_min_interval := os.getenv("CORTEXGRAPH_AUTO_RECALL_MIN_INTERVAL"):
+            config_dict["auto_recall_min_interval"] = int(auto_recall_min_interval)
 
         # Long-Term Memory
         if ltm_vault_path := os.getenv("LTM_VAULT_PATH"):

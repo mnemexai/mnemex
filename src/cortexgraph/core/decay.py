@@ -38,7 +38,9 @@ def calculate_score(
     time_delta = max(0, now - last_used)
 
     # Calculate components
-    use_component = math.pow(use_count, beta) if use_count > 0 else 0
+    # Add 1 to use_count so new memories (use_count=0) don't get zero score
+    # This gives new memories a grace period before decay dominates
+    use_component = math.pow(use_count + 1, beta)
     # If lambda_ explicitly provided, force exponential path
     if lambda_ is not None and (getattr(config, "decay_model", "power_law") != "exponential"):
         decay_component = math.exp(-lambda_ * time_delta)

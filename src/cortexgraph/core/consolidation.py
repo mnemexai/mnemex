@@ -4,7 +4,7 @@ import time
 import uuid
 from typing import Any
 
-from ..storage.models import Cluster, Memory, MemoryMetadata, MemoryStatus
+from ..storage.models import Cluster, Memory, MemoryMetadata, MemoryStatus, Relation
 
 
 def merge_content_smart(memories: list[Memory]) -> str:
@@ -301,4 +301,105 @@ def execute_consolidation(
         "merged_tags": len(merged_meta.tags),
         "merged_entities": len(merged_entities),
         "merged_strength": merged_strength,
+    }
+
+
+def link_cluster_memories(
+    cluster: Cluster,
+    storage: Any,  # JSONLStorage instance
+) -> dict[str, Any]:
+    """
+    Create 'related' relations between all memories in a cluster without merging.
+
+    This is useful for medium-cohesion clusters (0.40-0.75) where memories are
+    related but distinct enough to keep separate. Creates bidirectional relations
+    so the knowledge graph shows them as connected.
+
+    Args:
+        cluster: Cluster whose memories should be linked
+        storage: Storage instance (JSONLStorage)
+
+    Returns:
+        Result dictionary with success status and relation details
+    """
+    memories = cluster.memories
+
+    if len(memories) < 2:
+        return {
+            "success": False,
+            "error": "Need at least 2 memories to link",
+        }
+
+    # Track created relations
+    created_relations = []
+    skipped_existing = 0
+
+    # Create relations between all pairs in the cluster
+    for i in range(len(memories)):
+        for j in range(i + 1, len(memories)):
+            mem_a = memories[i]
+            mem_b = memories[j]
+
+            # Check if relation already exists (either direction)
+            existing_ab = storage.get_relations(
+                from_memory_id=mem_a.id,
+                to_memory_id=mem_b.id,
+                relation_type="related",
+            )
+            existing_ba = storage.get_relations(
+                from_memory_id=mem_b.id,
+                to_memory_id=mem_a.id,
+                relation_type="related",
+            )
+
+            if existing_ab or existing_ba:
+                skipped_existing += 1
+                continue
+
+            # Create bidirectional relations
+            relation_ab = Relation(
+                id=str(uuid.uuid4()),
+                from_memory_id=mem_a.id,
+                to_memory_id=mem_b.id,
+                relation_type="related",
+                strength=cluster.cohesion,  # Use cluster cohesion as relation strength
+                created_at=int(time.time()),
+                metadata={
+                    "cluster_id": cluster.id,
+                    "cluster_cohesion": cluster.cohesion,
+                    "cluster_size": len(memories),
+                    "link_reason": "cluster_linking",
+                },
+            )
+
+            relation_ba = Relation(
+                id=str(uuid.uuid4()),
+                from_memory_id=mem_b.id,
+                to_memory_id=mem_a.id,
+                relation_type="related",
+                strength=cluster.cohesion,
+                created_at=int(time.time()),
+                metadata={
+                    "cluster_id": cluster.id,
+                    "cluster_cohesion": cluster.cohesion,
+                    "cluster_size": len(memories),
+                    "link_reason": "cluster_linking",
+                },
+            )
+
+            storage.create_relation(relation_ab)
+            storage.create_relation(relation_ba)
+
+            created_relations.append((mem_a.id, mem_b.id))
+
+    return {
+        "success": True,
+        "cluster_id": cluster.id,
+        "cluster_size": len(memories),
+        "cohesion": cluster.cohesion,
+        "relations_created": len(created_relations) * 2,  # Bidirectional
+        "pairs_linked": len(created_relations),
+        "skipped_existing": skipped_existing,
+        "memory_ids": [m.id for m in memories],
+        "message": f"Created {len(created_relations) * 2} relations linking {len(memories)} memories",
     }
