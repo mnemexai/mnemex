@@ -366,27 +366,6 @@ CORTEXGRAPH_PROMOTE_THRESHOLD=0.65
 LTM_VAULT_PATH=~/Documents/Obsidian/Vault
 ```
 
-**Method 2: Environment variables in Claude Desktop config**
-
-Add environment variables directly to `~/Library/Application Support/Claude/claude_desktop_config.json`:
-
-```json
-{
-  "mcpServers": {
-    "cortexgraph": {
-      "command": "cortexgraph",
-      "env": {
-        "CORTEXGRAPH_STORAGE_PATH": "~/.config/cortexgraph/jsonl",
-        "CORTEXGRAPH_DECAY_MODEL": "power_law",
-        "CORTEXGRAPH_PL_ALPHA": "1.1",
-        "CORTEXGRAPH_PL_HALFLIFE_DAYS": "3.0",
-        "LTM_VAULT_PATH": "~/Documents/Obsidian/Vault"
-      }
-    }
-  }
-}
-```
-
 **Where cortexgraph looks for .env files:**
 1. **Primary**: `~/.config/cortexgraph/.env` ← Use this for `uv tool install` / `uvx`
 2. **Fallback**: `./.env` (current directory) ← Only works for editable installs
@@ -417,22 +396,6 @@ which cortexgraph
 Use that path in your config. Replace `yourusername` with your actual username.
 
 **Why absolute path?** GUI apps like Claude Desktop don't inherit your shell's PATH configuration (`.zshrc`, `.bashrc`). Using the full path ensures it always works.
-
-**Alternative: Simple command (only if cortexgraph is in system PATH)**
-
-If you've symlinked cortexgraph to `/usr/local/bin` or `/opt/homebrew/bin`:
-
-```json
-{
-  "mcpServers": {
-    "cortexgraph": {
-      "command": "cortexgraph"
-    }
-  }
-}
-```
-
-Configuration loaded from `~/.config/cortexgraph/.env` or environment variables (see Configuration section above).
 
 **For development (editable install):**
 
@@ -487,19 +450,6 @@ Update your Claude config with the absolute path:
 ```
 
 Replace `/Users/username/.local/bin/cortexgraph` with your actual path from `which cortexgraph`.
-
-**Alternative: System-wide install**
-
-You can also install to a system location that Claude Desktop searches:
-
-```bash
-# Option 1: Link to /usr/local/bin
-sudo ln -s ~/.local/bin/cortexgraph /usr/local/bin/cortexgraph
-
-# Option 2: Install with pipx/uv to system location (requires admin)
-sudo uv tool install git+https://github.com/simplemindedbot/cortexgraph.git
-```
-
 ### Maintenance
 
 Use the maintenance CLI to inspect and compact JSONL storage:
@@ -529,29 +479,6 @@ uv tool install git+https://github.com/simplemindedbot/cortexgraph.git
 ```
 
 **Your data is safe!** This only changes how the command is installed. Your memories in `~/.config/cortexgraph/` are untouched.
-
-### Migrating from STM Server
-
-If you previously used this project as "STM Server", use the migration tool:
-
-```bash
-# Preview what will be migrated
-cortexgraph-migrate --dry-run
-
-# Migrate data files from ~/.stm/ to ~/.config/cortexgraph/
-cortexgraph-migrate --data-only
-
-# Also migrate .env file (rename STM_* variables to CORTEXGRAPH_*)
-cortexgraph-migrate --migrate-env --env-path ./.env
-```
-
-The migration tool will:
-- Copy JSONL files from `~/.stm/jsonl/` to `~/.config/cortexgraph/jsonl/`
-- Optionally rename environment variables (STM_* → CORTEXGRAPH_*)
-- Create backups before making changes
-- Provide clear next-step instructions
-
-After migration, update your Claude Desktop config to use `cortexgraph` instead of `stm`.
 
 ## CLI Commands
 
@@ -782,16 +709,11 @@ AGPL-3.0 License - See [LICENSE](LICENSE) for details.
 
 This project uses the GNU Affero General Public License v3.0, which requires that modifications to this software be made available as source code when used to provide a network service.
 
-### Knowledge & Memory
-*   [mem0ai/mem0-mcp](https://github.com/mem0ai/mem0-mcp) (Python) - A MCP server that provides a smart memory for AI to manage and reference past conversations, user preferences, and key details.
-*   [cortexgraph](https://github.com/simplemindedbot/cortexgraph) (Python) - A Python-based MCP server that provides a human-like short-term working memory (JSONL) and long-term memory (Markdown) system for AI assistants. The core of the project is a temporal decay algorithm that causes memories to fade over time unless they are reinforced through use.
-*   [modelcontextprotocol/server-memory](https://github.com/modelcontextprotocol/server-memory) (TypeScript) - A knowledge graph-based persistent memory system for AI.
-
 ## Related Work
 
 - [Model Context Protocol](https://github.com/modelcontextprotocol) - MCP specification
 - [Ebbinghaus Forgetting Curve](https://en.wikipedia.org/wiki/Forgetting_curve) - Cognitive science foundation
-- Research inspired by: Memoripy, Titan MCP, MemoryBank
+- Research inspired by: mem0, Better Memory, Neo4j Graph Memory
 
 ## Citation
 

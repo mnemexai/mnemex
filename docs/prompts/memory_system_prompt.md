@@ -1,11 +1,11 @@
-# Smart Prompting for Memory Systems
+# Smart Prompt Interpretation for Memory Systems
 
 **Version:** 0.2.0
 **Last Updated:** 2025-01-07
 
 ## Overview
 
-CortexGraph’s true power lies not in its MCP tools alone, but in how LLMs are taught to use them naturally. This document describes the smart prompting system — patterns and techniques for making AI assistants remember things like humans do, without explicit commands.
+CortexGraph’s true power lies not in its MCP tools alone, but in how LLMs are taught to use them naturally. This document describes the smart prompt interpretation system — patterns and techniques for making AI assistants remember things like humans do, without explicit commands.
 
 ## Core Principle
 
