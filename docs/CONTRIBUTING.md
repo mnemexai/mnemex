@@ -918,7 +918,7 @@ Other approaches you've thought about.
 
 - **Documentation:** [docs/](docs/) directory
 - **Issues:** [GitHub Issues](https://github.com/prefrontal-systems/cortexgraph/issues)
-- **Roadmap:** [docs/future_roadmap.md](docs/future_roadmap.md)
+- **Roadmap:** [future_roadmap.md](future_roadmap.md)
 
 ---
 

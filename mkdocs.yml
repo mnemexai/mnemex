@@ -96,6 +96,8 @@ nav:
       - Contributing: CONTRIBUTING.md
       - Roadmap: ROADMAP.md
       - Future Plans: future_roadmap.md
+  - Features:
+      - Auto-Recall: features/auto-recall-conversation.md
   - About:
       - License: LICENSE.md
       - Changelog: CHANGELOG.md
