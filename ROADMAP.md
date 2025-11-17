@@ -97,7 +97,7 @@ This document outlines the development roadmap for Mnemex. For detailed implemen
   - Contextual surfacing (subtle/interactive modes)
   - Cross-domain usage detection (Maslow effect)
   - **Feature branch:** `feature/auto-recall-conversation`
-  - **Spec:** [docs/features/auto-recall-conversation.md](docs/features/auto-recall-conversation.md)
+  - **Spec:** [features/auto-recall-conversation.md](features/auto-recall-conversation.md)
   - **Implementation phases:**
     1. Silent Reinforcement (MVP) - Background search + auto-reinforce
     2. Subtle Surfacing - Natural context injection
