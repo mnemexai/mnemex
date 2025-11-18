@@ -7,7 +7,7 @@ from typing import Any
 from ..config import get_config
 from ..context import db, mcp
 from ..core.scoring import calculate_memory_age, should_promote
-from ..integration.basic_memory import BasicMemoryIntegration
+from ..integration.cortex_memory import BasicMemoryIntegration
 from ..security.validators import validate_target, validate_uuid
 from ..storage.ltm_index import LTMIndex
 from ..storage.models import MemoryStatus, PromotionCandidate

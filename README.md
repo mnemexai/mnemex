@@ -713,7 +713,8 @@ This project uses the GNU Affero General Public License v3.0, which requires tha
 
 - [Model Context Protocol](https://github.com/modelcontextprotocol) - MCP specification
 - [Ebbinghaus Forgetting Curve](https://en.wikipedia.org/wiki/Forgetting_curve) - Cognitive science foundation
-- Research inspired by: mem0, Better Memory, Neo4j Graph Memory
+- [Basic Memory](https://github.com/basicmachines-co/basic-memory) - Primary inspiration for the integration layer. CortexGraph extends this concept by adding the Ebbinghaus forgetting curve, temporal decay algorithms, short-term memory in JSONL storage, and natural spaced repetition.
+- Additional research inspired by: mem0, Neo4j Graph Memory
 
 ## Citation
 
