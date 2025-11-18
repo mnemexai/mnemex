@@ -133,3 +133,76 @@ def mock_config_embeddings(monkeypatch):
 
     monkeypatch.setattr(cortexgraph.config, "_global_config", config)
     return config
+
+
+def mock_embeddings_setup(monkeypatch, module_path):
+    """Setup embedding mocks for a given module.
+
+    This helper creates a mock SentenceTransformer model that returns
+    predictable embeddings for testing purposes.
+
+    Args:
+        monkeypatch: pytest monkeypatch fixture
+        module_path: Module path to patch (e.g., "cortexgraph.tools.save")
+
+    Returns:
+        MagicMock: Configured mock model for embedding generation
+
+    Example:
+        model = mock_embeddings_setup(monkeypatch, "cortexgraph.tools.save")
+        # Now _SentenceTransformer in save module returns mock model
+    """
+    from unittest.mock import MagicMock
+
+    # Set availability flag
+    monkeypatch.setattr(f"{module_path}.SENTENCE_TRANSFORMERS_AVAILABLE", True)
+
+    # Create mock model that returns predictable embeddings
+    mock_model = MagicMock()
+    mock_embedding = MagicMock()
+    mock_embedding.tolist.return_value = [0.1, 0.2, 0.3]
+    mock_model.encode.return_value = mock_embedding
+
+    # Patch transformer class
+    mock_transformer_class = MagicMock(return_value=mock_model)
+    monkeypatch.setattr(f"{module_path}._SentenceTransformer", mock_transformer_class)
+
+    return mock_model
+
+
+@pytest.fixture
+def mock_embeddings_save(monkeypatch):
+    """Embedding mocks for save module.
+
+    Sets up SentenceTransformer mocks for the save_memory tool.
+    Use with mock_config_embeddings to test embedding generation.
+
+    Example:
+        def test_save_with_embeddings(
+            mock_config_embeddings,
+            mock_embeddings_save,
+            temp_storage
+        ):
+            result = save_memory(content="Test")
+            assert result["has_embedding"] is True
+    """
+    return mock_embeddings_setup(monkeypatch, "cortexgraph.tools.save")
+
+
+@pytest.fixture
+def mock_embeddings_search(monkeypatch):
+    """Embedding mocks for search module.
+
+    Sets up SentenceTransformer mocks for the search_memory tool.
+    Use with mock_config_embeddings to test semantic search.
+
+    Example:
+        def test_semantic_search(
+            mock_config_embeddings,
+            mock_embeddings_search,
+            temp_storage
+        ):
+            result = search_memory(query="AI", use_embeddings=True)
+            # Will calculate similarity using mocked embeddings
+    """
+    return mock_embeddings_setup(monkeypatch, "cortexgraph.tools.search")

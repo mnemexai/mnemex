@@ -237,19 +237,11 @@ class TestSaveMemory:
         assert "Secrets detected" in caplog.text
 
     # Embedding tests
-    @patch("cortexgraph.tools.save.SENTENCE_TRANSFORMERS_AVAILABLE", True)
-    @patch("cortexgraph.tools.save._SentenceTransformer")
     def test_save_memory_with_embeddings_enabled(
-        self, mock_transformer, mock_config_embeddings, temp_storage
+        self, mock_config_embeddings, mock_embeddings_save, temp_storage
     ):
         """Test that embeddings are generated when enabled."""
-        # Uses mock_config_embeddings fixture (enables embeddings)
-        # Setup transformer mock
-        mock_model = MagicMock()
-        mock_embedding = MagicMock()
-        mock_embedding.tolist.return_value = [0.1, 0.2, 0.3]
-        mock_model.encode.return_value = mock_embedding
-        mock_transformer.return_value = mock_model
+        # Uses mock_config_embeddings + mock_embeddings_save fixtures
 
         result = save_memory(content="Test embedding")
 
@@ -267,13 +259,13 @@ class TestSaveMemory:
         memory = temp_storage.get_memory(result["memory_id"])
         assert memory.embed is None
 
-    @patch("cortexgraph.tools.save.SENTENCE_TRANSFORMERS_AVAILABLE", True)
     @patch("cortexgraph.tools.save._SentenceTransformer")
     def test_save_memory_embedding_import_error(
-        self, mock_transformer, mock_config_embeddings, temp_storage
+        self, mock_transformer, mock_config_embeddings, mock_embeddings_save, temp_storage
     ):
         """Test that import error in embedding generation is handled gracefully."""
-        # Uses mock_config_embeddings fixture (enables embeddings)
+        # Uses mock_config_embeddings + mock_embeddings_save fixtures
+        # Override transformer to raise ImportError
         mock_transformer.side_effect = ImportError("No model found")
 
         result = save_memory(content="Test")
