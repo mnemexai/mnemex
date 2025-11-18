@@ -1,7 +1,5 @@
 """Save memory tool."""
 
-from __future__ import annotations
-
 import logging
 import time
 import uuid
@@ -28,7 +26,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 # Optional dependency for embeddings
-_SentenceTransformer: type[SentenceTransformer] | None
+_SentenceTransformer: "type[SentenceTransformer] | None"
 try:
     from sentence_transformers import SentenceTransformer
 
@@ -42,7 +40,7 @@ except ImportError:
 _model_cache: dict[str, Any] = {}
 
 
-def _get_embedding_model(model_name: str) -> SentenceTransformer | None:
+def _get_embedding_model(model_name: str) -> "SentenceTransformer | None":
     """Get cached embedding model or create new one."""
     if not SENTENCE_TRANSFORMERS_AVAILABLE or _SentenceTransformer is None:
         return None

@@ -259,13 +259,19 @@ class TestSaveMemory:
         memory = temp_storage.get_memory(result["memory_id"])
         assert memory.embed is None
 
+    @patch("cortexgraph.tools.save.SENTENCE_TRANSFORMERS_AVAILABLE", True)
     @patch("cortexgraph.tools.save._SentenceTransformer")
     def test_save_memory_embedding_import_error(
-        self, mock_transformer, mock_config_embeddings, mock_embeddings_save, temp_storage
+        self, mock_transformer, mock_config_embeddings, temp_storage
     ):
         """Test that import error in embedding generation is handled gracefully."""
-        # Uses mock_config_embeddings + mock_embeddings_save fixtures
-        # Override transformer to raise ImportError
+        # Clear model cache to ensure this test gets a fresh model load attempt
+        from cortexgraph.tools import save
+
+        save._model_cache.clear()
+
+        # Uses mock_config_embeddings fixture (enables embeddings)
+        # Patch transformer to raise ImportError
         mock_transformer.side_effect = ImportError("No model found")
 
         result = save_memory(content="Test")

@@ -187,7 +187,7 @@ def mock_config_preprocessor(monkeypatch):
     # Patch at global level to avoid module-specific coupling
     import cortexgraph.config
 
-    monkeypatch.setattr(cortexgraph.config, "_global_config", config)
+    monkeypatch.setattr(cortexgraph.config, "_config", config)
     return config
 
 
@@ -213,7 +213,7 @@ def mock_config_embeddings(monkeypatch):
     # Patch at global level to avoid module-specific coupling
     import cortexgraph.config
 
-    monkeypatch.setattr(cortexgraph.config, "_global_config", config)
+    monkeypatch.setattr(cortexgraph.config, "_config", config)
     return config
 
 
