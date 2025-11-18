@@ -83,3 +83,53 @@ def temp_storage(monkeypatch):
 
         yield storage
         storage.close()
+
+
+@pytest.fixture
+def mock_config_preprocessor(monkeypatch):
+    """Mock config with preprocessing disabled.
+
+    Use this fixture for tests that need legacy behavior without auto-enrichment
+    of entities and strength. This is useful for testing basic memory operations
+    without the natural language preprocessing layer.
+
+    Example:
+        def test_basic_save(mock_config_preprocessor, temp_storage):
+            result = save_memory(content="Test")
+            # Entities will be empty (not auto-extracted)
+    """
+    from cortexgraph.config import get_config
+
+    config = get_config()
+    config.enable_preprocessing = False
+    # Patch at global level to avoid module-specific coupling
+    import cortexgraph.config
+
+    monkeypatch.setattr(cortexgraph.config, "_global_config", config)
+    return config
+
+
+@pytest.fixture
+def mock_config_embeddings(monkeypatch):
+    """Mock config with embeddings enabled.
+
+    Use this fixture for tests that need semantic search with embeddings.
+    Configures a test model and ensures all embedding-related config fields
+    are set appropriately.
+
+    Example:
+        def test_semantic_search(mock_config_embeddings, temp_storage):
+            result = search_memory(query="AI", use_embeddings=True)
+            # Will use mocked embeddings for similarity scoring
+    """
+    from cortexgraph.config import get_config
+
+    config = get_config()
+    config.enable_embeddings = True
+    config.embed_model = "test-model"
+    config.search_default_preview_length = 300
+    # Patch at global level to avoid module-specific coupling
+    import cortexgraph.config
+
+    monkeypatch.setattr(cortexgraph.config, "_global_config", config)
+    return config

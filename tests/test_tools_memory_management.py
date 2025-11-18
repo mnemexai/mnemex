@@ -26,15 +26,9 @@ from tests.conftest import make_test_uuid
 class TestSaveMemory:
     """Test suite for save_memory tool."""
 
-    @patch("cortexgraph.tools.save.get_config")
-    def test_save_basic_memory(self, mock_config, temp_storage):
+    def test_save_basic_memory(self, mock_config_preprocessor, temp_storage):
         """Test saving a basic memory with just content."""
-        from cortexgraph.config import get_config
-
-        # Disable preprocessing for this test (expects old behavior)
-        config = get_config()
-        config.enable_preprocessing = False
-        mock_config.return_value = config
+        # Uses mock_config_preprocessor fixture (disables preprocessing)
 
         result = save_memory(content="This is a test memory")
 
@@ -193,15 +187,9 @@ class TestSaveMemory:
         memory = temp_storage.get_memory(result["memory_id"])
         assert memory.meta.tags == []
 
-    @patch("cortexgraph.tools.save.get_config")
-    def test_save_memory_with_none_entities(self, mock_config, temp_storage):
+    def test_save_memory_with_none_entities(self, mock_config_preprocessor, temp_storage):
         """Test that None entities are converted to empty list."""
-        from cortexgraph.config import get_config
-
-        # Disable preprocessing for this test (expects old behavior)
-        config = get_config()
-        config.enable_preprocessing = False
-        mock_config.return_value = config
+        # Uses mock_config_preprocessor fixture (disables preprocessing)
 
         result = save_memory(content="Test", entities=None)
         memory = temp_storage.get_memory(result["memory_id"])
@@ -222,20 +210,19 @@ class TestSaveMemory:
         assert memory.content == content
 
     # Secret detection tests (when enabled)
-    @patch("cortexgraph.tools.save.get_config")
     @patch("cortexgraph.tools.save.detect_secrets")
     def test_save_warns_about_secrets_when_detected(
         self,
         mock_detect,
-        mock_config,
+        mock_config_preprocessor,
         temp_storage,
         caplog,
     ):
         """Test that secret detection warns but still saves memory."""
         from cortexgraph.security.secrets import SecretMatch
 
-        # Setup mocks
-        mock_config.return_value.detect_secrets = True
+        # Enable secret detection for this test
+        mock_config_preprocessor.detect_secrets = True
         # Mock a high-confidence secret to trigger the warning without patching should_warn_about_secrets
         mock_detect.return_value = [
             SecretMatch(secret_type="openai_key", position=0, context="...")
@@ -251,13 +238,13 @@ class TestSaveMemory:
 
     # Embedding tests
     @patch("cortexgraph.tools.save.SENTENCE_TRANSFORMERS_AVAILABLE", True)
-    @patch("cortexgraph.tools.save.get_config")
     @patch("cortexgraph.tools.save._SentenceTransformer")
-    def test_save_memory_with_embeddings_enabled(self, mock_transformer, mock_config, temp_storage):
+    def test_save_memory_with_embeddings_enabled(
+        self, mock_transformer, mock_config_embeddings, temp_storage
+    ):
         """Test that embeddings are generated when enabled."""
-        # Setup mocks
-        mock_config.return_value.enable_embeddings = True
-        mock_config.return_value.embed_model = "test-model"
+        # Uses mock_config_embeddings fixture (enables embeddings)
+        # Setup transformer mock
         mock_model = MagicMock()
         mock_embedding = MagicMock()
         mock_embedding.tolist.return_value = [0.1, 0.2, 0.3]
@@ -270,10 +257,9 @@ class TestSaveMemory:
         memory = temp_storage.get_memory(result["memory_id"])
         assert memory.embed == [0.1, 0.2, 0.3]
 
-    @patch("cortexgraph.tools.save.get_config")
-    def test_save_memory_with_embeddings_disabled(self, mock_config, temp_storage):
+    def test_save_memory_with_embeddings_disabled(self, mock_config_preprocessor, temp_storage):
         """Test that embeddings are not generated when disabled."""
-        mock_config.return_value.enable_embeddings = False
+        # Uses mock_config_preprocessor fixture (embeddings disabled by default)
 
         result = save_memory(content="Test no embedding")
 
@@ -282,11 +268,12 @@ class TestSaveMemory:
         assert memory.embed is None
 
     @patch("cortexgraph.tools.save.SENTENCE_TRANSFORMERS_AVAILABLE", True)
-    @patch("cortexgraph.tools.save.get_config")
     @patch("cortexgraph.tools.save._SentenceTransformer")
-    def test_save_memory_embedding_import_error(self, mock_transformer, mock_config, temp_storage):
+    def test_save_memory_embedding_import_error(
+        self, mock_transformer, mock_config_embeddings, temp_storage
+    ):
         """Test that import error in embedding generation is handled gracefully."""
-        mock_config.return_value.enable_embeddings = True
+        # Uses mock_config_embeddings fixture (enables embeddings)
         mock_transformer.side_effect = ImportError("No model found")
 
         result = save_memory(content="Test")
