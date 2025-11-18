@@ -20,6 +20,23 @@ from ..security.validators import (
 from ..storage.ltm_index import LTMIndex
 
 
+def _truncate_content(content: str, max_length: int | None) -> str:
+    """
+    Truncate content to specified length with ellipsis.
+
+    Args:
+        content: The content to truncate.
+        max_length: Maximum length (None or 0 = no truncation).
+
+    Returns:
+        Truncated content with "..." appended if truncated.
+    """
+    if max_length is None or max_length == 0 or len(content) <= max_length:
+        return content
+
+    return content[:max_length].rstrip() + "..."
+
+
 class UnifiedSearchResult:
     """Result from unified search across STM and LTM."""
 
@@ -72,9 +89,14 @@ def search_unified(
     min_score: float | None = None,
     page: int | None = None,
     page_size: int | None = None,
+    preview_length: int | None = None,
 ) -> dict[str, Any]:
     """
     Search across both STM and LTM with unified ranking.
+
+    **Content Preview (v0.7.0):** By default, returns first 300 characters of each
+    memory to reduce context usage. Pass `preview_length=0` for full content, or
+    set a custom length (1-5000 characters).
 
     **Pagination:** Results are paginated to help you find specific memories across
     large result sets from both short-term and long-term memory. Use `page` and `page_size`
@@ -91,6 +113,7 @@ def search_unified(
         min_score: Minimum score threshold for STM memories (0.0-1.0).
         page: Page number to retrieve (1-indexed, default: 1).
         page_size: Number of memories per page (default: 10, max: 100).
+        preview_length: Content preview length in chars (default: 300, 0 = full content).
 
     Returns:
         Dictionary with paginated results including:
@@ -98,11 +121,11 @@ def search_unified(
         - pagination: Metadata (page, page_size, total_count, total_pages, has_more)
 
     Examples:
-        # Get first page (10 results)
+        # Get first page with previews (default 300 chars)
         search_unified(query="architecture", page=1, page_size=10)
 
-        # Get next page
-        search_unified(query="architecture", page=2, page_size=10)
+        # Get full content
+        search_unified(query="architecture", preview_length=0)
 
     Raises:
         ValueError: If any input fails validation.
@@ -129,10 +152,21 @@ def search_unified(
     if min_score is not None:
         min_score = validate_score(min_score, "min_score")
 
+    # Validate preview_length
+    if preview_length is not None:
+        preview_length = validate_positive_int(
+            preview_length, "preview_length", min_value=0, max_value=5000
+        )
+
     # Only validate pagination if explicitly requested
     pagination_requested = page is not None or page_size is not None
 
     config = get_config()
+
+    # Use config default if preview_length not specified
+    if preview_length is None:
+        preview_length = config.search_default_preview_length
+
     results: list[UnifiedSearchResult] = []
 
     # Search STM
@@ -154,7 +188,7 @@ def search_unified(
 
             results.append(
                 UnifiedSearchResult(
-                    content=memory.content,
+                    content=_truncate_content(memory.content, preview_length),
                     title=f"Memory {memory.id[:8]}",
                     source="stm",
                     score=score * stm_weight,
@@ -203,7 +237,7 @@ def search_unified(
 
                     results.append(
                         UnifiedSearchResult(
-                            content=doc.content[:500],
+                            content=_truncate_content(doc.content, preview_length),
                             title=doc.title,
                             source="ltm",
                             score=relevance_score * ltm_weight,
