@@ -13,9 +13,6 @@
     }
   },
   "ruff.lineLength": 100,
-  "ruff.lint.args": [
-    "--config=${workspaceFolder}/pyproject.toml"
-  ],
 
   // MyPy type checking
   "mypy-type-checker.args": [
