@@ -88,6 +88,7 @@ from pathlib import Path
 
 import pytest
 
+import cortexgraph.config
 import cortexgraph.context
 import cortexgraph.tools.auto_recall_tool
 import cortexgraph.tools.cluster
@@ -100,7 +101,7 @@ import cortexgraph.tools.read_graph
 import cortexgraph.tools.save
 import cortexgraph.tools.search
 import cortexgraph.tools.touch
-from cortexgraph.config import Config, set_config
+from cortexgraph.config import Config, get_config, set_config
 from cortexgraph.storage.jsonl_storage import JSONLStorage
 
 
@@ -180,13 +181,9 @@ def mock_config_preprocessor(monkeypatch):
             result = save_memory(content="Test")
             # Entities will be empty (not auto-extracted)
     """
-    from cortexgraph.config import get_config
-
     config = get_config()
     config.enable_preprocessing = False
     # Patch at global level to avoid module-specific coupling
-    import cortexgraph.config
-
     monkeypatch.setattr(cortexgraph.config, "_config", config)
     return config
 
@@ -204,15 +201,11 @@ def mock_config_embeddings(monkeypatch):
             result = search_memory(query="AI", use_embeddings=True)
             # Will use mocked embeddings for similarity scoring
     """
-    from cortexgraph.config import get_config
-
     config = get_config()
     config.enable_embeddings = True
     config.embed_model = "test-model"
     config.search_default_preview_length = 300
     # Patch at global level to avoid module-specific coupling
-    import cortexgraph.config
-
     monkeypatch.setattr(cortexgraph.config, "_config", config)
     return config
 
