@@ -72,6 +72,23 @@ def _generate_query_embedding(query: str) -> list[float] | None:
         return None
 
 
+def _truncate_content(content: str, max_length: int | None) -> str:
+    """
+    Truncate content to specified length with ellipsis.
+
+    Args:
+        content: The content to truncate.
+        max_length: Maximum length (None or 0 = no truncation).
+
+    Returns:
+        Truncated content with "..." appended if truncated.
+    """
+    if max_length is None or max_length == 0 or len(content) <= max_length:
+        return content
+
+    return content[:max_length].rstrip() + "..."
+
+
 @mcp.tool()
 @time_operation("search_memory")
 def search_memory(
@@ -84,6 +101,7 @@ def search_memory(
     include_review_candidates: bool = True,
     page: int | None = None,
     page_size: int | None = None,
+    preview_length: int | None = None,
 ) -> dict[str, Any]:
     """
     Search for memories with optional filters and scoring.
@@ -91,6 +109,10 @@ def search_memory(
     This tool implements natural spaced repetition by blending memories due
     for review into results when they're relevant. This creates the "Maslow
     effect" - natural reinforcement through conversation.
+
+    **Content Preview (v0.7.0):** By default, returns first 300 characters of each
+    memory to reduce context usage. Pass `preview_length=0` for full content, or
+    set a custom length (1-5000 characters).
 
     **Pagination:** Results are paginated to help you find specific memories across
     large result sets. Use `page` and `page_size` to navigate through results.
@@ -106,6 +128,7 @@ def search_memory(
         include_review_candidates: Blend in memories due for review (default True).
         page: Page number to retrieve (1-indexed, default: 1).
         page_size: Number of memories per page (default: 10, max: 100).
+        preview_length: Content preview length in chars (default: 300, 0 = full content).
 
     Returns:
         Dictionary with paginated results including:
@@ -115,14 +138,14 @@ def search_memory(
         Some results may be review candidates that benefit from reinforcement.
 
     Examples:
-        # Get first page (10 results)
+        # Get first page with previews (default 300 chars)
         search_memory(query="authentication", page=1, page_size=10)
 
-        # Get next page
-        search_memory(query="authentication", page=2, page_size=10)
+        # Get full content
+        search_memory(query="authentication", preview_length=0)
 
-        # Larger page size
-        search_memory(query="authentication", page=1, page_size=25)
+        # Custom preview length
+        search_memory(query="authentication", preview_length=500)
 
     Raises:
         ValueError: If any input fails validation.
@@ -148,10 +171,21 @@ def search_memory(
     if min_score is not None:
         min_score = validate_score(min_score, "min_score")
 
+    # Validate preview_length
+    if preview_length is not None:
+        preview_length = validate_positive_int(
+            preview_length, "preview_length", min_value=0, max_value=5000
+        )
+
     # Only validate pagination if explicitly requested
     pagination_requested = page is not None or page_size is not None
 
     config = get_config()
+
+    # Use config default if preview_length not specified
+    if preview_length is None:
+        preview_length = config.search_default_preview_length
+
     now = int(time.time())
 
     memories = db.search_memories(
@@ -263,7 +297,7 @@ def search_memory(
             "results": [
                 {
                     "id": r.memory.id,
-                    "content": r.memory.content,
+                    "content": _truncate_content(r.memory.content, preview_length),
                     "tags": r.memory.meta.tags,
                     "score": round(r.score, 4),
                     "similarity": round(r.similarity, 4) if r.similarity else None,
@@ -286,7 +320,7 @@ def search_memory(
             "results": [
                 {
                     "id": r.memory.id,
-                    "content": r.memory.content,
+                    "content": _truncate_content(r.memory.content, preview_length),
                     "tags": r.memory.meta.tags,
                     "score": round(r.score, 4),
                     "similarity": round(r.similarity, 4) if r.similarity else None,

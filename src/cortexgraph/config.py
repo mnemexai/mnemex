@@ -276,6 +276,12 @@ class Config(BaseModel):
         description="Weight for LTM results in unified search",
         ge=0,
     )
+    search_default_preview_length: int = Field(
+        default=300,
+        description="Default number of characters to return in search results (0 = full content)",
+        ge=0,
+        le=5000,
+    )
 
     # Legacy Integration (deprecated) — removed
     basic_memory_path: Path | None | None = None
@@ -439,6 +445,8 @@ class Config(BaseModel):
             config_dict["search_stm_weight"] = float(search_stm_weight)
         if search_ltm_weight := os.getenv("SEARCH_LTM_WEIGHT"):
             config_dict["search_ltm_weight"] = float(search_ltm_weight)
+        if search_preview_length := os.getenv("CORTEXGRAPH_SEARCH_PREVIEW_LENGTH"):
+            config_dict["search_default_preview_length"] = int(search_preview_length)
 
         # Legacy Integration (ignored)
 
