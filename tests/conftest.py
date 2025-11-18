@@ -1,4 +1,86 @@
-"""Pytest configuration and shared fixtures."""
+"""Pytest configuration and shared fixtures for CortexGraph test suite.
+
+This module provides reusable fixtures and utilities for testing the CortexGraph
+temporal memory system. All fixtures defined here are automatically available to
+all test files without explicit imports.
+
+Core Fixtures
+------------
+test_config : Config (autouse=True)
+    Automatically applied to all tests. Sets consistent decay parameters and
+    disables embeddings by default.
+
+temp_storage : JSONLStorage
+    Creates isolated temporary JSONL storage for each test. Automatically
+    monkey-patches global db instances across 11 tool modules for proper
+    test isolation.
+
+Config Mock Fixtures
+------------------
+mock_config_preprocessor : Config
+    Config with enable_preprocessing=False for testing legacy behavior without
+    auto-enrichment of entities and strength.
+
+mock_config_embeddings : Config
+    Config with enable_embeddings=True and test model configured for testing
+    semantic search with embeddings.
+
+Embedding Mock Fixtures
+----------------------
+mock_embeddings_save : MagicMock
+    Mocks SentenceTransformer for the save module. Returns predictable test
+    embeddings [0.1, 0.2, 0.3]. Use with mock_config_embeddings.
+
+mock_embeddings_search : MagicMock
+    Mocks SentenceTransformer for the search module. Returns predictable test
+    embeddings [0.1, 0.2, 0.3]. Use with mock_config_embeddings.
+
+Utility Functions
+----------------
+make_test_uuid(name: str) -> str
+    Generates deterministic UUIDs for reproducible tests. Same input always
+    returns same UUID.
+
+mock_embeddings_setup(monkeypatch, module_path) -> MagicMock
+    Helper function to setup embedding mocks for any module. Used internally
+    by mock_embeddings_* fixtures.
+
+Usage Examples
+-------------
+Basic test with storage::
+
+    def test_save_memory(temp_storage):
+        mem = Memory(id="test", content="Test")
+        temp_storage.save_memory(mem)
+        assert temp_storage.get_memory("test") is not None
+
+Test with preprocessing disabled::
+
+    def test_no_preprocessing(mock_config_preprocessor, temp_storage):
+        result = save_memory(content="Test")
+        # Entities won't be auto-extracted
+
+Test with embeddings::
+
+    def test_embeddings(
+        mock_config_embeddings,
+        mock_embeddings_save,
+        temp_storage
+    ):
+        result = save_memory(content="Test")
+        assert result["has_embedding"] is True
+
+Notes
+-----
+- All fixtures use pytest's function scope by default (new instance per test)
+- temp_storage automatically cleans up after each test
+- Config fixtures patch at global level to avoid module-specific coupling
+- Embedding fixtures return predictable embeddings for deterministic testing
+
+See Also
+--------
+tests/README.md : Comprehensive test documentation and patterns
+"""
 
 import tempfile
 import uuid
