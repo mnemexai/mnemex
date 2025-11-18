@@ -307,6 +307,7 @@ class TestSearchMemory:
         # Setup mocks
         mock_config.return_value.enable_embeddings = True
         mock_config.return_value.embed_model = "test-model"
+        mock_config.return_value.search_default_preview_length = 300
         mock_model = MagicMock()
         mock_embedding = MagicMock()
         mock_embedding.tolist.return_value = [0.1, 0.2, 0.3]
@@ -332,6 +333,7 @@ class TestSearchMemory:
     def test_search_embeddings_disabled(self, mock_config, temp_storage):
         """Test that embeddings not used when disabled."""
         mock_config.return_value.enable_embeddings = False
+        mock_config.return_value.search_default_preview_length = 300
 
         mem = Memory(id="mem-1", content="Test", embed=[0.1, 0.2])
         temp_storage.save_memory(mem)
@@ -349,6 +351,7 @@ class TestSearchMemory:
     def test_search_embedding_import_error(self, mock_transformer, mock_config, temp_storage):
         """Test graceful handling of embedding import errors."""
         mock_config.return_value.enable_embeddings = True
+        mock_config.return_value.search_default_preview_length = 300
         mock_transformer.side_effect = ImportError("No model")
 
         mem = Memory(id=make_test_uuid("mem-1"), content="Test")
