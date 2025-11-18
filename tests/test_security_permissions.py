@@ -1,4 +1,25 @@
-"""Comprehensive tests for security.permissions module."""
+"""
+Comprehensive tests for the `cortexgraph.security.permissions` module.
+
+This test suite verifies the functionality of file and directory permission
+management utilities. It ensures that files and directories are created with
+secure, owner-only permissions (e.g., 0o600 for files, 0o700 for directories
+on POSIX systems) and that existing permissions can be correctly checked and
+remediated.
+
+The tests cover:
+- Securing individual files and directories.
+- Creating files/directories with secure permissions.
+- Recursively securing directory trees.
+- Checking for insecure permissions (group or world-read/write).
+- Handling of edge cases like non-existent paths or incorrect path types.
+- Command-line interface functionality for checking and applying permissions.
+- Graceful handling of `PermissionError` exceptions.
+
+Note: Most permission-related tests are skipped on non-POSIX systems (like
+Windows) where the permission model is different and `os.chmod` has limited
+effect.
+"""
 
 import os
 import stat
@@ -21,7 +42,13 @@ IS_POSIX = os.name != "nt"
 
 
 class TestSecureFile:
-    """Tests for secure_file function."""
+    """
+    Tests for the `secure_file` function.
+
+    These tests ensure that `secure_file` correctly sets permissions on new
+    or existing files, handles errors gracefully, and supports custom
+    permission settings.
+    """
 
     @pytest.mark.skipif(not IS_POSIX, reason="Unix permissions not applicable on Windows")
     def test_set_permissions_on_existing_file(self):
@@ -114,7 +141,13 @@ class TestSecureFile:
 
 
 class TestSecureDirectory:
-    """Tests for secure_directory function."""
+    """
+    Tests for the `secure_directory` function.
+
+    These tests verify that `secure_directory` can correctly set permissions
+    on directories, create them if needed, and handle recursive operations
+    without affecting files inside the directory tree.
+    """
 
     @pytest.mark.skipif(not IS_POSIX, reason="Unix permissions not applicable on Windows")
     def test_set_permissions_on_existing_directory(self):
@@ -261,7 +294,12 @@ class TestSecureDirectory:
 
 
 class TestCheckPermissionsAsIsSecureFile:
-    """Tests for check_permissions as is_secure_file validator."""
+    """
+    Tests for `check_permissions` when validating file permissions.
+
+    This class focuses on scenarios where `check_permissions` is used to
+    determine if a path has secure *file* permissions (e.g., 0o600).
+    """
 
     @pytest.mark.skipif(not IS_POSIX, reason="Unix permissions not applicable on Windows")
     def test_file_with_secure_permissions_0o600(self):
@@ -349,7 +387,12 @@ class TestCheckPermissionsAsIsSecureFile:
 
 
 class TestCheckPermissionsAsIsSecureDirectory:
-    """Tests for check_permissions as is_secure_directory validator."""
+    """
+    Tests for `check_permissions` when validating directory permissions.
+
+    This class focuses on scenarios where `check_permissions` is used to
+    determine if a path has secure *directory* permissions (e.g., 0o700).
+    """
 
     @pytest.mark.skipif(not IS_POSIX, reason="Unix permissions not applicable on Windows")
     def test_directory_with_secure_permissions_0o700(self):
@@ -420,7 +463,12 @@ class TestCheckPermissionsAsIsSecureDirectory:
 
 
 class TestCheckPermissionsGroupAndOtherAccess:
-    """Tests for check_permissions detecting group and other access."""
+    """
+    Tests for `check_permissions` detecting group and other (world) access.
+
+    This class verifies that the detailed permission flags (e.g.,
+    `group_readable`, `world_writable`) are correctly reported.
+    """
 
     @pytest.mark.skipif(not IS_POSIX, reason="Unix permissions not applicable on Windows")
     def test_file_with_group_read_access(self):
@@ -537,7 +585,12 @@ class TestCheckPermissionsGroupAndOtherAccess:
 
 
 class TestSecureConfigFile:
-    """Tests for secure_config_file function."""
+    """
+    Tests for the `secure_config_file` function.
+
+    This class ensures that configuration files, which often contain sensitive
+    data, are properly secured with owner-only read/write permissions.
+    """
 
     @pytest.mark.skipif(not IS_POSIX, reason="Unix permissions not applicable on Windows")
     def test_secure_existing_config_file(self):
@@ -602,7 +655,13 @@ class TestSecureConfigFile:
 
 
 class TestEnsureSecureStorage:
-    """Tests for ensure_secure_storage function."""
+    """
+    Tests for the `ensure_secure_storage` function.
+
+    This class verifies that the function can recursively traverse a storage
+    directory and apply secure permissions to all files and subdirectories
+    within it.
+    """
 
     @pytest.mark.skipif(not IS_POSIX, reason="Unix permissions not applicable on Windows")
     def test_secure_storage_directory_and_files(self):
@@ -721,7 +780,13 @@ class TestEnsureSecureStorage:
 
 
 class TestCheckPermissions:
-    """Tests for check_permissions function."""
+    """
+    High-level tests for the `check_permissions` function.
+
+    This class tests the overall behavior of the function, including its
+    ability to auto-detect path types and return a comprehensive dictionary
+    of permission details.
+    """
 
     @pytest.mark.skipif(not IS_POSIX, reason="Unix permissions not applicable on Windows")
     def test_check_permissions_secure_file(self):
@@ -825,7 +890,12 @@ class TestCheckPermissions:
 
 
 class TestMain:
-    """Tests for the main() CLI function."""
+    """
+    Tests for the `main()` command-line interface function.
+
+    This class mocks `sys.argv` to simulate command-line calls and verifies
+    the output, exit codes, and file system side effects.
+    """
 
     @pytest.mark.skipif(not IS_POSIX, reason="Unix permissions not applicable on Windows")
     def test_main_check_secure_file(self, monkeypatch, capsys):
@@ -1001,7 +1071,13 @@ class TestMain:
 
 
 class TestPermissionErrors:
-    """Tests for PermissionError exception handling."""
+    """
+    Tests for `PermissionError` exception handling.
+
+    This class ensures that the permission-setting functions raise or handle
+    `PermissionError` appropriately when the underlying `os.chmod` call fails,
+    simulated via mocking.
+    """
 
     def test_secure_file_permission_error(self, monkeypatch):
         """Test PermissionError when securing a file."""

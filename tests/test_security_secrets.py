@@ -1,4 +1,24 @@
-"""Comprehensive tests for security.secrets module."""
+"""
+Comprehensive tests for the `cortexgraph.security.secrets` module.
+
+This test suite is designed to ensure the effectiveness of the secret
+detection and handling capabilities within the application. It covers a
+wide array of secret patterns, including API keys from various services
+(AWS, OpenAI, GitHub), private keys, database URLs, and generic password
+or token assignments.
+
+The tests verify:
+- The `detect_secrets` function's ability to identify different secret
+  formats in text.
+- The `scan_file_for_secrets` function for file-based scanning.
+- The `redact_secrets` function to ensure secrets are properly removed
+  from text.
+- The logic for warning users about found secrets (`should_warn_about_secrets`
+  and `format_secret_warning`).
+- The command-line interface for scanning files and stdin, including
+  redaction and quiet modes.
+- The structural integrity of the `SecretMatch` data class.
+"""
 
 import io
 import sys
@@ -19,7 +39,13 @@ from cortexgraph.security.secrets import (
 
 
 class TestSecretMatch:
-    """Tests for SecretMatch dataclass."""
+    """
+    Tests for the `SecretMatch` dataclass.
+
+    These tests ensure that the `SecretMatch` dataclass, which is used to
+    store information about a found secret, is correctly instantiated and
+    has the expected attributes.
+    """
 
     def test_create_secret_match_instance(self):
         """Test creating a SecretMatch instance."""
@@ -59,7 +85,12 @@ class TestSecretMatch:
 
 
 class TestDetectSecretsAPIKeys:
-    """Tests for detect_secrets function - API keys."""
+    """
+    Tests for `detect_secrets` focusing on generic API key patterns.
+
+    This class verifies the detection of common, non-vendor-specific API
+    key and token formats.
+    """
 
     def test_detect_generic_api_key_uppercase(self):
         """Test detecting generic API_KEY pattern."""
@@ -95,7 +126,12 @@ class TestDetectSecretsAPIKeys:
 
 
 class TestDetectSecretsAWS:
-    """Tests for detect_secrets function - AWS credentials."""
+    """
+    Tests for `detect_secrets` focusing on AWS credential patterns.
+
+    This class ensures that AWS-specific secret formats, such as Access Key IDs
+    and Secret Access Keys, are correctly identified.
+    """
 
     def test_detect_aws_access_key_id(self):
         """Test detecting AWS access key (AKIA...)."""
@@ -131,7 +167,12 @@ class TestDetectSecretsAWS:
 
 
 class TestDetectSecretsGitHub:
-    """Tests for detect_secrets function - GitHub tokens."""
+    """
+    Tests for `detect_secrets` focusing on GitHub token patterns.
+
+    This class verifies the detection of various GitHub token formats,
+    including Personal Access Tokens (classic and fine-grained) and OAuth tokens.
+    """
 
     def test_detect_github_personal_access_token(self):
         """Test detecting GitHub personal access token (ghp_)."""
@@ -175,7 +216,12 @@ class TestDetectSecretsGitHub:
 
 
 class TestDetectSecretsOpenAI:
-    """Tests for detect_secrets function - OpenAI keys."""
+    """
+    Tests for `detect_secrets` focusing on OpenAI API key patterns.
+
+    This class ensures that OpenAI's specific key format (`sk-...`) is
+    correctly identified.
+    """
 
     def test_detect_openai_api_key(self):
         """Test detecting OpenAI API key (sk-)."""
@@ -195,7 +241,12 @@ class TestDetectSecretsOpenAI:
 
 
 class TestDetectSecretsAnthropic:
-    """Tests for detect_secrets function - Anthropic keys."""
+    """
+    Tests for `detect_secrets` focusing on Anthropic API key patterns.
+
+    This class ensures that Anthropic's specific key format (`sk-ant-...`)
+    is correctly identified.
+    """
 
     def test_detect_anthropic_api_key(self):
         """Test detecting Anthropic API key (sk-ant-)."""
@@ -215,7 +266,12 @@ class TestDetectSecretsAnthropic:
 
 
 class TestDetectSecretsGoogle:
-    """Tests for detect_secrets function - Google API keys."""
+    """
+    Tests for `detect_secrets` focusing on Google API key patterns.
+
+    This class ensures that Google's specific key format (`AIza...`) is
+    correctly identified.
+    """
 
     def test_detect_google_api_key(self):
         """Test detecting Google API key (AIza...)."""
@@ -235,7 +291,12 @@ class TestDetectSecretsGoogle:
 
 
 class TestDetectSecretsSlack:
-    """Tests for detect_secrets function - Slack tokens."""
+    """
+    Tests for `detect_secrets` focusing on Slack token patterns.
+
+    This class verifies the detection of various Slack token formats,
+    including bot, user, and app tokens.
+    """
 
     def test_detect_slack_bot_token(self):
         """Test detecting Slack bot token (xoxb-)."""
@@ -263,7 +324,12 @@ class TestDetectSecretsSlack:
 
 
 class TestDetectSecretsBearerTokens:
-    """Tests for detect_secrets function - Bearer tokens."""
+    """
+    Tests for `detect_secrets` focusing on Bearer token patterns.
+
+    This class ensures that generic Bearer tokens, often used in
+    Authorization headers, are correctly identified.
+    """
 
     def test_detect_bearer_token_uppercase(self):
         """Test detecting Bearer token (uppercase)."""
@@ -291,7 +357,12 @@ class TestDetectSecretsBearerTokens:
 
 
 class TestDetectSecretsJWT:
-    """Tests for detect_secrets function - JWT tokens."""
+    """
+    Tests for `detect_secrets` focusing on JSON Web Token (JWT) patterns.
+
+    This class verifies that the three-part structure of a JWT is correctly
+    identified as a potential secret.
+    """
 
     def test_detect_jwt_token(self):
         """Test detecting JWT token."""
@@ -311,7 +382,12 @@ class TestDetectSecretsJWT:
 
 
 class TestDetectSecretsPrivateKeys:
-    """Tests for detect_secrets function - Private keys."""
+    """
+    Tests for `detect_secrets` focusing on private key block patterns.
+
+    This class ensures that standard PEM-encoded private key formats
+    (e.g., `-----BEGIN ... PRIVATE KEY-----`) are detected.
+    """
 
     def test_detect_rsa_private_key(self):
         """Test detecting RSA private key."""
@@ -343,7 +419,12 @@ MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC
 
 
 class TestDetectSecretsDatabaseURLs:
-    """Tests for detect_secrets function - Database URLs."""
+    """
+    Tests for `detect_secrets` focusing on database connection strings.
+
+    This class verifies that URLs containing credentials for common databases
+    like PostgreSQL, MySQL, MongoDB, and Redis are identified.
+    """
 
     def test_detect_postgres_url(self):
         """Test detecting PostgreSQL connection string."""
@@ -387,7 +468,12 @@ class TestDetectSecretsDatabaseURLs:
 
 
 class TestDetectSecretsPasswords:
-    """Tests for detect_secrets function - Password assignments."""
+    """
+    Tests for `detect_secrets` focusing on password assignments.
+
+    This class ensures that common variable assignments for passwords
+    (e.g., `password = ...`) are detected.
+    """
 
     def test_detect_password_equals(self):
         """Test detecting password with equals sign."""
@@ -423,7 +509,12 @@ class TestDetectSecretsPasswords:
 
 
 class TestDetectSecretsSecretAssignments:
-    """Tests for detect_secrets function - Secret assignments."""
+    """
+    Tests for `detect_secrets` focusing on generic secret assignments.
+
+    This class verifies the detection of assignments using keywords like
+    `secret`, `token`, or `credential`.
+    """
 
     def test_detect_secret_assignment(self):
         """Test detecting secret assignment."""
@@ -451,7 +542,12 @@ class TestDetectSecretsSecretAssignments:
 
 
 class TestDetectSecretsMultipleAndEdgeCases:
-    """Tests for detect_secrets function - Multiple secrets and edge cases."""
+    """
+    Tests for `detect_secrets` covering multiple detections and edge cases.
+
+    This class ensures the detector handles text with multiple secrets,
+    no secrets, and respects parameters like `max_matches`.
+    """
 
     def test_multiple_secrets_in_same_text(self):
         """Test detecting multiple different secrets in same text."""
@@ -529,7 +625,12 @@ class TestDetectSecretsMultipleAndEdgeCases:
 
 
 class TestScanFileForSecrets:
-    """Tests for scan_file_for_secrets function."""
+    """
+    Tests for the `scan_file_for_secrets` function.
+
+    This class verifies that the function correctly scans files for secrets,
+    handles file I/O, and respects function parameters.
+    """
 
     def test_scan_file_with_secrets(self):
         """Test scanning a file containing secrets."""
@@ -582,7 +683,13 @@ class TestScanFileForSecrets:
 
 
 class TestFormatSecretWarning:
-    """Tests for format_secret_warning function."""
+    """
+    Tests for the `format_secret_warning` function.
+
+    This class ensures that the user-facing warning message is formatted
+    correctly based on the secrets found, including grouping by type and
+    providing helpful recommendations.
+    """
 
     def test_format_warning_with_single_secret(self):
         """Test formatting warning with one secret."""
@@ -643,7 +750,13 @@ class TestFormatSecretWarning:
 
 
 class TestShouldWarnAboutSecrets:
-    """Tests for should_warn_about_secrets function."""
+    """
+    Tests for the `should_warn_about_secrets` function.
+
+    This class verifies the logic that determines whether a warning should be
+    issued, based on the type and number of secrets found. This helps avoid
+    false positives for low-confidence matches.
+    """
 
     def test_warn_for_high_confidence_aws_key(self):
         """Test warning for high-confidence AWS key."""
@@ -712,7 +825,12 @@ class TestShouldWarnAboutSecrets:
 
 
 class TestRedactSecrets:
-    """Tests for redact_secrets function."""
+    """
+    Tests for the `redact_secrets` function.
+
+    This class ensures that found secrets are correctly replaced with a
+    redaction placeholder, and that the rest of the text remains intact.
+    """
 
     def test_redact_api_key(self):
         """Test redacting API key."""
@@ -813,7 +931,13 @@ class TestRedactSecrets:
 
 
 class TestCLIMain:
-    """Tests for main() CLI function."""
+    """
+    Tests for the `main()` command-line interface function.
+
+    This class mocks `sys.argv` and `sys.stdin` to simulate command-line
+    usage of the secret scanning script, verifying exit codes and output
+    to stdout/stderr.
+    """
 
     def test_cli_scan_file_with_secrets(self, monkeypatch, capsys):
         """Test CLI scanning a file with secrets."""

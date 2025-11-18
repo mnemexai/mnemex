@@ -1,4 +1,24 @@
-"""Comprehensive tests for security.validators module."""
+"""
+Comprehensive tests for the `cortexgraph.security.validators` module.
+
+This test suite ensures that all data validation and sanitization functions
+in the `cortexgraph.security.validators` module behave as expected. These
+validators are a critical security control, preventing malformed or malicious
+data from being processed by the application.
+
+The tests cover a wide range of validation scenarios, including:
+- **UUIDs**: Correct format, case-insensitivity, and rejection of invalid inputs.
+- **String Length**: Enforcement of minimum and maximum length constraints.
+- **Positive Integers**: Validation of numeric ranges.
+- **Scores**: Ensuring values are floats within the [0.0, 1.0] range.
+- **Tags and Entities**: Validation and sanitization of user-provided metadata,
+  including character restrictions and normalization.
+- **List Length**: Enforcement of limits on the number of items in a list.
+- **Enumerated Types**: Validation against predefined sets of allowed values for
+  relation types and storage targets.
+- **Sanitization**: Correct conversion of invalid characters and normalization
+  of strings for tags and entities.
+"""
 
 import pytest
 
@@ -23,7 +43,13 @@ from cortexgraph.security.validators import (
 
 
 class TestValidateUuid:
-    """Tests for validate_uuid function."""
+    """
+    Tests for the `validate_uuid` function.
+
+    These tests verify that the function correctly identifies valid UUIDs,
+    normalizes them to lowercase, and rejects any string that does not
+    conform to the UUID format.
+    """
 
     def test_valid_uuid_lowercase(self):
         """Test valid lowercase UUIDs."""
@@ -114,7 +140,13 @@ class TestValidateUuid:
 
 
 class TestValidateStringLength:
-    """Tests for validate_string_length function."""
+    """
+    Tests for the `validate_string_length` function.
+
+    These tests ensure that string inputs adhere to specified length
+    constraints, and that options for handling empty or None inputs work
+    correctly.
+    """
 
     def test_valid_string_within_limit(self):
         """Test valid strings within length limits."""
@@ -182,7 +214,12 @@ class TestValidateStringLength:
 
 
 class TestValidatePositiveInt:
-    """Tests for validate_positive_int function."""
+    """
+    Tests for the `validate_positive_int` function.
+
+    These tests verify that integer inputs are within a specified range
+    (e.g., positive) and reject non-integer or out-of-range values.
+    """
 
     def test_valid_positive_integers(self):
         """Test valid positive integers."""
@@ -269,7 +306,12 @@ class TestValidatePositiveInt:
 
 
 class TestValidateScore:
-    """Tests for validate_score function."""
+    """
+    Tests for the `validate_score` function.
+
+    These tests ensure that scores (e.g., for relevance or confidence) are
+    always a float between 0.0 and 1.0, inclusive.
+    """
 
     def test_valid_scores_in_range(self):
         """Test valid scores within [0.0, 1.0] range."""
@@ -338,7 +380,13 @@ class TestValidateScore:
 
 
 class TestValidateTag:
-    """Tests for validate_tag function."""
+    """
+    Tests for the `validate_tag` function.
+
+    These tests verify that tags are correctly validated and sanitized. They
+    ensure tags only contain allowed characters, adhere to length limits,
+    and are normalized (e.g., to lowercase).
+    """
 
     def test_valid_tags_alphanumeric(self):
         """Test valid alphanumeric tags."""
@@ -435,7 +483,12 @@ class TestValidateTag:
 
 
 class TestValidateEntity:
-    """Tests for validate_entity function."""
+    """
+    Tests for the `validate_entity` function.
+
+    These tests are similar to the tag validation tests but check for the
+    specific rules applied to entities, such as allowing spaces.
+    """
 
     def test_valid_entities_alphanumeric(self):
         """Test valid alphanumeric entities."""
@@ -531,7 +584,13 @@ class TestValidateEntity:
 
 
 class TestSanitizeTag:
-    """Tests for sanitize_tag function."""
+    """
+    Tests for the `sanitize_tag` function.
+
+    These tests focus on the transformation logic of the sanitization process,
+    ensuring that various invalid characters and formats are correctly
+    normalized into a valid tag format.
+    """
 
     def test_periods_converted_to_hyphens(self):
         """Test that periods are converted to hyphens."""
@@ -597,7 +656,12 @@ class TestSanitizeTag:
 
 
 class TestSanitizeEntity:
-    """Tests for sanitize_entity function."""
+    """
+    Tests for the `sanitize_entity` function.
+
+    These tests focus on the transformation logic for entities, ensuring
+    invalid characters are handled while preserving valid ones like spaces.
+    """
 
     def test_periods_converted_to_hyphens(self):
         """Test that periods are converted to hyphens."""
@@ -646,7 +710,12 @@ class TestSanitizeEntity:
 
 
 class TestValidateTagWithSanitization:
-    """Tests for validate_tag with auto_sanitize parameter."""
+    """
+    Tests for `validate_tag` focusing on the `auto_sanitize` parameter.
+
+    These tests verify that the function can either automatically clean
+    invalid tags or strictly reject them based on the `auto_sanitize` flag.
+    """
 
     def test_auto_sanitize_enabled_by_default(self):
         """Test that auto_sanitize is enabled by default."""
@@ -678,7 +747,12 @@ class TestValidateTagWithSanitization:
 
 
 class TestValidateEntityWithSanitization:
-    """Tests for validate_entity with auto_sanitize parameter."""
+    """
+    Tests for `validate_entity` focusing on the `auto_sanitize` parameter.
+
+    These tests verify that the function can either automatically clean
+    invalid entities or strictly reject them based on the `auto_sanitize` flag.
+    """
 
     def test_auto_sanitize_enabled_by_default(self):
         """Test that auto_sanitize is enabled by default."""
@@ -704,7 +778,12 @@ class TestValidateEntityWithSanitization:
 
 
 class TestValidateListLength:
-    """Tests for validate_list_length function."""
+    """
+    Tests for the `validate_list_length` function.
+
+    These tests ensure that lists adhere to maximum length constraints,
+    preventing oversized inputs.
+    """
 
     def test_valid_empty_list(self):
         """Test valid empty list."""
@@ -764,7 +843,13 @@ class TestValidateListLength:
 
 
 class TestValidateRelationType:
-    """Tests for validate_relation_type function."""
+    """
+    Tests for the `validate_relation_type` function.
+
+    These tests ensure that only predefined, allowed relation types can be
+    used, preventing the creation of arbitrary or invalid relationships
+    between memories.
+    """
 
     def test_valid_relation_types(self):
         """Test all valid relation types from ALLOWED_RELATION_TYPES."""
@@ -828,7 +913,12 @@ class TestValidateRelationType:
 
 
 class TestValidateTarget:
-    """Tests for validate_target function."""
+    """
+    Tests for the `validate_target` function.
+
+    These tests ensure that only predefined, allowed storage targets (backends)
+    can be specified for operations like memory promotion.
+    """
 
     def test_valid_targets(self):
         """Test all valid targets from ALLOWED_TARGETS."""
