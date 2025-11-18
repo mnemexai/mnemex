@@ -88,7 +88,6 @@ from pathlib import Path
 
 import pytest
 
-import cortexgraph.config
 import cortexgraph.context
 import cortexgraph.tools.auto_recall_tool
 import cortexgraph.tools.cluster
