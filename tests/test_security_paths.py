@@ -1,4 +1,17 @@
-"""Comprehensive tests for security.paths module."""
+"""
+Comprehensive tests for the `cortexgraph.security.paths` module.
+
+This test suite ensures that the path validation and sanitization functions
+in `cortexgraph.security.paths` are robust and correctly handle a wide
+range of valid and invalid inputs. The tests cover:
+- Path traversal attacks.
+- Absolute vs. relative path validation.
+- Handling of dangerous characters and control characters.
+- Normalization of paths (e.g., slashes, whitespace).
+- Filename sanitization, including reserved names and length limits.
+- Directory containment checks to prevent escaping a base directory.
+- Vault path validation.
+"""
 
 import tempfile
 from pathlib import Path
@@ -14,7 +27,13 @@ from cortexgraph.security.paths import (
 
 
 class TestValidateFolderPath:
-    """Tests for validate_folder_path function."""
+    """
+    Tests for the `validate_folder_path` function.
+
+    These tests verify that the function correctly validates and normalizes
+    relative folder paths, while rejecting absolute paths, path traversal
+    attempts, and paths with invalid characters.
+    """
 
     def test_valid_single_level_folder(self):
         """Test valid single-level folder paths."""
@@ -153,7 +172,14 @@ class TestValidateFolderPath:
 
 
 class TestSanitizeFilename:
-    """Tests for sanitize_filename function."""
+    """
+    Tests for the `sanitize_filename` function.
+
+    These tests ensure that filenames are properly sanitized by removing or
+    replacing invalid characters, rejecting reserved filenames, and enforcing
+    length limits. This is crucial for preventing security vulnerabilities
+    related to file creation.
+    """
 
     def test_valid_normal_filename(self):
         """Test valid normal filenames."""
@@ -304,7 +330,14 @@ class TestSanitizeFilename:
 
 
 class TestEnsureWithinDirectory:
-    """Tests for ensure_within_directory function."""
+    """
+    Tests for the `ensure_within_directory` function.
+
+    These tests confirm that the function correctly resolves paths and raises
+    an error if the resulting path falls outside of the specified base
+    directory. This is a critical security measure to prevent directory
+    traversal attacks.
+    """
 
     def test_path_within_base_directory_relative(self):
         """Test that paths within base directory are accepted (relative)."""
@@ -416,7 +449,13 @@ class TestEnsureWithinDirectory:
 
 
 class TestValidateVaultPath:
-    """Tests for validate_vault_path function."""
+    """
+    Tests for the `validate_vault_path` function.
+
+    These tests ensure that the function correctly validates and resolves
+    absolute paths for the vault directory, including expanding user-home
+    (~) paths, while rejecting relative paths.
+    """
 
     def test_valid_absolute_path(self):
         """Test valid absolute paths."""

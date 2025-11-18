@@ -6,8 +6,6 @@ and reinforcing related memories based on discussion topics.
 Phase 1 (MVP): Silent reinforcement - no surfacing, just prevent decay
 """
 
-from __future__ import annotations
-
 from typing import Any
 
 from cortexgraph.config import get_config
