@@ -1,6 +1,11 @@
 """JSONL-based storage interface for CortexGraph.
 
 Human-readable, git-friendly storage with in-memory indexing for fast queries.
+
+.. warning::
+    This storage backend loads all memories into RAM. It is not suitable for
+    datasets larger than available memory. Consider migrating to a database
+    backend for large-scale usage.
 """
 
 import asyncio

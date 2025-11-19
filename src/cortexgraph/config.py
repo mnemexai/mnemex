@@ -1,6 +1,5 @@
 """Configuration management for Mnemex."""
 
-import math
 import os
 from pathlib import Path
 from typing import Any, cast
@@ -461,20 +460,6 @@ class Config(BaseModel):
         return cls(**cast(dict[str, Any], config_dict))
 
     # No-op: JSONL storage ensures its own directory
-
-
-def calculate_decay_lambda_from_halflife(halflife_days: float) -> float:
-    """
-    Calculate decay constant from half-life in days.
-
-    Args:
-        halflife_days: Half-life period in days
-
-    Returns:
-        Decay constant (lambda) for exponential decay
-    """
-    halflife_seconds = halflife_days * 86400
-    return math.log(2) / halflife_seconds
 
 
 # Global configuration instance
