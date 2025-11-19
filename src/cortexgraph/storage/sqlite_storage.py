@@ -4,6 +4,7 @@ Provides a robust, SQL-based backend for larger datasets.
 """
 
 import json
+import logging
 import sqlite3
 import time
 from pathlib import Path
@@ -12,6 +13,8 @@ from typing import Any
 from ..config import get_config
 from ..security.permissions import secure_file
 from .models import KnowledgeGraph, Memory, MemoryStatus, Relation
+
+logger = logging.getLogger(__name__)
 
 
 class SQLiteStorage:
@@ -70,8 +73,10 @@ class SQLiteStorage:
         # Secure the database file
         try:
             secure_file(self.db_path)
-        except Exception:
-            pass
+        except Exception as e:
+            # Log error but don't fail if security settings can't be applied
+            # (e.g. on Windows or specific filesystems)
+            logger.warning(f"Failed to secure database file: {e}")
 
     def _init_schema(self) -> None:
         """Initialize database schema."""
@@ -272,7 +277,6 @@ class SQLiteStorage:
 
         if not updates:
             return True
-            return 0
 
         query = f"UPDATE memories SET {', '.join(updates)} WHERE id = :id"
 
