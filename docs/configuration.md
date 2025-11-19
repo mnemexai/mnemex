@@ -12,7 +12,14 @@ Create `~/.config/cortexgraph/.env`:
 # ============================================
 
 # Where short-term memories are stored (JSONL format)
+# Where short-term memories are stored (JSONL format)
 CORTEXGRAPH_STORAGE_PATH=~/.config/cortexgraph/jsonl
+
+# Storage Backend (jsonl | sqlite)
+CORTEXGRAPH_STORAGE_BACKEND=jsonl
+
+# SQLite Database Path (optional, defaults to storage_path/cortexgraph.db)
+# CORTEXGRAPH_SQLITE_PATH=~/.config/cortexgraph/cortexgraph.db
 
 # ============================================
 # Decay Model Configuration
@@ -125,9 +132,19 @@ Default values (0.05, 0.65) work well for most use cases.
 
 ### Storage Paths
 
-- **STM**: `CORTEXGRAPH_STORAGE_PATH` - JSONL files for short-term memory
+- **STM**: `CORTEXGRAPH_STORAGE_PATH` - Directory for storage
 - **LTM**: `LTM_VAULT_PATH` - Markdown files in Obsidian vault
 - **Index**: `LTM_INDEX_PATH` - Fast search index for LTM
+
+### Storage Backend
+
+Choose between:
+- **JSONL** (default): Human-readable, git-friendly text files. Best for transparency and small-to-medium datasets.
+- **SQLite**: Binary database file. Best for performance with large datasets.
+
+```bash
+CORTEXGRAPH_STORAGE_BACKEND=sqlite
+```
 
 ### Embeddings
 

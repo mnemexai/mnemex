@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.9] - 2025-11-19
+
+### Added
+- **SQLite Storage Backend**: Alternative to JSONL for better performance with large datasets.
+  - Configurable via `CORTEXGRAPH_STORAGE_BACKEND=sqlite`.
+  - Full feature parity with JSONL storage (CRUD, search, relations).
+- **Markdown Export Utility**: Tool to export memories to Markdown files with YAML frontmatter.
+  - Useful for backups, migration, or using memories in other tools like Obsidian.
+
 ## [0.5.5] - 2025-10-30
 
 ### Added

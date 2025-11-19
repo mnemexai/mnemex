@@ -49,6 +49,14 @@ class Config(BaseModel):
         default_factory=lambda: _get_config_dir() / "jsonl",
         description="Path to JSONL storage directory",
     )
+    storage_backend: str = Field(
+        default="jsonl",
+        description="Storage backend to use: jsonl | sqlite",
+    )
+    sqlite_path: Path | None = Field(
+        default=None,
+        description="Path to SQLite database file (default: storage_path/cortexgraph.db)",
+    )
 
     # Decay model selection
     decay_model: str = Field(
@@ -321,7 +329,9 @@ class Config(BaseModel):
         le=60.0,
     )
 
-    @field_validator("storage_path", "ltm_vault_path", "ltm_index_path", mode="before")
+    @field_validator(
+        "storage_path", "ltm_vault_path", "ltm_index_path", "sqlite_path", mode="before"
+    )
     @classmethod
     def expand_path(cls, v: str | Path | None) -> Path | None:
         """Expand home directory and environment variables in paths."""
@@ -338,6 +348,10 @@ class Config(BaseModel):
         # Storage
         if storage_path := os.getenv("CORTEXGRAPH_STORAGE_PATH"):
             config_dict["storage_path"] = storage_path
+        if storage_backend := os.getenv("CORTEXGRAPH_STORAGE_BACKEND"):
+            config_dict["storage_backend"] = storage_backend
+        if sqlite_path := os.getenv("CORTEXGRAPH_SQLITE_PATH"):
+            config_dict["sqlite_path"] = sqlite_path
 
         # Decay parameters
         if decay_model := os.getenv("CORTEXGRAPH_DECAY_MODEL"):
