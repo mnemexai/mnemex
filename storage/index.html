@@ -1241,6 +1241,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#choosing-a-backend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing a Backend
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#jsonl-default" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1335,6 +1346,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#migration-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration Guide
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Migration Guide">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#migrating-from-jsonl-to-sqlite" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migrating from JSONL to SQLite
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#migrating-from-sqlite-to-jsonl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migrating from SQLite to JSONL
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#migration-safety-tips" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migration Safety Tips
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1362,6 +1423,59 @@
 
 <h1 id="storage-backends">Storage Backends<a class="headerlink" href="#storage-backends" title="Permanent link">&para;</a></h1>
 <p>CortexGraph supports multiple storage backends for short-term memory (STM).</p>
+<h2 id="choosing-a-backend">Choosing a Backend<a class="headerlink" href="#choosing-a-backend" title="Permanent link">&para;</a></h2>
+<p><strong>Use JSONL when:</strong>
+- Dataset size &lt; 10,000 memories
+- You want human-readable, git-friendly files
+- You need easy inspection and manual editing
+- Memory usage is not a concern</p>
+<p><strong>Use SQLite when:</strong>
+- Dataset size &gt; 10,000 memories
+- Memory efficiency is important (low RAM usage)
+- You need fast queries and filtering on large datasets
+- You want ACID transaction guarantees</p>
+<p><strong>Performance Characteristics:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Backend</th>
+<th>Memory Count</th>
+<th>RAM Usage</th>
+<th>Search Speed</th>
+<th>Git-Friendly</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JSONL</td>
+<td>&lt; 10k</td>
+<td>High</td>
+<td>Fast</td>
+<td>✅ Yes</td>
+</tr>
+<tr>
+<td>JSONL</td>
+<td>10k - 50k</td>
+<td>Very High</td>
+<td>Medium</td>
+<td>✅ Yes</td>
+</tr>
+<tr>
+<td>JSONL</td>
+<td>&gt; 50k</td>
+<td>Excessive</td>
+<td>Slow</td>
+<td>⚠️ Large diffs</td>
+</tr>
+<tr>
+<td>SQLite</td>
+<td>Any size</td>
+<td>Low</td>
+<td>Fast</td>
+<td>❌ Binary</td>
+</tr>
+</tbody>
+</table>
 <h2 id="jsonl-default">JSONL (Default)<a class="headerlink" href="#jsonl-default" title="Permanent link">&para;</a></h2>
 <p>The default backend uses human-readable JSONL (JSON Lines) files.</p>
 <ul>
@@ -1436,6 +1550,127 @@
 <a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>
 <a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>Memory content goes here...
 </code></pre></div>
+<h2 id="migration-guide">Migration Guide<a class="headerlink" href="#migration-guide" title="Permanent link">&para;</a></h2>
+<h3 id="migrating-from-jsonl-to-sqlite">Migrating from JSONL to SQLite<a class="headerlink" href="#migrating-from-jsonl-to-sqlite" title="Permanent link">&para;</a></h3>
+<p>If your dataset has grown large (&gt;10k memories) and you want to switch to SQLite for better performance:</p>
+<p><strong>Step 1: Backup your data</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Backup current JSONL files</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>cp<span class="w"> </span>-r<span class="w"> </span>~/.config/cortexgraph/jsonl<span class="w"> </span>~/.config/cortexgraph/jsonl.backup
+</code></pre></div>
+<p><strong>Step 2: Export to Markdown (optional but recommended)</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">cortexgraph.tools.export</span><span class="w"> </span><span class="kn">import</span> <span class="n">MarkdownExport</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">cortexgraph.storage.jsonl_storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONLStorage</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># Read from JSONL</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="n">storage</span> <span class="o">=</span> <span class="n">JSONLStorage</span><span class="p">()</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="n">storage</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="n">memories</span> <span class="o">=</span> <span class="n">storage</span><span class="o">.</span><span class="n">list_memories</span><span class="p">()</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="c1"># Export to Markdown as backup</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="n">exporter</span> <span class="o">=</span> <span class="n">MarkdownExport</span><span class="p">(</span><span class="n">output_dir</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;./backup_export&quot;</span><span class="p">))</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="n">stats</span> <span class="o">=</span> <span class="n">exporter</span><span class="o">.</span><span class="n">export_batch</span><span class="p">(</span><span class="n">memories</span><span class="p">)</span>
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Backed up </span><span class="si">{</span><span class="n">stats</span><span class="o">.</span><span class="n">success</span><span class="si">}</span><span class="s2"> memories&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Step 3: Copy data from JSONL to SQLite</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">cortexgraph.storage.jsonl_storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONLStorage</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">cortexgraph.storage.sqlite_storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLiteStorage</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># Read all data from JSONL</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="n">jsonl</span> <span class="o">=</span> <span class="n">JSONLStorage</span><span class="p">()</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="n">jsonl</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="n">memories</span> <span class="o">=</span> <span class="n">jsonl</span><span class="o">.</span><span class="n">list_memories</span><span class="p">()</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="n">relations</span> <span class="o">=</span> <span class="n">jsonl</span><span class="o">.</span><span class="n">list_relations</span><span class="p">()</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="c1"># Write to SQLite</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="n">sqlite</span> <span class="o">=</span> <span class="n">SQLiteStorage</span><span class="p">()</span>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="n">sqlite</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="c1"># Copy memories</span>
+<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="k">for</span> <span class="n">memory</span> <span class="ow">in</span> <span class="n">memories</span><span class="p">:</span>
+<a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>    <span class="n">sqlite</span><span class="o">.</span><span class="n">save_memory</span><span class="p">(</span><span class="n">memory</span><span class="p">)</span>
+<a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a>
+<a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a><span class="c1"># Copy relations</span>
+<a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a><span class="k">for</span> <span class="n">relation</span> <span class="ow">in</span> <span class="n">relations</span><span class="p">:</span>
+<a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a>    <span class="n">sqlite</span><span class="o">.</span><span class="n">create_relation</span><span class="p">(</span><span class="n">relation</span><span class="p">)</span>
+<a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a>
+<a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Migrated </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">memories</span><span class="p">)</span><span class="si">}</span><span class="s2"> memories and </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">relations</span><span class="p">)</span><span class="si">}</span><span class="s2"> relations&quot;</span><span class="p">)</span>
+<a id="__codelineno-6-24" name="__codelineno-6-24" href="#__codelineno-6-24"></a>
+<a id="__codelineno-6-25" name="__codelineno-6-25" href="#__codelineno-6-25"></a><span class="n">jsonl</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<a id="__codelineno-6-26" name="__codelineno-6-26" href="#__codelineno-6-26"></a><span class="n">sqlite</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div>
+<p><strong>Step 4: Update configuration</strong></p>
+<p>Update <code>~/.config/cortexgraph/.env</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Change from jsonl to sqlite</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="nv">CORTEXGRAPH_STORAGE_BACKEND</span><span class="o">=</span>sqlite
+</code></pre></div>
+<p><strong>Step 5: Test</strong></p>
+<p>Restart your MCP server or application and verify memories are accessible:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">cortexgraph.storage.sqlite_storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLiteStorage</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">storage</span> <span class="o">=</span> <span class="n">SQLiteStorage</span><span class="p">()</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="n">storage</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="n">memories</span> <span class="o">=</span> <span class="n">storage</span><span class="o">.</span><span class="n">list_memories</span><span class="p">()</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">memories</span><span class="p">)</span><span class="si">}</span><span class="s2"> memories in SQLite&quot;</span><span class="p">)</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="n">storage</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="migrating-from-sqlite-to-jsonl">Migrating from SQLite to JSONL<a class="headerlink" href="#migrating-from-sqlite-to-jsonl" title="Permanent link">&para;</a></h3>
+<p>If you want to switch back to JSONL (e.g., for better git integration):</p>
+<p><strong>Step 1: Backup SQLite database</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>cp<span class="w"> </span>~/.config/cortexgraph/cortexgraph.db<span class="w"> </span>~/.config/cortexgraph/cortexgraph.db.backup
+</code></pre></div>
+<p><strong>Step 2: Copy data from SQLite to JSONL</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">cortexgraph.storage.jsonl_storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONLStorage</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">cortexgraph.storage.sqlite_storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLiteStorage</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="c1"># Read all data from SQLite</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="n">sqlite</span> <span class="o">=</span> <span class="n">SQLiteStorage</span><span class="p">()</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="n">sqlite</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="n">memories</span> <span class="o">=</span> <span class="n">sqlite</span><span class="o">.</span><span class="n">list_memories</span><span class="p">()</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="n">relations</span> <span class="o">=</span> <span class="n">sqlite</span><span class="o">.</span><span class="n">list_relations</span><span class="p">()</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="c1"># Write to JSONL</span>
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="n">jsonl</span> <span class="o">=</span> <span class="n">JSONLStorage</span><span class="p">()</span>
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="n">jsonl</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>
+<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="c1"># Copy memories</span>
+<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="k">for</span> <span class="n">memory</span> <span class="ow">in</span> <span class="n">memories</span><span class="p">:</span>
+<a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a>    <span class="n">jsonl</span><span class="o">.</span><span class="n">save_memory</span><span class="p">(</span><span class="n">memory</span><span class="p">)</span>
+<a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a>
+<a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a><span class="c1"># Copy relations</span>
+<a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a><span class="k">for</span> <span class="n">relation</span> <span class="ow">in</span> <span class="n">relations</span><span class="p">:</span>
+<a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a>    <span class="n">jsonl</span><span class="o">.</span><span class="n">create_relation</span><span class="p">(</span><span class="n">relation</span><span class="p">)</span>
+<a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a>
+<a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Migrated </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">memories</span><span class="p">)</span><span class="si">}</span><span class="s2"> memories and </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">relations</span><span class="p">)</span><span class="si">}</span><span class="s2"> relations&quot;</span><span class="p">)</span>
+<a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a>
+<a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a><span class="n">sqlite</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<a id="__codelineno-10-26" name="__codelineno-10-26" href="#__codelineno-10-26"></a><span class="n">jsonl</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div>
+<p><strong>Step 3: Update configuration</strong></p>
+<p>Update <code>~/.config/cortexgraph/.env</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># Change from sqlite to jsonl</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="nv">CORTEXGRAPH_STORAGE_BACKEND</span><span class="o">=</span>jsonl
+</code></pre></div>
+<p><strong>Step 4: Test</strong></p>
+<p>Verify the migration:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">cortexgraph.storage.jsonl_storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONLStorage</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="n">storage</span> <span class="o">=</span> <span class="n">JSONLStorage</span><span class="p">()</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="n">storage</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="n">memories</span> <span class="o">=</span> <span class="n">storage</span><span class="o">.</span><span class="n">list_memories</span><span class="p">()</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">memories</span><span class="p">)</span><span class="si">}</span><span class="s2"> memories in JSONL&quot;</span><span class="p">)</span>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="n">storage</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="migration-safety-tips">Migration Safety Tips<a class="headerlink" href="#migration-safety-tips" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Always backup before migrating</strong> - Keep your original data until you've verified the migration</li>
+<li><strong>Test with small subset first</strong> - If you have many memories, test the migration script on a subset</li>
+<li><strong>Verify data integrity</strong> - Check memory counts and spot-check a few memories after migration</li>
+<li><strong>Keep Markdown exports</strong> - Export to Markdown as a human-readable backup format</li>
+<li><strong>No data loss</strong> - Both backends support the same data model, so no information is lost in migration</li>
+</ol>
 
 
 
