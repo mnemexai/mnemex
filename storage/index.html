@@ -12,13 +12,9 @@
         <meta name="author" content="prefrontal-systems">
       
       
-        <link rel="canonical" href="https://cortexgraph.dev/configuration/">
+        <link rel="canonical" href="https://cortexgraph.dev/storage/">
       
       
-        <link rel="prev" href="../quickstart/">
-      
-      
-        <link rel="next" href="../architecture/">
       
       
         
@@ -29,7 +25,7 @@
     
     
       
-        <title>Configuration - CortexGraph Documentation</title>
+        <title>Storage Backends - CortexGraph Documentation</title>
       
     
     
@@ -80,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#configuration" class="md-skip">
+        <a href="#storage-backends" class="md-skip">
           Skip to content
         </a>
       
@@ -114,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Configuration
+              Storage Backends
             
           </span>
         </div>
@@ -244,12 +240,10 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
+      <li class="md-tabs__item">
         <a href="../installation/" class="md-tabs__link">
           
   
@@ -438,31 +432,28 @@
       
   
   
-    
   
   
-  
     
     
     
     
-      
-        
-        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
             
   
   
@@ -480,7 +471,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -551,37 +542,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Configuration
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../configuration/" class="md-nav__link">
         
   
   
@@ -597,209 +561,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#configuration-file" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Configuration File
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#configuration-options" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Configuration Options
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Configuration Options">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#decay-models" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Decay Models
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Decay Models">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#power-law-recommended" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Power-Law (Recommended)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#exponential" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Exponential
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#two-component" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Two-Component
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#thresholds" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Thresholds
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#storage-paths" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Storage Paths
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#storage-backend" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Storage Backend
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#embeddings" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Embeddings
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#mcp-server-configuration" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MCP Server Configuration
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="MCP Server Configuration">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#claude-desktop" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Claude Desktop
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#development-mode" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Development Mode
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#verification" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Verification
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#next-steps" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Next Steps
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1480,116 +1241,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#configuration-file" class="md-nav__link">
+  <a href="#jsonl-default" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Configuration File
+        JSONL (Default)
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#configuration-options" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Configuration Options
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Configuration Options">
+    <nav class="md-nav" aria-label="JSONL (Default)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#decay-models" class="md-nav__link">
+  <a href="#configuration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Decay Models
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Decay Models">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#power-law-recommended" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Power-Law (Recommended)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#exponential" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Exponential
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#two-component" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Two-Component
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#thresholds" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Thresholds
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#storage-paths" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Storage Paths
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#storage-backend" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Storage Backend
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#embeddings" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Embeddings
+        Configuration
       
     </span>
   </a>
@@ -1602,33 +1269,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#mcp-server-configuration" class="md-nav__link">
+  <a href="#sqlite" class="md-nav__link">
     <span class="md-ellipsis">
       
-        MCP Server Configuration
+        SQLite
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="MCP Server Configuration">
+    <nav class="md-nav" aria-label="SQLite">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#claude-desktop" class="md-nav__link">
+  <a href="#configuration_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Claude Desktop
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#development-mode" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Development Mode
+        Configuration
       
     </span>
   </a>
@@ -1641,24 +1297,41 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#verification" class="md-nav__link">
+  <a href="#markdown-export" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Verification
+        Markdown Export
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Markdown Export">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#usage-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage (Python)
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#next-steps" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#output-format" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Next Steps
+        Output Format
       
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1679,7 +1352,7 @@
 
 
   
-    <a href="https://github.com/prefrontal-systems/cortexgraph/edit/main/docs/configuration.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/prefrontal-systems/cortexgraph/edit/main/docs/storage.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1687,178 +1360,82 @@
   
 
 
-<h1 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h1>
-<p>CortexGraph is configured via environment variables, typically stored in <code>~/.config/cortexgraph/.env</code>.</p>
-<h2 id="configuration-file">Configuration File<a class="headerlink" href="#configuration-file" title="Permanent link">&para;</a></h2>
-<p>Create <code>~/.config/cortexgraph/.env</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># ============================================</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="c1"># Storage Configuration</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># ============================================</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># Where short-term memories are stored (JSONL format)</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># Where short-term memories are stored (JSONL format)</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="nv">CORTEXGRAPH_STORAGE_PATH</span><span class="o">=</span>~/.config/cortexgraph/jsonl
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="c1"># Storage Backend (jsonl | sqlite)</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="nv">CORTEXGRAPH_STORAGE_BACKEND</span><span class="o">=</span>jsonl
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="c1"># SQLite Database Path (optional, defaults to storage_path/cortexgraph.db)</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="c1"># CORTEXGRAPH_SQLITE_PATH=~/.config/cortexgraph/cortexgraph.db</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>
-<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="c1"># ============================================</span>
-<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="c1"># Decay Model Configuration</span>
-<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="c1"># ============================================</span>
-<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>
-<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="c1"># Decay model: power_law | exponential | two_component</span>
-<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="nv">CORTEXGRAPH_DECAY_MODEL</span><span class="o">=</span>power_law
-<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>
-<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="c1"># Power-law model parameters</span>
-<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="nv">CORTEXGRAPH_PL_ALPHA</span><span class="o">=</span><span class="m">1</span>.1<span class="w">                </span><span class="c1"># Power exponent (higher = faster decay)</span>
-<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="nv">CORTEXGRAPH_PL_HALFLIFE_DAYS</span><span class="o">=</span><span class="m">3</span>.0<span class="w">       </span><span class="c1"># Half-life in days</span>
-<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>
-<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="c1"># Exponential model parameters (if CORTEXGRAPH_DECAY_MODEL=exponential)</span>
-<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="c1"># CORTEXGRAPH_DECAY_LAMBDA=2.673e-6     # Decay constant</span>
-<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>
-<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a><span class="c1"># Two-component model parameters (if CORTEXGRAPH_DECAY_MODEL=two_component)</span>
-<a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a><span class="c1"># CORTEXGRAPH_TC_LAMBDA_FAST=1.603e-5   # Fast decay constant</span>
-<a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a><span class="c1"># CORTEXGRAPH_TC_LAMBDA_SLOW=1.147e-6   # Slow decay constant</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a><span class="c1"># CORTEXGRAPH_TC_WEIGHT_FAST=0.7        # Weight for fast component</span>
-<a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a>
-<a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a><span class="c1"># Use count exponent (affects reinforcement)</span>
-<a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a><span class="nv">CORTEXGRAPH_DECAY_BETA</span><span class="o">=</span><span class="m">0</span>.6
-<a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a>
-<a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a><span class="c1"># ============================================</span>
-<a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a><span class="c1"># Thresholds</span>
-<a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a><span class="c1"># ============================================</span>
-<a id="__codelineno-0-40" name="__codelineno-0-40" href="#__codelineno-0-40"></a>
-<a id="__codelineno-0-41" name="__codelineno-0-41" href="#__codelineno-0-41"></a><span class="c1"># Forget threshold: delete memories with score &lt; this</span>
-<a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a><span class="nv">CORTEXGRAPH_FORGET_THRESHOLD</span><span class="o">=</span><span class="m">0</span>.05
-<a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a>
-<a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a><span class="c1"># Promote threshold: move to LTM if score &gt;= this</span>
-<a id="__codelineno-0-45" name="__codelineno-0-45" href="#__codelineno-0-45"></a><span class="nv">CORTEXGRAPH_PROMOTE_THRESHOLD</span><span class="o">=</span><span class="m">0</span>.65
-<a id="__codelineno-0-46" name="__codelineno-0-46" href="#__codelineno-0-46"></a>
-<a id="__codelineno-0-47" name="__codelineno-0-47" href="#__codelineno-0-47"></a><span class="c1"># ============================================</span>
-<a id="__codelineno-0-48" name="__codelineno-0-48" href="#__codelineno-0-48"></a><span class="c1"># Long-Term Memory (LTM)</span>
-<a id="__codelineno-0-49" name="__codelineno-0-49" href="#__codelineno-0-49"></a><span class="c1"># ============================================</span>
-<a id="__codelineno-0-50" name="__codelineno-0-50" href="#__codelineno-0-50"></a>
-<a id="__codelineno-0-51" name="__codelineno-0-51" href="#__codelineno-0-51"></a><span class="c1"># Obsidian vault path (for permanent storage)</span>
-<a id="__codelineno-0-52" name="__codelineno-0-52" href="#__codelineno-0-52"></a><span class="nv">LTM_VAULT_PATH</span><span class="o">=</span>~/Documents/Obsidian/Vault
-<a id="__codelineno-0-53" name="__codelineno-0-53" href="#__codelineno-0-53"></a>
-<a id="__codelineno-0-54" name="__codelineno-0-54" href="#__codelineno-0-54"></a><span class="c1"># LTM index path (for fast search)</span>
-<a id="__codelineno-0-55" name="__codelineno-0-55" href="#__codelineno-0-55"></a><span class="nv">LTM_INDEX_PATH</span><span class="o">=</span>~/.config/cortexgraph/ltm_index.jsonl
-<a id="__codelineno-0-56" name="__codelineno-0-56" href="#__codelineno-0-56"></a>
-<a id="__codelineno-0-57" name="__codelineno-0-57" href="#__codelineno-0-57"></a><span class="c1"># ============================================</span>
-<a id="__codelineno-0-58" name="__codelineno-0-58" href="#__codelineno-0-58"></a><span class="c1"># Git Backups</span>
-<a id="__codelineno-0-59" name="__codelineno-0-59" href="#__codelineno-0-59"></a><span class="c1"># ============================================</span>
-<a id="__codelineno-0-60" name="__codelineno-0-60" href="#__codelineno-0-60"></a>
-<a id="__codelineno-0-61" name="__codelineno-0-61" href="#__codelineno-0-61"></a><span class="c1"># Auto-commit changes to git</span>
-<a id="__codelineno-0-62" name="__codelineno-0-62" href="#__codelineno-0-62"></a><span class="nv">GIT_AUTO_COMMIT</span><span class="o">=</span><span class="nb">true</span>
-<a id="__codelineno-0-63" name="__codelineno-0-63" href="#__codelineno-0-63"></a>
-<a id="__codelineno-0-64" name="__codelineno-0-64" href="#__codelineno-0-64"></a><span class="c1"># Commit interval in seconds (3600 = 1 hour)</span>
-<a id="__codelineno-0-65" name="__codelineno-0-65" href="#__codelineno-0-65"></a><span class="nv">GIT_COMMIT_INTERVAL</span><span class="o">=</span><span class="m">3600</span>
-<a id="__codelineno-0-66" name="__codelineno-0-66" href="#__codelineno-0-66"></a>
-<a id="__codelineno-0-67" name="__codelineno-0-67" href="#__codelineno-0-67"></a><span class="c1"># ============================================</span>
-<a id="__codelineno-0-68" name="__codelineno-0-68" href="#__codelineno-0-68"></a><span class="c1"># Embeddings (Optional)</span>
-<a id="__codelineno-0-69" name="__codelineno-0-69" href="#__codelineno-0-69"></a><span class="c1"># ============================================</span>
-<a id="__codelineno-0-70" name="__codelineno-0-70" href="#__codelineno-0-70"></a>
-<a id="__codelineno-0-71" name="__codelineno-0-71" href="#__codelineno-0-71"></a><span class="c1"># Enable semantic search with embeddings</span>
-<a id="__codelineno-0-72" name="__codelineno-0-72" href="#__codelineno-0-72"></a><span class="nv">CORTEXGRAPH_ENABLE_EMBEDDINGS</span><span class="o">=</span><span class="nb">false</span>
-<a id="__codelineno-0-73" name="__codelineno-0-73" href="#__codelineno-0-73"></a>
-<a id="__codelineno-0-74" name="__codelineno-0-74" href="#__codelineno-0-74"></a><span class="c1"># Embedding model (if enabled)</span>
-<a id="__codelineno-0-75" name="__codelineno-0-75" href="#__codelineno-0-75"></a><span class="nv">CORTEXGRAPH_EMBED_MODEL</span><span class="o">=</span>all-MiniLM-L6-v2
-</code></pre></div>
-<h2 id="configuration-options">Configuration Options<a class="headerlink" href="#configuration-options" title="Permanent link">&para;</a></h2>
-<h3 id="decay-models">Decay Models<a class="headerlink" href="#decay-models" title="Permanent link">&para;</a></h3>
-<h4 id="power-law-recommended">Power-Law (Recommended)<a class="headerlink" href="#power-law-recommended" title="Permanent link">&para;</a></h4>
-<p>Most realistic model matching human memory:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nv">CORTEXGRAPH_DECAY_MODEL</span><span class="o">=</span>power_law
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nv">CORTEXGRAPH_PL_ALPHA</span><span class="o">=</span><span class="m">1</span>.1
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nv">CORTEXGRAPH_PL_HALFLIFE_DAYS</span><span class="o">=</span><span class="m">3</span>.0
-</code></pre></div>
+<h1 id="storage-backends">Storage Backends<a class="headerlink" href="#storage-backends" title="Permanent link">&para;</a></h1>
+<p>CortexGraph supports multiple storage backends for short-term memory (STM).</p>
+<h2 id="jsonl-default">JSONL (Default)<a class="headerlink" href="#jsonl-default" title="Permanent link">&para;</a></h2>
+<p>The default backend uses human-readable JSONL (JSON Lines) files.</p>
 <ul>
-<li><code>CORTEXGRAPH_PL_ALPHA</code>: Power exponent (1.0-2.0, higher = faster decay)</li>
-<li><code>CORTEXGRAPH_PL_HALFLIFE_DAYS</code>: Half-life in days</li>
+<li><strong>Path</strong>: <code>~/.config/cortexgraph/jsonl/</code> (configurable)</li>
+<li><strong>Format</strong>: One JSON object per line</li>
+<li><strong>Pros</strong>:</li>
+<li>Human-readable</li>
+<li>Git-friendly (easy to diff and version control)</li>
+<li>Easy to backup and inspect</li>
+<li>No external dependencies</li>
+<li><strong>Cons</strong>:</li>
+<li>Loads entire dataset into memory (RAM)</li>
+<li>Slower for very large datasets (&gt;100k memories)</li>
 </ul>
-<h4 id="exponential">Exponential<a class="headerlink" href="#exponential" title="Permanent link">&para;</a></h4>
-<p>Traditional time-based decay:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nv">CORTEXGRAPH_DECAY_MODEL</span><span class="o">=</span>exponential
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nv">CORTEXGRAPH_DECAY_LAMBDA</span><span class="o">=</span><span class="m">2</span>.673e-6<span class="w">  </span><span class="c1"># ln(2) / (3 days in seconds)</span>
+<h3 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nv">CORTEXGRAPH_STORAGE_BACKEND</span><span class="o">=</span>jsonl
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nv">CORTEXGRAPH_STORAGE_PATH</span><span class="o">=</span>~/.config/cortexgraph/jsonl
 </code></pre></div>
-<h4 id="two-component">Two-Component<a class="headerlink" href="#two-component" title="Permanent link">&para;</a></h4>
-<p>Combines fast and slow decay:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nv">CORTEXGRAPH_DECAY_MODEL</span><span class="o">=</span>two_component
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nv">CORTEXGRAPH_TC_LAMBDA_FAST</span><span class="o">=</span><span class="m">1</span>.603e-5
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="nv">CORTEXGRAPH_TC_LAMBDA_SLOW</span><span class="o">=</span><span class="m">1</span>.147e-6
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="nv">CORTEXGRAPH_TC_WEIGHT_FAST</span><span class="o">=</span><span class="m">0</span>.7
-</code></pre></div>
-<h3 id="thresholds">Thresholds<a class="headerlink" href="#thresholds" title="Permanent link">&para;</a></h3>
-<p>Control memory lifecycle:</p>
+<h2 id="sqlite">SQLite<a class="headerlink" href="#sqlite" title="Permanent link">&para;</a></h2>
+<p>The SQLite backend uses a binary database file.</p>
 <ul>
-<li><strong>Forget Threshold</strong> (<code>CORTEXGRAPH_FORGET_THRESHOLD</code>): Delete if score &lt; this</li>
-<li><strong>Promote Threshold</strong> (<code>CORTEXGRAPH_PROMOTE_THRESHOLD</code>): Move to LTM if score &gt;= this</li>
+<li><strong>Path</strong>: <code>~/.config/cortexgraph/cortexgraph.db</code> (configurable)</li>
+<li><strong>Format</strong>: SQLite database</li>
+<li><strong>Pros</strong>:</li>
+<li>Efficient for large datasets</li>
+<li>Low memory usage (doesn't load everything into RAM)</li>
+<li>Fast queries and filtering</li>
+<li>ACID transactions</li>
+<li><strong>Cons</strong>:</li>
+<li>Not human-readable</li>
+<li>Binary file (not git-friendly for diffs)</li>
 </ul>
-<p>Default values (0.05, 0.65) work well for most use cases.</p>
-<h3 id="storage-paths">Storage Paths<a class="headerlink" href="#storage-paths" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>STM</strong>: <code>CORTEXGRAPH_STORAGE_PATH</code> - Directory for storage</li>
-<li><strong>LTM</strong>: <code>LTM_VAULT_PATH</code> - Markdown files in Obsidian vault</li>
-<li><strong>Index</strong>: <code>LTM_INDEX_PATH</code> - Fast search index for LTM</li>
-</ul>
-<h3 id="storage-backend">Storage Backend<a class="headerlink" href="#storage-backend" title="Permanent link">&para;</a></h3>
-<p>Choose between:
-- <strong>JSONL</strong> (default): Human-readable, git-friendly text files. Best for transparency and small-to-medium datasets.
-- <strong>SQLite</strong>: Binary database file. Best for performance with large datasets.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nv">CORTEXGRAPH_STORAGE_BACKEND</span><span class="o">=</span>sqlite
+<h3 id="configuration_1">Configuration<a class="headerlink" href="#configuration_1" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nv">CORTEXGRAPH_STORAGE_BACKEND</span><span class="o">=</span>sqlite
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># Optional: Custom path</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># CORTEXGRAPH_SQLITE_PATH=~/.config/cortexgraph/my_db.sqlite</span>
 </code></pre></div>
-<h3 id="embeddings">Embeddings<a class="headerlink" href="#embeddings" title="Permanent link">&para;</a></h3>
-<p>Enable semantic similarity search:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nv">CORTEXGRAPH_ENABLE_EMBEDDINGS</span><span class="o">=</span><span class="nb">true</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="nv">CORTEXGRAPH_EMBED_MODEL</span><span class="o">=</span>all-MiniLM-L6-v2
+<h2 id="markdown-export">Markdown Export<a class="headerlink" href="#markdown-export" title="Permanent link">&para;</a></h2>
+<p>CortexGraph includes a utility to export memories to Markdown files, useful for:
+- Migrating data
+- Backing up to a readable format
+- Importing into other tools (Obsidian, Notion, etc.)</p>
+<h3 id="usage-python">Usage (Python)<a class="headerlink" href="#usage-python" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">cortexgraph.tools.export</span><span class="w"> </span><span class="kn">import</span> <span class="n">MarkdownExport</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">cortexgraph.storage.sqlite_storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLiteStorage</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># Connect to storage</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">storage</span> <span class="o">=</span> <span class="n">SQLiteStorage</span><span class="p">()</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="n">storage</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="c1"># Get all active memories</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="n">memories</span> <span class="o">=</span> <span class="n">storage</span><span class="o">.</span><span class="n">list_memories</span><span class="p">()</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="c1"># Export</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="n">exporter</span> <span class="o">=</span> <span class="n">MarkdownExport</span><span class="p">(</span><span class="n">output_dir</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;./exported_memories&quot;</span><span class="p">))</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="n">stats</span> <span class="o">=</span> <span class="n">exporter</span><span class="o">.</span><span class="n">export_batch</span><span class="p">(</span><span class="n">memories</span><span class="p">)</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Exported </span><span class="si">{</span><span class="n">stats</span><span class="o">.</span><span class="n">success</span><span class="si">}</span><span class="s2"> memories&quot;</span><span class="p">)</span>
 </code></pre></div>
-<p>Requires additional dependencies:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>sentence-transformers
-</code></pre></div></p>
-<h2 id="mcp-server-configuration">MCP Server Configuration<a class="headerlink" href="#mcp-server-configuration" title="Permanent link">&para;</a></h2>
-<h3 id="claude-desktop">Claude Desktop<a class="headerlink" href="#claude-desktop" title="Permanent link">&para;</a></h3>
-<p>Add to <code>~/Library/Application Support/Claude/claude_desktop_config.json</code> (macOS):</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">{</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nt">&quot;mcpServers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="nt">&quot;cortexgraph&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">      </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;cortexgraph&quot;</span>
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">  </span><span class="p">}</span>
-<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="p">}</span>
+<h3 id="output-format">Output Format<a class="headerlink" href="#output-format" title="Permanent link">&para;</a></h3>
+<p>Each memory is saved as a <code>.md</code> file with YAML frontmatter:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>---
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>id: mem-123
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>created_at: 2023-10-27T10:00:00
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>status: active
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>tags:
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">  </span><span class="k">-</span><span class="w"> </span>python
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">  </span><span class="k">-</span><span class="w"> </span>coding
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="gu">strength: 1.5</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="gu">---</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>Memory content goes here...
 </code></pre></div>
-<p>On Windows: <code>%APPDATA%\Claude\claude_desktop_config.json</code></p>
-<p>On Linux: <code>~/.config/Claude/claude_desktop_config.json</code></p>
-<h3 id="development-mode">Development Mode<a class="headerlink" href="#development-mode" title="Permanent link">&para;</a></h3>
-<p>For development/testing:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="p">{</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span><span class="nt">&quot;mcpServers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="nt">&quot;cortexgraph&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">      </span><span class="nt">&quot;command&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uv&quot;</span><span class="p">,</span>
-<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">      </span><span class="nt">&quot;args&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;--directory&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;/absolute/path/to/cortexgraph&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;run&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;cortexgraph&quot;</span><span class="p">],</span>
-<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">      </span><span class="nt">&quot;env&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;PYTHONPATH&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/absolute/path/to/cortexgraph/src&quot;</span><span class="p">}</span>
-<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">  </span><span class="p">}</span>
-<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="p">}</span>
-</code></pre></div>
-<h2 id="verification">Verification<a class="headerlink" href="#verification" title="Permanent link">&para;</a></h2>
-<p>Check configuration:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># View current config</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>cat<span class="w"> </span>~/.config/cortexgraph/.env
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
-<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="c1"># Test MCP server</span>
-<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>cortexgraph
-<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>
-<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="c1"># Check storage</span>
-<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>ls<span class="w"> </span>-la<span class="w"> </span>~/.config/cortexgraph/jsonl/
-</code></pre></div>
-<h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="../quickstart/">Quick Start</a> - Start using CortexGraph with Claude</li>
-<li><a href="../api/">API Reference</a> - Learn about available tools</li>
-</ul>
 
 
 
