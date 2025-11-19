@@ -9,6 +9,16 @@ Supports multiple decay models:
 import math
 import time
 
+from .math_utils import calculate_decay_lambda, calculate_halflife  # noqa: F401
+
+# Constants
+SECONDS_PER_DAY = 86400.0
+SECONDS_PER_HOUR = 3600.0
+BISECTION_MAX_YEARS = 10.0
+BISECTION_MAX_SECONDS = 3650 * SECONDS_PER_DAY  # ~10 years
+BISECTION_EXPANSION_ITERATIONS = 32
+BISECTION_PRECISION_ITERATIONS = 60
+
 
 def calculate_score(
     use_count: int,
@@ -49,7 +59,7 @@ def calculate_score(
         if model == "power_law":
             # Derive t0 from alpha and target half-life
             alpha = config.pl_alpha
-            t_half = config.pl_halflife_days * 86400.0
+            t_half = config.pl_halflife_days * SECONDS_PER_DAY
             # t0 = H / (2^(1/alpha) - 1)
             denom = math.pow(2.0, 1.0 / alpha) - 1.0
             t0 = t_half / denom if denom > 0 else t_half
@@ -63,36 +73,6 @@ def calculate_score(
             decay_component = math.exp(-lambda_ * time_delta)
 
     return use_component * decay_component * strength
-
-
-def calculate_decay_lambda(halflife_days: float) -> float:
-    """
-    Calculate decay constant from half-life in days.
-
-    Half-life is the time it takes for the score to decay to 50% of its original value.
-
-    Args:
-        halflife_days: Half-life period in days
-
-    Returns:
-        Decay constant (lambda) for exponential decay
-    """
-    halflife_seconds = halflife_days * 86400
-    return math.log(2) / halflife_seconds
-
-
-def calculate_halflife(lambda_: float) -> float:
-    """
-    Calculate half-life in days from decay constant.
-
-    Args:
-        lambda_: Decay constant
-
-    Returns:
-        Half-life in days
-    """
-    halflife_seconds = math.log(2) / lambda_
-    return halflife_seconds / 86400
 
 
 def time_until_threshold(
@@ -131,7 +111,7 @@ def time_until_threshold(
         model = getattr(config, "decay_model", "power_law")
         if model == "power_law":
             alpha = config.pl_alpha
-            t_half = config.pl_halflife_days * 86400.0
+            t_half = config.pl_halflife_days * SECONDS_PER_DAY
             denom = math.pow(2.0, 1.0 / alpha) - 1.0
             t0 = t_half / denom if denom > 0 else t_half
             return math.pow(1.0 + (dt / t0), -alpha)
@@ -150,20 +130,20 @@ def time_until_threshold(
 
     # Bisection search for t >= 0 with upper bound expansion
     lo = 0.0
-    hi = 3600.0  # start with 1 hour
+    hi = SECONDS_PER_HOUR  # start with 1 hour
     # Expand until f(elapsed + hi) <= target or cap
-    for _ in range(32):
+    for _ in range(BISECTION_EXPANSION_ITERATIONS):
         if f(elapsed + hi) <= target:
             break
         hi *= 2.0
-        if hi > 3650 * 86400:  # cap ~10 years
+        if hi > BISECTION_MAX_SECONDS:  # cap ~10 years
             break
 
     # If even at very large hi we haven't crossed, return None (effectively never)
     if f(elapsed + hi) > target:
         return None
 
-    for _ in range(60):  # high-precision bisection
+    for _ in range(BISECTION_PRECISION_ITERATIONS):  # high-precision bisection
         mid = (lo + hi) / 2.0
         if f(elapsed + mid) <= target:
             hi = mid
