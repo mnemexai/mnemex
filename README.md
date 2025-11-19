@@ -93,15 +93,16 @@ This repository contains research, design, and a complete implementation of a sh
 
 **All data stored locally on your machine** - no cloud services, no tracking, no data sharing.
 
-- **Short-term memory**: Human-readable JSONL files (`~/.config/cortexgraph/jsonl/`)
-  - One JSON object per line
-  - Easy to inspect, version control, and backup
-  - Git-friendly format for tracking changes
+- **Short-term memory**:
+  - **JSONL** (default): Human-readable, git-friendly files (`~/.config/cortexgraph/jsonl/`)
+  - **SQLite**: Robust database storage for larger datasets (`~/.config/cortexgraph/cortexgraph.db`)
 
 - **Long-term memory**: Markdown files optimized for Obsidian
   - YAML frontmatter with metadata
   - Wikilinks for connections
   - Permanent storage you control
+
+- **Export**: Built-in utility to export memories to Markdown for portability.
 
 You own your data. You can read it, edit it, delete it, or version control it - all without any special tools.
 
