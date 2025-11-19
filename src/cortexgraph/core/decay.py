@@ -9,6 +9,9 @@ Supports multiple decay models:
 import math
 import time
 
+# Re-export math utilities for backward compatibility with existing imports
+# These functions were refactored to math_utils.py but are imported here to maintain
+# the public API (used by core/__init__.py and server.py)
 from .math_utils import calculate_decay_lambda, calculate_halflife  # noqa: F401
 
 # Constants
