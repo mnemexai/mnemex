@@ -374,8 +374,15 @@ window.saveToVault = async function (id, btn) {
         });
 
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.detail || 'Failed to save');
+            let errorMessage = 'Failed to save';
+            try {
+                const error = await response.json();
+                errorMessage = error.detail || errorMessage;
+            } catch (e) {
+                // Fallback to status text if JSON parsing fails
+                errorMessage = `Error ${response.status}: ${response.statusText}`;
+            }
+            throw new Error(errorMessage);
         }
 
         const result = await response.json();
