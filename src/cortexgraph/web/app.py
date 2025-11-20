@@ -1,9 +1,9 @@
 import logging
 from pathlib import Path
 
-from fastapi import FastAPI  # type: ignore
-from fastapi.middleware.cors import CORSMiddleware  # type: ignore
-from fastapi.staticfiles import StaticFiles  # type: ignore
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from .api import router as api_router
 

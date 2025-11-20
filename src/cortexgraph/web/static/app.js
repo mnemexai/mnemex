@@ -385,7 +385,7 @@ window.saveToVault = async function (id, btn) {
             throw new Error(errorMessage);
         }
 
-        const result = await response.json();
+        await response.json();
         showToast('Memory saved to vault');
         btn.innerText = 'Saved';
         setTimeout(() => {
@@ -403,25 +403,6 @@ window.saveToVault = async function (id, btn) {
         }, 2000);
     }
 };
-
-function formatDate(timestamp) {
-    return new Date(timestamp * 1000).toLocaleDateString(undefined, {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-}
-
-function escapeHtml(unsafe) {
-    return unsafe
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
 
 function showToast(message, type = 'success') {
     toastMessage.innerText = message;
