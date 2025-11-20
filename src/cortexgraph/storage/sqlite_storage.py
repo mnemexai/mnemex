@@ -332,6 +332,7 @@ class SQLiteStorage:
 
     def search_memories(
         self,
+        query: str | None = None,
         tags: list[str] | None = None,
         status: MemoryStatus | None = MemoryStatus.ACTIVE,
         window_days: int | None = None,
@@ -341,17 +342,21 @@ class SQLiteStorage:
         if not self._conn:
             raise RuntimeError("Storage not connected")
 
-        query = "SELECT * FROM memories WHERE 1=1"
+        sql_query = "SELECT * FROM memories WHERE 1=1"
         params: list[Any] = []
 
         if status is not None:
-            query += " AND status = ?"
+            sql_query += " AND status = ?"
             params.append(status.value)
 
         if window_days is not None:
             cutoff = int(time.time()) - (window_days * 86400)
-            query += " AND last_used >= ?"
+            sql_query += " AND last_used >= ?"
             params.append(cutoff)
+
+        if query:
+            sql_query += " AND content LIKE ?"
+            params.append(f"%{query}%")
 
         # SQLite doesn't have great JSON support for array containment in older versions,
         # but we can do a LIKE query for simple tag matching or fetch and filter in python.
@@ -360,14 +365,14 @@ class SQLiteStorage:
         # Let's try a simple LIKE approach for now as a fallback, or just filter in app.
         # Given the scale warning in JSONL, SQLite might handle more, but full scan is okay for now.
 
-        query += " ORDER BY last_used DESC"
+        sql_query += " ORDER BY last_used DESC"
 
         # If tags are present, we might need to fetch more to filter
         fetch_limit = limit * 5 if tags else limit
-        query += " LIMIT ?"
+        sql_query += " LIMIT ?"
         params.append(fetch_limit)
 
-        cursor = self._conn.execute(query, params)
+        cursor = self._conn.execute(sql_query, params)
 
         memories = []
         for row in cursor:

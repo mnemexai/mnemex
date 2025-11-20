@@ -1,14 +1,20 @@
 [project]
 name = "cortexgraph"
-version = "0.6.9"
+version = "0.7.0"
 description = "CortexGraph: Temporal memory management for AI assistants with human-like dynamics"
 readme = "README.md"
 requires-python = ">=3.10"
-license = {text = "AGPL-3.0"}
-authors = [
-    {name = "Prefrontal Systems"}
+license = { text = "AGPL-3.0" }
+authors = [{ name = "Prefrontal Systems" }]
+keywords = [
+    "mcp",
+    "memory",
+    "ai",
+    "llm",
+    "temporal-decay",
+    "knowledge-graph",
+    "cortex",
 ]
-keywords = ["mcp", "memory", "ai", "llm", "temporal-decay", "knowledge-graph", "cortex"]
 
 dependencies = [
     "mcp>=1.2.0",
@@ -18,13 +24,12 @@ dependencies = [
     "markdown>=3.5.0",
     "GitPython>=3.1.40",
     "PyYAML>=6.0",
+    "fastapi>=0.100.0",
+    "uvicorn>=0.20.0",
 ]
 
 [project.optional-dependencies]
-embeddings = [
-    "sentence-transformers>=2.0.0",
-    "numpy>=1.24.0",
-]
+embeddings = ["sentence-transformers>=2.0.0", "numpy>=1.24.0"]
 dev = [
     "pytest>=8.0.0",
     "pytest-asyncio>=0.23.0",
@@ -43,6 +48,7 @@ cortexgraph-backup = "cortexgraph.backup.git_backup:main"
 cortexgraph-vault = "cortexgraph.vault.markdown_writer:main"
 cortexgraph-search = "cortexgraph.tools.search_unified:main"
 cortexgraph-maintenance = "cortexgraph.storage.maintenance:main"
+cortexgraph-web = "cortexgraph.web.cli:main"
 
 [build-system]
 requires = ["hatchling"]
@@ -105,17 +111,17 @@ target-version = "py310"
 
 [tool.ruff.lint]
 select = [
-    "E",   # pycodestyle errors
-    "W",   # pycodestyle warnings
-    "F",   # pyflakes
-    "I",   # isort
-    "B",   # flake8-bugbear
-    "C4",  # flake8-comprehensions
-    "UP",  # pyupgrade
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
 ]
 ignore = [
     "E501",  # line too long (handled by formatter)
-    "UP038",  # isinstance with tuple (deprecated, slower than tuple syntax)
+    "UP038", # isinstance with tuple (deprecated, slower than tuple syntax)
 ]
 
 [tool.ruff.lint.isort]

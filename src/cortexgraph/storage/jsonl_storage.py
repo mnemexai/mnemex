@@ -423,8 +423,21 @@ class JSONLStorage:
 
         return memories
 
+    def count_memories(self, status: MemoryStatus | None = None) -> int:
+        """
+        Count memories with optional filtering.
+        """
+        if not self._connected:
+            raise RuntimeError("Storage not connected")
+
+        if status is None:
+            return len(self._memories)
+
+        return sum(1 for m in self._memories.values() if m.status == status)
+
     def search_memories(
         self,
+        query: str | None = None,
         tags: list[str] | None = None,
         status: MemoryStatus | None = MemoryStatus.ACTIVE,
         window_days: int | None = None,
@@ -434,6 +447,7 @@ class JSONLStorage:
         Search memories with filters.
 
         Args:
+            query: Text to search for in content
             tags: Filter by tags (any match)
             status: Filter by status
             window_days: Only return memories from last N days
@@ -467,28 +481,17 @@ class JSONLStorage:
             cutoff = int(time.time()) - (window_days * 86400)
             memories = [m for m in memories if m.last_used >= cutoff]
 
+        # Filter by query
+        if query:
+            query = query.lower()
+            memories = [m for m in memories if query in m.content.lower()]
+
         # Sort by last_used DESC
         memories.sort(key=lambda m: m.last_used, reverse=True)
 
-        return memories[:limit]
-
-    def count_memories(self, status: MemoryStatus | None = None) -> int:
-        """
-        Count memories with optional status filter.
-
-        Args:
-            status: Filter by memory status
-
-        Returns:
-            Number of memories
-        """
-        if not self._connected:
-            raise RuntimeError("Storage not connected")
-
-        if status is None:
-            return len(self._memories)
-
-        return sum(1 for m in self._memories.values() if m.status == status)
+        if limit is not None:
+            return memories[:limit]
+        return memories
 
     def get_all_embeddings(self) -> dict[str, list[float]]:
         """

@@ -1,0 +1,426 @@
+const API_BASE = '/api';
+
+// DOM Elements
+let memoriesContainer;
+let searchInput;
+let toast;
+let toastMessage;
+let themeToggle;
+let limitSelects;
+let prevBtns;
+let nextBtns;
+let viewGridBtns;
+let viewListBtns;
+let modal;
+let modalBody;
+let closeModalBtn;
+
+// State
+let memories = [];
+let isLoading = false;
+let searchDebounce;
+let currentPage = 1;
+let itemsPerPage = 50;
+let currentSearch = '';
+let currentView = localStorage.getItem('viewMode') || 'grid';
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize DOM Elements
+    memoriesContainer = document.getElementById('memories-container');
+    searchInput = document.getElementById('search-input');
+    toast = document.getElementById('toast');
+    toastMessage = document.getElementById('toast-message');
+    themeToggle = document.getElementById('theme-toggle');
+
+    // Select all instances of controls
+    limitSelects = document.querySelectorAll('.limit-select');
+    prevBtns = document.querySelectorAll('.prev-btn');
+    nextBtns = document.querySelectorAll('.next-btn');
+    viewGridBtns = document.querySelectorAll('.view-grid-btn');
+    viewListBtns = document.querySelectorAll('.view-list-btn');
+
+    modal = document.getElementById('memory-modal');
+    modalBody = document.getElementById('modal-body');
+    closeModalBtn = document.querySelector('.btn-close');
+
+    // Theme initialization
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+
+    // Initialize View Mode
+    updateViewMode(currentView);
+
+    // Event Listeners
+    themeToggle.addEventListener('click', toggleTheme);
+
+    limitSelects.forEach(select => {
+        select.addEventListener('change', (e) => {
+            itemsPerPage = parseInt(e.target.value);
+            // Sync other selects
+            limitSelects.forEach(s => s.value = itemsPerPage);
+            currentPage = 1;
+            fetchMemories();
+        });
+    });
+
+    prevBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                fetchMemories();
+            }
+        });
+    });
+
+    nextBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            currentPage++;
+            fetchMemories();
+        });
+    });
+
+    searchInput.addEventListener('input', (e) => {
+        clearTimeout(searchDebounce);
+        searchDebounce = setTimeout(() => {
+            currentSearch = e.target.value;
+            currentPage = 1;
+            fetchMemories();
+        }, 300);
+    });
+
+    viewGridBtns.forEach(btn => {
+        btn.addEventListener('click', () => updateViewMode('grid'));
+    });
+
+    viewListBtns.forEach(btn => {
+        btn.addEventListener('click', () => updateViewMode('list'));
+    });
+
+    closeModalBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+            closeModal();
+        }
+    });
+
+    // Initial fetch
+    fetchMemories();
+});
+
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+}
+
+async function fetchMemories() {
+    isLoading = true;
+    renderLoading();
+
+    try {
+        const offset = (currentPage - 1) * itemsPerPage;
+        const params = new URLSearchParams({
+            limit: itemsPerPage,
+            offset: offset
+        });
+        if (currentSearch) params.append('search', currentSearch);
+
+        const response = await fetch(`${API_BASE}/memories?${params}`);
+        if (!response.ok) throw new Error('Failed to fetch memories');
+
+        const data = await response.json();
+        memories = data.items;
+        const total = data.total;
+
+        renderMemories();
+        updatePaginationControls(total);
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Failed to load memories', 'error');
+        memoriesContainer.innerHTML = `<div class="loading-state" style="color: var(--accent-error)">Error loading memories. Please try again.</div>`;
+    } finally {
+        isLoading = false;
+    }
+}
+
+function updatePaginationControls(total) {
+    const totalPages = Math.ceil(total / itemsPerPage);
+
+    // Update all pagination navs
+    const navs = document.querySelectorAll('.pagination-nav');
+
+    navs.forEach(nav => {
+        nav.innerHTML = '';
+
+        // Previous Button
+        const prevBtn = document.createElement('button');
+        prevBtn.innerText = 'Previous';
+        prevBtn.className = 'prev-btn'; // Add class for consistency
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.onclick = () => {
+            if (currentPage > 1) {
+                currentPage--;
+                fetchMemories();
+            }
+        };
+        nav.appendChild(prevBtn);
+
+        // First Page
+        if (totalPages > 0) {
+            addPageButton(nav, 1);
+        }
+
+        // Calculate window
+        let startPage = Math.max(2, currentPage - 2);
+        let endPage = Math.min(totalPages - 1, currentPage + 2);
+
+        // Adjust window if close to edges
+        if (currentPage <= 3) {
+            endPage = Math.min(totalPages - 1, 5);
+        }
+        if (currentPage >= totalPages - 2) {
+            startPage = Math.max(2, totalPages - 4);
+        }
+
+        // Ellipsis before window
+        if (startPage > 2) {
+            const span = document.createElement('span');
+            span.innerText = '...';
+            span.className = 'pagination-ellipsis';
+            nav.appendChild(span);
+        }
+
+        // Window pages
+        for (let i = startPage; i <= endPage; i++) {
+            addPageButton(nav, i);
+        }
+
+        // Ellipsis after window
+        if (endPage < totalPages - 1) {
+            const span = document.createElement('span');
+            span.innerText = '...';
+            span.className = 'pagination-ellipsis';
+            nav.appendChild(span);
+        }
+
+        // Last Page
+        if (totalPages > 1) {
+            addPageButton(nav, totalPages);
+        }
+
+        // Next Button
+        const nextBtn = document.createElement('button');
+        nextBtn.innerText = 'Next';
+        nextBtn.className = 'next-btn'; // Add class for consistency
+        nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+        nextBtn.onclick = () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                fetchMemories();
+            }
+        };
+        nav.appendChild(nextBtn);
+    });
+}
+
+function addPageButton(container, page) {
+    const btn = document.createElement('button');
+    btn.innerText = page;
+    if (page === currentPage) {
+        btn.classList.add('active');
+        btn.disabled = true;
+    }
+    btn.onclick = () => {
+        currentPage = page;
+        fetchMemories();
+    };
+    container.appendChild(btn);
+}
+
+function renderLoading() {
+    memoriesContainer.innerHTML = '<div class="loading-state">Loading memories...</div>';
+}
+
+function updateViewMode(mode) {
+    currentView = mode;
+    localStorage.setItem('viewMode', mode);
+
+    // Update all buttons
+    if (mode === 'grid') {
+        viewGridBtns.forEach(btn => btn.classList.add('active'));
+        viewListBtns.forEach(btn => btn.classList.remove('active'));
+        memoriesContainer.classList.remove('list-view');
+    } else {
+        viewListBtns.forEach(btn => btn.classList.add('active'));
+        viewGridBtns.forEach(btn => btn.classList.remove('active'));
+        memoriesContainer.classList.add('list-view');
+    }
+
+    // Re-render to apply structure changes if needed (or just CSS handles it)
+    // For list view, we might want different content structure, so re-rendering is safer
+    renderMemories();
+}
+
+function openModal(memory) {
+    const date = new Date(memory.created_at * 1000).toLocaleString();
+    const tagsHtml = memory.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+
+    modalBody.innerHTML = `
+        <div class="memory-card full-detail">
+            <div class="memory-header">
+                <div class="memory-meta">
+                    <span class="memory-id">#${memory.id.substring(0, 8)}</span>
+                    <span class="memory-date">${date}</span>
+                </div>
+                <div class="memory-status status-${memory.status}">${memory.status}</div>
+            </div>
+            <div class="memory-content">${marked.parse(memory.content)}</div>
+            <div class="memory-footer">
+                <div class="memory-tags">${tagsHtml}</div>
+                <div class="memory-actions">
+                    <button onclick="saveToVault('${memory.id}', this)" class="btn-secondary">
+                        Save to Vault
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+}
+
+function closeModal() {
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+}
+
+function renderMemories() {
+    memoriesContainer.innerHTML = '';
+
+    if (memories.length === 0) {
+        memoriesContainer.innerHTML = '<div class="empty-state">No memories found matching your criteria.</div>';
+        return;
+    }
+
+    memories.forEach(memory => {
+        const card = document.createElement('div');
+        card.className = 'memory-card';
+
+        // Add click event for list view expansion
+        card.onclick = (e) => {
+            // Don't trigger if clicking a button
+            if (e.target.tagName === 'BUTTON') return;
+
+            if (currentView === 'list') {
+                openModal(memory);
+            }
+        };
+
+        const date = new Date(memory.created_at * 1000).toLocaleString();
+        const tagsHtml = memory.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+
+        // For list view, we render a simplified version
+        // We strip HTML tags to ensure text-overflow: ellipsis works correctly
+        let contentHtml = marked.parse(memory.content);
+        if (currentView === 'list') {
+            // Create a temporary element to strip HTML
+            const temp = document.createElement('div');
+            temp.innerHTML = contentHtml;
+            contentHtml = temp.textContent || temp.innerText || '';
+        }
+
+        card.innerHTML = `
+            <div class="memory-header">
+                <div class="memory-meta">
+                    <span class="memory-id">#${memory.id.substring(0, 8)}</span>
+                    <span class="memory-date">${date}</span>
+                </div>
+                <div class="memory-status status-${memory.status}">${memory.status}</div>
+            </div>
+            <div class="memory-content">${contentHtml}</div>
+            <div class="memory-footer">
+                <div class="memory-tags">${tagsHtml}</div>
+                <div class="memory-actions">
+                    <button onclick="saveToVault('${memory.id}', this)" class="btn-secondary">
+                        Save to Vault
+                    </button>
+                </div>
+            </div>
+        `;
+
+        memoriesContainer.appendChild(card);
+    });
+}
+
+// Make function available globally for onclick
+window.saveToVault = async function (id, btn) {
+    const originalText = btn.innerText;
+    btn.disabled = true;
+    btn.innerText = 'Saving...';
+
+    try {
+        const response = await fetch(`${API_BASE}/memories/${id}/save-to-vault`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({})
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.detail || 'Failed to save');
+        }
+
+        const result = await response.json();
+        showToast('Memory saved to vault');
+        btn.innerText = 'Saved';
+        setTimeout(() => {
+            btn.disabled = false;
+            btn.innerText = originalText;
+        }, 2000);
+
+    } catch (error) {
+        console.error('Error:', error);
+        showToast(error.message, 'error');
+        btn.innerText = 'Error';
+        setTimeout(() => {
+            btn.disabled = false;
+            btn.innerText = originalText;
+        }, 2000);
+    }
+};
+
+function formatDate(timestamp) {
+    return new Date(timestamp * 1000).toLocaleDateString(undefined, {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+function escapeHtml(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function showToast(message, type = 'success') {
+    toastMessage.innerText = message;
+    toast.className = `toast ${type}`;
+
+    setTimeout(() => {
+        toast.classList.add('hidden');
+    }, 3000);
+}
