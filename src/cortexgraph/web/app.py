@@ -1,13 +1,13 @@
 import logging
 from pathlib import Path
 
-from fastapi import FastAPI  # type: ignore
-from fastapi.middleware.cors import CORSMiddleware  # type: ignore
-from fastapi.responses import JSONResponse  # type: ignore
-from fastapi.staticfiles import StaticFiles  # type: ignore
-from slowapi import Limiter, _rate_limit_exceeded_handler  # type: ignore
-from slowapi.errors import RateLimitExceeded  # type: ignore
-from slowapi.util import get_remote_address  # type: ignore
+from fastapi import FastAPI, Request  # type: ignore[import-not-found]
+from fastapi.middleware.cors import CORSMiddleware  # type: ignore[import-not-found]
+from fastapi.responses import JSONResponse, Response  # type: ignore[import-not-found]
+from fastapi.staticfiles import StaticFiles  # type: ignore[import-not-found]
+from slowapi import Limiter  # type: ignore[import-not-found]
+from slowapi.errors import RateLimitExceeded  # type: ignore[import-not-found]
+from slowapi.util import get_remote_address  # type: ignore[import-not-found]
 
 from ..storage.models import ErrorCode, ErrorContext, ErrorDetail, ErrorResponse
 from .api import router as api_router
@@ -51,7 +51,14 @@ def create_app() -> FastAPI:
     state = getattr(app, "state", None)
     if state:
         state.limiter = limiter
-    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+    def rate_limit_handler(request: Request, exc: RateLimitExceeded) -> Response:
+        return JSONResponse(
+            status_code=429,
+            content={"error": "Rate limit exceeded", "detail": str(exc)},
+        )
+
+    app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
 
     # Global error handling
     app.add_exception_handler(Exception, _global_exception_handler)

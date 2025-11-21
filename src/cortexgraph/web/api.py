@@ -1,7 +1,7 @@
 import logging
 from typing import Any
 
-from fastapi import APIRouter, HTTPException  # type: ignore
+from fastapi import APIRouter, HTTPException  # type: ignore[import-not-found]
 from pydantic import BaseModel
 
 from ..config import get_config
