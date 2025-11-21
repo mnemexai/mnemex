@@ -575,3 +575,132 @@ body {
 .toast.error::before {
     background: var(--accent-error);
 }
+
+/* Relationships Section */
+.memory-relationships-section {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: var(--surface-color);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.memory-relationships-section h3 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.relationships-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.relationship-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem;
+    background: var(--card-bg);
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    font-size: 0.9rem;
+}
+
+.relation-type {
+    color: var(--brand-primary);
+    font-weight: 600;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    padding: 0.1rem 0.4rem;
+    background: rgba(25, 118, 210, 0.1);
+    border-radius: 4px;
+}
+
+.relation-target {
+    font-family: var(--font-mono);
+    color: var(--text-primary);
+}
+
+.relation-strength {
+    margin-left: auto;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.loading-state.small,
+.empty-state.small,
+.error-state.small {
+    padding: 1rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    text-align: center;
+    background: none;
+}
+
+.error-state.small {
+    color: var(--accent-error);
+}
+
+/* Graph Visualization */
+.graph-container {
+    width: 100%;
+    height: calc(100vh - 60px);
+    background-color: var(--bg-color);
+    /* Changed from --bg-primary to match theme */
+    overflow: hidden;
+    position: relative;
+}
+
+.controls-panel {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: var(--card-bg);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    width: 250px;
+    border: 1px solid var(--border-color);
+}
+
+.node-detail-panel {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    width: 300px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    display: none;
+    border: 1px solid var(--border-color);
+}
+
+.node-detail-panel.visible {
+    display: block;
+}
+
+.node-detail-panel h3 {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    color: var(--text-primary);
+}
+
+.node-detail-panel .meta p {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.node-detail-panel .meta strong {
+    color: var(--text-primary);
+}

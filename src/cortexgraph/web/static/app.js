@@ -266,10 +266,11 @@ function updateViewMode(mode) {
     renderMemories();
 }
 
-function openModal(memory) {
+async function openModal(memory) {
     const date = new Date(memory.created_at * 1000).toLocaleString();
     const tagsHtml = memory.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
 
+    // Initial render with loading state for relationships
     modalBody.innerHTML = `
         <div class="memory-card full-detail">
             <div class="memory-header">
@@ -280,6 +281,14 @@ function openModal(memory) {
                 <div class="memory-status status-${memory.status}">${memory.status}</div>
             </div>
             <div class="memory-content">${marked.parse(memory.content)}</div>
+
+            <div class="memory-relationships-section">
+                <h3>Relationships</h3>
+                <div id="relationships-container" class="relationships-container">
+                    <div class="loading-state small">Loading relationships...</div>
+                </div>
+            </div>
+
             <div class="memory-footer">
                 <div class="memory-tags">${tagsHtml}</div>
                 <div class="memory-actions">
@@ -293,7 +302,71 @@ function openModal(memory) {
 
     modal.classList.remove('hidden');
     document.body.style.overflow = 'hidden'; // Prevent background scrolling
+
+    // Fetch and render relationships
+    try {
+        const response = await fetch(`${API_BASE}/memories/${memory.id}/relationships`);
+        if (!response.ok) throw new Error('Failed to fetch relationships');
+
+        const data = await response.json();
+        const relationships = data.relationships;
+        const container = document.getElementById('relationships-container');
+
+        if (relationships.length === 0) {
+            container.innerHTML = '<div class="empty-state small">No relationships found.</div>';
+            return;
+        }
+
+        container.innerHTML = relationships.map(rel => `
+            <div class="relationship-item">
+                <span class="relation-type">${rel.relation_type}</span>
+                <span class="relation-target clickable" onclick="openMemory('${rel.target_memory_id}')" title="View Memory">
+                    #${rel.target_memory_id.substring(0, 8)}
+                </span>
+                <span class="relation-strength" style="opacity: ${rel.strength}">
+                    ${Math.round(rel.strength * 100)}%
+                </span>
+            </div>
+        `).join('');
+
+    } catch (error) {
+        console.error('Error loading relationships:', error);
+        const container = document.getElementById('relationships-container');
+        if (container) {
+            container.innerHTML = '<div class="error-state small">Failed to load relationships.</div>';
+        }
+    }
 }
+
+// Global function for relationship navigation
+window.openMemory = async function (id) {
+    try {
+        // Optional: Show loading indicator in the modal before content replacement
+        const modalBody = document.getElementById('modal-body');
+        if (modalBody) {
+            modalBody.style.opacity = '0.5';
+        }
+
+        const response = await fetch(`${API_BASE}/memories/${id}`);
+        if (!response.ok) throw new Error('Failed to fetch memory details');
+
+        const memory = await response.json();
+
+        if (modalBody) {
+            modalBody.style.opacity = '1';
+        }
+
+        openModal(memory);
+
+    } catch (error) {
+        console.error('Error opening memory:', error);
+        showToast('Failed to load memory details', 'error');
+        const modalBody = document.getElementById('modal-body');
+        if (modalBody) {
+            modalBody.style.opacity = '1';
+        }
+    }
+};
 
 function closeModal() {
     modal.classList.add('hidden');

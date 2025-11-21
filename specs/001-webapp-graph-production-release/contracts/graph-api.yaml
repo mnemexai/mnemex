@@ -1,0 +1,531 @@
+openapi: 3.1.0
+info:
+  title: CortexGraph Web-App API - Graph Visualization
+  description: API endpoints for graph visualization and memory relationship display
+  version: 1.0.0
+  contact:
+    name: Prefrontal Systems
+    url: https://cortexgraph.dev
+
+servers:
+  - url: http://localhost:8765
+    description: Local development server
+
+paths:
+  /api/memories/{memory_id}/relationships:
+    get:
+      summary: Get memory relationships
+      description: Returns all relationships for a specific memory, both incoming and outgoing
+      operationId: getMemoryRelationships
+      tags:
+        - Relationships
+      parameters:
+        - name: memory_id
+          in: path
+          required: true
+          description: UUID of the memory
+          schema:
+            type: string
+            format: uuid
+        - name: direction
+          in: query
+          required: false
+          description: Filter by relationship direction
+          schema:
+            type: string
+            enum: [incoming, outgoing, both]
+            default: both
+        - name: include_memory_preview
+          in: query
+          required: false
+          description: Include content preview of related memories
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          description: Successfully retrieved relationships
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RelationshipsResponse'
+        '404':
+          description: Memory not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/graph:
+    get:
+      summary: Get full graph
+      description: Returns the complete memory graph for visualization
+      operationId: getGraph
+      tags:
+        - Graph
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          description: Maximum number of nodes to return
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 10000
+            default: 1000
+        - name: min_score
+          in: query
+          required: false
+          description: Minimum decay score threshold
+          schema:
+            type: number
+            minimum: 0
+            maximum: 1
+            default: 0
+        - name: status
+          in: query
+          required: false
+          description: Filter by memory status
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [active, promoted, archived]
+            default: [active]
+      responses:
+        '200':
+          description: Successfully retrieved graph
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GraphResponse'
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            X-RateLimit-Limit:
+              schema:
+                type: integer
+            X-RateLimit-Remaining:
+              schema:
+                type: integer
+            X-RateLimit-Reset:
+              schema:
+                type: integer
+
+  /api/graph/filtered:
+    post:
+      summary: Get filtered graph
+      description: Returns a filtered subset of the memory graph
+      operationId: getFilteredGraph
+      tags:
+        - Graph
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GraphFilter'
+      responses:
+        '200':
+          description: Successfully retrieved filtered graph
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GraphResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/graph/layout:
+    post:
+      summary: Save graph layout
+      description: Saves user's custom node positions for the graph
+      operationId: saveGraphLayout
+      tags:
+        - Graph
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LayoutData'
+      responses:
+        '200':
+          description: Layout saved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
+  /api/health:
+    get:
+      summary: Storage health check
+      description: Returns health status of storage system
+      operationId: getHealth
+      tags:
+        - System
+      responses:
+        '200':
+          description: Health check results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+components:
+  schemas:
+    # Core response wrappers
+    SuccessResponse:
+      type: object
+      required:
+        - success
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+
+    ErrorResponse:
+      type: object
+      required:
+        - success
+        - error
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          $ref: '#/components/schemas/ErrorDetail'
+
+    ErrorDetail:
+      type: object
+      required:
+        - code
+        - message
+        - remediation
+      properties:
+        code:
+          type: string
+          example: MEMORY_NOT_FOUND
+        message:
+          type: string
+          example: Memory with ID 'abc-123' does not exist
+        remediation:
+          type: string
+          example: Verify the memory ID and try again, or use search to find the correct memory
+        context:
+          type: object
+          properties:
+            memory_id:
+              type: string
+            file:
+              type: string
+            line:
+              type: integer
+
+    # Graph visualization models
+    GraphResponse:
+      type: object
+      required:
+        - success
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/GraphData'
+
+    GraphData:
+      type: object
+      required:
+        - nodes
+        - edges
+        - total_memories
+        - total_relations
+        - query_time_ms
+      properties:
+        nodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/GraphNode'
+        edges:
+          type: array
+          items:
+            $ref: '#/components/schemas/GraphEdge'
+        total_memories:
+          type: integer
+          example: 1523
+        total_relations:
+          type: integer
+          example: 3847
+        filtered_count:
+          type: integer
+          nullable: true
+          example: 250
+        query_time_ms:
+          type: number
+          example: 45.3
+
+    GraphNode:
+      type: object
+      required:
+        - id
+        - label
+        - status
+        - decay_score
+        - use_count
+        - created_at
+        - last_used
+      properties:
+        id:
+          type: string
+          format: uuid
+        label:
+          type: string
+          description: Truncated content (max 100 chars)
+        tags:
+          type: array
+          items:
+            type: string
+        entities:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum: [active, promoted, archived]
+        decay_score:
+          type: number
+          minimum: 0
+          maximum: 1
+        use_count:
+          type: integer
+        created_at:
+          type: integer
+          description: Unix timestamp
+        last_used:
+          type: integer
+          description: Unix timestamp
+        x:
+          type: number
+          nullable: true
+        y:
+          type: number
+          nullable: true
+        fx:
+          type: number
+          nullable: true
+          description: Fixed x position (user pinned)
+        fy:
+          type: number
+          nullable: true
+          description: Fixed y position (user pinned)
+
+    GraphEdge:
+      type: object
+      required:
+        - id
+        - source
+        - target
+        - relation_type
+        - strength
+      properties:
+        id:
+          type: string
+          format: uuid
+        source:
+          type: string
+          format: uuid
+          description: from_memory_id
+        target:
+          type: string
+          format: uuid
+          description: to_memory_id
+        relation_type:
+          type: string
+          enum: [related, causes, supports, contradicts, has_decision, consolidated_from]
+        strength:
+          type: number
+          minimum: 0
+          maximum: 2
+        directed:
+          type: boolean
+          default: true
+
+    GraphFilter:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+        entities:
+          type: array
+          items:
+            type: string
+        search_query:
+          type: string
+        min_decay_score:
+          type: number
+          minimum: 0
+          maximum: 1
+          default: 0
+        created_after:
+          type: integer
+          description: Unix timestamp
+        created_before:
+          type: integer
+          description: Unix timestamp
+        used_after:
+          type: integer
+          description: Unix timestamp
+        statuses:
+          type: array
+          items:
+            type: string
+            enum: [active, promoted, archived]
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 10000
+          default: 1000
+        offset:
+          type: integer
+          minimum: 0
+          default: 0
+
+    LayoutData:
+      type: object
+      required:
+        - positions
+      properties:
+        positions:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              x:
+                type: number
+              y:
+                type: number
+              fx:
+                type: number
+                nullable: true
+              fy:
+                type: number
+                nullable: true
+        zoom:
+          type: number
+          default: 1
+        pan:
+          type: object
+          properties:
+            x:
+              type: number
+              default: 0
+            y:
+              type: number
+              default: 0
+
+    # Relationships response
+    RelationshipsResponse:
+      type: object
+      required:
+        - success
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            memory_id:
+              type: string
+              format: uuid
+            incoming:
+              type: array
+              items:
+                $ref: '#/components/schemas/RelationshipItem'
+            outgoing:
+              type: array
+              items:
+                $ref: '#/components/schemas/RelationshipItem'
+
+    RelationshipItem:
+      type: object
+      required:
+        - relation_id
+        - related_memory_id
+        - relation_type
+        - strength
+      properties:
+        relation_id:
+          type: string
+          format: uuid
+        related_memory_id:
+          type: string
+          format: uuid
+        relation_type:
+          type: string
+          enum: [related, causes, supports, contradicts, has_decision, consolidated_from]
+        strength:
+          type: number
+        memory_preview:
+          type: string
+          nullable: true
+          description: First 100 chars of related memory content
+
+    # Health check response
+    HealthResponse:
+      type: object
+      required:
+        - success
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            status:
+              type: string
+              enum: [healthy, degraded, unhealthy]
+            memories_valid:
+              type: boolean
+            relations_valid:
+              type: boolean
+            index_status:
+              type: string
+              enum: [healthy, stale, missing]
+            last_backup:
+              type: integer
+              nullable: true
+            recommendations:
+              type: array
+              items:
+                type: string
+
+tags:
+  - name: Relationships
+    description: Memory relationship operations
+  - name: Graph
+    description: Graph visualization operations
+  - name: System
+    description: System health and status

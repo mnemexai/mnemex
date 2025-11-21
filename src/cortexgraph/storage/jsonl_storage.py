@@ -522,6 +522,12 @@ class JSONLStorage:
         if not self._connected:
             raise RuntimeError("Storage not connected")
 
+        # Validate foreign keys (parity with SQLite)
+        if relation.from_memory_id not in self._memories:
+            raise ValueError(f"Source memory {relation.from_memory_id} does not exist")
+        if relation.to_memory_id not in self._memories:
+            raise ValueError(f"Target memory {relation.to_memory_id} does not exist")
+
         # Update in-memory index
         self._relations[relation.id] = relation
 

@@ -144,6 +144,11 @@ def temp_storage(monkeypatch):
         storage = JSONLStorage(storage_path=storage_dir)
         storage.connect()
 
+        # Update global config to point to temp storage
+        config = get_config()
+        original_storage_path = config.storage_path
+        config.storage_path = storage_dir
+
         # Monkey-patch the global db instance in context and all tool modules
 
         modules_to_patch = [
@@ -164,6 +169,9 @@ def temp_storage(monkeypatch):
             monkeypatch.setattr(module, "db", storage)
 
         yield storage
+
+        # Restore original config
+        config.storage_path = original_storage_path
         storage.close()
 
 
