@@ -1,13 +1,13 @@
 import logging
 from pathlib import Path
 
-from fastapi import FastAPI, Request  # type: ignore[import-not-found]
-from fastapi.middleware.cors import CORSMiddleware  # type: ignore[import-not-found]
-from fastapi.responses import JSONResponse, Response  # type: ignore[import-not-found]
-from fastapi.staticfiles import StaticFiles  # type: ignore[import-not-found]
-from slowapi import Limiter  # type: ignore[import-not-found]
-from slowapi.errors import RateLimitExceeded  # type: ignore[import-not-found]
-from slowapi.util import get_remote_address  # type: ignore[import-not-found]
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse, Response
+from fastapi.staticfiles import StaticFiles
+from slowapi import Limiter
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
 
 from ..storage.models import ErrorCode, ErrorContext, ErrorDetail, ErrorResponse
 from .api import router as api_router
@@ -52,7 +52,7 @@ def create_app() -> FastAPI:
     if state:
         state.limiter = limiter
 
-    def rate_limit_handler(request: Request, exc: RateLimitExceeded) -> Response:
+    def rate_limit_handler(request: Request, exc: Exception) -> Response:
         return JSONResponse(
             status_code=429,
             content={"error": "Rate limit exceeded", "detail": str(exc)},
