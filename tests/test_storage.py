@@ -714,6 +714,15 @@ def test_data_persists_across_connections():
 
 def test_compact_with_relations(temp_storage):
     """Test compact also works with relations."""
+    # First create memories that relations will reference
+    for i in range(4):  # Need m0, m1, m2, m3
+        temp_storage.save_memory(
+            Memory(
+                id=f"m{i}",
+                content=f"Memory {i}",
+            )
+        )
+
     # Create relations
     for i in range(3):
         temp_storage.create_relation(

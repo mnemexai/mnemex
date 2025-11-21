@@ -268,13 +268,11 @@ def execute_consolidation(
     # Save consolidated memory
     storage.save_memory(consolidated_memory)
 
-    # Mark original memories as consolidated (delete them)
-    original_ids = []
-    for mem in memories:
-        original_ids.append(mem.id)
-        storage.delete_memory(mem.id)
+    # Collect original IDs before deletion
+    original_ids = [mem.id for mem in memories]
 
-    # Create relations from new memory to originals (for tracking)
+    # Create relations from new memory to originals BEFORE deleting them
+    # (storage enforces foreign key constraints)
     from ..storage.models import Relation
 
     for orig_id in original_ids:
@@ -291,6 +289,10 @@ def execute_consolidation(
             },
         )
         storage.create_relation(relation)
+
+    # Mark original memories as consolidated (delete them after relations created)
+    for orig_id in original_ids:
+        storage.delete_memory(orig_id)
 
     return {
         "success": True,
