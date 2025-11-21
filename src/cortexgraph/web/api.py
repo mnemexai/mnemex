@@ -39,6 +39,16 @@ class MemoryResponse(BaseModel):
     status: str
     tags: list[str]
 
+    strength: float
+    entities: list[str]
+    source: str | None
+    context: str | None
+    promoted_at: int | None
+    promoted_to: str | None
+    review_count: int
+    last_review_at: int | None
+    review_priority: float
+
     @classmethod
     def from_memory(cls, memory: Memory):
         return cls(
@@ -49,6 +59,15 @@ class MemoryResponse(BaseModel):
             use_count=memory.use_count,
             status=memory.status.value,
             tags=memory.meta.tags if memory.meta and memory.meta.tags else [],
+            strength=memory.strength,
+            entities=memory.entities,
+            source=memory.meta.source if memory.meta else None,
+            context=memory.meta.context if memory.meta else None,
+            promoted_at=memory.promoted_at,
+            promoted_to=memory.promoted_to,
+            review_count=memory.review_count,
+            last_review_at=memory.last_review_at,
+            review_priority=memory.review_priority,
         )
 
 

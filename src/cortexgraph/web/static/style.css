@@ -660,13 +660,43 @@ body {
     position: absolute;
     top: 20px;
     left: 20px;
+    width: 280px;
     background: var(--card-bg);
-    padding: 15px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    border: 1px solid var(--border-color);
+    max-height: calc(100% - 40px);
+    overflow-y: auto;
+}
+
+.zoom-controls {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: var(--card-bg);
+    padding: 8px;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    z-index: 10;
-    width: 250px;
+    z-index: 100;
     border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.zoom-controls .btn-icon {
+    background: var(--surface-color);
+    color: var(--text-primary);
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+}
+
+.zoom-controls .btn-icon:hover {
+    background: var(--brand-primary);
+    color: white;
 }
 
 .node-detail-panel {

@@ -129,7 +129,9 @@
 - [x] T038 Implement `get_graph_data` service `src/cortexgraph/web/services/graph_service.py`
 - [x] T039 Implement GET /api/graph endpoint `src/cortexgraph/web/api.py`
 - [x] T040 Implement POST /api/graph/filtered endpoint `src/cortexgraph/web/api.py`
-- [x] T041 Create D3.js force-directed graph visualization `src/cortexgraph/web/static/js/graph.js`
+- [x] T040 Implement POST /api/graph/filtered endpoint `src/cortexgraph/web/api.py`
+- [x] T041 Create D3.js force-directed graph visualization `src/cortexgraph/web/static/js/graph.js` (REPLACED by T041b)
+- [x] T041b Refactor graph visualization to use Cytoscape.js `src/cortexgraph/web/static/js/graph.js`
 - [x] T042 Implement node click to show details
 - [x] T043 Implement node drag behavior
 - [x] T044 Implement zoom and pan
@@ -151,16 +153,16 @@
 
 ### Tests for User Story 3
 
-- [ ] T050 [P] [US3] Integration test for full metadata display in tests/integration/test_metadata_display.py
+- [x] T050 [P] [US3] Integration test for full metadata display in tests/integration/test_metadata_display.py
 
 ### Implementation for User Story 3
 
-- [ ] T051 [US3] Extend memory detail template with all metadata fields in src/cortexgraph/web/templates/memory_detail.html
-- [ ] T052 [US3] Add timestamp formatting (human-readable) in src/cortexgraph/web/static/js/formatters.js
-- [ ] T053 [US3] Add decay score calculation and display
-- [ ] T054 [US3] Show "Not set" indicator for null/empty fields
-- [ ] T055 [US3] Add promotion status and vault path display for promoted memories
-- [ ] T056 [US3] Style metadata section for clarity and readability
+- [x] T051 [US3] Extend memory detail template with all metadata fields in src/cortexgraph/web/templates/memory_detail.html
+- [x] T052 [US3] Add timestamp formatting (human-readable) in src/cortexgraph/web/static/js/formatters.js
+- [x] T053 [US3] Add decay score calculation and display
+- [x] T054 [US3] Show "Not set" indicator for null/empty fields
+- [x] T055 [US3] Add promotion status and vault path display for promoted memories
+- [x] T056 [US3] Style metadata section for clarity and readability
 
 **Checkpoint**: User Story 3 complete - users can see complete memory metadata
 

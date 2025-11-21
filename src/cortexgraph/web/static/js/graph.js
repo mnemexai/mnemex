@@ -1,13 +1,9 @@
-// Graph Visualization using D3.js v7
+// Graph Visualization using Cytoscape.js
 
 const API_BASE = '/api';
-let simulation;
-let svg;
-let width;
-let height;
-let g; // Group for zoom
-let nodes = [];
-let links = [];
+let cy;
+let allNodes = [];
+let allEdges = [];
 
 // Initialize graph when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
@@ -17,47 +13,73 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function initGraph() {
     const container = document.getElementById('graph-viz');
-    width = container.clientWidth;
-    height = container.clientHeight;
 
-    // Setup SVG
-    svg = d3.select('#graph-viz')
-        .append('svg')
-        .attr('width', width)
-        .attr('height', height)
-        .attr('viewBox', [0, 0, width, height])
-        .style('max-width', '100%')
-        .style('height', 'auto');
+    // Initialize Cytoscape
+    cy = cytoscape({
+        container: container,
+        style: getStylesheet(),
+        layout: { name: 'grid' }, // Initial layout before data load
+        wheelSensitivity: 0.2,
+    });
 
-    // Add zoom behavior
-    const zoom = d3.zoom()
-        .scaleExtent([0.1, 4])
-        .on('zoom', (event) => {
-            g.attr('transform', event.transform);
-        });
+    // Event Listeners
+    cy.on('tap', 'node', (evt) => {
+        const node = evt.target;
+        showNodeDetails(node.data());
+    });
 
-    svg.call(zoom);
+    cy.on('tap', (evt) => {
+        if (evt.target === cy) {
+            hideNodeDetails();
+        }
+    });
 
-    // Group for all graph elements (to support zoom)
-    g = svg.append('g');
-
-    // Fetch data
+    // Fetch and render data
     try {
         const data = await fetchGraphData();
-        nodes = data.nodes;
-        links = data.edges.map(d => ({ ...d })); // Copy to avoid mutation issues if re-fetching
-
-        renderGraph();
+        renderGraph(data);
     } catch (error) {
         console.error('Failed to load graph data:', error);
         container.innerHTML = `<div class="error-state">Failed to load graph data: ${error.message}</div>`;
     }
+
+    // Theme initialization
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateGraphTheme(savedTheme);
+
+    const themeToggle = document.getElementById('theme-toggle');
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateGraphTheme(newTheme);
+        });
+    }
+
+    // Zoom Controls
+    document.getElementById('zoom-in').addEventListener('click', () => {
+        cy.zoom({
+            level: cy.zoom() * 1.5,
+            renderedPosition: { x: cy.width() / 2, y: cy.height() / 2 }
+        });
+    });
+
+    document.getElementById('zoom-out').addEventListener('click', () => {
+        cy.zoom({
+            level: cy.zoom() * 0.66,
+            renderedPosition: { x: cy.width() / 2, y: cy.height() / 2 }
+        });
+    });
+
+    document.getElementById('zoom-fit').addEventListener('click', () => {
+        cy.fit(undefined, 50);
+    });
 }
 
 async function fetchGraphData(filter = {}) {
-    // If filter is empty, use GET /api/graph
-    // If filter has properties, use POST /api/graph/filtered
-
     let url = `${API_BASE}/graph`;
     let options = {};
 
@@ -79,123 +101,137 @@ async function fetchGraphData(filter = {}) {
     return await response.json();
 }
 
-function renderGraph() {
-    // Clear existing
-    g.selectAll('*').remove();
+function renderGraph(data) {
+    // Transform data for Cytoscape
+    const elements = [
+        ...data.nodes.map(n => ({
+            group: 'nodes',
+            data: { ...n, id: n.id, label: n.label, status: n.status, decay_score: n.decay_score }
+        })),
+        ...data.edges.map(e => ({
+            group: 'edges',
+            data: { ...e, id: `${e.source}-${e.target}`, source: e.source, target: e.target, strength: e.strength }
+        }))
+    ];
 
-    // Simulation setup
-    simulation = d3.forceSimulation(nodes)
-        .force('link', d3.forceLink(links).id(d => d.id).distance(100))
-        .force('charge', d3.forceManyBody().strength(-300))
-        .force('center', d3.forceCenter(width / 2, height / 2))
-        .force('collide', d3.forceCollide().radius(30));
+    cy.elements().remove();
+    cy.add(elements);
 
-    // Draw links
-    const link = g.append('g')
-        .attr('stroke', '#999')
-        .attr('stroke-opacity', 0.6)
-        .selectAll('line')
-        .data(links)
-        .join('line')
-        .attr('stroke-width', d => Math.sqrt(d.strength * 5)); // Strength determines thickness
-
-    // Draw nodes
-    const node = g.append('g')
-        .attr('stroke', '#fff')
-        .attr('stroke-width', 1.5)
-        .selectAll('circle')
-        .data(nodes)
-        .join('circle')
-        .attr('r', 10) // Fixed radius for now, could use use_count
-        .attr('fill', d => getNodeColor(d.status))
-        .attr('opacity', d => d.decay_score || 1)
-        .call(drag(simulation));
-
-    // Add labels (optional, maybe on hover or zoom level)
-    const label = g.append('g')
-        .attr('class', 'labels')
-        .selectAll('text')
-        .data(nodes)
-        .join('text')
-        .attr('dx', 12)
-        .attr('dy', '.35em')
-        .text(d => d.label)
-        .style('font-size', '10px')
-        .style('pointer-events', 'none')
-        .style('fill', 'var(--text-secondary)');
-
-    // Tooltip/Interaction
-    node.on('click', (event, d) => {
-        showNodeDetails(d);
-        event.stopPropagation(); // Prevent background click
-    });
-
-    svg.on('click', () => {
-        hideNodeDetails();
-    });
-
-    // Simulation tick
-    simulation.on('tick', () => {
-        link
-            .attr('x1', d => d.source.x)
-            .attr('y1', d => d.source.y)
-            .attr('x2', d => d.target.x)
-            .attr('y2', d => d.target.y);
-
-        node
-            .attr('cx', d => d.x)
-            .attr('cy', d => d.y);
-
-        label
-            .attr('x', d => d.x)
-            .attr('y', d => d.y);
-    });
+    runLayout();
 }
 
-function getNodeColor(status) {
-    switch (status) {
-        case 'active': return 'var(--brand-primary)';
-        case 'archived': return 'var(--text-secondary)';
-        case 'deleted': return 'var(--accent-error)';
-        default: return '#ccc';
-    }
+function runLayout() {
+    const layout = cy.layout({
+        name: 'cose',
+        animate: true,
+        animationDuration: 1000,
+        refresh: 20,
+        fit: true,
+        padding: 50,
+        randomize: false,
+        componentSpacing: 100,
+        nodeRepulsion: 400000,
+        nodeOverlap: 10,
+        idealEdgeLength: 100,
+        edgeElasticity: 100,
+        nestingFactor: 5,
+        gravity: 80,
+        numIter: 1000,
+        initialTemp: 200,
+        coolingFactor: 0.95,
+        minTemp: 1.0
+    });
+
+    layout.run();
 }
 
-function drag(simulation) {
-    function dragstarted(event) {
-        if (!event.active) simulation.alphaTarget(0.3).restart();
-        event.subject.fx = event.subject.x;
-        event.subject.fy = event.subject.y;
-    }
+function getStylesheet() {
+    // Define colors based on CSS variables (we'll need to read them or hardcode defaults that match)
+    // Since Cy styles are JS, we can't directly use var() in all properties easily without a helper,
+    // but Cy supports standard CSS color names and hex.
+    // For dynamic theming, we'll update the stylesheet when theme changes.
 
-    function dragged(event) {
-        event.subject.fx = event.x;
-        event.subject.fy = event.y;
-    }
-
-    function dragended(event) {
-        if (!event.active) simulation.alphaTarget(0);
-        event.subject.fx = null;
-        event.subject.fy = null;
-    }
-
-    return d3.drag()
-        .on('start', dragstarted)
-        .on('drag', dragged)
-        .on('end', dragended);
+    return [
+        {
+            selector: 'node',
+            style: {
+                'label': 'data(label)',
+                'width': 40,
+                'height': 40,
+                'background-color': '#666', // Default, overridden by status
+                'color': '#fff',
+                'text-valign': 'center',
+                'text-halign': 'right',
+                'text-margin-x': 10,
+                'font-size': '12px',
+                'font-family': 'Inter, sans-serif'
+            }
+        },
+        {
+            selector: 'node[status = "active"]',
+            style: { 'background-color': '#007AFF' } // brand-primary
+        },
+        {
+            selector: 'node[status = "archived"]',
+            style: { 'background-color': '#8E8E93' } // text-secondary
+        },
+        {
+            selector: 'node[status = "deleted"]',
+            style: { 'background-color': '#FF3B30' } // accent-error
+        },
+        {
+            selector: 'edge',
+            style: {
+                'width': 3,
+                'line-color': '#8E8E93', // text-secondary
+                'opacity': 0.8,
+                'curve-style': 'bezier'
+            }
+        },
+        {
+            selector: ':selected',
+            style: {
+                'border-width': 2,
+                'border-color': '#fff'
+            }
+        }
+    ];
 }
 
-function showNodeDetails(node) {
+function updateGraphTheme(theme) {
+    const isDark = theme === 'dark';
+    const bgColor = isDark ? '#1c1c1e' : '#ffffff';
+    const textColor = isDark ? '#ffffff' : '#000000';
+    const edgeColor = isDark ? '#48484a' : '#d1d1d6'; // darker gray in dark mode, lighter in light
+
+    // Update container background
+    document.getElementById('graph-viz').style.backgroundColor = bgColor;
+
+    // Update Cy styles
+    cy.style()
+        .selector('node')
+        .style({
+            'color': textColor
+        })
+        .selector('edge')
+        .style({
+            'line-color': edgeColor
+        })
+        .update();
+}
+
+function showNodeDetails(nodeData) {
     const panel = document.getElementById('node-details');
     panel.innerHTML = `
-        <h3>${node.label}</h3>
+        <h3>${nodeData.label}</h3>
         <div class="meta">
-            <p><strong>ID:</strong> ${node.id}</p>
-            <p><strong>Status:</strong> ${node.status}</p>
-            <p><strong>Tags:</strong> ${node.tags.join(', ') || 'None'}</p>
+            <p><strong>ID:</strong> ${nodeData.id}</p>
+            <p><strong>Status:</strong> ${nodeData.status}</p>
+            <p><strong>Decay Score:</strong> ${nodeData.decay_score ? nodeData.decay_score.toFixed(3) : 'N/A'}</p>
+            <p><strong>Tags:</strong> ${nodeData.tags ? nodeData.tags.join(', ') : 'None'}</p>
         </div>
         <div class="actions" style="margin-top: 1rem;">
-            <a href="/?memory_id=${node.id}" class="btn-save">View Full Memory</a>
+            <a href="/?memory_id=${nodeData.id}" class="btn-save">View Full Memory</a>
         </div>
     `;
     panel.classList.add('visible');
@@ -207,16 +243,6 @@ function hideNodeDetails() {
 }
 
 function setupControls() {
-    const forceSlider = document.getElementById('force-strength');
-    if (forceSlider) {
-        forceSlider.addEventListener('input', (e) => {
-            if (simulation) {
-                simulation.force('charge').strength(-e.target.value * 10);
-                simulation.alpha(1).restart();
-            }
-        });
-    }
-
     const applyBtn = document.getElementById('apply-filters');
     if (applyBtn) {
         applyBtn.addEventListener('click', async () => {
@@ -235,13 +261,28 @@ function setupControls() {
 
             try {
                 const data = await fetchGraphData(filter);
-                nodes = data.nodes;
-                links = data.edges.map(d => ({ ...d }));
-                renderGraph();
+                renderGraph(data);
             } catch (error) {
                 console.error('Failed to filter graph:', error);
                 alert('Failed to filter graph: ' + error.message);
             }
+        });
+    }
+
+    // Force slider - update layout parameters
+    const forceSlider = document.getElementById('force-strength');
+    if (forceSlider) {
+        forceSlider.addEventListener('change', (e) => {
+            // Re-run layout with new spacing
+            const val = parseInt(e.target.value);
+            const layout = cy.layout({
+                name: 'cose',
+                animate: true,
+                componentSpacing: val * 2 + 50,
+                nodeRepulsion: val * 10000 + 100000,
+                idealEdgeLength: val * 2 + 50
+            });
+            layout.run();
         });
     }
 }
