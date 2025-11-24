@@ -44,12 +44,17 @@ class TestAnalyzeMessageToolIntegration:
         assert "save" in result["reasoning"].lower() or "remember" in result["reasoning"].lower()
 
     def test_importance_marker_full_pipeline(self):
-        """Integration: Importance marker flows through full pipeline."""
+        """Integration: Importance marker flows through full pipeline.
+
+        Note: The activation module uses 'critical_marker' for 'critical' phrases
+        and 'importance_marker' for non-critical markers like 'important', 'must'.
+        """
         result = analyze_message("This is critical: always validate input")
 
         # Should trigger save due to importance marker
         assert result["should_save"] is True
-        assert result["phrase_signals"]["importance_marker"] is True
+        # New activation module uses critical_marker for "critical" phrases
+        assert result["phrase_signals"].get("critical_marker") is True
         assert result["confidence"] >= 0.5
 
     def test_entity_extraction_full_pipeline(self):
@@ -92,21 +97,32 @@ class TestAnalyzeMessageToolIntegration:
         assert result_high["suggested_strength"] >= result_low["suggested_strength"]
 
     def test_phrase_signals_structure(self):
-        """Integration: phrase_signals has expected structure."""
+        """Integration: phrase_signals has expected structure.
+
+        Note: The activation module returns dynamic phrase_signals based on what's
+        detected. Keys present depend on the message content:
+        - save_request: Explicit save triggers
+        - critical_marker: "critical" phrases
+        - importance_marker: Non-critical importance markers
+        - decision_marker: Preference/decision patterns
+        - exclusion_pattern: General questions
+        - uncertainty_marker: Uncertain language
+        """
         result = analyze_message("Remember this: I prefer dark mode")
 
         signals = result["phrase_signals"]
-        # Expected signal keys
-        assert "save_request" in signals
-        assert "recall_request" in signals
-        assert "importance_marker" in signals
-        assert "matched_phrases" in signals
+        # phrase_signals should be a dict
+        assert isinstance(signals, dict)
 
-        # Types are correct
-        assert isinstance(signals["save_request"], bool)
-        assert isinstance(signals["recall_request"], bool)
-        assert isinstance(signals["importance_marker"], bool)
-        assert isinstance(signals["matched_phrases"], list)
+        # For "Remember this: I prefer dark mode" we expect:
+        # - save_request (from "remember this")
+        # - decision_marker (from "prefer")
+        assert signals.get("save_request") is True
+        assert signals.get("decision_marker") is True
+
+        # All values should be booleans
+        for key, value in signals.items():
+            assert isinstance(value, bool), f"Signal {key} should be bool, got {type(value)}"
 
 
 class TestAnalyzeMessageToolEdgeCases:

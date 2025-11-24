@@ -107,18 +107,14 @@ class TestExplicitSaveRequestContract:
         assert result["should_save"] is True
         assert result["confidence"] >= 0.7
 
-    @pytest.mark.xfail(
-        reason="TDD: Contract specifies desired behavior. Needs PhraseDetector update for 'I prefer' pattern.",
-        strict=False,  # Don't fail if it unexpectedly passes
-    )
     def test_i_prefer_with_entity_triggers_save_detection(self):
         """Contract: 'I prefer [entity]' yields should_save=True (preference detection).
 
         Note: Preferences require recognizable entities to trigger save.
         Per acceptance criteria: "I prefer PostgreSQL for databases" → should_save=True
 
-        This test is marked xfail because the PhraseDetector doesn't yet support
-        "I prefer" as a save trigger. Implementation tracked in beads.
+        Implemented in v0.7.5 via activation module integration with 'i prefer'
+        pattern in explicit_save_triggers and preference_statement signal weight.
         """
         result = analyze_message("I prefer PostgreSQL for my databases")
 
