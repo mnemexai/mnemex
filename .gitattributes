@@ -49,3 +49,6 @@
 docs/** linguist-documentation
 tests/** linguist-documentation=false
 examples/** linguist-documentation
+
+# Use bd merge for beads JSONL files
+.beads/issues.jsonl merge=beads
