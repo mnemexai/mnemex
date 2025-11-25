@@ -110,20 +110,20 @@
 
 ### Tests for User Story 2
 
-- [ ] T034 [P] [US2] Contract test: ClusterDetector.scan() returns memory IDs in `tests/contract/test_cluster_detector.py`
-- [ ] T035 [P] [US2] Contract test: ClusterDetector.process_item() returns ClusterResult in `tests/contract/test_cluster_detector.py`
-- [ ] T036 [P] [US2] Unit test: cohesion calculation in `tests/unit/agents/test_cluster_detector.py`
-- [ ] T037 [P] [US2] Unit test: action recommendation (merge/link/ignore) in `tests/unit/agents/test_cluster_detector.py`
-- [ ] T038 [US2] Integration test: cluster detection with embeddings in `tests/integration/agents/test_cluster_detector.py`
+- [x] T034 [P] [US2] Contract test: ClusterDetector.scan() returns memory IDs in `tests/contract/test_cluster_detector.py`
+- [x] T035 [P] [US2] Contract test: ClusterDetector.process_item() returns ClusterResult in `tests/contract/test_cluster_detector.py`
+- [x] T036 [P] [US2] Unit test: cohesion calculation in `tests/unit/agents/test_cluster_detector.py`
+- [x] T037 [P] [US2] Unit test: action recommendation (merge/link/ignore) in `tests/unit/agents/test_cluster_detector.py`
+- [x] T038 [US2] Integration test: cluster detection with embeddings in `tests/integration/agents/test_cluster_detector.py`
 
 ### Implementation for User Story 2
 
-- [ ] T039 [US2] Create ClusterDetector class skeleton in `src/cortexgraph/agents/cluster_detector.py`
-- [ ] T040 [US2] Implement `scan()` - find memories with potential clusters in `src/cortexgraph/agents/cluster_detector.py`
-- [ ] T041 [US2] Implement `process_item()` - calculate cohesion, determine action in `src/cortexgraph/agents/cluster_detector.py`
-- [ ] T042 [US2] Integrate with existing `core/clustering.py` for similarity calculation
-- [ ] T043 [US2] Integrate with beads for cluster issue creation (cohesion >= 0.4)
-- [ ] T044 [US2] Prevent duplicate cluster detection
+- [x] T039 [US2] Create ClusterDetector class skeleton in `src/cortexgraph/agents/cluster_detector.py`
+- [x] T040 [US2] Implement `scan()` - find memories with potential clusters in `src/cortexgraph/agents/cluster_detector.py`
+- [x] T041 [US2] Implement `process_item()` - calculate cohesion, determine action in `src/cortexgraph/agents/cluster_detector.py`
+- [x] T042 [US2] Integrate with existing `core/clustering.py` for similarity calculation
+- [x] T043 [US2] Integrate with beads for cluster issue creation (cohesion >= 0.4)
+- [x] T044 [US2] Prevent duplicate cluster detection
 
 **Checkpoint**: Cluster Detector should be fully functional and independently testable
 
