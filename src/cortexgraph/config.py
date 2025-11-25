@@ -224,6 +224,18 @@ class Config(BaseModel):
         ge=0,
     )
 
+    # Urgent Decay Event Triggers (T090)
+    enable_urgent_decay_check: bool = Field(
+        default=True,
+        description="Enable event-driven urgent decay detection after save_memory",
+    )
+    urgent_decay_threshold: float = Field(
+        default=0.10,
+        description="Score threshold below which memory triggers urgent processing",
+        ge=0,
+        le=1,
+    )
+
     # Long-Term Memory (LTM) Integration
     ltm_vault_path: Path | None = Field(
         default=None,

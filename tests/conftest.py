@@ -82,6 +82,7 @@ See Also
 tests/README.md : Comprehensive test documentation and patterns
 """
 
+import shutil
 import tempfile
 import uuid
 from pathlib import Path
@@ -102,6 +103,48 @@ import cortexgraph.tools.search
 import cortexgraph.tools.touch
 from cortexgraph.config import Config, get_config, set_config
 from cortexgraph.storage.jsonl_storage import JSONLStorage
+
+# ============================================================================
+# Beads CLI Detection and Skip Markers
+# ============================================================================
+
+
+def is_beads_available() -> bool:
+    """Check if the beads CLI (bd) is available on the system."""
+    return shutil.which("bd") is not None
+
+
+# Check once at import time
+BEADS_AVAILABLE = is_beads_available()
+
+
+@pytest.fixture
+def requires_beads():
+    """Fixture that skips tests if beads CLI is not available.
+
+    Usage:
+        def test_something_with_beads(requires_beads, temp_storage):
+            # This test will be skipped if bd CLI is not installed
+            ...
+    """
+    if not BEADS_AVAILABLE:
+        pytest.skip("beads CLI (bd) not found - skipping test")
+
+
+def pytest_configure(config):
+    """Register custom pytest markers."""
+    config.addinivalue_line("markers", "requires_beads: mark test as requiring beads CLI (bd)")
+
+
+def pytest_collection_modifyitems(config, items):
+    """Skip tests marked with @pytest.mark.requires_beads if bd is unavailable."""
+    if BEADS_AVAILABLE:
+        return  # bd is available, run all tests
+
+    skip_beads = pytest.mark.skip(reason="beads CLI (bd) not installed")
+    for item in items:
+        if "requires_beads" in item.keywords:
+            item.add_marker(skip_beads)
 
 
 def make_test_uuid(name: str) -> str:

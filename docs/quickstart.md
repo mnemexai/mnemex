@@ -87,11 +87,14 @@ When you revisit information, Claude uses `touch_memory` to strengthen it, preve
 When similar memories accumulate:
 
 ```bash
-# Find clusters
-cortexgraph-consolidate --preview
+# Find clusters (dry run)
+cortexgraph-consolidate run --all --dry-run
 
 # Apply consolidation
-cortexgraph-consolidate --apply
+cortexgraph-consolidate run --all
+
+# Check queue status
+cortexgraph-consolidate status
 ```
 
 Or let Claude do it automatically when detecting related memories.
@@ -132,15 +135,17 @@ Important memories automatically promote to LTM when:
 - Score >= 0.65 (high value)
 - Used 5+ times in 14 days
 
-Or manually promote:
+Or manually promote via CLI:
 
 ```bash
-# Find high-value memories
-cortexgraph-promote --dry-run
+# Find promotion candidates (dry run)
+cortexgraph-consolidate run promote --dry-run
 
-# Promote to Obsidian vault
-cortexgraph-promote
+# Execute promotion to Obsidian vault
+cortexgraph-consolidate run promote
 ```
+
+Or ask Claude to promote specific memories via the `promote_memory` MCP tool.
 
 ## CLI Tools
 
@@ -172,22 +177,28 @@ cortexgraph-maintenance report
 
 ### Garbage Collection
 
-```bash
-# Preview what will be deleted
-cortexgraph-gc --dry-run
+Low-scoring memories can be cleaned up via MCP (ask Claude to use the `gc` tool) or via the decay analyzer:
 
-# Delete low-scoring memories
-cortexgraph-gc
+```bash
+# Find memories at risk of deletion (dry run)
+cortexgraph-consolidate run decay --dry-run
+
+# Process decay analysis
+cortexgraph-consolidate run decay
 ```
 
 ### Memory Consolidation
 
 ```bash
-# Find similar memory clusters
-cortexgraph-consolidate --preview --cohesion-threshold 0.75
+# Run full consolidation pipeline (dry run)
+cortexgraph-consolidate run --all --dry-run
 
-# Apply consolidation
-cortexgraph-consolidate --apply --cohesion-threshold 0.80
+# Apply consolidation (all agents)
+cortexgraph-consolidate run --all
+
+# Run individual agents
+cortexgraph-consolidate run cluster --dry-run
+cortexgraph-consolidate run merge --dry-run
 ```
 
 ## Advanced Usage
@@ -260,7 +271,7 @@ CORTEXGRAPH_PL_HALFLIFE_DAYS=7.0  # Increase from 3.0
 
 ## Next Steps
 
-- [API Reference](api.md) - Learn all 11 MCP tools
+- [API Reference](api.md) - Learn all 15 MCP tools
 - [Architecture](architecture.md) - Understand how CortexGraph works
 - [Knowledge Graph](graph_features.md) - Build connected concepts
 - [Scoring Algorithm](scoring_algorithm.md) - Deep dive into decay

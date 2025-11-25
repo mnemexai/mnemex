@@ -598,24 +598,256 @@ Cluster similar memories for potential consolidation.
 
 ### consolidate_memories
 
-Consolidate similar memories using LLM-driven merging (NOT YET IMPLEMENTED).
+Consolidate similar memories using algorithmic merging or linking.
+
+This tool handles clusters in three ways:
+1. **MERGE** (`mode="apply"`): Combine memories into one (high cohesion ≥0.75)
+2. **LINK** (`mode="link"`): Create 'related' relations without merging (medium cohesion 0.40-0.75)
+3. **PREVIEW** (`mode="preview"`): Show what would happen without making changes
+
+Merging intelligently:
+- Combines content (preserving unique information)
+- Merges tags and entities (union)
+- Calculates appropriate strength based on cohesion
+- Preserves earliest `created_at` and latest `last_used` timestamps
 
 **Parameters:**
 
 | Name | Type | Required | Default | Description |
 |------|------|----------|---------|-------------|
-| `cluster_id` | string | Yes | - | Cluster ID to consolidate |
-| `mode` | string | No | "dry_run" | "dry_run" or "apply" |
+| `cluster_id` | string | No | - | Cluster ID to consolidate (required unless `auto_detect=true`) |
+| `mode` | string | No | "preview" | "preview", "apply", or "link" |
+| `auto_detect` | boolean | No | false | Auto-detect high-cohesion clusters |
+| `cohesion_threshold` | float | No | 0.75 | Minimum cohesion for auto-detection (0.0-1.0) |
+
+**Returns - Preview Mode:**
+
+```json
+{
+  "success": true,
+  "mode": "preview",
+  "auto_detect": true,
+  "candidates_found": 3,
+  "previews": [
+    {
+      "cluster_id": "cluster-abc",
+      "cohesion": 0.87,
+      "memory_count": 4,
+      "merged_content_preview": "Combined content from 4 memories...",
+      "merged_entities": ["entity1", "entity2"],
+      "merged_tags": ["tag1", "tag2"],
+      "calculated_strength": 1.4
+    }
+  ]
+}
+```
+
+**Returns - Apply Mode:**
+
+```json
+{
+  "success": true,
+  "mode": "apply",
+  "new_memory_id": "mem-new-123",
+  "source_ids": ["mem-1", "mem-2", "mem-3"],
+  "relation_ids": ["rel-1", "rel-2", "rel-3"],
+  "archived_count": 3,
+  "message": "Merged 3 memories into mem-new-123"
+}
+```
+
+**Returns - Link Mode:**
+
+```json
+{
+  "success": true,
+  "mode": "link",
+  "relations_created": 6,
+  "cluster_id": "cluster-abc",
+  "message": "Created 6 bidirectional relations linking 4 memories"
+}
+```
+
+**Example - Auto-detect and Preview:**
+
+```json
+{
+  "auto_detect": true,
+  "mode": "preview",
+  "cohesion_threshold": 0.80
+}
+```
+
+**Example - Apply Specific Cluster:**
+
+```json
+{
+  "cluster_id": "cluster-abc-123",
+  "mode": "apply"
+}
+```
+
+---
+
+### read_graph
+
+Read the entire knowledge graph of memories and relations.
+
+Returns the complete graph structure including all memories (with decay scores), all relations between memories, and statistics.
+
+**Parameters:**
+
+| Name | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `status` | string | No | "active" | Filter: "active", "promoted", "archived", "all" |
+| `include_scores` | boolean | No | true | Include decay scores and age |
+| `limit` | integer | No | - | Maximum memories to return (1-10,000) |
+| `page` | integer | No | 1 | Page number (1-indexed) |
+| `page_size` | integer | No | 10 | Memories per page (max: 100) |
 
 **Returns:**
 
 ```json
 {
-  "success": false,
-  "message": "Consolidation tool is not yet implemented...",
-  "status": "not_implemented",
-  "cluster_id": "cluster-abc",
-  "mode": "dry_run"
+  "success": true,
+  "memories": [
+    {
+      "id": "mem-123",
+      "content": "Important project info",
+      "entities": ["Project"],
+      "tags": ["work"],
+      "created_at": 1699012345,
+      "last_used": 1699112345,
+      "use_count": 5,
+      "strength": 1.2,
+      "status": "active",
+      "score": 0.7523,
+      "age_days": 5.2
+    }
+  ],
+  "relations": [
+    {
+      "id": "rel-123",
+      "from": "mem-123",
+      "to": "mem-456",
+      "type": "related",
+      "strength": 0.85,
+      "created_at": 1699012345
+    }
+  ],
+  "stats": {
+    "total_memories": 150,
+    "total_relations": 45,
+    "avg_score": 0.4521,
+    "avg_use_count": 2.3,
+    "status_filter": "active"
+  },
+  "pagination": {
+    "page": 1,
+    "page_size": 10,
+    "total_count": 150,
+    "total_pages": 15,
+    "has_more": true
+  }
+}
+```
+
+---
+
+### open_memories
+
+Retrieve specific memories by their IDs.
+
+Similar to the reference MCP memory server's `open_nodes` functionality. Returns detailed information including relations.
+
+**Parameters:**
+
+| Name | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `memory_ids` | string or array | Yes | - | ID(s) to retrieve (max 100) |
+| `include_relations` | boolean | No | true | Include relations from/to these memories |
+| `include_scores` | boolean | No | true | Include decay scores and age |
+| `page` | integer | No | 1 | Page number (1-indexed) |
+| `page_size` | integer | No | 10 | Memories per page (max: 100) |
+
+**Returns:**
+
+```json
+{
+  "success": true,
+  "count": 2,
+  "memories": [
+    {
+      "id": "mem-123",
+      "content": "Project deadline is Dec 15",
+      "entities": ["Project", "December"],
+      "tags": ["deadline"],
+      "source": "meeting notes",
+      "context": "Q4 planning",
+      "created_at": 1699012345,
+      "last_used": 1699112345,
+      "use_count": 5,
+      "strength": 1.2,
+      "status": "active",
+      "promoted_at": null,
+      "promoted_to": null,
+      "score": 0.7523,
+      "age_days": 5.2,
+      "relations": {
+        "outgoing": [
+          {"to": "mem-456", "type": "related", "strength": 0.85}
+        ],
+        "incoming": [
+          {"from": "mem-789", "type": "supports", "strength": 0.9}
+        ]
+      }
+    }
+  ],
+  "not_found": ["mem-invalid-id"]
+}
+```
+
+---
+
+### create_relation
+
+Create an explicit relation between two memories.
+
+Links two memories with a typed relationship for building knowledge graphs.
+
+**Parameters:**
+
+| Name | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `from_memory_id` | string | Yes | - | Source memory ID (valid UUID) |
+| `to_memory_id` | string | Yes | - | Target memory ID (valid UUID) |
+| `relation_type` | string | Yes | - | Type: "related", "causes", "supports", "contradicts", "has_decision", "consolidated_from" |
+| `strength` | float | No | 1.0 | Relation strength (0.0-1.0) |
+| `metadata` | object | No | {} | Additional metadata |
+
+**Returns:**
+
+```json
+{
+  "success": true,
+  "relation_id": "rel-abc-123",
+  "from": "mem-123",
+  "to": "mem-456",
+  "type": "related",
+  "strength": 1.0,
+  "message": "Relation created: mem-123 --[related]--> mem-456"
+}
+```
+
+**Example:**
+
+```json
+{
+  "from_memory_id": "mem-123",
+  "to_memory_id": "mem-456",
+  "relation_type": "supports",
+  "strength": 0.9,
+  "metadata": {"reason": "Same project context"}
 }
 ```
 
@@ -716,3 +948,337 @@ Use the CLI to manage JSONL storage:
 - `cortexgraph-maintenance compact` — compacts JSONL files to remove tombstones and duplicates
 
 Optionally specify a path: `cortexgraph-maintenance --storage-path ~/.config/cortexgraph/jsonl stats`
+
+---
+
+## Multi-Agent Consolidation System
+
+**NEW in v0.7.5** - Automated memory maintenance through five specialized agents.
+
+For architecture details, see [docs/agents.md](agents.md).
+
+### Pipeline Overview
+
+```
+decay → cluster → merge → promote → relations
+  │        │        │        │          │
+  ▼        ▼        ▼        ▼          ▼
+Find at- Find    Combine  Promote  Discover
+risk    similar  similar  to LTM   cross-domain
+memories groups   groups           links
+```
+
+### Scheduler
+
+The Scheduler orchestrates all agents in the pipeline.
+
+**Python Usage:**
+
+```python
+from cortexgraph.agents import Scheduler
+
+# Run full pipeline (dry run)
+scheduler = Scheduler(dry_run=True)
+results = scheduler.run_pipeline()
+# Returns: {"decay": [...], "cluster": [...], "merge": [...], "promote": [...], "relations": [...]}
+
+# Run single agent
+decay_results = scheduler.run_agent("decay")
+
+# Run on schedule (respects interval)
+result = scheduler.run_scheduled(force=False)
+```
+
+**CLI Usage:**
+
+```bash
+# Run full pipeline (dry run)
+cortexgraph-consolidate --dry-run
+
+# Run full pipeline (live)
+cortexgraph-consolidate
+
+# Run single agent
+cortexgraph-consolidate --agent decay --dry-run
+
+# Run on schedule
+cortexgraph-consolidate --scheduled --interval-hours 1
+```
+
+---
+
+### DecayAnalyzer
+
+Identifies memories at risk of being forgotten.
+
+**Purpose:** Find memories in the "danger zone" (0.15-0.35 score) before they decay below the forget threshold.
+
+**Urgency Levels:**
+
+| Score | Urgency | Description |
+|-------|---------|-------------|
+| < 0.15 | HIGH | Immediate attention needed |
+| 0.15 - 0.25 | MEDIUM | Standard priority |
+| 0.25 - 0.35 | LOW | Can wait |
+
+**Actions:**
+
+- `reinforce` - Memory is valuable, should be reviewed
+- `gc_candidate` - Memory is low-value, consider deletion
+- `needs_review` - Uncertain, requires human judgment
+
+**Python Usage:**
+
+```python
+from cortexgraph.agents import DecayAnalyzer
+
+analyzer = DecayAnalyzer(dry_run=True)
+results = analyzer.run()  # Returns list[DecayResult]
+
+for result in results:
+    print(f"{result.memory_id}: {result.urgency} - {result.action}")
+```
+
+**Result Type - DecayResult:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `memory_id` | string | ID of the at-risk memory |
+| `score` | float | Current decay score |
+| `urgency` | string | "high", "medium", "low" |
+| `action` | string | Recommended action |
+
+---
+
+### ClusterDetector
+
+Groups similar memories for potential consolidation.
+
+**Purpose:** Find memories that share content/entities and could be merged.
+
+**Cohesion Levels:**
+
+| Cohesion | Action |
+|----------|--------|
+| ≥ 0.85 | Auto-merge candidate |
+| 0.65 - 0.85 | LLM review recommended |
+| < 0.65 | Keep separate |
+
+**Python Usage:**
+
+```python
+from cortexgraph.agents import ClusterDetector
+
+detector = ClusterDetector(
+    dry_run=True,
+    similarity_threshold=0.83,
+    min_cluster_size=2
+)
+results = detector.run()  # Returns list[ClusterResult]
+```
+
+**Result Type - ClusterResult:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `cluster_id` | string | Unique cluster identifier |
+| `memory_ids` | list[str] | IDs of memories in cluster |
+| `cohesion` | float | Similarity score (0.0-1.0) |
+| `action` | string | Recommended action |
+
+---
+
+### SemanticMerge
+
+Intelligently combines clustered memories.
+
+**Purpose:** Merge similar memories while preserving unique information.
+
+**Merge Process:**
+
+1. Fetch source memories from cluster
+2. Merge content (preserving unique information)
+3. Union tags and entities
+4. Calculate combined strength (max + cohesion bonus)
+5. Create new memory
+6. Create `consolidated_from` relations
+7. Archive original memories
+
+**Python Usage:**
+
+```python
+from cortexgraph.agents import SemanticMerge
+
+merger = SemanticMerge(dry_run=True)
+results = merger.run()  # Returns list[MergeResult]
+```
+
+**Result Type - MergeResult:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `new_memory_id` | string | ID of merged memory |
+| `source_ids` | list[str] | IDs of original memories |
+| `relation_ids` | list[str] | IDs of consolidation relations |
+| `success` | bool | Whether merge succeeded |
+
+---
+
+### LTMPromoter
+
+Moves high-value memories to long-term Obsidian storage.
+
+**Purpose:** Promote memories that exceed score and usage thresholds to permanent storage.
+
+**Promotion Criteria:**
+
+- Score ≥ 0.65 (configurable via `CORTEXGRAPH_PROMOTE_THRESHOLD`)
+- OR use_count ≥ 5 within 14 days
+- OR force=True
+
+**Python Usage:**
+
+```python
+from cortexgraph.agents import LTMPromoter
+
+promoter = LTMPromoter(dry_run=True)
+results = promoter.run()  # Returns list[PromotionResult]
+```
+
+**Result Type - PromotionResult:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `memory_id` | string | ID of promoted memory |
+| `vault_path` | string | Path in Obsidian vault |
+| `criteria_met` | list[str] | Which criteria triggered promotion |
+
+---
+
+### RelationshipDiscovery
+
+Finds cross-domain connections between memories.
+
+**Purpose:** Discover and create relations between memories sharing entities.
+
+**Relation Metrics:**
+
+- **Strength**: Weighted Jaccard similarity (70% entities, 30% tags)
+- **Confidence**: Based on number of shared entities/tags
+
+**Python Usage:**
+
+```python
+from cortexgraph.agents import RelationshipDiscovery
+
+discovery = RelationshipDiscovery(
+    dry_run=True,
+    min_shared_entities=2,
+    min_confidence=0.5
+)
+results = discovery.run()  # Returns list[RelationResult]
+```
+
+**Result Type - RelationResult:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `from_id` | string | Source memory ID |
+| `to_id` | string | Target memory ID |
+| `relation_type` | string | Type of relation (always "related") |
+| `strength` | float | Relation strength (0.0-1.0) |
+| `confidence` | float | Detection confidence (0.0-1.0) |
+| `shared_entities` | list[str] | Entities shared between memories |
+| `reasoning` | string | Human-readable explanation |
+
+---
+
+### Agent Configuration
+
+**Environment Variables:**
+
+```bash
+# Scheduler
+CORTEXGRAPH_CONSOLIDATION_INTERVAL=3600  # Seconds between runs
+
+# Thresholds (existing)
+CORTEXGRAPH_FORGET_THRESHOLD=0.05        # Decay below this → delete
+CORTEXGRAPH_PROMOTE_THRESHOLD=0.65       # Score above this → promote
+CORTEXGRAPH_PROMOTE_USE_COUNT=5          # Uses within window → promote
+
+# Clustering
+CORTEXGRAPH_CLUSTER_THRESHOLD=0.83       # Default similarity threshold
+CORTEXGRAPH_MIN_CLUSTER_SIZE=2           # Minimum memories per cluster
+```
+
+**Agent-Specific Configuration:**
+
+Each agent accepts configuration in their constructors:
+
+```python
+ClusterDetector(
+    dry_run=True,
+    similarity_threshold=0.83,  # Minimum similarity to cluster
+    min_cluster_size=2,         # Minimum memories per cluster
+    rate_limit=60,              # Max operations per minute
+)
+
+RelationshipDiscovery(
+    dry_run=True,
+    min_shared_entities=2,      # Minimum shared entities to create relation
+    min_confidence=0.5,         # Minimum confidence threshold
+)
+```
+
+---
+
+### Beads Integration
+
+Agents coordinate through [beads](https://github.com/steveyegge/beads) issue tracking.
+
+**Label Convention:**
+
+| Agent | Label |
+|-------|-------|
+| Decay | `consolidation:decay` |
+| Cluster | `consolidation:cluster` |
+| Merge | `consolidation:merge` |
+| Promote | `consolidation:promote` |
+| Relations | `consolidation:relations` |
+
+**Issue Flow:**
+
+1. DecayAnalyzer scans → Creates issues for at-risk memories
+2. ClusterDetector scans → Creates issues with clusters for merging
+3. SemanticMerge reads issues → Processes merge requests
+4. Issues closed on completion
+
+**Programmatic Integration:**
+
+```python
+from cortexgraph.agents.beads_integration import (
+    create_consolidation_issue,
+    query_consolidation_issues,
+    claim_issue,
+    close_issue,
+)
+
+# Create issue
+issue_id = create_consolidation_issue(
+    agent="decay",
+    memory_ids=["mem-123", "mem-456"],
+    action="reinforce",
+    urgency="high",
+)
+
+# Query issues
+open_issues = query_consolidation_issues(
+    agent="cluster",
+    status="open",
+)
+
+# Claim and process
+if claim_issue(issue_id):
+    # ... do work ...
+    close_issue(issue_id, "Processed successfully")
+```

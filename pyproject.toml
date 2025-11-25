@@ -50,6 +50,7 @@ cortexgraph-vault = "cortexgraph.vault.markdown_writer:main"
 cortexgraph-search = "cortexgraph.tools.search_unified:main"
 cortexgraph-maintenance = "cortexgraph.storage.maintenance:main"
 cortexgraph-web = "cortexgraph.web.cli:main"
+cortexgraph-consolidate = "cortexgraph.cli.consolidate:main"
 
 [build-system]
 requires = ["hatchling"]
