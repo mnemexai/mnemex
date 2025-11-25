@@ -137,23 +137,23 @@
 
 ### Tests for User Story 3
 
-- [ ] T045 [P] [US3] Contract test: SemanticMerge.scan() reads from beads issues in `tests/contract/test_semantic_merge.py`
-- [ ] T046 [P] [US3] Contract test: SemanticMerge.process_item() returns MergeResult in `tests/contract/test_semantic_merge.py`
-- [ ] T047 [P] [US3] Unit test: content deduplication in `tests/unit/agents/test_semantic_merge.py`
-- [ ] T048 [P] [US3] Unit test: entity/tag union preservation in `tests/unit/agents/test_semantic_merge.py`
-- [ ] T049 [US3] Integration test: full merge with relation creation in `tests/integration/agents/test_semantic_merge.py`
+- [X] T045 [P] [US3] Contract test: SemanticMerge.scan() reads from beads issues in `tests/contract/test_semantic_merge.py`
+- [X] T046 [P] [US3] Contract test: SemanticMerge.process_item() returns MergeResult in `tests/contract/test_semantic_merge.py`
+- [X] T047 [P] [US3] Unit test: content deduplication in `tests/unit/agents/test_semantic_merge.py`
+- [X] T048 [P] [US3] Unit test: entity/tag union preservation in `tests/unit/agents/test_semantic_merge.py`
+- [X] T049 [US3] Integration test: full merge with relation creation in `tests/integration/agents/test_semantic_merge_e2e.py`
 
 ### Implementation for User Story 3
 
-- [ ] T050 [US3] Create SemanticMerge class skeleton in `src/cortexgraph/agents/semantic_merge.py`
-- [ ] T051 [US3] Implement `scan()` - query beads for consolidation:merge issues in `src/cortexgraph/agents/semantic_merge.py`
-- [ ] T052 [US3] Implement `process_item()` - merge content, preserve entities in `src/cortexgraph/agents/semantic_merge.py`
-- [ ] T053 [US3] Integrate with existing `core/consolidation.py` for merge logic
-- [ ] T054 [US3] Create `consolidated_from` relations after merge
-- [ ] T055 [US3] Archive original memories (status=archived, not deleted)
-- [ ] T056 [US3] Close beads issue on successful merge
+- [X] T050 [US3] Create SemanticMerge class skeleton in `src/cortexgraph/agents/semantic_merge.py`
+- [X] T051 [US3] Implement `scan()` - query beads for consolidation:merge issues in `src/cortexgraph/agents/semantic_merge.py`
+- [X] T052 [US3] Implement `process_item()` - merge content, preserve entities in `src/cortexgraph/agents/semantic_merge.py`
+- [X] T053 [US3] Integrate with existing `core/consolidation.py` for merge logic
+- [X] T054 [US3] Create `consolidated_from` relations after merge
+- [X] T055 [US3] Archive original memories (status=archived, not deleted)
+- [X] T056 [US3] Close beads issue on successful merge
 
-**Checkpoint**: Semantic Merge should be fully functional and independently testable
+**Checkpoint**: ✅ Semantic Merge fully functional and independently testable (41 tests)
 
 ---
 

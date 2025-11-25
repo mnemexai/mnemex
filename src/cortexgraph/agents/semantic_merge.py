@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import json
 import logging
+import time
 import uuid
 from typing import TYPE_CHECKING
 
@@ -30,6 +31,13 @@ from cortexgraph.agents.beads_integration import (
     query_consolidation_issues,
 )
 from cortexgraph.agents.models import MergeResult
+from cortexgraph.core.consolidation import (
+    calculate_merged_strength,
+    merge_content_smart,
+    merge_entities,
+    merge_metadata,
+)
+from cortexgraph.storage.models import Memory, MemoryStatus, Relation
 
 if TYPE_CHECKING:
     from cortexgraph.storage.jsonl_storage import JSONLStorage
@@ -147,13 +155,21 @@ class SemanticMerge(ConsolidationAgent[MergeResult]):
             raise ValueError(f"Issue {issue_id} has fewer than 2 memories to merge")
 
         # Fetch source memories
+        # Check memories dict first (for tests), then try connected storage methods
         source_memories = []
         for mem_id in memory_ids:
-            mem = self.storage.get(mem_id) if hasattr(self.storage, "get") else None
-            if mem is None and hasattr(self.storage, "get_memory"):
-                mem = self.storage.get_memory(mem_id)
-            if mem is None and hasattr(self.storage, "memories"):
+            mem = None
+            # First try direct dict access (for mocks/tests)
+            if hasattr(self.storage, "memories") and isinstance(self.storage.memories, dict):
                 mem = self.storage.memories.get(mem_id)
+            # Then try storage methods (for real storage)
+            if mem is None:
+                try:
+                    if hasattr(self.storage, "get_memory"):
+                        mem = self.storage.get_memory(mem_id)
+                except RuntimeError:
+                    # Storage not connected - already checked dict above
+                    pass
             if mem is None:
                 raise ValueError(f"Memory not found: {mem_id}")
             source_memories.append(mem)
@@ -205,18 +221,70 @@ class SemanticMerge(ConsolidationAgent[MergeResult]):
             raise RuntimeError(f"Failed to claim issue {issue_id}")
 
         try:
-            # Create merged memory
-            # (Implementation depends on storage interface)
-            # For now, we'll simulate success
+            # Get cohesion from issue notes (for strength calculation)
+            cohesion = notes.get("cohesion", 0.8)
 
-            # Create consolidated_from relations
+            # Use consolidation module for intelligent merging (T053)
+            merged_content = merge_content_smart(source_memories)
+            merged_meta = merge_metadata(source_memories)
+            merged_entities_list = merge_entities(source_memories)
+            merged_strength = calculate_merged_strength(source_memories, cohesion)
+
+            # Calculate timestamps: earliest created, latest used
+            earliest_created = min(
+                getattr(m, "created_at", int(time.time())) for m in source_memories
+            )
+            latest_used = max(
+                getattr(m, "last_used", int(time.time())) for m in source_memories
+            )
+            total_use_count = sum(
+                getattr(m, "use_count", 0) for m in source_memories
+            )
+
+            # Create the merged memory
+            merged_memory = Memory(
+                id=new_memory_id,
+                content=merged_content,
+                meta=merged_meta,
+                entities=merged_entities_list,
+                created_at=earliest_created,
+                last_used=latest_used,
+                use_count=total_use_count,
+                strength=merged_strength,
+                status=MemoryStatus.ACTIVE,
+            )
+
+            # Save merged memory
+            self.storage.save_memory(merged_memory)
+            logger.info(f"Created merged memory {new_memory_id}")
+
+            # Create consolidated_from relations (T054)
             relation_ids = []
-            # TODO: Implement actual relation creation
+            now = int(time.time())
+            for orig_id in memory_ids:
+                relation = Relation(
+                    id=str(uuid.uuid4()),
+                    from_memory_id=new_memory_id,
+                    to_memory_id=orig_id,
+                    relation_type="consolidated_from",
+                    strength=1.0,
+                    created_at=now,
+                    metadata={
+                        "cluster_id": cluster_id,
+                        "cohesion": cohesion,
+                        "beads_issue_id": issue_id,
+                    },
+                )
+                self.storage.create_relation(relation)
+                relation_ids.append(relation.id)
+            logger.info(f"Created {len(relation_ids)} consolidated_from relations")
 
-            # Archive original memories
-            # TODO: Implement actual archiving
+            # Archive original memories (T055) - status change, not delete
+            for orig_id in memory_ids:
+                self.storage.update_memory(orig_id, status=MemoryStatus.ARCHIVED)
+            logger.info(f"Archived {len(memory_ids)} original memories")
 
-            # Close the beads issue
+            # Close the beads issue (T056)
             close_issue(issue_id, f"Merged into {new_memory_id}")
 
             return MergeResult(
