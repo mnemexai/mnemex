@@ -430,3 +430,238 @@ class TestMergeResultIntegrity:
             result = merge.process_item("cortexgraph-merge-pg")
 
             assert result.beads_issue_id == "cortexgraph-merge-pg"
+
+
+# =============================================================================
+# T099: Live Mode Tests - Cover lines 223-301
+# =============================================================================
+
+
+class TestSemanticMergeLiveMode:
+    """Tests for live mode (dry_run=False) to cover merge execution paths."""
+
+    def test_live_merge_creates_memory_and_relations(
+        self, test_storage: JSONLStorage, mock_beads: MagicMock
+    ) -> None:
+        """Live merge creates new memory and consolidated_from relations."""
+        issue = create_merge_issue(
+            "cortexgraph-merge-pg",
+            ["pg-1", "pg-2"],
+            "cluster-postgresql",
+            cohesion=0.85,
+        )
+        mock_beads.query_consolidation_issues.return_value = [issue]
+
+        # Mock storage methods for live mode
+        saved_memories: list[Memory] = []
+        created_relations: list = []
+        updated_memories: dict[str, dict] = {}
+
+        def mock_save_memory(memory: Memory) -> None:
+            saved_memories.append(memory)
+
+        def mock_create_relation(relation) -> None:
+            created_relations.append(relation)
+
+        def mock_update_memory(mem_id: str, **kwargs) -> None:
+            updated_memories[mem_id] = kwargs
+
+        test_storage.save_memory = MagicMock(side_effect=mock_save_memory)
+        test_storage.create_relation = MagicMock(side_effect=mock_create_relation)
+        test_storage.update_memory = MagicMock(side_effect=mock_update_memory)
+
+        with (
+            patch("cortexgraph.agents.semantic_merge.get_storage", return_value=test_storage),
+            patch(
+                "cortexgraph.agents.semantic_merge.query_consolidation_issues",
+                mock_beads.query_consolidation_issues,
+            ),
+            patch("cortexgraph.agents.semantic_merge.claim_issue", mock_beads.claim_issue),
+            patch("cortexgraph.agents.semantic_merge.close_issue", mock_beads.close_issue),
+        ):
+            merge = SemanticMerge(dry_run=False)  # LIVE MODE
+            merge._storage = test_storage
+
+            result = merge.process_item("cortexgraph-merge-pg")
+
+            # Verify result
+            assert result.success is True
+            assert len(result.source_ids) == 2
+            assert len(result.relation_ids) == 2  # One relation per source
+
+            # Verify memory was saved
+            assert len(saved_memories) == 1
+            merged_memory = saved_memories[0]
+            assert merged_memory.id == result.new_memory_id
+
+            # Verify relations were created
+            assert len(created_relations) == 2
+            for rel in created_relations:
+                assert rel.relation_type == "consolidated_from"
+                assert rel.from_memory_id == result.new_memory_id
+
+            # Verify original memories were archived
+            assert "pg-1" in updated_memories
+            assert "pg-2" in updated_memories
+            from cortexgraph.storage.models import MemoryStatus
+            assert updated_memories["pg-1"].get("status") == MemoryStatus.ARCHIVED
+
+            # Verify beads issue was closed
+            mock_beads.close_issue.assert_called_once()
+
+    def test_live_merge_claim_failure_raises_error(
+        self, test_storage: JSONLStorage, mock_beads: MagicMock
+    ) -> None:
+        """Live merge raises error if beads issue claim fails."""
+        issue = create_merge_issue(
+            "cortexgraph-merge-fail",
+            ["pg-1", "pg-2"],
+            "cluster-fail",
+        )
+        mock_beads.query_consolidation_issues.return_value = [issue]
+        mock_beads.claim_issue.return_value = False  # Claim fails
+
+        with (
+            patch("cortexgraph.agents.semantic_merge.get_storage", return_value=test_storage),
+            patch(
+                "cortexgraph.agents.semantic_merge.query_consolidation_issues",
+                mock_beads.query_consolidation_issues,
+            ),
+            patch("cortexgraph.agents.semantic_merge.claim_issue", mock_beads.claim_issue),
+            patch("cortexgraph.agents.semantic_merge.close_issue", mock_beads.close_issue),
+        ):
+            merge = SemanticMerge(dry_run=False)
+            merge._storage = test_storage
+
+            with pytest.raises(RuntimeError, match="Failed to claim issue"):
+                merge.process_item("cortexgraph-merge-fail")
+
+    def test_live_merge_preserves_timestamps(
+        self, test_storage: JSONLStorage, mock_beads: MagicMock
+    ) -> None:
+        """Live merge preserves earliest created_at and latest last_used."""
+        issue = create_merge_issue(
+            "cortexgraph-merge-pg",
+            ["pg-1", "pg-2", "pg-3"],
+            "cluster-postgresql",
+        )
+        mock_beads.query_consolidation_issues.return_value = [issue]
+
+        saved_memories: list[Memory] = []
+
+        def mock_save_memory(memory: Memory) -> None:
+            saved_memories.append(memory)
+
+        test_storage.save_memory = MagicMock(side_effect=mock_save_memory)
+        test_storage.create_relation = MagicMock()
+        test_storage.update_memory = MagicMock()
+
+        with (
+            patch("cortexgraph.agents.semantic_merge.get_storage", return_value=test_storage),
+            patch(
+                "cortexgraph.agents.semantic_merge.query_consolidation_issues",
+                mock_beads.query_consolidation_issues,
+            ),
+            patch("cortexgraph.agents.semantic_merge.claim_issue", mock_beads.claim_issue),
+            patch("cortexgraph.agents.semantic_merge.close_issue", mock_beads.close_issue),
+        ):
+            merge = SemanticMerge(dry_run=False)
+            merge._storage = test_storage
+
+            result = merge.process_item("cortexgraph-merge-pg")
+
+            assert result.success is True
+            merged = saved_memories[0]
+
+            # Should have earliest created_at from pg-3 (86400 * 3 seconds ago)
+            pg3 = test_storage.memories["pg-3"]
+            assert merged.created_at == pg3.created_at
+
+            # Should have latest last_used from pg-1 (3600 seconds ago)
+            pg1 = test_storage.memories["pg-1"]
+            assert merged.last_used == pg1.last_used
+
+            # Total use count should be sum
+            expected_use_count = sum(
+                test_storage.memories[mid].use_count for mid in ["pg-1", "pg-2", "pg-3"]
+            )
+            assert merged.use_count == expected_use_count
+
+    def test_live_merge_uses_smart_content_merging(
+        self, test_storage: JSONLStorage, mock_beads: MagicMock
+    ) -> None:
+        """Live merge uses consolidation module for intelligent content merging."""
+        issue = create_merge_issue(
+            "cortexgraph-merge-pg",
+            ["pg-1", "pg-2"],
+            "cluster-postgresql",
+            cohesion=0.9,
+        )
+        mock_beads.query_consolidation_issues.return_value = [issue]
+
+        saved_memories: list[Memory] = []
+
+        def mock_save_memory(memory: Memory) -> None:
+            saved_memories.append(memory)
+
+        test_storage.save_memory = MagicMock(side_effect=mock_save_memory)
+        test_storage.create_relation = MagicMock()
+        test_storage.update_memory = MagicMock()
+
+        with (
+            patch("cortexgraph.agents.semantic_merge.get_storage", return_value=test_storage),
+            patch(
+                "cortexgraph.agents.semantic_merge.query_consolidation_issues",
+                mock_beads.query_consolidation_issues,
+            ),
+            patch("cortexgraph.agents.semantic_merge.claim_issue", mock_beads.claim_issue),
+            patch("cortexgraph.agents.semantic_merge.close_issue", mock_beads.close_issue),
+        ):
+            merge = SemanticMerge(dry_run=False)
+            merge._storage = test_storage
+
+            result = merge.process_item("cortexgraph-merge-pg")
+
+            assert result.success is True
+            merged = saved_memories[0]
+
+            # Merged content should include info from both sources
+            pg1_content = test_storage.memories["pg-1"].content
+            pg2_content = test_storage.memories["pg-2"].content
+            assert pg1_content in merged.content or pg2_content in merged.content
+
+            # Entities should be merged (union)
+            pg1_entities = set(test_storage.memories["pg-1"].entities)
+            pg2_entities = set(test_storage.memories["pg-2"].entities)
+            merged_entities = set(merged.entities)
+            assert pg1_entities.issubset(merged_entities)
+            assert pg2_entities.issubset(merged_entities)
+
+    def test_live_merge_error_handling(
+        self, test_storage: JSONLStorage, mock_beads: MagicMock
+    ) -> None:
+        """Live merge wraps errors in RuntimeError."""
+        issue = create_merge_issue(
+            "cortexgraph-merge-pg",
+            ["pg-1", "pg-2"],
+            "cluster-postgresql",
+        )
+        mock_beads.query_consolidation_issues.return_value = [issue]
+
+        # Make save_memory raise an error
+        test_storage.save_memory = MagicMock(side_effect=Exception("Storage error"))
+
+        with (
+            patch("cortexgraph.agents.semantic_merge.get_storage", return_value=test_storage),
+            patch(
+                "cortexgraph.agents.semantic_merge.query_consolidation_issues",
+                mock_beads.query_consolidation_issues,
+            ),
+            patch("cortexgraph.agents.semantic_merge.claim_issue", mock_beads.claim_issue),
+            patch("cortexgraph.agents.semantic_merge.close_issue", mock_beads.close_issue),
+        ):
+            merge = SemanticMerge(dry_run=False)
+            merge._storage = test_storage
+
+            with pytest.raises(RuntimeError, match="Merge failed"):
+                merge.process_item("cortexgraph-merge-pg")

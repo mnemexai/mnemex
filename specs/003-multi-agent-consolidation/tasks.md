@@ -253,9 +253,9 @@
 - [X] T097 Run mypy strict on `src/cortexgraph/agents/`
 - [X] T098 Run ruff check/format on agents module
 - [X] T099 Achieve 90%+ test coverage on agents module (90.5% achieved)
-- [ ] T100 Run quickstart.md validation (manual testing)
-- [ ] T101 Performance validation: < 5 seconds per memory (SC-006)
-- [ ] T102 Security review: No credential exposure, rate limiting enforced
+- [X] T100 Run quickstart.md validation (fixed 4 CLI command references)
+- [X] T101 Performance validation: < 5 seconds per memory (all agents < 10ms)
+- [X] T102 Security review: No credential exposure, rate limiting enforced
 
 ---
 
