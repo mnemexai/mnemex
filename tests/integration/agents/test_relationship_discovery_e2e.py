@@ -515,3 +515,389 @@ class TestRelationshipDiscoveryLiveMode:
             result = discovery.process_item(candidates[0])
 
             assert result.beads_issue_id == "beads-test-789"
+
+
+class TestRelationshipDiscoveryCoverageGaps:
+    """Tests targeting specific coverage gaps in relationship_discovery.py."""
+
+    def test_invalid_pair_id_no_colon(self, temp_storage: JSONLStorage) -> None:
+        """ValueError when pair_id has no colon separator (covers lines 241, 245)."""
+        from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
+
+        with patch(
+            "cortexgraph.agents.relationship_discovery.get_storage",
+            return_value=temp_storage,
+        ):
+            discovery = RelationshipDiscovery(dry_run=True)
+            discovery._storage = temp_storage
+
+            with pytest.raises(ValueError, match="Invalid pair ID format"):
+                discovery.process_item("invalid-pair-id-no-colon")
+
+    def test_process_item_not_in_cache_recalculates(
+        self, populated_storage: JSONLStorage
+    ) -> None:
+        """When pair not in cache, recalculates shared entities (covers lines 254-264)."""
+        from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
+
+        with patch(
+            "cortexgraph.agents.relationship_discovery.get_storage",
+            return_value=populated_storage,
+        ):
+            discovery = RelationshipDiscovery(dry_run=True, min_shared_entities=1)
+            discovery._storage = populated_storage
+
+            # Process without scanning (cache will be empty)
+            # Manually construct a valid pair_id
+            pair_id = "mem-pg-config:mem-pg-perf"
+
+            # Cache should be empty
+            assert pair_id not in discovery._candidate_cache
+
+            # Process should still work by recalculating
+            result = discovery.process_item(pair_id)
+
+            assert result.strength >= 0.0
+            assert len(result.shared_entities) >= 1
+
+    def test_process_item_memory_not_found(
+        self, populated_storage: JSONLStorage
+    ) -> None:
+        """ValueError when memory not found (covers lines 257-260)."""
+        from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
+
+        with patch(
+            "cortexgraph.agents.relationship_discovery.get_storage",
+            return_value=populated_storage,
+        ):
+            discovery = RelationshipDiscovery(dry_run=True)
+            discovery._storage = populated_storage
+
+            # Pair with non-existent memory
+            with pytest.raises(ValueError, match="Memory not found"):
+                discovery.process_item("nonexistent-mem:mem-pg-config")
+
+    def test_live_mode_relation_creation_error(
+        self, populated_storage: JSONLStorage
+    ) -> None:
+        """RuntimeError when relation creation fails (covers lines 357-359)."""
+        from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
+
+        with (
+            patch(
+                "cortexgraph.agents.relationship_discovery.get_storage",
+                return_value=populated_storage,
+            ),
+            patch(
+                "cortexgraph.agents.relationship_discovery.create_consolidation_issue",
+                return_value="mock-issue",
+            ),
+        ):
+            discovery = RelationshipDiscovery(
+                dry_run=False, min_shared_entities=2, min_confidence=0.3
+            )
+            discovery._storage = populated_storage
+
+            # Make create_relation fail
+            def fail_create(*args, **kwargs):
+                raise Exception("Database error")
+
+            populated_storage.create_relation = fail_create
+
+            candidates = discovery.scan()
+            assert len(candidates) >= 1
+
+            with pytest.raises(RuntimeError, match="Relation creation failed"):
+                discovery.process_item(candidates[0])
+
+    def test_get_memory_via_storage_method(
+        self, temp_storage: JSONLStorage
+    ) -> None:
+        """_get_memory uses storage.get_memory when no dict (covers lines 368-374)."""
+        from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
+        from unittest.mock import MagicMock
+
+        # Create storage mock with get_memory but no memories dict
+        mock_storage = MagicMock()
+        del mock_storage.memories  # Remove memories attribute
+
+        now = int(time.time())
+        test_memory = Memory(
+            id="test-mem",
+            content="Test",
+            entities=["E1"],
+            meta=MemoryMetadata(tags=["t1"]),
+            strength=1.0,
+            use_count=1,
+            created_at=now,
+            last_used=now,
+            status=MemoryStatus.ACTIVE,
+        )
+        mock_storage.get_memory.return_value = test_memory
+
+        with patch(
+            "cortexgraph.agents.relationship_discovery.get_storage",
+            return_value=mock_storage,
+        ):
+            discovery = RelationshipDiscovery(dry_run=True)
+            discovery._storage = mock_storage
+
+            result = discovery._get_memory("test-mem")
+
+            assert result == test_memory
+            mock_storage.get_memory.assert_called_with("test-mem")
+
+    def test_get_memory_returns_none_on_exception(
+        self, temp_storage: JSONLStorage
+    ) -> None:
+        """_get_memory returns None when get_memory raises exception."""
+        from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
+        from unittest.mock import MagicMock
+
+        mock_storage = MagicMock()
+        del mock_storage.memories
+        mock_storage.get_memory.side_effect = Exception("Not found")
+
+        with patch(
+            "cortexgraph.agents.relationship_discovery.get_storage",
+            return_value=mock_storage,
+        ):
+            discovery = RelationshipDiscovery(dry_run=True)
+            discovery._storage = mock_storage
+
+            result = discovery._get_memory("nonexistent")
+
+            assert result is None
+
+    def test_calculate_relation_metrics_no_shared(
+        self, temp_storage: JSONLStorage
+    ) -> None:
+        """Reasoning shows 'No shared entities or tags' (covers line 436)."""
+        from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
+
+        now = int(time.time())
+
+        # Create two memories with NO shared entities or tags
+        mem1 = Memory(
+            id="mem-unique-1",
+            content="Unique memory 1",
+            entities=["Entity1"],
+            meta=MemoryMetadata(tags=["tag1"]),
+            strength=1.0,
+            use_count=1,
+            created_at=now,
+            last_used=now,
+            status=MemoryStatus.ACTIVE,
+        )
+        mem2 = Memory(
+            id="mem-unique-2",
+            content="Unique memory 2",
+            entities=["Entity2"],
+            meta=MemoryMetadata(tags=["tag2"]),
+            strength=1.0,
+            use_count=1,
+            created_at=now,
+            last_used=now,
+            status=MemoryStatus.ACTIVE,
+        )
+        temp_storage.save_memory(mem1)
+        temp_storage.save_memory(mem2)
+
+        with patch(
+            "cortexgraph.agents.relationship_discovery.get_storage",
+            return_value=temp_storage,
+        ):
+            discovery = RelationshipDiscovery(dry_run=True)
+            discovery._storage = temp_storage
+
+            # Call _calculate_relation_metrics with empty shared set
+            strength, confidence, reasoning = discovery._calculate_relation_metrics(
+                "mem-unique-1", "mem-unique-2", set()  # No shared entities
+            )
+
+            assert reasoning == "No shared entities or tags"
+            assert strength == 0.0
+
+    def test_scan_with_storage_list_memories_method(
+        self, temp_storage: JSONLStorage
+    ) -> None:
+        """Scan uses list_memories when available (covers lines 111-115)."""
+        from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
+        from unittest.mock import MagicMock
+
+        now = int(time.time())
+        memories = [
+            Memory(
+                id="m1",
+                content="Memory 1",
+                entities=["Shared"],
+                meta=MemoryMetadata(tags=["t1"]),
+                strength=1.0,
+                use_count=1,
+                created_at=now,
+                last_used=now,
+                status=MemoryStatus.ACTIVE,
+            ),
+            Memory(
+                id="m2",
+                content="Memory 2",
+                entities=["Shared"],
+                meta=MemoryMetadata(tags=["t2"]),
+                strength=1.0,
+                use_count=1,
+                created_at=now,
+                last_used=now,
+                status=MemoryStatus.ACTIVE,
+            ),
+        ]
+
+        mock_storage = MagicMock()
+        # Remove memories dict to force method fallback
+        del mock_storage.memories
+        mock_storage.list_memories.return_value = memories
+        mock_storage.relations = {}  # Empty relations
+
+        with patch(
+            "cortexgraph.agents.relationship_discovery.get_storage",
+            return_value=mock_storage,
+        ):
+            discovery = RelationshipDiscovery(dry_run=True, min_shared_entities=1)
+            discovery._storage = mock_storage
+
+            candidates = discovery.scan()
+
+            mock_storage.list_memories.assert_called_once()
+            assert len(candidates) >= 1
+
+    def test_scan_with_storage_runtime_error(
+        self, temp_storage: JSONLStorage
+    ) -> None:
+        """Scan handles RuntimeError from storage (covers lines 116-118)."""
+        from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
+        from unittest.mock import MagicMock
+
+        mock_storage = MagicMock()
+        del mock_storage.memories
+        mock_storage.list_memories.side_effect = RuntimeError("Storage not connected")
+
+        with patch(
+            "cortexgraph.agents.relationship_discovery.get_storage",
+            return_value=mock_storage,
+        ):
+            discovery = RelationshipDiscovery(dry_run=True)
+            discovery._storage = mock_storage
+
+            candidates = discovery.scan()
+
+            # Should return empty list, not raise
+            assert candidates == []
+
+    def test_existing_relations_via_get_relations_method(
+        self, temp_storage: JSONLStorage
+    ) -> None:
+        """_get_existing_relation_pairs uses get_relations method (covers 195-205)."""
+        from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
+        from unittest.mock import MagicMock
+
+        existing_rel = Relation(
+            id="rel-1",
+            from_memory_id="m1",
+            to_memory_id="m2",
+            relation_type="related",
+            strength=0.8,
+        )
+
+        mock_storage = MagicMock()
+        del mock_storage.relations  # Force method fallback
+        mock_storage.get_relations.return_value = [existing_rel]
+
+        with patch(
+            "cortexgraph.agents.relationship_discovery.get_storage",
+            return_value=mock_storage,
+        ):
+            discovery = RelationshipDiscovery(dry_run=True)
+            discovery._storage = mock_storage
+
+            existing = discovery._get_existing_relation_pairs()
+
+            assert ("m1", "m2") in existing or ("m2", "m1") in existing
+
+    def test_existing_relations_via_get_all_relations_method(
+        self, temp_storage: JSONLStorage
+    ) -> None:
+        """_get_existing_relation_pairs falls back to get_all_relations (lines 206-215)."""
+        from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
+        from unittest.mock import MagicMock
+
+        existing_rel = Relation(
+            id="rel-1",
+            from_memory_id="a1",
+            to_memory_id="b2",
+            relation_type="related",
+            strength=0.8,
+        )
+
+        # Create mock that ONLY has get_all_relations (no relations dict, no get_relations)
+        mock_storage = MagicMock(spec=["get_all_relations"])
+        mock_storage.get_all_relations.return_value = [existing_rel]
+
+        with patch(
+            "cortexgraph.agents.relationship_discovery.get_storage",
+            return_value=mock_storage,
+        ):
+            discovery = RelationshipDiscovery(dry_run=True)
+            discovery._storage = mock_storage
+
+            existing = discovery._get_existing_relation_pairs()
+
+            assert ("a1", "b2") in existing or ("b2", "a1") in existing
+
+    def test_scan_uses_get_all_memories_fallback(
+        self, temp_storage: JSONLStorage
+    ) -> None:
+        """Scan uses get_all_memories when list_memories not available (line 115)."""
+        from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
+        from unittest.mock import MagicMock
+
+        now = int(time.time())
+        memories = [
+            Memory(
+                id="m1",
+                content="Memory 1",
+                entities=["Shared"],
+                meta=MemoryMetadata(tags=["t1"]),
+                strength=1.0,
+                use_count=1,
+                created_at=now,
+                last_used=now,
+                status=MemoryStatus.ACTIVE,
+            ),
+            Memory(
+                id="m2",
+                content="Memory 2",
+                entities=["Shared"],
+                meta=MemoryMetadata(tags=["t2"]),
+                strength=1.0,
+                use_count=1,
+                created_at=now,
+                last_used=now,
+                status=MemoryStatus.ACTIVE,
+            ),
+        ]
+
+        # Create mock that ONLY has get_all_memories (not list_memories)
+        mock_storage = MagicMock(spec=["get_all_memories", "relations"])
+        mock_storage.get_all_memories.return_value = memories
+        mock_storage.relations = {}
+
+        with patch(
+            "cortexgraph.agents.relationship_discovery.get_storage",
+            return_value=mock_storage,
+        ):
+            discovery = RelationshipDiscovery(dry_run=True, min_shared_entities=1)
+            discovery._storage = mock_storage
+
+            candidates = discovery.scan()
+
+            mock_storage.get_all_memories.assert_called_once()
+            assert len(candidates) >= 1
