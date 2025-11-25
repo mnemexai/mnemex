@@ -2125,11 +2125,14 @@
 <p>When you revisit information, Claude uses <code>touch_memory</code> to strengthen it, preventing decay.</p>
 <h3 id="consolidate-similar-memories">Consolidate Similar Memories<a class="headerlink" href="#consolidate-similar-memories" title="Permanent link">&para;</a></h3>
 <p>When similar memories accumulate:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Find clusters</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>cortexgraph-consolidate<span class="w"> </span>--preview
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Find clusters (dry run)</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>cortexgraph-consolidate<span class="w"> </span>run<span class="w"> </span>--all<span class="w"> </span>--dry-run
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Apply consolidation</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>cortexgraph-consolidate<span class="w"> </span>--apply
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>cortexgraph-consolidate<span class="w"> </span>run<span class="w"> </span>--all
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># Check queue status</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>cortexgraph-consolidate<span class="w"> </span>status
 </code></pre></div>
 <p>Or let Claude do it automatically when detecting related memories.</p>
 <h2 id="example-workflow">Example Workflow<a class="headerlink" href="#example-workflow" title="Permanent link">&para;</a></h2>
@@ -2159,13 +2162,14 @@
 <p>Important memories automatically promote to LTM when:
 - Score &gt;= 0.65 (high value)
 - Used 5+ times in 14 days</p>
-<p>Or manually promote:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Find high-value memories</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>cortexgraph-promote<span class="w"> </span>--dry-run
+<p>Or manually promote via CLI:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Find promotion candidates (dry run)</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>cortexgraph-consolidate<span class="w"> </span>run<span class="w"> </span>promote<span class="w"> </span>--dry-run
 <a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Promote to Obsidian vault</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>cortexgraph-promote
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Execute promotion to Obsidian vault</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>cortexgraph-consolidate<span class="w"> </span>run<span class="w"> </span>promote
 </code></pre></div>
+<p>Or ask Claude to promote specific memories via the <code>promote_memory</code> MCP tool.</p>
 <h2 id="cli-tools">CLI Tools<a class="headerlink" href="#cli-tools" title="Permanent link">&para;</a></h2>
 <h3 id="search-across-stm-ltm">Search Across STM + LTM<a class="headerlink" href="#search-across-stm-ltm" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Basic search</span>
@@ -2188,18 +2192,23 @@
 <a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>cortexgraph-maintenance<span class="w"> </span>report
 </code></pre></div>
 <h3 id="garbage-collection">Garbage Collection<a class="headerlink" href="#garbage-collection" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Preview what will be deleted</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>cortexgraph-gc<span class="w"> </span>--dry-run
+<p>Low-scoring memories can be cleaned up via MCP (ask Claude to use the <code>gc</code> tool) or via the decay analyzer:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Find memories at risk of deletion (dry run)</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>cortexgraph-consolidate<span class="w"> </span>run<span class="w"> </span>decay<span class="w"> </span>--dry-run
 <a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># Delete low-scoring memories</span>
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>cortexgraph-gc
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># Process decay analysis</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>cortexgraph-consolidate<span class="w"> </span>run<span class="w"> </span>decay
 </code></pre></div>
 <h3 id="memory-consolidation">Memory Consolidation<a class="headerlink" href="#memory-consolidation" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Find similar memory clusters</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>cortexgraph-consolidate<span class="w"> </span>--preview<span class="w"> </span>--cohesion-threshold<span class="w"> </span><span class="m">0</span>.75
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Run full consolidation pipeline (dry run)</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>cortexgraph-consolidate<span class="w"> </span>run<span class="w"> </span>--all<span class="w"> </span>--dry-run
 <a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1"># Apply consolidation</span>
-<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>cortexgraph-consolidate<span class="w"> </span>--apply<span class="w"> </span>--cohesion-threshold<span class="w"> </span><span class="m">0</span>.80
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1"># Apply consolidation (all agents)</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>cortexgraph-consolidate<span class="w"> </span>run<span class="w"> </span>--all
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="c1"># Run individual agents</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>cortexgraph-consolidate<span class="w"> </span>run<span class="w"> </span>cluster<span class="w"> </span>--dry-run
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>cortexgraph-consolidate<span class="w"> </span>run<span class="w"> </span>merge<span class="w"> </span>--dry-run
 </code></pre></div>
 <h2 id="advanced-usage">Advanced Usage<a class="headerlink" href="#advanced-usage" title="Permanent link">&para;</a></h2>
 <h3 id="custom-decay-parameters">Custom Decay Parameters<a class="headerlink" href="#custom-decay-parameters" title="Permanent link">&para;</a></h3>
@@ -2251,7 +2260,7 @@
 </code></pre></div></p>
 <h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
 <ul>
-<li><a href="../api/">API Reference</a> - Learn all 11 MCP tools</li>
+<li><a href="../api/">API Reference</a> - Learn all 15 MCP tools</li>
 <li><a href="../architecture/">Architecture</a> - Understand how CortexGraph works</li>
 <li><a href="../graph_features/">Knowledge Graph</a> - Build connected concepts</li>
 <li><a href="../scoring_algorithm/">Scoring Algorithm</a> - Deep dive into decay</li>
