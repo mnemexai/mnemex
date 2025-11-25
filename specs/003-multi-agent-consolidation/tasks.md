@@ -247,12 +247,12 @@
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T094 [P] Update `docs/api.md` with new agent tools
-- [ ] T095 [P] Create `docs/agents.md` architecture documentation
-- [ ] T096 [P] Update `README.md` with consolidation agent section
-- [ ] T097 Run mypy strict on `src/cortexgraph/agents/`
-- [ ] T098 Run ruff check/format on agents module
-- [ ] T099 Achieve 90%+ test coverage on agents module
+- [X] T094 [P] Update `docs/api.md` with new agent tools
+- [X] T095 [P] Create `docs/agents.md` architecture documentation
+- [X] T096 [P] Update `README.md` with consolidation agent section
+- [X] T097 Run mypy strict on `src/cortexgraph/agents/`
+- [X] T098 Run ruff check/format on agents module
+- [X] T099 Achieve 90%+ test coverage on agents module (90.5% achieved)
 - [ ] T100 Run quickstart.md validation (manual testing)
 - [ ] T101 Performance validation: < 5 seconds per memory (SC-006)
 - [ ] T102 Security review: No credential exposure, rate limiting enforced
