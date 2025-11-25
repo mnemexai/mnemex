@@ -165,23 +165,23 @@
 
 ### Tests for User Story 4
 
-- [ ] T057 [P] [US4] Contract test: LTMPromoter.scan() finds promotion candidates in `tests/contract/test_ltm_promoter.py`
-- [ ] T058 [P] [US4] Contract test: LTMPromoter.process_item() returns PromotionResult in `tests/contract/test_ltm_promoter.py`
-- [ ] T059 [P] [US4] Unit test: promotion criteria matching in `tests/unit/agents/test_ltm_promoter.py`
-- [ ] T060 [P] [US4] Unit test: markdown generation in `tests/unit/agents/test_ltm_promoter.py`
-- [ ] T061 [US4] Integration test: full promotion with vault write in `tests/integration/agents/test_ltm_promoter.py`
+- [X] T057 [P] [US4] Contract test: LTMPromoter.scan() finds promotion candidates in `tests/contract/test_ltm_promoter.py`
+- [X] T058 [P] [US4] Contract test: LTMPromoter.process_item() returns PromotionResult in `tests/contract/test_ltm_promoter.py`
+- [X] T059 [P] [US4] Unit test: promotion criteria matching in `tests/unit/agents/test_ltm_promoter.py`
+- [X] T060 [P] [US4] Unit test: markdown generation in `tests/unit/agents/test_ltm_promoter.py`
+- [X] T061 [US4] Integration test: full promotion with vault write in `tests/integration/agents/test_ltm_promoter_e2e.py`
 
 ### Implementation for User Story 4
 
-- [ ] T062 [US4] Create LTMPromoter class skeleton in `src/cortexgraph/agents/ltm_promoter.py`
-- [ ] T063 [US4] Implement `scan()` - find memories meeting criteria in `src/cortexgraph/agents/ltm_promoter.py`
-- [ ] T064 [US4] Implement `process_item()` - write markdown, update status in `src/cortexgraph/agents/ltm_promoter.py`
-- [ ] T065 [US4] Integrate with existing `vault/writer.py` for markdown output
-- [ ] T066 [US4] Integrate with existing `core/scoring.py` for promotion criteria
-- [ ] T067 [US4] Prevent duplicate vault files
-- [ ] T068 [US4] Create beads issue documenting promotion
+- [X] T062 [US4] Create LTMPromoter class skeleton in `src/cortexgraph/agents/ltm_promoter.py`
+- [X] T063 [US4] Implement `scan()` - find memories meeting criteria in `src/cortexgraph/agents/ltm_promoter.py`
+- [X] T064 [US4] Implement `process_item()` - write markdown, update status in `src/cortexgraph/agents/ltm_promoter.py`
+- [X] T065 [US4] Integrate with existing `vault/writer.py` for markdown output
+- [X] T066 [US4] Integrate with existing `core/scoring.py` for promotion criteria
+- [X] T067 [US4] Prevent duplicate vault files
+- [X] T068 [US4] Create beads issue documenting promotion
 
-**Checkpoint**: LTM Promoter should be fully functional and independently testable
+**Checkpoint**: ✅ LTM Promoter fully functional and independently testable (49 tests: 16 contract, 18 unit, 15 integration)
 
 ---
 
