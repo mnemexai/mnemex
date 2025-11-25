@@ -598,24 +598,256 @@ Cluster similar memories for potential consolidation.
 
 ### consolidate_memories
 
-Consolidate similar memories using LLM-driven merging (NOT YET IMPLEMENTED).
+Consolidate similar memories using algorithmic merging or linking.
+
+This tool handles clusters in three ways:
+1. **MERGE** (`mode="apply"`): Combine memories into one (high cohesion ≥0.75)
+2. **LINK** (`mode="link"`): Create 'related' relations without merging (medium cohesion 0.40-0.75)
+3. **PREVIEW** (`mode="preview"`): Show what would happen without making changes
+
+Merging intelligently:
+- Combines content (preserving unique information)
+- Merges tags and entities (union)
+- Calculates appropriate strength based on cohesion
+- Preserves earliest `created_at` and latest `last_used` timestamps
 
 **Parameters:**
 
 | Name | Type | Required | Default | Description |
 |------|------|----------|---------|-------------|
-| `cluster_id` | string | Yes | - | Cluster ID to consolidate |
-| `mode` | string | No | "dry_run" | "dry_run" or "apply" |
+| `cluster_id` | string | No | - | Cluster ID to consolidate (required unless `auto_detect=true`) |
+| `mode` | string | No | "preview" | "preview", "apply", or "link" |
+| `auto_detect` | boolean | No | false | Auto-detect high-cohesion clusters |
+| `cohesion_threshold` | float | No | 0.75 | Minimum cohesion for auto-detection (0.0-1.0) |
+
+**Returns - Preview Mode:**
+
+```json
+{
+  "success": true,
+  "mode": "preview",
+  "auto_detect": true,
+  "candidates_found": 3,
+  "previews": [
+    {
+      "cluster_id": "cluster-abc",
+      "cohesion": 0.87,
+      "memory_count": 4,
+      "merged_content_preview": "Combined content from 4 memories...",
+      "merged_entities": ["entity1", "entity2"],
+      "merged_tags": ["tag1", "tag2"],
+      "calculated_strength": 1.4
+    }
+  ]
+}
+```
+
+**Returns - Apply Mode:**
+
+```json
+{
+  "success": true,
+  "mode": "apply",
+  "new_memory_id": "mem-new-123",
+  "source_ids": ["mem-1", "mem-2", "mem-3"],
+  "relation_ids": ["rel-1", "rel-2", "rel-3"],
+  "archived_count": 3,
+  "message": "Merged 3 memories into mem-new-123"
+}
+```
+
+**Returns - Link Mode:**
+
+```json
+{
+  "success": true,
+  "mode": "link",
+  "relations_created": 6,
+  "cluster_id": "cluster-abc",
+  "message": "Created 6 bidirectional relations linking 4 memories"
+}
+```
+
+**Example - Auto-detect and Preview:**
+
+```json
+{
+  "auto_detect": true,
+  "mode": "preview",
+  "cohesion_threshold": 0.80
+}
+```
+
+**Example - Apply Specific Cluster:**
+
+```json
+{
+  "cluster_id": "cluster-abc-123",
+  "mode": "apply"
+}
+```
+
+---
+
+### read_graph
+
+Read the entire knowledge graph of memories and relations.
+
+Returns the complete graph structure including all memories (with decay scores), all relations between memories, and statistics.
+
+**Parameters:**
+
+| Name | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `status` | string | No | "active" | Filter: "active", "promoted", "archived", "all" |
+| `include_scores` | boolean | No | true | Include decay scores and age |
+| `limit` | integer | No | - | Maximum memories to return (1-10,000) |
+| `page` | integer | No | 1 | Page number (1-indexed) |
+| `page_size` | integer | No | 10 | Memories per page (max: 100) |
 
 **Returns:**
 
 ```json
 {
-  "success": false,
-  "message": "Consolidation tool is not yet implemented...",
-  "status": "not_implemented",
-  "cluster_id": "cluster-abc",
-  "mode": "dry_run"
+  "success": true,
+  "memories": [
+    {
+      "id": "mem-123",
+      "content": "Important project info",
+      "entities": ["Project"],
+      "tags": ["work"],
+      "created_at": 1699012345,
+      "last_used": 1699112345,
+      "use_count": 5,
+      "strength": 1.2,
+      "status": "active",
+      "score": 0.7523,
+      "age_days": 5.2
+    }
+  ],
+  "relations": [
+    {
+      "id": "rel-123",
+      "from": "mem-123",
+      "to": "mem-456",
+      "type": "related",
+      "strength": 0.85,
+      "created_at": 1699012345
+    }
+  ],
+  "stats": {
+    "total_memories": 150,
+    "total_relations": 45,
+    "avg_score": 0.4521,
+    "avg_use_count": 2.3,
+    "status_filter": "active"
+  },
+  "pagination": {
+    "page": 1,
+    "page_size": 10,
+    "total_count": 150,
+    "total_pages": 15,
+    "has_more": true
+  }
+}
+```
+
+---
+
+### open_memories
+
+Retrieve specific memories by their IDs.
+
+Similar to the reference MCP memory server's `open_nodes` functionality. Returns detailed information including relations.
+
+**Parameters:**
+
+| Name | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `memory_ids` | string or array | Yes | - | ID(s) to retrieve (max 100) |
+| `include_relations` | boolean | No | true | Include relations from/to these memories |
+| `include_scores` | boolean | No | true | Include decay scores and age |
+| `page` | integer | No | 1 | Page number (1-indexed) |
+| `page_size` | integer | No | 10 | Memories per page (max: 100) |
+
+**Returns:**
+
+```json
+{
+  "success": true,
+  "count": 2,
+  "memories": [
+    {
+      "id": "mem-123",
+      "content": "Project deadline is Dec 15",
+      "entities": ["Project", "December"],
+      "tags": ["deadline"],
+      "source": "meeting notes",
+      "context": "Q4 planning",
+      "created_at": 1699012345,
+      "last_used": 1699112345,
+      "use_count": 5,
+      "strength": 1.2,
+      "status": "active",
+      "promoted_at": null,
+      "promoted_to": null,
+      "score": 0.7523,
+      "age_days": 5.2,
+      "relations": {
+        "outgoing": [
+          {"to": "mem-456", "type": "related", "strength": 0.85}
+        ],
+        "incoming": [
+          {"from": "mem-789", "type": "supports", "strength": 0.9}
+        ]
+      }
+    }
+  ],
+  "not_found": ["mem-invalid-id"]
+}
+```
+
+---
+
+### create_relation
+
+Create an explicit relation between two memories.
+
+Links two memories with a typed relationship for building knowledge graphs.
+
+**Parameters:**
+
+| Name | Type | Required | Default | Description |
+|------|------|----------|---------|-------------|
+| `from_memory_id` | string | Yes | - | Source memory ID (valid UUID) |
+| `to_memory_id` | string | Yes | - | Target memory ID (valid UUID) |
+| `relation_type` | string | Yes | - | Type: "related", "causes", "supports", "contradicts", "has_decision", "consolidated_from" |
+| `strength` | float | No | 1.0 | Relation strength (0.0-1.0) |
+| `metadata` | object | No | {} | Additional metadata |
+
+**Returns:**
+
+```json
+{
+  "success": true,
+  "relation_id": "rel-abc-123",
+  "from": "mem-123",
+  "to": "mem-456",
+  "type": "related",
+  "strength": 1.0,
+  "message": "Relation created: mem-123 --[related]--> mem-456"
+}
+```
+
+**Example:**
+
+```json
+{
+  "from_memory_id": "mem-123",
+  "to_memory_id": "mem-456",
+  "relation_type": "supports",
+  "strength": 0.9,
+  "metadata": {"reason": "Same project context"}
 }
 ```
 
