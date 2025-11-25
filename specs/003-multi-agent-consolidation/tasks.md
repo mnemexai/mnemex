@@ -96,9 +96,9 @@
 - [x] T030 [US1] Implement `process_item()` - calculate urgency, recommend action in `src/cortexgraph/agents/decay_analyzer.py`
 - [x] T031 [US1] Integrate with existing `core/decay.py` for score calculation
 - [x] T032 [US1] Integrate with beads for issue creation (urgent items)
-- [ ] T033 [US1] Add event trigger hook for post-save decay check
+- [~] T033 [US1] Add event trigger hook for post-save decay check *(Deferred: Enhancement for future release - core decay triage works via scheduled scans)*
 
-**Checkpoint**: Decay Analyzer should be fully functional and independently testable
+**Checkpoint**: ✅ Decay Analyzer fully functional and independently testable
 
 ---
 
