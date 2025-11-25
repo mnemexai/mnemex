@@ -80,6 +80,34 @@ class JSONLStorage:
         self.memories_path = self.storage_dir / config.stm_memories_filename
         self.relations_path = self.storage_dir / config.stm_relations_filename
 
+    @property
+    def memories(self) -> dict[str, "Memory"]:
+        """Access to in-memory memories dict.
+
+        Used by consolidation agents for direct iteration.
+        For filtered queries, prefer list_memories() or search_memories().
+        """
+        return self._memories
+
+    @memories.setter
+    def memories(self, value: dict[str, "Memory"]) -> None:
+        """Set memories dict (primarily for testing)."""
+        self._memories = value
+
+    @property
+    def relations(self) -> dict[str, "Relation"]:
+        """Access to in-memory relations dict.
+
+        Used by consolidation agents for direct iteration.
+        For filtered queries, prefer get_relations().
+        """
+        return self._relations
+
+    @relations.setter
+    def relations(self, value: dict[str, "Relation"]) -> None:
+        """Set relations dict (primarily for testing)."""
+        self._relations = value
+
     def connect(self) -> None:
         """Load JSONL files into memory and build indexes."""
         if self._connected:
