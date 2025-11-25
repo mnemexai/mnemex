@@ -193,21 +193,21 @@
 
 ### Tests for User Story 5
 
-- [ ] T069 [P] [US5] Contract test: RelationshipDiscovery.scan() finds candidates in `tests/contract/test_relationship_discovery.py`
-- [ ] T070 [P] [US5] Contract test: RelationshipDiscovery.process_item() returns RelationResult in `tests/contract/test_relationship_discovery.py`
-- [ ] T071 [P] [US5] Unit test: shared entity detection in `tests/unit/agents/test_relationship_discovery.py`
-- [ ] T072 [P] [US5] Unit test: relation strength calculation in `tests/unit/agents/test_relationship_discovery.py`
-- [ ] T073 [US5] Integration test: relation creation with reasoning in `tests/integration/agents/test_relationship_discovery.py`
+- [X] T069 [P] [US5] Contract test: RelationshipDiscovery.scan() finds candidates in `tests/contract/test_relationship_discovery.py`
+- [X] T070 [P] [US5] Contract test: RelationshipDiscovery.process_item() returns RelationResult in `tests/contract/test_relationship_discovery.py`
+- [X] T071 [P] [US5] Unit test: shared entity detection in `tests/unit/agents/test_relationship_discovery.py`
+- [X] T072 [P] [US5] Unit test: relation strength calculation in `tests/unit/agents/test_relationship_discovery.py`
+- [X] T073 [US5] Integration test: relation creation with reasoning in `tests/integration/agents/test_relationship_discovery.py`
 
 ### Implementation for User Story 5
 
-- [ ] T074 [US5] Create RelationshipDiscovery class skeleton in `src/cortexgraph/agents/relationship_discovery.py`
-- [ ] T075 [US5] Implement `scan()` - find memories with potential connections in `src/cortexgraph/agents/relationship_discovery.py`
-- [ ] T076 [US5] Implement `process_item()` - calculate strength, provide reasoning in `src/cortexgraph/agents/relationship_discovery.py`
-- [ ] T077 [US5] Integrate with existing `core/clustering.py` for similarity
-- [ ] T078 [US5] Create `related` relations via `create_relation` tool
-- [ ] T079 [US5] Prevent spurious relations (precision > 0.8)
-- [ ] T080 [US5] Create beads issue documenting discovered relations
+- [X] T074 [US5] Create RelationshipDiscovery class skeleton in `src/cortexgraph/agents/relationship_discovery.py`
+- [X] T075 [US5] Implement `scan()` - find memories with potential connections in `src/cortexgraph/agents/relationship_discovery.py`
+- [X] T076 [US5] Implement `process_item()` - calculate strength, provide reasoning in `src/cortexgraph/agents/relationship_discovery.py`
+- [X] T077 [US5] Integrate with existing `core/clustering.py` for similarity (using Jaccard similarity directly)
+- [X] T078 [US5] Create `related` relations via `create_relation` tool
+- [X] T079 [US5] Prevent spurious relations (precision > 0.8) via min_confidence threshold
+- [X] T080 [US5] Create beads issue documenting discovered relations via create_consolidation_issue()
 
 **Checkpoint**: Relationship Discovery should be fully functional and independently testable
 
