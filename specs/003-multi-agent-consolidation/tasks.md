@@ -231,7 +231,7 @@
 
 - [X] T088 Create hybrid scheduler at `src/cortexgraph/agents/scheduler.py`
 - [X] T089 Implement cron-like scheduled execution
-- [ ] T090 Implement event trigger for urgent decay (<0.10)
+- [X] T090 Implement event trigger for urgent decay (<0.10)
 
 ### CLI Tests
 

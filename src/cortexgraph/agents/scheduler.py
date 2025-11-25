@@ -47,6 +47,27 @@ DEFAULT_INTERVAL_SECONDS = 3600
 LAST_RUN_FILENAME = ".consolidation_last_run"
 
 
+def post_save_hook(memory_id: str) -> dict[str, Any] | None:
+    """Event-driven hook to check for urgent decay after save_memory.
+
+    This function is called after a memory is saved to detect if it
+    needs urgent attention (score < threshold). It's designed to be
+    fast and fail-safe - errors are logged but don't propagate.
+
+    Args:
+        memory_id: ID of the newly saved memory
+
+    Returns:
+        None if no urgent action needed, otherwise dict with action details
+    """
+    try:
+        scheduler = Scheduler()
+        return scheduler.post_save_check(memory_id)
+    except Exception as e:
+        logger.warning(f"post_save_hook error for {memory_id}: {e}")
+        return None
+
+
 def calculate_score(memory_id: str) -> float:
     """Calculate current decay score for a memory.
 
