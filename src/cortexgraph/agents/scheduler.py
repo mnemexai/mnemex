@@ -27,6 +27,8 @@ import logging
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
+    from pathlib import Path
+
     from cortexgraph.agents.base import ConsolidationAgent
     from cortexgraph.storage.jsonl_storage import JSONLStorage
 
@@ -37,6 +39,12 @@ AGENT_ORDER = ["decay", "cluster", "merge", "promote", "relations"]
 
 # Default threshold for urgent decay detection
 DEFAULT_URGENT_THRESHOLD = 0.10
+
+# Default interval between scheduled runs (1 hour)
+DEFAULT_INTERVAL_SECONDS = 3600
+
+# Filename for storing last run timestamp
+LAST_RUN_FILENAME = ".consolidation_last_run"
 
 
 def calculate_score(memory_id: str) -> float:
@@ -78,21 +86,34 @@ class Scheduler:
     Attributes:
         dry_run: If True, agents preview changes without modifying data
         urgent_threshold: Score threshold below which memory is urgent (default: 0.10)
+        interval_seconds: Minimum seconds between scheduled runs (default: 3600)
     """
 
     def __init__(
         self,
         dry_run: bool = False,
         urgent_threshold: float = DEFAULT_URGENT_THRESHOLD,
+        interval_seconds: int | None = None,
+        interval_hours: float | None = None,
     ) -> None:
         """Initialize the scheduler.
 
         Args:
             dry_run: If True, agents preview changes without modifying data
             urgent_threshold: Score threshold for urgent detection (default: 0.10)
+            interval_seconds: Minimum seconds between scheduled runs
+            interval_hours: Alternative way to specify interval (converted to seconds)
         """
         self.dry_run = dry_run
         self.urgent_threshold = urgent_threshold
+
+        # Handle interval - hours takes precedence if both specified
+        if interval_hours is not None:
+            self.interval_seconds = int(interval_hours * 3600)
+        elif interval_seconds is not None:
+            self.interval_seconds = interval_seconds
+        else:
+            self.interval_seconds = DEFAULT_INTERVAL_SECONDS
 
     def get_storage(self) -> JSONLStorage:
         """Get the storage instance.
@@ -239,4 +260,119 @@ class Scheduler:
             "score": score,
             "dry_run": False,
             "action": "flagged_urgent",
+        }
+
+    # =========================================================================
+    # Scheduled Execution Methods (T089)
+    # =========================================================================
+
+    def _get_last_run_file(self) -> Path:
+        """Get the path to the last run timestamp file.
+
+        Returns:
+            Path to the timestamp file in the storage directory
+        """
+        from pathlib import Path
+
+        from cortexgraph.config import get_config
+
+        config = get_config()
+        return Path(config.storage_path) / LAST_RUN_FILENAME
+
+    def _get_last_run_time(self) -> int | None:
+        """Get the timestamp of the last scheduled run.
+
+        Returns:
+            Unix timestamp of last run, or None if never run
+        """
+        last_run_file = self._get_last_run_file()
+
+        if not last_run_file.exists():
+            return None
+
+        try:
+            content = last_run_file.read_text().strip()
+            return int(content)
+        except (ValueError, OSError) as e:
+            logger.warning(f"Failed to read last run time: {e}")
+            return None
+
+    def _save_last_run_time(self, timestamp: int) -> None:
+        """Save the timestamp of the current run.
+
+        Args:
+            timestamp: Unix timestamp to save
+        """
+        last_run_file = self._get_last_run_file()
+
+        try:
+            # Ensure parent directory exists
+            last_run_file.parent.mkdir(parents=True, exist_ok=True)
+            last_run_file.write_text(str(timestamp))
+        except OSError as e:
+            logger.error(f"Failed to save last run time: {e}")
+
+    def should_run(self, force: bool = False) -> bool:
+        """Check if a scheduled run should execute.
+
+        Args:
+            force: If True, always return True regardless of interval
+
+        Returns:
+            True if run should execute, False if interval hasn't elapsed
+        """
+        if force:
+            return True
+
+        last_run = self._get_last_run_time()
+
+        if last_run is None:
+            # Never run before
+            return True
+
+        import time
+
+        elapsed = int(time.time()) - last_run
+        return elapsed >= self.interval_seconds
+
+    def record_run(self) -> None:
+        """Record the current time as the last run time."""
+        import time
+
+        self._save_last_run_time(int(time.time()))
+
+    def run_scheduled(self, force: bool = False) -> dict[str, Any]:
+        """Run the consolidation pipeline if the interval has elapsed.
+
+        This is the main entry point for cron/launchd scheduled execution.
+        It checks if enough time has passed since the last run and either
+        executes the pipeline or skips.
+
+        Args:
+            force: If True, run regardless of interval elapsed
+
+        Returns:
+            Dictionary with execution results or skip information
+        """
+        if not force and not self.should_run():
+            logger.info(
+                f"Scheduled run skipped: interval ({self.interval_seconds}s) not elapsed"
+            )
+            return {
+                "skipped": True,
+                "reason": "Interval not due - last run was too recent",
+                "interval_seconds": self.interval_seconds,
+            }
+
+        # Execute the pipeline
+        logger.info(f"Starting scheduled consolidation (force={force})")
+        results = self.run_pipeline()
+
+        # Record this run
+        self.record_run()
+
+        return {
+            "skipped": False,
+            "results": results,
+            "interval_seconds": self.interval_seconds,
         }
