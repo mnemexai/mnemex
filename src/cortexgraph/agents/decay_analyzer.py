@@ -44,7 +44,7 @@ URGENCY_HIGH_THRESHOLD = 0.10
 URGENCY_MEDIUM_THRESHOLD = 0.25
 
 
-def get_storage() -> "JSONLStorage":
+def get_storage() -> JSONLStorage:
     """Get storage instance. Separated for testability."""
     from cortexgraph.context import get_db
 
@@ -82,13 +82,13 @@ class DecayAnalyzer(ConsolidationAgent[DecayResult]):
         self._storage: JSONLStorage | None = None
 
     @property
-    def storage(self) -> "JSONLStorage":
+    def storage(self) -> JSONLStorage:
         """Get storage, initializing lazily."""
         if self._storage is None:
             self._storage = get_storage()
         return self._storage
 
-    def _compute_score(self, memory: "Memory") -> float:
+    def _compute_score(self, memory: Memory) -> float:
         """Compute current decay score for a memory.
 
         Uses the decay module's calculate_score function which considers

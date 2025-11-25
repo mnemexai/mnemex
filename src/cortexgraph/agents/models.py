@@ -18,7 +18,6 @@ from enum import Enum
 
 from pydantic import BaseModel, Field
 
-
 # =============================================================================
 # Enums (T015)
 # =============================================================================
@@ -135,9 +134,7 @@ class ClusterResult(BaseModel):
     """
 
     cluster_id: str = Field(..., description="Generated cluster UUID")
-    memory_ids: list[str] = Field(
-        ..., min_length=2, description="Memories in cluster"
-    )
+    memory_ids: list[str] = Field(..., min_length=2, description="Memories in cluster")
     cohesion: float = Field(..., ge=0.0, le=1.0, description="Cluster cohesion score")
     action: ClusterAction = Field(..., description="Recommended action")
     confidence: float = Field(..., ge=0.0, le=1.0, description="Confidence in recommendation")
@@ -168,9 +165,7 @@ class MergeResult(BaseModel):
     """
 
     new_memory_id: str = Field(..., description="Merged memory UUID")
-    source_ids: list[str] = Field(
-        ..., min_length=2, description="Original memory IDs"
-    )
+    source_ids: list[str] = Field(..., min_length=2, description="Original memory IDs")
     relation_ids: list[str] = Field(
         default_factory=list, description="Created consolidated_from relations"
     )
@@ -243,8 +238,6 @@ class RelationResult(BaseModel):
     relation_id: str = Field(..., description="Created relation UUID")
     strength: float = Field(..., ge=0.0, le=1.0, description="Relation strength")
     reasoning: str = Field(..., description="Why relation was created")
-    shared_entities: list[str] = Field(
-        default_factory=list, description="Entities in common"
-    )
+    shared_entities: list[str] = Field(default_factory=list, description="Entities in common")
     confidence: float = Field(..., ge=0.0, le=1.0, description="Confidence in relation")
     beads_issue_id: str | None = Field(default=None, description="Created beads issue ID")

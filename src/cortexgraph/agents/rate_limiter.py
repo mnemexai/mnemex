@@ -200,7 +200,9 @@ class AgentRateLimiters:
                     max_ops=max_ops,
                     window_seconds=self._default_window,
                 )
-                logger.debug(f"Created rate limiter for {agent}: {max_ops} ops/{self._default_window}s")
+                logger.debug(
+                    f"Created rate limiter for {agent}: {max_ops} ops/{self._default_window}s"
+                )
 
             return self._limiters[agent]
 

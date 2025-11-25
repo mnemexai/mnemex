@@ -34,7 +34,7 @@ if TYPE_CHECKING:
     from cortexgraph.storage.models import Memory
 
 
-def get_storage() -> "JSONLStorage":
+def get_storage() -> JSONLStorage:
     """Get storage instance. Separated for testability."""
     from cortexgraph.context import get_db
 
@@ -80,7 +80,7 @@ class RelationshipDiscovery(ConsolidationAgent[RelationResult]):
         self._candidate_cache: dict[str, tuple[str, str, set[str]]] = {}
 
     @property
-    def storage(self) -> "JSONLStorage":
+    def storage(self) -> JSONLStorage:
         """Get storage instance (lazy initialization)."""
         if self._storage is None:
             self._storage = get_storage()
@@ -137,7 +137,7 @@ class RelationshipDiscovery(ConsolidationAgent[RelationResult]):
         seen_pairs: set[tuple[str, str]] = set()
         existing_relations = self._get_existing_relation_pairs()
 
-        for entity, memory_ids in entity_to_memories.items():
+        for _entity, memory_ids in entity_to_memories.items():
             if len(memory_ids) < 2:
                 continue
 
@@ -169,15 +169,11 @@ class RelationshipDiscovery(ConsolidationAgent[RelationResult]):
                             pair_id = f"{pair[0]}:{pair[1]}"
                             candidates.append(pair_id)
                             self._candidate_cache[pair_id] = (pair[0], pair[1], shared)
-                            logger.debug(
-                                f"Relationship candidate: {pair_id} (shared: {shared})"
-                            )
+                            logger.debug(f"Relationship candidate: {pair_id} (shared: {shared})")
                     except Exception as e:
                         logger.warning(f"Error checking pair {pair}: {e}")
 
-        logger.info(
-            f"RelationshipDiscovery scan found {len(candidates)} relationship candidates"
-        )
+        logger.info(f"RelationshipDiscovery scan found {len(candidates)} relationship candidates")
         return candidates
 
     def _get_existing_relation_pairs(self) -> set[tuple[str, str]]:
@@ -189,9 +185,7 @@ class RelationshipDiscovery(ConsolidationAgent[RelationResult]):
         existing: set[tuple[str, str]] = set()
 
         # Try to get relations from storage
-        if hasattr(self.storage, "relations") and isinstance(
-            self.storage.relations, dict
-        ):
+        if hasattr(self.storage, "relations") and isinstance(self.storage.relations, dict):
             for rel in self.storage.relations.values():
                 from_id = getattr(rel, "from_memory_id", None)
                 to_id = getattr(rel, "to_memory_id", None)
@@ -364,7 +358,7 @@ class RelationshipDiscovery(ConsolidationAgent[RelationResult]):
             logger.error(f"Failed to create relation for {pair_id}: {e}")
             raise RuntimeError(f"Relation creation failed: {e}") from e
 
-    def _get_memory(self, memory_id: str) -> "Memory | None":
+    def _get_memory(self, memory_id: str) -> Memory | None:
         """Get memory by ID from storage."""
         # Try direct dict access first (for tests/mocks)
         if hasattr(self.storage, "memories") and isinstance(self.storage.memories, dict):
@@ -416,9 +410,7 @@ class RelationshipDiscovery(ConsolidationAgent[RelationResult]):
 
         # Calculate Jaccard similarity for entities
         entity_union = entities1 | entities2
-        entity_jaccard = (
-            len(shared_entities) / len(entity_union) if entity_union else 0.0
-        )
+        entity_jaccard = len(shared_entities) / len(entity_union) if entity_union else 0.0
 
         # Calculate Jaccard similarity for tags
         shared_tags = tags1 & tags2

@@ -376,9 +376,7 @@ class Scheduler:
             Dictionary with execution results or skip information
         """
         if not force and not self.should_run():
-            logger.info(
-                f"Scheduled run skipped: interval ({self.interval_seconds}s) not elapsed"
-            )
+            logger.info(f"Scheduled run skipped: interval ({self.interval_seconds}s) not elapsed")
             return {
                 "skipped": True,
                 "reason": "Interval not due - last run was too recent",

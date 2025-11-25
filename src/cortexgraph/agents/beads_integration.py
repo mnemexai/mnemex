@@ -79,12 +79,13 @@ def _run_bd_command(args: list[str], check: bool = True) -> dict[str, Any] | lis
         if not result.stdout.strip():
             return {}
 
-        return json.loads(result.stdout)
+        parsed: dict[str, Any] | list[Any] = json.loads(result.stdout)
+        return parsed
 
     except json.JSONDecodeError as e:
-        raise BeadsError(f"Failed to parse beads output: {e}")
-    except FileNotFoundError:
-        raise BeadsError("beads CLI (bd) not found. Is it installed?")
+        raise BeadsError(f"Failed to parse beads output: {e}") from e
+    except FileNotFoundError as e:
+        raise BeadsError("beads CLI (bd) not found. Is it installed?") from e
 
 
 def create_consolidation_issue(
@@ -120,7 +121,9 @@ def create_consolidation_issue(
         raise ValueError(f"Invalid agent: {agent}. Must be one of {list(AGENT_LABELS.keys())}")
 
     if urgency not in URGENCY_LABELS:
-        raise ValueError(f"Invalid urgency: {urgency}. Must be one of {list(URGENCY_LABELS.keys())}")
+        raise ValueError(
+            f"Invalid urgency: {urgency}. Must be one of {list(URGENCY_LABELS.keys())}"
+        )
 
     # Check for existing issue with same memory_ids to prevent duplicates
     existing = query_consolidation_issues(agent=agent, status="open")
@@ -134,7 +137,7 @@ def create_consolidation_issue(
         existing_ids = set(notes.get("memory_ids", []))
         if existing_ids == set(memory_ids):
             logger.info(f"Issue already exists for memory_ids: {issue['id']}")
-            return issue["id"]
+            return str(issue["id"])
 
     # Build human-readable title
     if len(memory_ids) == 1:
@@ -171,7 +174,7 @@ def create_consolidation_issue(
     result = _run_bd_command(args)
 
     if isinstance(result, dict) and "id" in result:
-        issue_id = result["id"]
+        issue_id = str(result["id"])
         logger.info(f"Created consolidation issue: {issue_id}")
         return issue_id
 
@@ -221,12 +224,17 @@ def query_consolidation_issues(
         return []
 
     # Result might be a list or dict with "result" key
+    issues: list[Any]
     if isinstance(result, list):
         issues = result
     elif isinstance(result, dict):
-        issues = result.get("result", result.get("issues", []))
-        if not isinstance(issues, list):
-            issues = [result] if "id" in result else []
+        inner = result.get("result", result.get("issues", []))
+        if isinstance(inner, list):
+            issues = inner
+        elif "id" in result:
+            issues = [result]
+        else:
+            issues = []
     else:
         return []
 
@@ -243,9 +251,7 @@ def query_consolidation_issues(
     if not agent:
         consolidation_labels = set(AGENT_LABELS.values())
         issues = [
-            i
-            for i in issues
-            if any(label in consolidation_labels for label in i.get("labels", []))
+            i for i in issues if any(label in consolidation_labels for label in i.get("labels", []))
         ]
 
     return issues

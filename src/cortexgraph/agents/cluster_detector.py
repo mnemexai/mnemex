@@ -26,12 +26,11 @@ from cortexgraph.storage.models import ClusterConfig
 
 if TYPE_CHECKING:
     from cortexgraph.storage.jsonl_storage import JSONLStorage
-    from cortexgraph.storage.models import Memory
 
 logger = logging.getLogger(__name__)
 
 
-def get_storage() -> "JSONLStorage":
+def get_storage() -> JSONLStorage:
     """Get storage instance. Separated for testability."""
     from cortexgraph.context import get_db
 
@@ -157,8 +156,7 @@ class ClusterDetector(ConsolidationAgent[ClusterResult]):
                 clusterable_memory_ids.add(mem_id)
 
         logger.info(
-            f"Found {len(clusters)} clusters with "
-            f"{len(clusterable_memory_ids)} total memories"
+            f"Found {len(clusters)} clusters with {len(clusterable_memory_ids)} total memories"
         )
 
         return list(clusterable_memory_ids)
@@ -216,8 +214,7 @@ class ClusterDetector(ConsolidationAgent[ClusterResult]):
         )
 
         logger.debug(
-            f"Processed cluster {cluster_id}: "
-            f"cohesion={cohesion:.2f}, action={action.value}"
+            f"Processed cluster {cluster_id}: cohesion={cohesion:.2f}, action={action.value}"
         )
 
         return result
@@ -299,7 +296,6 @@ class ClusterDetector(ConsolidationAgent[ClusterResult]):
         if memory_id not in self._storage.memories:
             return
 
-        memory = self._storage.memories[memory_id]
         memories = list(self._storage.memories.values())
 
         if len(memories) < self.min_cluster_size:

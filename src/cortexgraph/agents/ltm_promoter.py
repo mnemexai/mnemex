@@ -37,7 +37,7 @@ if TYPE_CHECKING:
     from cortexgraph.storage.models import Memory
 
 
-def get_storage() -> "JSONLStorage":
+def get_storage() -> JSONLStorage:
     """Get storage instance. Separated for testability."""
     from cortexgraph.context import get_db
 
@@ -88,7 +88,7 @@ class LTMPromoter(ConsolidationAgent[PromotionResult]):
         self._promotion_candidates: dict[str, tuple[bool, str, float]] = {}
 
     @property
-    def storage(self) -> "JSONLStorage":
+    def storage(self) -> JSONLStorage:
         """Get storage instance (lazy initialization)."""
         if self._storage is None:
             self._storage = get_storage()
@@ -302,7 +302,7 @@ class LTMPromoter(ConsolidationAgent[PromotionResult]):
 
         return criteria
 
-    def _generate_title(self, memory: "Memory") -> str:
+    def _generate_title(self, memory: Memory) -> str:
         """Generate a title for the vault note.
 
         Args:
@@ -326,7 +326,7 @@ class LTMPromoter(ConsolidationAgent[PromotionResult]):
         # Fallback to memory ID
         return f"Memory {memory.id[:8]}"
 
-    def _generate_content(self, memory: "Memory") -> str:
+    def _generate_content(self, memory: Memory) -> str:
         """Generate markdown content for the vault note.
 
         Args:
@@ -346,11 +346,13 @@ class LTMPromoter(ConsolidationAgent[PromotionResult]):
         ]
 
         if entities:
-            lines.extend([
-                "## Entities",
-                "",
-                ", ".join(f"[[{e}]]" for e in entities),
-                "",
-            ])
+            lines.extend(
+                [
+                    "## Entities",
+                    "",
+                    ", ".join(f"[[{e}]]" for e in entities),
+                    "",
+                ]
+            )
 
         return "\n".join(lines)

@@ -138,8 +138,7 @@ class ConsolidationAgent(ABC, Generic[T]):
         self._error_count = 0
 
         logger.info(
-            f"Initialized {self.__class__.__name__} "
-            f"(dry_run={dry_run}, rate_limit={rate_limit})"
+            f"Initialized {self.__class__.__name__} (dry_run={dry_run}, rate_limit={rate_limit})"
         )
 
     @property
@@ -201,15 +200,11 @@ class ConsolidationAgent(ABC, Generic[T]):
         decision = self.confidence_config.decide(confidence)
 
         if decision == ProcessingDecision.WAIT_HUMAN:
-            logger.info(
-                f"Confidence {confidence:.2f} below threshold - waiting for human"
-            )
+            logger.info(f"Confidence {confidence:.2f} below threshold - waiting for human")
             return False, decision
 
         if decision == ProcessingDecision.LOG_ONLY:
-            logger.info(
-                f"Confidence {confidence:.2f} - processing with detailed logging"
-            )
+            logger.info(f"Confidence {confidence:.2f} - processing with detailed logging")
 
         return True, decision
 

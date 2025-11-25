@@ -17,7 +17,7 @@ Example:
     >>> results = analyzer.run()
 """
 
-from cortexgraph.agents.base import ConsolidationAgent, ConfidenceConfig
+from cortexgraph.agents.base import ConfidenceConfig, ConsolidationAgent
 from cortexgraph.agents.cluster_detector import ClusterDetector
 from cortexgraph.agents.decay_analyzer import DecayAnalyzer
 from cortexgraph.agents.models import (

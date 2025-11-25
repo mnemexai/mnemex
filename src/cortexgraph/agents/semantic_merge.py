@@ -22,7 +22,7 @@ import json
 import logging
 import time
 import uuid
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from cortexgraph.agents.base import ConsolidationAgent
 from cortexgraph.agents.beads_integration import (
@@ -43,11 +43,12 @@ if TYPE_CHECKING:
     from cortexgraph.storage.jsonl_storage import JSONLStorage
 
 
-def get_storage() -> "JSONLStorage":
+def get_storage() -> JSONLStorage:
     """Get storage instance. Separated for testability."""
     from cortexgraph.context import get_db
 
     return get_db()
+
 
 logger = logging.getLogger(__name__)
 
@@ -80,10 +81,10 @@ class SemanticMerge(ConsolidationAgent[MergeResult]):
         """
         super().__init__(dry_run=dry_run, rate_limit=rate_limit)
         self._storage: JSONLStorage | None = None
-        self._pending_issues: dict[str, dict] = {}  # Cache issue data by ID
+        self._pending_issues: dict[str, dict[str, Any]] = {}  # Cache issue data by ID
 
     @property
-    def storage(self) -> "JSONLStorage":
+    def storage(self) -> JSONLStorage:
         """Get storage instance (lazy initialization)."""
         if self._storage is None:
             self._storage = get_storage()
@@ -148,8 +149,8 @@ class SemanticMerge(ConsolidationAgent[MergeResult]):
             notes = json.loads(issue.get("notes", "{}"))
             memory_ids = notes.get("memory_ids", [])
             cluster_id = notes.get("cluster_id", "unknown")
-        except json.JSONDecodeError:
-            raise ValueError(f"Invalid notes JSON in issue {issue_id}")
+        except json.JSONDecodeError as e:
+            raise ValueError(f"Invalid notes JSON in issue {issue_id}") from e
 
         if len(memory_ids) < 2:
             raise ValueError(f"Issue {issue_id} has fewer than 2 memories to merge")
@@ -199,7 +200,9 @@ class SemanticMerge(ConsolidationAgent[MergeResult]):
         new_memory_id = str(uuid.uuid4())
 
         # Create content diff summary
-        content_diff = f"Merged {len(source_memories)} memories about {', '.join(list(all_entities)[:3])}"
+        content_diff = (
+            f"Merged {len(source_memories)} memories about {', '.join(list(all_entities)[:3])}"
+        )
 
         if self.dry_run:
             # Dry run - don't modify anything
@@ -234,12 +237,8 @@ class SemanticMerge(ConsolidationAgent[MergeResult]):
             earliest_created = min(
                 getattr(m, "created_at", int(time.time())) for m in source_memories
             )
-            latest_used = max(
-                getattr(m, "last_used", int(time.time())) for m in source_memories
-            )
-            total_use_count = sum(
-                getattr(m, "use_count", 0) for m in source_memories
-            )
+            latest_used = max(getattr(m, "last_used", int(time.time())) for m in source_memories)
+            total_use_count = sum(getattr(m, "use_count", 0) for m in source_memories)
 
             # Create the merged memory
             merged_memory = Memory(
