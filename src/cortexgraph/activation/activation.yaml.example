@@ -1,0 +1,188 @@
+# Natural Language Activation Patterns
+# CortexGraph v0.7.0+
+#
+# This file configures pattern matching for automatic memory activation.
+# Copy to ~/.config/cortexgraph/activation.yaml and customize as needed.
+#
+# With hot-reload enabled, changes take effect without restarting the server.
+
+version: 1.0
+
+# Patterns that trigger automatic save_memory
+# These phrases indicate the user wants information remembered
+explicit_save_triggers:
+  # Direct memory commands
+  - "remember this"
+  - "remember that"
+  - "don't forget"
+  - "do not forget"
+  - "don't forget that"
+  - "save this"
+  - "keep in mind"
+  - "make a note"
+  - "note that"
+  - "write this down"
+  - "log this"
+
+  # User preferences
+  - "my preference is"
+  - "i prefer"
+  - "i always"
+  - "i never"
+  - "i like to"
+  - "i tend to"
+
+  # Decisions
+  - "i've decided"
+  - "i decided to"
+  - "my decision is"
+  - "my choice is"
+  - "i'm going with"
+  - "i'll use"
+  - "i'll go with"
+
+# Patterns that trigger search_memory (recall)
+# These phrases indicate the user wants to retrieve past information
+explicit_recall_triggers:
+  # Direct recall requests
+  - "what did i say"
+  - "what did we discuss"
+  - "what did we talk about"
+  - "do you remember"
+  - "can you remember"
+  - "remind me"
+  - "recall"
+  - "didn't i mention"
+  - "didn't i tell you"
+  - "as i said before"
+  - "like i told you"
+  - "like we discussed"
+
+  # Possessive references to past information
+  - "my preference"
+  - "my choice"
+  - "my decision"
+  - "what's my"
+  - "what is my"
+
+# Markers indicating high importance
+# These words boost confidence that information is memory-worthy
+importance_markers:
+  - "critical"
+  - "crucial"
+  - "essential"
+  - "must"
+  - "important"
+  - "vital"
+  - "urgent"
+  - "key"
+  - "always"
+  - "never"
+  - "required"
+  - "mandatory"
+
+# Patterns that should NOT trigger auto-save
+# These are general knowledge questions, not memory operations
+exclusion_patterns:
+  # General knowledge requests
+  - "what is"
+  - "who is"
+  - "how do"
+  - "how to"
+  - "tell me about"
+  - "explain"
+  - "can you"
+  - "could you"
+  - "what's the best"
+  - "which is better"
+
+  # System capability checks
+  - "are you able"
+  - "can claude"
+  - "does this support"
+
+# Markers indicating uncertainty
+# These words reduce confidence that information should be saved
+uncertainty_markers:
+  - "maybe"
+  - "might"
+  - "not sure"
+  - "perhaps"
+  - "possibly"
+  - "probably"
+  - "i think"
+  - "could be"
+  - "may be"
+  - "wondering if"
+  - "considering"
+  - "thinking about"
+
+config:
+  # Pattern matching behavior
+  case_sensitive: false      # Ignore case when matching patterns
+  partial_match: true        # Allow patterns as substrings (not just exact match)
+
+  # Confidence thresholds (0.0-1.0)
+  auto_save_min: 0.7         # Auto-save if confidence >= this value
+  auto_recall_min: 0.7       # Auto-search if confidence >= this value
+  clarification_min: 0.4     # Ask user if confidence >= this (lower bound)
+  clarification_max: 0.7     # Ask user if confidence < this (upper bound)
+
+  # Signal weights for confidence scoring (used in weighted sigmoid formula)
+  weights:
+    explicit_save_request: 5.0
+    explicit_recall_request: 4.0
+    decision_marker: 4.5
+    preference_statement: 4.0
+    critical_marker: 3.0
+    important_marker: 2.0
+    factual_statement: 1.5
+    uncertainty_marker: -3.0
+    conditional: -2.0
+    hypothetical: -2.5
+    entity_count: 0.8          # Per entity, max 3.2 for 4+ entities
+    numerical_data: 1.0
+    proper_noun: 0.5           # Per noun, max 2.0 for 4+ nouns
+
+  # Bias term for sigmoid formula (calibration)
+  bias: -2.0
+
+# Tech term expansions for semantic query matching
+# Maps abbreviations and aliases to full terms
+query_expansions:
+  # Authentication & Security
+  auth: ["authentication", "authorize", "authorization"]
+  jwt: ["json web token", "bearer token"]
+  oauth: ["oauth2", "open authorization"]
+  sso: ["single sign-on"]
+  mfa: ["multi-factor authentication", "2fa"]
+
+  # Databases
+  db: ["database", "databases"]
+  sql: ["structured query language", "relational database"]
+  postgres: ["postgresql", "psql"]
+  mongo: ["mongodb", "document database"]
+  redis: ["redis cache", "key-value store"]
+
+  # APIs & Web
+  api: ["application programming interface"]
+  rest: ["representational state transfer", "restful"]
+  graphql: ["graph query language"]
+  grpc: ["google remote procedure call"]
+
+  # Programming Languages
+  py: ["python"]
+  js: ["javascript"]
+  ts: ["typescript"]
+
+  # Frameworks
+  react: ["reactjs", "react.js"]
+  vue: ["vuejs", "vue.js"]
+  next: ["nextjs", "next.js"]
+
+  # Development Tools
+  git: ["version control", "source control"]
+  docker: ["container", "containerization"]
+  k8s: ["kubernetes", "container orchestration"]
+  ci: ["continuous integration"]
+  cd: ["continuous deployment", "continuous delivery"]
