@@ -237,7 +237,7 @@
 
 - [X] T091 [P] Unit tests for CLI commands in `tests/unit/cli/test_cli_consolidate.py`
 - [X] T092 Integration test for pipeline execution in `tests/integration/agents/test_agent_pipeline.py`
-- [ ] T093 Integration test for beads coordination in `tests/integration/agents/test_beads_coordination.py`
+- [X] T093 Integration test for beads coordination in `tests/integration/agents/test_beads_coordination.py`
 
 **Checkpoint**: CLI and pipeline should be fully functional
 
