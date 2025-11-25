@@ -18,6 +18,7 @@ Example:
 """
 
 from cortexgraph.agents.base import ConsolidationAgent, ConfidenceConfig
+from cortexgraph.agents.cluster_detector import ClusterDetector
 from cortexgraph.agents.decay_analyzer import DecayAnalyzer
 from cortexgraph.agents.models import (
     ClusterAction,
@@ -37,6 +38,7 @@ __all__ = [
     "ConfidenceConfig",
     # Agents
     "DecayAnalyzer",
+    "ClusterDetector",
     # Result models
     "DecayResult",
     "ClusterResult",
