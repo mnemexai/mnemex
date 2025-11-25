@@ -18,6 +18,10 @@ from cortexgraph.agents.scheduler import AGENT_ORDER, Scheduler
 from cortexgraph.storage.jsonl_storage import JSONLStorage
 from cortexgraph.storage.models import Memory
 
+# Mark all tests in this module as requiring beads CLI
+# The scheduler/pipeline tests involve SemanticMerge which requires beads
+pytestmark = pytest.mark.requires_beads
+
 # =============================================================================
 # Test Fixtures
 # =============================================================================

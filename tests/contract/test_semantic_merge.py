@@ -27,6 +27,9 @@ import pytest
 from cortexgraph.agents.base import ConsolidationAgent
 from cortexgraph.agents.models import MergeResult
 
+# Mark all tests in this module as requiring beads CLI
+pytestmark = pytest.mark.requires_beads
+
 if TYPE_CHECKING:
     from cortexgraph.agents.semantic_merge import SemanticMerge
 
