@@ -279,6 +279,72 @@ See `docs/prompts/` for LLM system prompt templates that enable natural memory u
 └─────────────────────────────────────┘
 ```
 
+### 5. Multi-Agent Consolidation Pipeline
+
+Automated memory maintenance through five specialized agents:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                    Consolidation Pipeline                            │
+│                                                                       │
+│   decay → cluster → merge → promote → relations                      │
+│     │        │        │        │          │                          │
+│     ▼        ▼        ▼        ▼          ▼                          │
+│  Find at- Find   Combine  Promote  Discover                         │
+│  risk    similar similar  to LTM   cross-                           │
+│  memories groups  groups           domain                            │
+│                                    links                             │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+**The Five Agents:**
+
+| Agent | Purpose |
+|-------|---------|
+| **DecayAnalyzer** | Find memories at risk of being forgotten (danger zone: 0.15-0.35) |
+| **ClusterDetector** | Group similar memories using embedding similarity |
+| **SemanticMerge** | Intelligently combine clustered memories, preserving unique info |
+| **LTMPromoter** | Move high-value memories to permanent Obsidian storage |
+| **RelationshipDiscovery** | Find cross-domain connections via shared entities |
+
+**Key Features:**
+
+- **Dry-run mode**: Preview changes without modifying data
+- **Rate limiting**: Configurable operations per minute (default: 60)
+- **Audit trail**: Every decision tracked via beads issue tracking
+- **Human override**: Review and approve decisions before execution
+
+**Usage:**
+
+```python
+from cortexgraph.agents import Scheduler
+
+# Preview what would change (dry run)
+scheduler = Scheduler(dry_run=True)
+preview = scheduler.run_pipeline()
+
+# Run full pipeline
+scheduler = Scheduler(dry_run=False)
+results = scheduler.run_pipeline()
+
+# Run single agent
+decay_results = scheduler.run_agent("decay")
+```
+
+**CLI:**
+
+```bash
+# Dry run (preview)
+cortexgraph-consolidate --dry-run
+
+# Run specific agent
+cortexgraph-consolidate --agent decay --dry-run
+
+# Scheduled execution (with interval)
+cortexgraph-consolidate --scheduled --interval-hours 1
+```
+
+See [docs/agents.md](docs/agents.md) for complete documentation including configuration, beads integration, and troubleshooting.
 
 ## Quick Start
 
@@ -681,6 +747,7 @@ Frequent access significantly extends retention.
 - **[Smart Prompting](docs/prompts/memory_system_prompt.md)** - Patterns for natural LLM integration
 - **[Architecture](docs/architecture.md)** - System design and implementation
 - **[API Reference](docs/api.md)** - MCP tool documentation
+- **[Multi-Agent System](docs/agents.md)** - Consolidation agents and pipeline architecture
 - **[Bear Integration](docs/bear-integration.md)** - Guide to using Bear app as an LTM store
 - **[Graph Features](docs/graph_features.md)** - Knowledge graph usage
 
@@ -771,9 +838,8 @@ Quick start:
 
 ### Phase 1 (Complete) ✅
 
-- 10 MCP tools
+- 14 MCP tools
 - Temporal decay algorithm
-
 - Knowledge graph
 
 ### Phase 2 (Complete) ✅
@@ -785,9 +851,18 @@ Quick start:
 - Maintenance CLI
 - Memory consolidation (algorithmic merging)
 
+### Phase 3 (Complete) ✅
+
+- **Multi-Agent Consolidation Pipeline**
+  - DecayAnalyzer, ClusterDetector, SemanticMerge, LTMPromoter, RelationshipDiscovery
+  - Scheduler for orchestration
+  - Beads issue tracking integration
+  - Dry-run and rate limiting support
+- Natural language activation (v0.6.0+)
+- Auto-enrichment for entity extraction
+
 ### Future Work
 
-- Spaced repetition optimization
 - Adaptive decay parameters
 - Performance benchmarks
 - LLM-assisted consolidation (optional enhancement)
