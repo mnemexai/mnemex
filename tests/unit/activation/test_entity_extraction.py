@@ -222,12 +222,14 @@ class TestFallbackPatternExtraction:
         original_nlp = extractor.nlp
         extractor.nlp = None
 
-        text = "Check out https://cortexgraph.dev for documentation"
+        test_url = "https://cortexgraph.dev"
+        text = f"Check out {test_url} for documentation"
 
         entities = extractor.extract(text)
 
-        # Should extract URL
-        assert "https://cortexgraph.dev" in entities
+        # Should extract URL (this is entity extraction, not URL sanitization)
+        # lgtm[py/incomplete-url-substring-sanitization]
+        assert test_url in entities
 
         extractor.nlp = original_nlp
 
