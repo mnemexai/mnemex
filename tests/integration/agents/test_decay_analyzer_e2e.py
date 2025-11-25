@@ -158,9 +158,7 @@ class TestDecayTriageEndToEnd:
             # With such low score, urgency should be HIGH or MEDIUM
             assert critical_results[0].urgency in (Urgency.HIGH, Urgency.MEDIUM)
 
-    def test_action_based_on_memory_state(
-        self, decay_analyzer_with_storage: DecayAnalyzer
-    ) -> None:
+    def test_action_based_on_memory_state(self, decay_analyzer_with_storage: DecayAnalyzer) -> None:
         """Test actions are recommended based on memory state."""
         analyzer = decay_analyzer_with_storage
         results = analyzer.run()
@@ -169,9 +167,7 @@ class TestDecayTriageEndToEnd:
         for result in results:
             assert result.action in DecayAction
 
-    def test_score_in_valid_range(
-        self, decay_analyzer_with_storage: DecayAnalyzer
-    ) -> None:
+    def test_score_in_valid_range(self, decay_analyzer_with_storage: DecayAnalyzer) -> None:
         """Test computed scores are in valid range [0, 1]."""
         analyzer = decay_analyzer_with_storage
         results = analyzer.run()
@@ -186,12 +182,8 @@ class TestDecayTriageEndToEnd:
         analyzer = decay_analyzer_with_storage
 
         # Capture original state (use_count and last_used are the key fields)
-        original_use_counts = {
-            mid: m.use_count for mid, m in test_storage.memories.items()
-        }
-        original_last_used = {
-            mid: m.last_used for mid, m in test_storage.memories.items()
-        }
+        original_use_counts = {mid: m.use_count for mid, m in test_storage.memories.items()}
+        original_last_used = {mid: m.last_used for mid, m in test_storage.memories.items()}
 
         # Run analyzer
         analyzer.run()
@@ -202,9 +194,7 @@ class TestDecayTriageEndToEnd:
         for mid, original_time in original_last_used.items():
             assert test_storage.memories[mid].last_used == original_time
 
-    def test_stats_reflect_run(
-        self, decay_analyzer_with_storage: DecayAnalyzer
-    ) -> None:
+    def test_stats_reflect_run(self, decay_analyzer_with_storage: DecayAnalyzer) -> None:
         """Test statistics are updated correctly after run."""
         analyzer = decay_analyzer_with_storage
 

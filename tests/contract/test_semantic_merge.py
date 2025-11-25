@@ -239,9 +239,7 @@ class TestSemanticMergeScanContract:
         # Verify no changes
         assert len(mock_storage.memories) == original_count
 
-    def test_scan_is_subclass_of_consolidation_agent(
-        self, semantic_merge: SemanticMerge
-    ) -> None:
+    def test_scan_is_subclass_of_consolidation_agent(self, semantic_merge: SemanticMerge) -> None:
         """SemanticMerge MUST inherit from ConsolidationAgent."""
         assert isinstance(semantic_merge, ConsolidationAgent)
 
@@ -254,18 +252,14 @@ class TestSemanticMergeScanContract:
 class TestSemanticMergeProcessItemContract:
     """Contract tests for SemanticMerge.process_item() method (T046)."""
 
-    def test_process_item_returns_merge_result(
-        self, semantic_merge: SemanticMerge
-    ) -> None:
+    def test_process_item_returns_merge_result(self, semantic_merge: SemanticMerge) -> None:
         """process_item() MUST return MergeResult."""
         issue_ids = semantic_merge.scan()
         if issue_ids:
             result = semantic_merge.process_item(issue_ids[0])
             assert isinstance(result, MergeResult)
 
-    def test_process_item_result_has_required_fields(
-        self, semantic_merge: SemanticMerge
-    ) -> None:
+    def test_process_item_result_has_required_fields(self, semantic_merge: SemanticMerge) -> None:
         """MergeResult MUST have all required fields."""
         issue_ids = semantic_merge.scan()
         if issue_ids:
@@ -288,9 +282,7 @@ class TestSemanticMergeProcessItemContract:
             assert isinstance(result.entities_preserved, int)
             assert isinstance(result.success, bool)
 
-    def test_process_item_source_ids_minimum_two(
-        self, semantic_merge: SemanticMerge
-    ) -> None:
+    def test_process_item_source_ids_minimum_two(self, semantic_merge: SemanticMerge) -> None:
         """MergeResult.source_ids MUST have at least 2 memories."""
         issue_ids = semantic_merge.scan()
         if issue_ids:
@@ -306,9 +298,7 @@ class TestSemanticMergeProcessItemContract:
             result = semantic_merge.process_item(issue_ids[0])
             assert result.entities_preserved >= 0
 
-    def test_process_item_raises_on_invalid_issue_id(
-        self, semantic_merge: SemanticMerge
-    ) -> None:
+    def test_process_item_raises_on_invalid_issue_id(self, semantic_merge: SemanticMerge) -> None:
         """process_item() MUST raise exception for invalid beads issue ID."""
         with pytest.raises((ValueError, KeyError, RuntimeError)):
             semantic_merge.process_item("nonexistent-issue")
@@ -353,9 +343,7 @@ class TestSemanticMergeProcessItemContract:
                 mock_storage.create_relation.assert_not_called()
                 mock_beads_integration.close_issue.assert_not_called()
 
-    def test_process_item_completes_within_timeout(
-        self, semantic_merge: SemanticMerge
-    ) -> None:
+    def test_process_item_completes_within_timeout(self, semantic_merge: SemanticMerge) -> None:
         """process_item() SHOULD complete within 5 seconds."""
         issue_ids = semantic_merge.scan()
         if issue_ids:
@@ -374,9 +362,7 @@ class TestSemanticMergeProcessItemContract:
 class TestSemanticMergeFullContract:
     """Integration tests verifying full contract compliance."""
 
-    def test_run_method_uses_scan_and_process_item(
-        self, semantic_merge: SemanticMerge
-    ) -> None:
+    def test_run_method_uses_scan_and_process_item(self, semantic_merge: SemanticMerge) -> None:
         """run() MUST call scan() then process_item() for each result."""
         results = semantic_merge.run()
 
@@ -384,9 +370,7 @@ class TestSemanticMergeFullContract:
         for result in results:
             assert isinstance(result, MergeResult)
 
-    def test_content_diff_describes_merge(
-        self, semantic_merge: SemanticMerge
-    ) -> None:
+    def test_content_diff_describes_merge(self, semantic_merge: SemanticMerge) -> None:
         """MergeResult.content_diff MUST describe the merge operation."""
         issue_ids = semantic_merge.scan()
         if issue_ids:

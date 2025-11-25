@@ -132,9 +132,7 @@ class TestCreateConsolidationIssue:
 
     @patch("cortexgraph.agents.beads_integration._run_bd_command")
     @patch("cortexgraph.agents.beads_integration.query_consolidation_issues")
-    def test_create_issue(
-        self, mock_query: MagicMock, mock_bd: MagicMock
-    ) -> None:
+    def test_create_issue(self, mock_query: MagicMock, mock_bd: MagicMock) -> None:
         """Test successful issue creation."""
         mock_query.return_value = []  # No duplicates
         mock_bd.return_value = {"id": "cortexgraph-001"}
@@ -156,9 +154,7 @@ class TestCreateConsolidationIssue:
 
     @patch("cortexgraph.agents.beads_integration._run_bd_command")
     @patch("cortexgraph.agents.beads_integration.query_consolidation_issues")
-    def test_prevent_duplicate(
-        self, mock_query: MagicMock, mock_bd: MagicMock
-    ) -> None:
+    def test_prevent_duplicate(self, mock_query: MagicMock, mock_bd: MagicMock) -> None:
         """Test duplicate prevention returns existing issue."""
         mock_query.return_value = [
             {
@@ -197,9 +193,7 @@ class TestCreateConsolidationIssue:
 
     @patch("cortexgraph.agents.beads_integration._run_bd_command")
     @patch("cortexgraph.agents.beads_integration.query_consolidation_issues")
-    def test_title_format_single_memory(
-        self, mock_query: MagicMock, mock_bd: MagicMock
-    ) -> None:
+    def test_title_format_single_memory(self, mock_query: MagicMock, mock_bd: MagicMock) -> None:
         """Test title format for single memory."""
         mock_query.return_value = []
         mock_bd.return_value = {"id": "test"}

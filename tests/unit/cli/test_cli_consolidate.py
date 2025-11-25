@@ -268,9 +268,7 @@ class TestCLIProcessCommand:
             "cortexgraph.cli.consolidate.process_issue",
             return_value=mock_result,
         ):
-            result = cmd_process(
-                issue_id="cortexgraph-abc", dry_run=False, json_output=False
-            )
+            result = cmd_process(issue_id="cortexgraph-abc", dry_run=False, json_output=False)
 
             assert result == 0
 
@@ -282,9 +280,7 @@ class TestCLIProcessCommand:
             "cortexgraph.cli.consolidate.process_issue",
             side_effect=ValueError("Issue not found"),
         ):
-            result = cmd_process(
-                issue_id="nonexistent-123", dry_run=False, json_output=False
-            )
+            result = cmd_process(issue_id="nonexistent-123", dry_run=False, json_output=False)
 
             assert result != 0
 
@@ -302,9 +298,7 @@ class TestCLIProcessCommand:
             "cortexgraph.cli.consolidate.process_issue",
             return_value=mock_result,
         ) as mock_process:
-            result = cmd_process(
-                issue_id="cortexgraph-abc", dry_run=True, json_output=False
-            )
+            result = cmd_process(issue_id="cortexgraph-abc", dry_run=True, json_output=False)
 
             assert result == 0
             mock_process.assert_called_with("cortexgraph-abc", dry_run=True)
@@ -374,12 +368,8 @@ class TestCLIEntryPoint:
         from cortexgraph.cli.consolidate import main
 
         with (
-            patch(
-                "sys.argv", ["cortexgraph-consolidate", "run", "--all", "--dry-run"]
-            ),
-            patch(
-                "cortexgraph.cli.consolidate.cmd_run_all", return_value=0
-            ) as mock_cmd,
+            patch("sys.argv", ["cortexgraph-consolidate", "run", "--all", "--dry-run"]),
+            patch("cortexgraph.cli.consolidate.cmd_run_all", return_value=0) as mock_cmd,
         ):
             result = main()
 
@@ -392,9 +382,7 @@ class TestCLIEntryPoint:
 
         with (
             patch("sys.argv", ["cortexgraph-consolidate", "status"]),
-            patch(
-                "cortexgraph.cli.consolidate.cmd_status", return_value=(0, "")
-            ) as mock_cmd,
+            patch("cortexgraph.cli.consolidate.cmd_status", return_value=(0, "")) as mock_cmd,
         ):
             result = main()
 
@@ -410,9 +398,7 @@ class TestCLIEntryPoint:
                 "sys.argv",
                 ["cortexgraph-consolidate", "process", "cortexgraph-abc"],
             ),
-            patch(
-                "cortexgraph.cli.consolidate.cmd_process", return_value=0
-            ) as mock_cmd,
+            patch("cortexgraph.cli.consolidate.cmd_process", return_value=0) as mock_cmd,
         ):
             result = main()
 
@@ -428,9 +414,7 @@ class TestCLIEntryPoint:
                 "sys.argv",
                 ["cortexgraph-consolidate", "status", "--json"],
             ),
-            patch(
-                "cortexgraph.cli.consolidate.cmd_status", return_value=(0, "{}")
-            ) as mock_cmd,
+            patch("cortexgraph.cli.consolidate.cmd_status", return_value=(0, "{}")) as mock_cmd,
         ):
             result = main()
 

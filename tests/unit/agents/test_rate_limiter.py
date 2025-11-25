@@ -184,10 +184,7 @@ class TestRateLimiterThreadSafety:
                         acquired_count += 1
 
         # Start 10 threads each trying to acquire 20 tokens
-        threads = [
-            threading.Thread(target=acquire_tokens, args=(20,))
-            for _ in range(10)
-        ]
+        threads = [threading.Thread(target=acquire_tokens, args=(20,)) for _ in range(10)]
 
         for t in threads:
             t.start()

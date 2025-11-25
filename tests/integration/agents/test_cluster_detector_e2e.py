@@ -159,9 +159,7 @@ class TestClusterDetectionEndToEnd:
         # Isolated memory should not be in results (no shared entities)
         assert "isolated" not in memory_ids
 
-    def test_action_based_on_cohesion(
-        self, cluster_detector_with_storage: ClusterDetector
-    ) -> None:
+    def test_action_based_on_cohesion(self, cluster_detector_with_storage: ClusterDetector) -> None:
         """Test actions are recommended based on cohesion thresholds."""
         detector = cluster_detector_with_storage
         results = detector.run()
@@ -177,9 +175,7 @@ class TestClusterDetectionEndToEnd:
             else:
                 assert result.action == ClusterAction.IGNORE
 
-    def test_cohesion_in_valid_range(
-        self, cluster_detector_with_storage: ClusterDetector
-    ) -> None:
+    def test_cohesion_in_valid_range(self, cluster_detector_with_storage: ClusterDetector) -> None:
         """Test cohesion scores are in valid range [0, 1]."""
         detector = cluster_detector_with_storage
         results = detector.run()
@@ -224,9 +220,7 @@ class TestClusterDetectionEndToEnd:
         assert len(test_storage.memories) == original_count
         assert set(test_storage.memories.keys()) == original_ids
 
-    def test_stats_reflect_run(
-        self, cluster_detector_with_storage: ClusterDetector
-    ) -> None:
+    def test_stats_reflect_run(self, cluster_detector_with_storage: ClusterDetector) -> None:
         """Test statistics are updated correctly after run."""
         detector = cluster_detector_with_storage
 

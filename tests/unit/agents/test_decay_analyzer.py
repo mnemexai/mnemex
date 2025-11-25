@@ -113,9 +113,7 @@ class TestActionRecommendation:
         memory = MagicMock(use_count=2, strength=1.0)
         assert analyzer._recommend_action(0.08, memory) == DecayAction.GC
 
-    def test_reinforce_when_high_urgency_moderate_use(
-        self, analyzer: DecayAnalyzer
-    ) -> None:
+    def test_reinforce_when_high_urgency_moderate_use(self, analyzer: DecayAnalyzer) -> None:
         """High urgency with moderate use should recommend REINFORCE."""
         memory = MagicMock(use_count=3, strength=1.0)
         assert analyzer._recommend_action(0.08, memory) == DecayAction.REINFORCE
@@ -126,16 +124,12 @@ class TestActionRecommendation:
         assert analyzer._recommend_action(0.15, memory) == DecayAction.CONSOLIDATE
         assert analyzer._recommend_action(0.19, memory) == DecayAction.CONSOLIDATE
 
-    def test_promote_when_low_urgency_high_strength(
-        self, analyzer: DecayAnalyzer
-    ) -> None:
+    def test_promote_when_low_urgency_high_strength(self, analyzer: DecayAnalyzer) -> None:
         """Low urgency (>= 0.20) with high strength should recommend PROMOTE."""
         memory = MagicMock(use_count=5, strength=1.5)
         assert analyzer._recommend_action(0.25, memory) == DecayAction.PROMOTE
 
-    def test_reinforce_when_low_urgency_normal_strength(
-        self, analyzer: DecayAnalyzer
-    ) -> None:
+    def test_reinforce_when_low_urgency_normal_strength(self, analyzer: DecayAnalyzer) -> None:
         """Low urgency with normal strength should recommend REINFORCE."""
         memory = MagicMock(use_count=5, strength=1.0)
         assert analyzer._recommend_action(0.25, memory) == DecayAction.REINFORCE

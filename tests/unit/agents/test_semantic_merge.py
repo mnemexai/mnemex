@@ -86,11 +86,13 @@ def create_merge_issue(
         "title": f"Merge: {cluster_id}",
         "status": "open",
         "labels": ["consolidation:merge"],
-        "notes": json.dumps({
-            "memory_ids": memory_ids,
-            "cluster_id": cluster_id,
-            "cohesion": cohesion,
-        }),
+        "notes": json.dumps(
+            {
+                "memory_ids": memory_ids,
+                "cluster_id": cluster_id,
+                "cohesion": cohesion,
+            }
+        ),
     }
 
 
@@ -135,9 +137,7 @@ class TestContentDeduplication:
             # In dry run, we verify the merge logic worked
             assert result.success is True
 
-    def test_unique_content_preserved(
-        self, mock_storage: MagicMock, mock_beads: MagicMock
-    ) -> None:
+    def test_unique_content_preserved(self, mock_storage: MagicMock, mock_beads: MagicMock) -> None:
         """Unique content from each memory should be preserved."""
         from cortexgraph.agents.semantic_merge import SemanticMerge
 
@@ -167,9 +167,7 @@ class TestContentDeduplication:
             assert result.success is True
             assert len(result.source_ids) == 2
 
-    def test_partial_overlap_handled(
-        self, mock_storage: MagicMock, mock_beads: MagicMock
-    ) -> None:
+    def test_partial_overlap_handled(self, mock_storage: MagicMock, mock_beads: MagicMock) -> None:
         """Memories with partial content overlap should be merged intelligently."""
         from cortexgraph.agents.semantic_merge import SemanticMerge
 
@@ -200,9 +198,7 @@ class TestContentDeduplication:
             assert len(result.source_ids) == 3
             assert result.success is True
 
-    def test_empty_content_handled(
-        self, mock_storage: MagicMock, mock_beads: MagicMock
-    ) -> None:
+    def test_empty_content_handled(self, mock_storage: MagicMock, mock_beads: MagicMock) -> None:
         """Memories with empty content should be handled gracefully."""
         from cortexgraph.agents.semantic_merge import SemanticMerge
 
@@ -237,12 +233,8 @@ class TestContentDeduplication:
         from cortexgraph.agents.semantic_merge import SemanticMerge
 
         mock_storage.memories = {
-            "mem-1": create_memory_mock(
-                "mem-1", "PostgreSQL config", entities=["PostgreSQL"]
-            ),
-            "mem-2": create_memory_mock(
-                "mem-2", "PostgreSQL tuning", entities=["PostgreSQL"]
-            ),
+            "mem-1": create_memory_mock("mem-1", "PostgreSQL config", entities=["PostgreSQL"]),
+            "mem-2": create_memory_mock("mem-2", "PostgreSQL tuning", entities=["PostgreSQL"]),
         }
 
         issue = create_merge_issue("issue-1", ["mem-1", "mem-2"])
@@ -274,9 +266,7 @@ class TestContentDeduplication:
 class TestEntityTagPreservation:
     """Unit tests for entity and tag union preservation (T048)."""
 
-    def test_all_entities_preserved(
-        self, mock_storage: MagicMock, mock_beads: MagicMock
-    ) -> None:
+    def test_all_entities_preserved(self, mock_storage: MagicMock, mock_beads: MagicMock) -> None:
         """All unique entities from source memories should be preserved."""
         from cortexgraph.agents.semantic_merge import SemanticMerge
 
@@ -352,9 +342,7 @@ class TestEntityTagPreservation:
             # Only 1 unique entity
             assert result.entities_preserved == 1
 
-    def test_empty_entities_handled(
-        self, mock_storage: MagicMock, mock_beads: MagicMock
-    ) -> None:
+    def test_empty_entities_handled(self, mock_storage: MagicMock, mock_beads: MagicMock) -> None:
         """Memories with no entities should merge without error."""
         from cortexgraph.agents.semantic_merge import SemanticMerge
 
@@ -382,17 +370,13 @@ class TestEntityTagPreservation:
             assert result.entities_preserved == 0
             assert result.success is True
 
-    def test_none_entities_handled(
-        self, mock_storage: MagicMock, mock_beads: MagicMock
-    ) -> None:
+    def test_none_entities_handled(self, mock_storage: MagicMock, mock_beads: MagicMock) -> None:
         """Memories with None entities should merge without error."""
         from cortexgraph.agents.semantic_merge import SemanticMerge
 
         mock_storage.memories = {
             "mem-1": create_memory_mock("mem-1", "Content 1", entities=None),
-            "mem-2": create_memory_mock(
-                "mem-2", "Content 2", entities=["Entity1"]
-            ),
+            "mem-2": create_memory_mock("mem-2", "Content 2", entities=["Entity1"]),
         }
 
         issue = create_merge_issue("issue-1", ["mem-1", "mem-2"])
@@ -414,9 +398,7 @@ class TestEntityTagPreservation:
             assert result.entities_preserved == 1
             assert result.success is True
 
-    def test_many_entities_preserved(
-        self, mock_storage: MagicMock, mock_beads: MagicMock
-    ) -> None:
+    def test_many_entities_preserved(self, mock_storage: MagicMock, mock_beads: MagicMock) -> None:
         """Large entity sets should be fully preserved."""
         from cortexgraph.agents.semantic_merge import SemanticMerge
 
@@ -458,9 +440,7 @@ class TestEntityTagPreservation:
             # All 8 unique entities preserved
             assert result.entities_preserved == 8
 
-    def test_tags_union_collected(
-        self, mock_storage: MagicMock, mock_beads: MagicMock
-    ) -> None:
+    def test_tags_union_collected(self, mock_storage: MagicMock, mock_beads: MagicMock) -> None:
         """Tags from all source memories should be collected (union)."""
         from cortexgraph.agents.semantic_merge import SemanticMerge
 

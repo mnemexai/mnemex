@@ -119,9 +119,7 @@ def populated_storage(temp_storage: JSONLStorage):
 class TestRelationshipDiscoveryEndToEnd:
     """End-to-end integration tests for RelationshipDiscovery."""
 
-    def test_full_discovery_workflow_dry_run(
-        self, populated_storage: JSONLStorage
-    ) -> None:
+    def test_full_discovery_workflow_dry_run(self, populated_storage: JSONLStorage) -> None:
         """Full workflow: scan, process, verify - in dry run mode."""
         from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
 
@@ -157,9 +155,7 @@ class TestRelationshipDiscoveryEndToEnd:
             relations_after = populated_storage.get_relations()
             assert len(relations_after) == 0
 
-    def test_full_discovery_workflow_live_mode(
-        self, populated_storage: JSONLStorage
-    ) -> None:
+    def test_full_discovery_workflow_live_mode(self, populated_storage: JSONLStorage) -> None:
         """Full workflow with actual relation creation."""
         from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
 
@@ -377,9 +373,7 @@ class TestRelationshipDiscoveryEdgeCases:
             for pair_id in candidates:
                 assert "mem-archived" not in pair_id
 
-    def test_skips_already_related_pairs(
-        self, populated_storage: JSONLStorage
-    ) -> None:
+    def test_skips_already_related_pairs(self, populated_storage: JSONLStorage) -> None:
         """Does not suggest pairs that already have a relation."""
         from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
 
@@ -407,17 +401,15 @@ class TestRelationshipDiscoveryEdgeCases:
             for pair_id in candidates:
                 has_pg_config = "mem-pg-config" in pair_id
                 has_pg_perf = "mem-pg-perf" in pair_id
-                assert not (
-                    has_pg_config and has_pg_perf
-                ), "Already-related pair should be excluded"
+                assert not (has_pg_config and has_pg_perf), (
+                    "Already-related pair should be excluded"
+                )
 
 
 class TestRelationshipDiscoveryLiveMode:
     """Tests for live mode relation creation."""
 
-    def test_relation_metadata_complete(
-        self, populated_storage: JSONLStorage
-    ) -> None:
+    def test_relation_metadata_complete(self, populated_storage: JSONLStorage) -> None:
         """Created relations have complete metadata."""
         from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
 
@@ -457,9 +449,7 @@ class TestRelationshipDiscoveryLiveMode:
             assert isinstance(rel.metadata["reasoning"], str)
             assert rel.metadata["beads_issue_id"] == "mock-issue-456"
 
-    def test_skips_low_confidence_relations(
-        self, populated_storage: JSONLStorage
-    ) -> None:
+    def test_skips_low_confidence_relations(self, populated_storage: JSONLStorage) -> None:
         """Does not create relations below confidence threshold."""
         from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
 
@@ -483,9 +473,7 @@ class TestRelationshipDiscoveryLiveMode:
                     assert result.beads_issue_id is None
                     assert "Skipped" in result.reasoning
 
-    def test_result_includes_beads_issue_id(
-        self, populated_storage: JSONLStorage
-    ) -> None:
+    def test_result_includes_beads_issue_id(self, populated_storage: JSONLStorage) -> None:
         """Live mode results include beads issue ID."""
         from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
 
@@ -533,9 +521,7 @@ class TestRelationshipDiscoveryCoverageGaps:
             with pytest.raises(ValueError, match="Invalid pair ID format"):
                 discovery.process_item("invalid-pair-id-no-colon")
 
-    def test_process_item_not_in_cache_recalculates(
-        self, populated_storage: JSONLStorage
-    ) -> None:
+    def test_process_item_not_in_cache_recalculates(self, populated_storage: JSONLStorage) -> None:
         """When pair not in cache, recalculates shared entities (covers lines 254-264)."""
         from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
 
@@ -559,9 +545,7 @@ class TestRelationshipDiscoveryCoverageGaps:
             assert result.strength >= 0.0
             assert len(result.shared_entities) >= 1
 
-    def test_process_item_memory_not_found(
-        self, populated_storage: JSONLStorage
-    ) -> None:
+    def test_process_item_memory_not_found(self, populated_storage: JSONLStorage) -> None:
         """ValueError when memory not found (covers lines 257-260)."""
         from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
 
@@ -576,9 +560,7 @@ class TestRelationshipDiscoveryCoverageGaps:
             with pytest.raises(ValueError, match="Memory not found"):
                 discovery.process_item("nonexistent-mem:mem-pg-config")
 
-    def test_live_mode_relation_creation_error(
-        self, populated_storage: JSONLStorage
-    ) -> None:
+    def test_live_mode_relation_creation_error(self, populated_storage: JSONLStorage) -> None:
         """RuntimeError when relation creation fails (covers lines 357-359)."""
         from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
 
@@ -609,9 +591,7 @@ class TestRelationshipDiscoveryCoverageGaps:
             with pytest.raises(RuntimeError, match="Relation creation failed"):
                 discovery.process_item(candidates[0])
 
-    def test_get_memory_via_storage_method(
-        self, temp_storage: JSONLStorage
-    ) -> None:
+    def test_get_memory_via_storage_method(self, temp_storage: JSONLStorage) -> None:
         """_get_memory uses storage.get_memory when no dict (covers lines 368-374)."""
         from unittest.mock import MagicMock
 
@@ -647,9 +627,7 @@ class TestRelationshipDiscoveryCoverageGaps:
             assert result == test_memory
             mock_storage.get_memory.assert_called_with("test-mem")
 
-    def test_get_memory_returns_none_on_exception(
-        self, temp_storage: JSONLStorage
-    ) -> None:
+    def test_get_memory_returns_none_on_exception(self, temp_storage: JSONLStorage) -> None:
         """_get_memory returns None when get_memory raises exception."""
         from unittest.mock import MagicMock
 
@@ -670,9 +648,7 @@ class TestRelationshipDiscoveryCoverageGaps:
 
             assert result is None
 
-    def test_calculate_relation_metrics_no_shared(
-        self, temp_storage: JSONLStorage
-    ) -> None:
+    def test_calculate_relation_metrics_no_shared(self, temp_storage: JSONLStorage) -> None:
         """Reasoning shows 'No shared entities or tags' (covers line 436)."""
         from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
 
@@ -713,15 +689,15 @@ class TestRelationshipDiscoveryCoverageGaps:
 
             # Call _calculate_relation_metrics with empty shared set
             strength, confidence, reasoning = discovery._calculate_relation_metrics(
-                "mem-unique-1", "mem-unique-2", set()  # No shared entities
+                "mem-unique-1",
+                "mem-unique-2",
+                set(),  # No shared entities
             )
 
             assert reasoning == "No shared entities or tags"
             assert strength == 0.0
 
-    def test_scan_with_storage_list_memories_method(
-        self, temp_storage: JSONLStorage
-    ) -> None:
+    def test_scan_with_storage_list_memories_method(self, temp_storage: JSONLStorage) -> None:
         """Scan uses list_memories when available (covers lines 111-115)."""
         from unittest.mock import MagicMock
 
@@ -771,9 +747,7 @@ class TestRelationshipDiscoveryCoverageGaps:
             mock_storage.list_memories.assert_called_once()
             assert len(candidates) >= 1
 
-    def test_scan_with_storage_runtime_error(
-        self, temp_storage: JSONLStorage
-    ) -> None:
+    def test_scan_with_storage_runtime_error(self, temp_storage: JSONLStorage) -> None:
         """Scan handles RuntimeError from storage (covers lines 116-118)."""
         from unittest.mock import MagicMock
 
@@ -795,9 +769,7 @@ class TestRelationshipDiscoveryCoverageGaps:
             # Should return empty list, not raise
             assert candidates == []
 
-    def test_existing_relations_via_get_relations_method(
-        self, temp_storage: JSONLStorage
-    ) -> None:
+    def test_existing_relations_via_get_relations_method(self, temp_storage: JSONLStorage) -> None:
         """_get_existing_relation_pairs uses get_relations method (covers 195-205)."""
         from unittest.mock import MagicMock
 
@@ -857,9 +829,7 @@ class TestRelationshipDiscoveryCoverageGaps:
 
             assert ("a1", "b2") in existing or ("b2", "a1") in existing
 
-    def test_scan_uses_get_all_memories_fallback(
-        self, temp_storage: JSONLStorage
-    ) -> None:
+    def test_scan_uses_get_all_memories_fallback(self, temp_storage: JSONLStorage) -> None:
         """Scan uses get_all_memories when list_memories not available (line 115)."""
         from unittest.mock import MagicMock
 

@@ -200,9 +200,7 @@ class TestClusterDetectorScanContract:
             result = detector.scan()
             assert result == []
 
-    def test_scan_returns_clusterable_memories(
-        self, cluster_detector: ClusterDetector
-    ) -> None:
+    def test_scan_returns_clusterable_memories(self, cluster_detector: ClusterDetector) -> None:
         """scan() MUST return memory IDs that can be clustered.
 
         Note: The fixture pre-populates the cache, simulating what scan() returns.
@@ -248,9 +246,7 @@ class TestClusterDetectorScanContract:
 class TestClusterDetectorProcessItemContract:
     """Contract tests for ClusterDetector.process_item() method (T035)."""
 
-    def test_process_item_returns_cluster_result(
-        self, cluster_detector: ClusterDetector
-    ) -> None:
+    def test_process_item_returns_cluster_result(self, cluster_detector: ClusterDetector) -> None:
         """process_item() MUST return ClusterResult."""
         # First scan to find clusterable memories
         memory_ids = cluster_detector.scan()
@@ -282,27 +278,21 @@ class TestClusterDetectorProcessItemContract:
             assert isinstance(result.action, ClusterAction)
             assert isinstance(result.confidence, float)
 
-    def test_process_item_cohesion_in_range(
-        self, cluster_detector: ClusterDetector
-    ) -> None:
+    def test_process_item_cohesion_in_range(self, cluster_detector: ClusterDetector) -> None:
         """ClusterResult.cohesion MUST be in range [0.0, 1.0]."""
         memory_ids = cluster_detector.scan()
         if memory_ids:
             result = cluster_detector.process_item(memory_ids[0])
             assert 0.0 <= result.cohesion <= 1.0
 
-    def test_process_item_confidence_in_range(
-        self, cluster_detector: ClusterDetector
-    ) -> None:
+    def test_process_item_confidence_in_range(self, cluster_detector: ClusterDetector) -> None:
         """ClusterResult.confidence MUST be in range [0.0, 1.0]."""
         memory_ids = cluster_detector.scan()
         if memory_ids:
             result = cluster_detector.process_item(memory_ids[0])
             assert 0.0 <= result.confidence <= 1.0
 
-    def test_process_item_memory_ids_include_input(
-        self, cluster_detector: ClusterDetector
-    ) -> None:
+    def test_process_item_memory_ids_include_input(self, cluster_detector: ClusterDetector) -> None:
         """ClusterResult.memory_ids MUST include the input memory_id."""
         memory_ids = cluster_detector.scan()
         if memory_ids:
@@ -310,16 +300,12 @@ class TestClusterDetectorProcessItemContract:
             result = cluster_detector.process_item(input_id)
             assert input_id in result.memory_ids
 
-    def test_process_item_raises_on_invalid_id(
-        self, cluster_detector: ClusterDetector
-    ) -> None:
+    def test_process_item_raises_on_invalid_id(self, cluster_detector: ClusterDetector) -> None:
         """process_item() MUST raise exception for invalid memory ID."""
         with pytest.raises((ValueError, KeyError, RuntimeError)):
             cluster_detector.process_item("nonexistent-memory")
 
-    def test_process_item_dry_run_no_side_effects(
-        self, mock_storage: MagicMock
-    ) -> None:
+    def test_process_item_dry_run_no_side_effects(self, mock_storage: MagicMock) -> None:
         """If dry_run=True, process_item() MUST NOT modify any data."""
         from cortexgraph.agents.cluster_detector import ClusterDetector
 
@@ -337,9 +323,7 @@ class TestClusterDetectorProcessItemContract:
                 # In dry_run mode, no modifications should occur
                 mock_storage.create_relation.assert_not_called()
 
-    def test_process_item_completes_within_timeout(
-        self, cluster_detector: ClusterDetector
-    ) -> None:
+    def test_process_item_completes_within_timeout(self, cluster_detector: ClusterDetector) -> None:
         """process_item() SHOULD complete within 5 seconds."""
         memory_ids = cluster_detector.scan()
         if memory_ids:
@@ -358,9 +342,7 @@ class TestClusterDetectorProcessItemContract:
 class TestClusterDetectorFullContract:
     """Integration tests verifying full contract compliance."""
 
-    def test_run_method_uses_scan_and_process_item(
-        self, cluster_detector: ClusterDetector
-    ) -> None:
+    def test_run_method_uses_scan_and_process_item(self, cluster_detector: ClusterDetector) -> None:
         """run() MUST call scan() then process_item() for each result."""
         results = cluster_detector.run()
 
@@ -368,9 +350,7 @@ class TestClusterDetectorFullContract:
         for result in results:
             assert isinstance(result, ClusterResult)
 
-    def test_action_matches_cohesion_thresholds(
-        self, cluster_detector: ClusterDetector
-    ) -> None:
+    def test_action_matches_cohesion_thresholds(self, cluster_detector: ClusterDetector) -> None:
         """Action MUST match cohesion thresholds (MERGE >= 0.75, LINK 0.4-0.75, IGNORE < 0.4)."""
         results = cluster_detector.run()
 

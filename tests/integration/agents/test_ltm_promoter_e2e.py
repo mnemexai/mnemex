@@ -200,9 +200,7 @@ class TestPromotionEndToEnd:
         result_ids = {r.memory_id for r in results}
         assert "mem-low-value" not in result_ids
 
-    def test_excludes_already_promoted(
-        self, ltm_promoter_with_storage: LTMPromoter
-    ) -> None:
+    def test_excludes_already_promoted(self, ltm_promoter_with_storage: LTMPromoter) -> None:
         """Test already-promoted memories are excluded from scan."""
         promoter = ltm_promoter_with_storage
 
@@ -212,9 +210,7 @@ class TestPromotionEndToEnd:
         # Already promoted memory should not appear
         assert "mem-promoted" not in candidates
 
-    def test_excludes_archived_memories(
-        self, ltm_promoter_with_storage: LTMPromoter
-    ) -> None:
+    def test_excludes_archived_memories(self, ltm_promoter_with_storage: LTMPromoter) -> None:
         """Test archived memories are excluded from scan."""
         promoter = ltm_promoter_with_storage
 
@@ -222,9 +218,7 @@ class TestPromotionEndToEnd:
 
         assert "mem-archived" not in candidates
 
-    def test_promotion_result_fields(
-        self, ltm_promoter_with_storage: LTMPromoter
-    ) -> None:
+    def test_promotion_result_fields(self, ltm_promoter_with_storage: LTMPromoter) -> None:
         """Test PromotionResult has correct field values."""
         promoter = ltm_promoter_with_storage
 
@@ -314,9 +308,7 @@ class TestPromotionEndToEnd:
             promoter._writer = mock_vault_writer
 
             # Capture original statuses
-            original_statuses = {
-                mid: m.status for mid, m in test_storage.memories.items()
-            }
+            original_statuses = {mid: m.status for mid, m in test_storage.memories.items()}
 
             promoter.run()
 
@@ -324,9 +316,7 @@ class TestPromotionEndToEnd:
             for mid, original_status in original_statuses.items():
                 assert test_storage.memories[mid].status == original_status
 
-    def test_stats_reflect_run(
-        self, ltm_promoter_with_storage: LTMPromoter
-    ) -> None:
+    def test_stats_reflect_run(self, ltm_promoter_with_storage: LTMPromoter) -> None:
         """Test statistics are updated correctly after run."""
         promoter = ltm_promoter_with_storage
 
@@ -614,14 +604,11 @@ class TestPromotionLiveMode:
 
             if results:
                 # Beads issue should be created for each promotion
-                assert (
-                    mock_beads_integration["create_consolidation_issue"].call_count
-                    == len(results)
+                assert mock_beads_integration["create_consolidation_issue"].call_count == len(
+                    results
                 )
                 # Issue should be closed after successful promotion
-                assert (
-                    mock_beads_integration["close_issue"].call_count == len(results)
-                )
+                assert mock_beads_integration["close_issue"].call_count == len(results)
 
     def test_live_mode_updates_memory_status(
         self,

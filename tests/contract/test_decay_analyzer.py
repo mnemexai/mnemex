@@ -145,9 +145,7 @@ class TestDecayAnalyzerScanContract:
     ) -> None:
         """scan() MUST NOT modify any data."""
         # Take snapshot before
-        original_scores = {
-            k: v.score for k, v in mock_storage.memories.items()
-        }
+        original_scores = {k: v.score for k, v in mock_storage.memories.items()}
 
         # Run scan
         decay_analyzer.scan()
@@ -156,9 +154,7 @@ class TestDecayAnalyzerScanContract:
         for mem_id, original_score in original_scores.items():
             assert mock_storage.memories[mem_id].score == original_score
 
-    def test_scan_is_subclass_of_consolidation_agent(
-        self, decay_analyzer: DecayAnalyzer
-    ) -> None:
+    def test_scan_is_subclass_of_consolidation_agent(self, decay_analyzer: DecayAnalyzer) -> None:
         """DecayAnalyzer MUST inherit from ConsolidationAgent."""
         assert isinstance(decay_analyzer, ConsolidationAgent)
 
@@ -171,16 +167,12 @@ class TestDecayAnalyzerScanContract:
 class TestDecayAnalyzerProcessItemContract:
     """Contract tests for DecayAnalyzer.process_item() method (T024)."""
 
-    def test_process_item_returns_decay_result(
-        self, decay_analyzer: DecayAnalyzer
-    ) -> None:
+    def test_process_item_returns_decay_result(self, decay_analyzer: DecayAnalyzer) -> None:
         """process_item() MUST return DecayResult."""
         result = decay_analyzer.process_item("mem-critical")
         assert isinstance(result, DecayResult)
 
-    def test_process_item_result_has_required_fields(
-        self, decay_analyzer: DecayAnalyzer
-    ) -> None:
+    def test_process_item_result_has_required_fields(self, decay_analyzer: DecayAnalyzer) -> None:
         """DecayResult MUST have all required fields."""
         result = decay_analyzer.process_item("mem-danger")
 
@@ -196,30 +188,22 @@ class TestDecayAnalyzerProcessItemContract:
         assert isinstance(result.urgency, Urgency)
         assert isinstance(result.action, DecayAction)
 
-    def test_process_item_score_in_range(
-        self, decay_analyzer: DecayAnalyzer
-    ) -> None:
+    def test_process_item_score_in_range(self, decay_analyzer: DecayAnalyzer) -> None:
         """DecayResult.score MUST be in range [0.0, 1.0]."""
         result = decay_analyzer.process_item("mem-critical")
         assert 0.0 <= result.score <= 1.0
 
-    def test_process_item_memory_id_matches_input(
-        self, decay_analyzer: DecayAnalyzer
-    ) -> None:
+    def test_process_item_memory_id_matches_input(self, decay_analyzer: DecayAnalyzer) -> None:
         """DecayResult.memory_id MUST match input memory_id."""
         result = decay_analyzer.process_item("mem-danger")
         assert result.memory_id == "mem-danger"
 
-    def test_process_item_raises_on_invalid_id(
-        self, decay_analyzer: DecayAnalyzer
-    ) -> None:
+    def test_process_item_raises_on_invalid_id(self, decay_analyzer: DecayAnalyzer) -> None:
         """process_item() MUST raise exception for invalid memory ID."""
         with pytest.raises((ValueError, KeyError, RuntimeError)):
             decay_analyzer.process_item("nonexistent-memory")
 
-    def test_process_item_dry_run_no_side_effects(
-        self, mock_storage: MagicMock
-    ) -> None:
+    def test_process_item_dry_run_no_side_effects(self, mock_storage: MagicMock) -> None:
         """If dry_run=True, process_item() MUST NOT modify any data."""
         from cortexgraph.agents.decay_analyzer import DecayAnalyzer
 
@@ -237,9 +221,7 @@ class TestDecayAnalyzerProcessItemContract:
             mock_storage.update_memory.assert_not_called()
             mock_storage.delete_memory.assert_not_called()
 
-    def test_process_item_completes_within_timeout(
-        self, decay_analyzer: DecayAnalyzer
-    ) -> None:
+    def test_process_item_completes_within_timeout(self, decay_analyzer: DecayAnalyzer) -> None:
         """process_item() SHOULD complete within 5 seconds."""
         start = time.time()
         decay_analyzer.process_item("mem-critical")
@@ -256,9 +238,7 @@ class TestDecayAnalyzerProcessItemContract:
 class TestDecayAnalyzerFullContract:
     """Integration tests verifying full contract compliance."""
 
-    def test_run_method_uses_scan_and_process_item(
-        self, decay_analyzer: DecayAnalyzer
-    ) -> None:
+    def test_run_method_uses_scan_and_process_item(self, decay_analyzer: DecayAnalyzer) -> None:
         """run() MUST call scan() then process_item() for each result."""
         results = decay_analyzer.run()
 

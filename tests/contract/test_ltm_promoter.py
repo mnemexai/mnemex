@@ -240,9 +240,7 @@ class TestLTMPromoterScanContract:
         # Verify no changes
         assert len(mock_storage.memories) == original_count
 
-    def test_scan_is_subclass_of_consolidation_agent(
-        self, ltm_promoter: LTMPromoter
-    ) -> None:
+    def test_scan_is_subclass_of_consolidation_agent(self, ltm_promoter: LTMPromoter) -> None:
         """LTMPromoter MUST inherit from ConsolidationAgent."""
         assert isinstance(ltm_promoter, ConsolidationAgent)
 
@@ -255,18 +253,14 @@ class TestLTMPromoterScanContract:
 class TestLTMPromoterProcessItemContract:
     """Contract tests for LTMPromoter.process_item() method (T058)."""
 
-    def test_process_item_returns_promotion_result(
-        self, ltm_promoter: LTMPromoter
-    ) -> None:
+    def test_process_item_returns_promotion_result(self, ltm_promoter: LTMPromoter) -> None:
         """process_item() MUST return PromotionResult."""
         memory_ids = ltm_promoter.scan()
         if memory_ids:
             result = ltm_promoter.process_item(memory_ids[0])
             assert isinstance(result, PromotionResult)
 
-    def test_process_item_result_has_required_fields(
-        self, ltm_promoter: LTMPromoter
-    ) -> None:
+    def test_process_item_result_has_required_fields(self, ltm_promoter: LTMPromoter) -> None:
         """PromotionResult MUST have all required fields."""
         memory_ids = ltm_promoter.scan()
         if memory_ids:
@@ -285,18 +279,14 @@ class TestLTMPromoterProcessItemContract:
             assert len(result.criteria_met) >= 1  # At least one criterion met
             assert isinstance(result.success, bool)
 
-    def test_process_item_criteria_met_minimum_one(
-        self, ltm_promoter: LTMPromoter
-    ) -> None:
+    def test_process_item_criteria_met_minimum_one(self, ltm_promoter: LTMPromoter) -> None:
         """PromotionResult.criteria_met MUST have at least 1 item."""
         memory_ids = ltm_promoter.scan()
         if memory_ids:
             result = ltm_promoter.process_item(memory_ids[0])
             assert len(result.criteria_met) >= 1
 
-    def test_process_item_raises_on_invalid_memory_id(
-        self, ltm_promoter: LTMPromoter
-    ) -> None:
+    def test_process_item_raises_on_invalid_memory_id(self, ltm_promoter: LTMPromoter) -> None:
         """process_item() MUST raise exception for invalid memory ID."""
         with pytest.raises((ValueError, KeyError, RuntimeError)):
             ltm_promoter.process_item("nonexistent-memory")
@@ -339,9 +329,7 @@ class TestLTMPromoterProcessItemContract:
                 mock_storage.update_memory.assert_not_called()
                 mock_vault_writer.write_note.assert_not_called()
 
-    def test_process_item_completes_within_timeout(
-        self, ltm_promoter: LTMPromoter
-    ) -> None:
+    def test_process_item_completes_within_timeout(self, ltm_promoter: LTMPromoter) -> None:
         """process_item() SHOULD complete within 5 seconds."""
         memory_ids = ltm_promoter.scan()
         if memory_ids:
@@ -360,9 +348,7 @@ class TestLTMPromoterProcessItemContract:
 class TestLTMPromoterFullContract:
     """Integration tests verifying full contract compliance."""
 
-    def test_run_method_uses_scan_and_process_item(
-        self, ltm_promoter: LTMPromoter
-    ) -> None:
+    def test_run_method_uses_scan_and_process_item(self, ltm_promoter: LTMPromoter) -> None:
         """run() MUST call scan() then process_item() for each result."""
         results = ltm_promoter.run()
 
@@ -370,9 +356,7 @@ class TestLTMPromoterFullContract:
         for result in results:
             assert isinstance(result, PromotionResult)
 
-    def test_criteria_met_valid_values(
-        self, ltm_promoter: LTMPromoter
-    ) -> None:
+    def test_criteria_met_valid_values(self, ltm_promoter: LTMPromoter) -> None:
         """criteria_met MUST contain valid promotion criteria names."""
         # Valid criteria names based on data-model.md
         valid_criteria = {"score_threshold", "use_count_threshold", "review_count_threshold"}

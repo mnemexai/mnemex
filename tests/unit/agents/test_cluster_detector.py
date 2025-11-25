@@ -110,7 +110,7 @@ class TestConfidenceCalculation:
             (0.5, 3),
             (1.0, 5),
             (0.9, 10),  # Very large cluster
-            (0.1, 2),   # Low cohesion small cluster
+            (0.1, 2),  # Low cohesion small cluster
         ]
 
         for cohesion, size in test_cases:

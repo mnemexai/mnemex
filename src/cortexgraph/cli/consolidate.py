@@ -151,9 +151,7 @@ def cmd_run(agent: str, dry_run: bool = False, json_output: bool = False) -> int
         if json_output:
             # Convert results to JSON-serializable format
             if results:
-                output = [
-                    r.to_dict() if hasattr(r, "to_dict") else str(r) for r in results
-                ]
+                output = [r.to_dict() if hasattr(r, "to_dict") else str(r) for r in results]
             else:
                 output = []
             print(json.dumps({"agent": agent, "results": output}))
@@ -204,9 +202,7 @@ def cmd_run_all(dry_run: bool = False, json_output: bool = False) -> int:
             logger.exception(f"Pipeline failed at agent '{agent_name}'")
             if json_output:
                 print(
-                    json.dumps(
-                        {"error": str(e), "failed_at": agent_name, "results": all_results}
-                    )
+                    json.dumps({"error": str(e), "failed_at": agent_name, "results": all_results})
                 )
             else:
                 print(f"✗ Pipeline failed at '{agent_name}': {e}")
@@ -246,9 +242,7 @@ def cmd_status(json_output: bool = False) -> tuple[int, str]:
     return 0, output
 
 
-def cmd_process(
-    issue_id: str, dry_run: bool = False, json_output: bool = False
-) -> int:
+def cmd_process(issue_id: str, dry_run: bool = False, json_output: bool = False) -> int:
     """Process a specific beads issue.
 
     Args:
@@ -364,9 +358,7 @@ Examples:
         if args.run_all:
             return cmd_run_all(dry_run=args.dry_run, json_output=args.json_output)
         elif args.agent:
-            return cmd_run(
-                agent=args.agent, dry_run=args.dry_run, json_output=args.json_output
-            )
+            return cmd_run(agent=args.agent, dry_run=args.dry_run, json_output=args.json_output)
         else:
             run_parser.print_help()
             return 1

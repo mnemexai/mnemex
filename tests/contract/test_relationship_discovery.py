@@ -175,18 +175,14 @@ class TestRelationshipDiscoveryScanContract:
         result = relationship_discovery.scan()
         assert isinstance(result, list)
 
-    def test_scan_returns_string_pairs(
-        self, relationship_discovery: RelationshipDiscovery
-    ) -> None:
+    def test_scan_returns_string_pairs(self, relationship_discovery: RelationshipDiscovery) -> None:
         """scan() MUST return list of string pair identifiers."""
         result = relationship_discovery.scan()
         # Each item should be a string (pair identifier like "mem-1:mem-2")
         for item in result:
             assert isinstance(item, str)
 
-    def test_scan_may_return_empty(
-        self, mock_beads_integration: MagicMock
-    ) -> None:
+    def test_scan_may_return_empty(self, mock_beads_integration: MagicMock) -> None:
         """scan() MAY return empty list when no relationship candidates."""
         from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
 
@@ -442,9 +438,7 @@ class TestRelationshipDiscoveryFullContract:
         for result in results:
             assert isinstance(result, RelationResult)
 
-    def test_shared_entities_populated(
-        self, relationship_discovery: RelationshipDiscovery
-    ) -> None:
+    def test_shared_entities_populated(self, relationship_discovery: RelationshipDiscovery) -> None:
         """shared_entities SHOULD be populated for related memories."""
         pair_ids = relationship_discovery.scan()
         if pair_ids:

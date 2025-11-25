@@ -123,11 +123,13 @@ def create_merge_issue(
         "title": f"Merge: {cluster_id} ({len(memory_ids)} memories)",
         "status": "open",
         "labels": ["consolidation:merge", "urgency:medium"],
-        "notes": json.dumps({
-            "memory_ids": memory_ids,
-            "cluster_id": cluster_id,
-            "cohesion": cohesion,
-        }),
+        "notes": json.dumps(
+            {
+                "memory_ids": memory_ids,
+                "cluster_id": cluster_id,
+                "cohesion": cohesion,
+            }
+        ),
     }
 
 
@@ -192,9 +194,7 @@ class TestSemanticMergeIntegration:
             # PostgreSQL, Database, Production, ConnectionPool, Performance, Query, Index
             assert result.entities_preserved >= 7
 
-    def test_merge_jwt_cluster(
-        self, test_storage: JSONLStorage, mock_beads: MagicMock
-    ) -> None:
+    def test_merge_jwt_cluster(self, test_storage: JSONLStorage, mock_beads: MagicMock) -> None:
         """Merge JWT cluster with two memories."""
         issue = create_merge_issue(
             "cortexgraph-merge-jwt",
@@ -503,6 +503,7 @@ class TestSemanticMergeLiveMode:
             assert "pg-1" in updated_memories
             assert "pg-2" in updated_memories
             from cortexgraph.storage.models import MemoryStatus
+
             assert updated_memories["pg-1"].get("status") == MemoryStatus.ARCHIVED
 
             # Verify beads issue was closed
