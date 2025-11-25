@@ -219,13 +219,13 @@
 
 ### CLI Entry Point
 
-- [ ] T081 Create CLI skeleton at `src/cortexgraph/cli/consolidate.py`
-- [ ] T082 Implement `run` command with agent selection
-- [ ] T083 Implement `run --all` for full pipeline
-- [ ] T084 Implement `status` command for queue inspection
-- [ ] T085 Implement `process` command for specific issue
-- [ ] T086 Add `--dry-run` and `--json` global options
-- [ ] T087 Add entry point `cortexgraph-consolidate` to `pyproject.toml`
+- [X] T081 Create CLI skeleton at `src/cortexgraph/cli/consolidate.py`
+- [X] T082 Implement `run` command with agent selection
+- [X] T083 Implement `run --all` for full pipeline
+- [X] T084 Implement `status` command for queue inspection
+- [X] T085 Implement `process` command for specific issue
+- [X] T086 Add `--dry-run` and `--json` global options
+- [X] T087 Add entry point `cortexgraph-consolidate` to `pyproject.toml`
 
 ### Scheduler
 
@@ -235,7 +235,7 @@
 
 ### CLI Tests
 
-- [ ] T091 [P] Unit tests for CLI commands in `tests/unit/agents/test_cli_consolidate.py`
+- [X] T091 [P] Unit tests for CLI commands in `tests/unit/cli/test_cli_consolidate.py`
 - [ ] T092 Integration test for pipeline execution in `tests/integration/agents/test_agent_pipeline.py`
 - [ ] T093 Integration test for beads coordination in `tests/integration/agents/test_beads_coordination.py`
 
