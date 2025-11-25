@@ -61,9 +61,7 @@ class TestPatternMatch:
 
     def test_match_count_auto_calculated(self):
         """Test match_count is calculated from matched_patterns."""
-        result = PatternMatch(
-            matched=True, matched_patterns=["pattern1", "pattern2", "pattern3"]
-        )
+        result = PatternMatch(matched=True, matched_patterns=["pattern1", "pattern2", "pattern3"])
 
         assert result.match_count == 3
 

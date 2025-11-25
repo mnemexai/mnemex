@@ -190,7 +190,9 @@ class TestFallbackPatternExtraction:
 
         # Should extract multi-word capitalized sequences as fallback
         # Regex pattern matches "John Smith" and "Acme Corporation" as single entities
-        assert any("john smith" in e or "acme corporation" in e or "remember" in e for e in entities)
+        assert any(
+            "john smith" in e or "acme corporation" in e or "remember" in e for e in entities
+        )
 
         # Restore original nlp
         extractor.nlp = original_nlp

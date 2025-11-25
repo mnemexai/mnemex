@@ -7,6 +7,7 @@ and are used across the activation module and MCP tools.
 """
 
 from typing import Literal
+
 from pydantic import BaseModel, Field
 
 
@@ -151,9 +152,7 @@ class RecallAnalysis(BaseModel):
         phrase_signals: Detected phrase signals for transparency
     """
 
-    should_search: bool = Field(
-        ..., description="Recommendation: should memory be searched?"
-    )
+    should_search: bool = Field(..., description="Recommendation: should memory be searched?")
 
     confidence: float = Field(
         ...,

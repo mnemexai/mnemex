@@ -7,7 +7,6 @@ and provides high-level detection functions for save/recall intent.
 
 import math
 import time
-from typing import Any
 
 from cortexgraph.activation.config import ActivationConfig, get_signal_weight
 from cortexgraph.activation.entity_extraction import extract_entities
@@ -101,9 +100,7 @@ def detect_save_intent(
 
     # Explicit save request (strongest signal)
     if pattern_results["save"].matched:
-        signals["explicit_save_request"] = get_signal_weight(
-            config, "explicit_save_request"
-        )
+        signals["explicit_save_request"] = get_signal_weight(config, "explicit_save_request")
         phrase_signals["save_request"] = True
 
     # Importance markers
@@ -157,14 +154,10 @@ def detect_save_intent(
     # Generate tags (simple heuristic from entities)
     suggested_tags: list[str] = []
     if any(
-        tech in " ".join(entities).lower()
-        for tech in ["database", "postgres", "mongodb", "redis"]
+        tech in " ".join(entities).lower() for tech in ["database", "postgres", "mongodb", "redis"]
     ):
         suggested_tags.append("database")
-    if any(
-        tech in " ".join(entities).lower()
-        for tech in ["api", "rest", "graphql", "http"]
-    ):
+    if any(tech in " ".join(entities).lower() for tech in ["api", "rest", "graphql", "http"]):
         suggested_tags.append("api")
     if "decision" in phrase_signals or "preference" in message.lower():
         suggested_tags.append("preference")
@@ -221,9 +214,7 @@ def detect_recall_intent(
 
     # Explicit recall request (strongest signal)
     if pattern_results["recall"].matched:
-        signals["explicit_recall_request"] = get_signal_weight(
-            config, "explicit_recall_request"
-        )
+        signals["explicit_recall_request"] = get_signal_weight(config, "explicit_recall_request")
         phrase_signals["recall_request"] = True
 
     # Past reference detection (heuristic)

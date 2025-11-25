@@ -61,19 +61,11 @@ class PatternMatcher:
         self.recall_triggers_regex = self._compile_patterns(
             patterns.explicit_recall_triggers, regex_flags
         )
-        self.importance_regex = self._compile_patterns(
-            patterns.importance_markers, regex_flags
-        )
-        self.exclusion_regex = self._compile_patterns(
-            patterns.exclusion_patterns, regex_flags
-        )
-        self.uncertainty_regex = self._compile_patterns(
-            patterns.uncertainty_markers, regex_flags
-        )
+        self.importance_regex = self._compile_patterns(patterns.importance_markers, regex_flags)
+        self.exclusion_regex = self._compile_patterns(patterns.exclusion_patterns, regex_flags)
+        self.uncertainty_regex = self._compile_patterns(patterns.uncertainty_markers, regex_flags)
 
-    def _compile_patterns(
-        self, pattern_list: list[str], flags: int
-    ) -> re.Pattern[str] | None:
+    def _compile_patterns(self, pattern_list: list[str], flags: int) -> re.Pattern[str] | None:
         """Compile list of patterns into single regex.
 
         Args:

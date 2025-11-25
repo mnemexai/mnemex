@@ -10,8 +10,6 @@ Unlike contract tests (schema validation) or unit tests (isolated components),
 integration tests verify the components work correctly together.
 """
 
-import pytest
-
 from cortexgraph.tools.analyze_message import analyze_message
 
 
@@ -205,9 +203,7 @@ class TestAnalyzeMessageToolWithVariousInputs:
 
     def test_technical_configuration(self):
         """Integration: Technical configuration detected as memory-worthy."""
-        result = analyze_message(
-            "Remember this: DATABASE_URL=postgres://localhost:5432/mydb"
-        )
+        result = analyze_message("Remember this: DATABASE_URL=postgres://localhost:5432/mydb")
 
         assert result["should_save"] is True
         assert result["confidence"] >= 0.7

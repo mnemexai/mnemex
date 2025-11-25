@@ -13,8 +13,6 @@ Contract guarantees:
 - Explicit save triggers yield high confidence (>=0.7)
 """
 
-import pytest
-
 from cortexgraph.tools.analyze_message import analyze_message
 
 
@@ -171,8 +169,18 @@ class TestReasoningContract:
 
         assert len(result["reasoning"]) > 0
         # Reasoning should explain the decision
-        assert any(word in result["reasoning"].lower() for word in
-                   ["detect", "signal", "entity", "importance", "request", "marker", "preference"])
+        assert any(
+            word in result["reasoning"].lower()
+            for word in [
+                "detect",
+                "signal",
+                "entity",
+                "importance",
+                "request",
+                "marker",
+                "preference",
+            ]
+        )
 
     def test_reasoning_mentions_entities_when_present(self):
         """Contract: Reasoning mentions entities when they affect decision."""
@@ -180,9 +188,9 @@ class TestReasoningContract:
 
         if result["suggested_entities"]:
             # Reasoning should reference entities (may say "Entities:" or list them)
-            assert "entit" in result["reasoning"].lower() or \
-                   any(e.lower() in result["reasoning"].lower()
-                       for e in result["suggested_entities"][:3])
+            assert "entit" in result["reasoning"].lower() or any(
+                e.lower() in result["reasoning"].lower() for e in result["suggested_entities"][:3]
+            )
 
 
 class TestEdgeCasesContract:

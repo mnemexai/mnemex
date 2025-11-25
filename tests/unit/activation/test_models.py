@@ -205,14 +205,10 @@ class TestMessageAnalysis:
     def test_confidence_valid_range(self):
         """Test confidence accepts 0.0-1.0 range."""
         # Boundary values
-        analysis_low = MessageAnalysis(
-            should_save=False, confidence=0.0, reasoning="test"
-        )
+        analysis_low = MessageAnalysis(should_save=False, confidence=0.0, reasoning="test")
         assert analysis_low.confidence == 0.0
 
-        analysis_high = MessageAnalysis(
-            should_save=True, confidence=1.0, reasoning="test"
-        )
+        analysis_high = MessageAnalysis(should_save=True, confidence=1.0, reasoning="test")
         assert analysis_high.confidence == 1.0
 
     def test_confidence_out_of_range_fails(self):
@@ -312,9 +308,7 @@ class TestMessageAnalysis:
         long_reasoning = "x" * 1500
 
         with pytest.raises(ValidationError):
-            MessageAnalysis(
-                should_save=True, confidence=0.8, reasoning=long_reasoning
-            )
+            MessageAnalysis(should_save=True, confidence=0.8, reasoning=long_reasoning)
 
     def test_phrase_signals_optional(self):
         """Test phrase_signals is optional and defaults to empty dict."""
@@ -379,14 +373,10 @@ class TestRecallAnalysis:
 
     def test_confidence_valid_range(self):
         """Test confidence accepts 0.0-1.0 range."""
-        analysis_low = RecallAnalysis(
-            should_search=False, confidence=0.0, reasoning="test"
-        )
+        analysis_low = RecallAnalysis(should_search=False, confidence=0.0, reasoning="test")
         assert analysis_low.confidence == 0.0
 
-        analysis_high = RecallAnalysis(
-            should_search=True, confidence=1.0, reasoning="test"
-        )
+        analysis_high = RecallAnalysis(should_search=True, confidence=1.0, reasoning="test")
         assert analysis_high.confidence == 1.0
 
     def test_confidence_out_of_range_fails(self):
@@ -462,9 +452,7 @@ class TestRecallAnalysis:
         # Too long reasoning
         long_reasoning = "x" * 1500
         with pytest.raises(ValidationError):
-            RecallAnalysis(
-                should_search=True, confidence=0.8, reasoning=long_reasoning
-            )
+            RecallAnalysis(should_search=True, confidence=0.8, reasoning=long_reasoning)
 
     def test_phrase_signals_optional(self):
         """Test phrase_signals is optional and defaults to empty dict."""

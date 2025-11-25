@@ -75,9 +75,7 @@ class TestExplicitSaveTriggers:
     - "I prefer [entity]"
     """
 
-    def test_remember_this_triggers_save(
-        self, save_detection_config, save_detection_matcher
-    ):
+    def test_remember_this_triggers_save(self, save_detection_config, save_detection_matcher):
         """'Remember this' should trigger save with high confidence."""
         result = detect_save_intent(
             "Remember this: I use PostgreSQL for all my projects",
@@ -89,9 +87,7 @@ class TestExplicitSaveTriggers:
         assert result.confidence >= 0.7
         assert result.phrase_signals.get("save_request") is True
 
-    def test_dont_forget_triggers_save(
-        self, save_detection_config, save_detection_matcher
-    ):
+    def test_dont_forget_triggers_save(self, save_detection_config, save_detection_matcher):
         """'Don't forget' should trigger save with high confidence."""
         result = detect_save_intent(
             "Don't forget: my API key format is sk-xxx",
@@ -122,9 +118,7 @@ class TestExplicitSaveTriggers:
         assert result.confidence >= 0.5
         assert "postgresql" in [e.lower() for e in result.suggested_entities]
 
-    def test_explicit_trigger_case_insensitive(
-        self, save_detection_config, save_detection_matcher
-    ):
+    def test_explicit_trigger_case_insensitive(self, save_detection_config, save_detection_matcher):
         """Explicit triggers should work regardless of case."""
         result = detect_save_intent(
             "REMEMBER THIS: I always use TypeScript",
@@ -165,9 +159,7 @@ class TestImplicitSaveSignals:
     - Decision/preference statements
     """
 
-    def test_critical_marker_triggers_save(
-        self, save_detection_config, save_detection_matcher
-    ):
+    def test_critical_marker_triggers_save(self, save_detection_config, save_detection_matcher):
         """'Critical' importance marker should trigger save."""
         result = detect_save_intent(
             "This is critical: the API endpoint changed to /v2/users",
@@ -260,9 +252,7 @@ class TestImplicitSaveSignals:
 
         assert result.phrase_signals.get("decision_marker") is True
 
-    def test_combined_signals_high_confidence(
-        self, save_detection_config, save_detection_matcher
-    ):
+    def test_combined_signals_high_confidence(self, save_detection_config, save_detection_matcher):
         """Multiple positive signals should result in high confidence."""
         result = detect_save_intent(
             "Remember this critical decision: I chose PostgreSQL and Redis",
@@ -289,9 +279,7 @@ class TestExclusionPatterns:
     - Small talk and casual conversation
     """
 
-    def test_what_is_question_excluded(
-        self, save_detection_config, save_detection_matcher
-    ):
+    def test_what_is_question_excluded(self, save_detection_config, save_detection_matcher):
         """'What is X?' questions should NOT trigger save."""
         result = detect_save_intent(
             "What is a database index?",
@@ -303,9 +291,7 @@ class TestExclusionPatterns:
         assert result.confidence < 0.4
         assert result.phrase_signals.get("exclusion_pattern") is True
 
-    def test_how_do_question_excluded(
-        self, save_detection_config, save_detection_matcher
-    ):
+    def test_how_do_question_excluded(self, save_detection_config, save_detection_matcher):
         """'How do I X?' questions should NOT trigger save."""
         result = detect_save_intent(
             "How do I connect to PostgreSQL?",
@@ -316,9 +302,7 @@ class TestExclusionPatterns:
         assert result.should_save is False
         assert result.phrase_signals.get("exclusion_pattern") is True
 
-    def test_how_does_question_excluded(
-        self, save_detection_config, save_detection_matcher
-    ):
+    def test_how_does_question_excluded(self, save_detection_config, save_detection_matcher):
         """'How does X?' questions should NOT trigger save."""
         result = detect_save_intent(
             "How does garbage collection work in Python?",
@@ -329,9 +313,7 @@ class TestExclusionPatterns:
         assert result.should_save is False
         assert result.phrase_signals.get("exclusion_pattern") is True
 
-    def test_can_you_explain_excluded(
-        self, save_detection_config, save_detection_matcher
-    ):
+    def test_can_you_explain_excluded(self, save_detection_config, save_detection_matcher):
         """'Can you explain X?' questions should NOT trigger save."""
         result = detect_save_intent(
             "Can you explain async/await in JavaScript?",
@@ -342,9 +324,7 @@ class TestExclusionPatterns:
         assert result.should_save is False
         assert result.phrase_signals.get("exclusion_pattern") is True
 
-    def test_exclusion_overrides_entity_count(
-        self, save_detection_config, save_detection_matcher
-    ):
+    def test_exclusion_overrides_entity_count(self, save_detection_config, save_detection_matcher):
         """Exclusion pattern should override positive entity signals."""
         result = detect_save_intent(
             "What is the difference between PostgreSQL, MySQL, and SQLite?",
@@ -387,9 +367,7 @@ class TestUncertaintyMarkers:
     Uncertainty reduces confidence in save decision.
     """
 
-    def test_maybe_reduces_confidence(
-        self, save_detection_config, save_detection_matcher
-    ):
+    def test_maybe_reduces_confidence(self, save_detection_config, save_detection_matcher):
         """'Maybe' should reduce save confidence."""
         result_certain = detect_save_intent(
             "I use PostgreSQL for databases",
@@ -406,9 +384,7 @@ class TestUncertaintyMarkers:
         assert result_uncertain.confidence < result_certain.confidence
         assert result_uncertain.phrase_signals.get("uncertainty_marker") is True
 
-    def test_not_sure_reduces_confidence(
-        self, save_detection_config, save_detection_matcher
-    ):
+    def test_not_sure_reduces_confidence(self, save_detection_config, save_detection_matcher):
         """'Not sure' should reduce save confidence."""
         result = detect_save_intent(
             "I'm not sure if PostgreSQL is the right choice",
@@ -429,9 +405,7 @@ class TestUncertaintyMarkers:
 class TestSaveDetectionEdgeCases:
     """Edge case tests for save detection."""
 
-    def test_empty_message_no_save(
-        self, save_detection_config, save_detection_matcher
-    ):
+    def test_empty_message_no_save(self, save_detection_config, save_detection_matcher):
         """Empty message should not trigger save."""
         result = detect_save_intent(
             "",
@@ -442,9 +416,7 @@ class TestSaveDetectionEdgeCases:
         assert result.should_save is False
         assert result.confidence < 0.5
 
-    def test_whitespace_only_no_save(
-        self, save_detection_config, save_detection_matcher
-    ):
+    def test_whitespace_only_no_save(self, save_detection_config, save_detection_matcher):
         """Whitespace-only message should not trigger save."""
         result = detect_save_intent(
             "   \n\t  ",
@@ -454,9 +426,7 @@ class TestSaveDetectionEdgeCases:
 
         assert result.should_save is False
 
-    def test_very_short_message_no_save(
-        self, save_detection_config, save_detection_matcher
-    ):
+    def test_very_short_message_no_save(self, save_detection_config, save_detection_matcher):
         """Very short messages typically shouldn't trigger save."""
         result = detect_save_intent(
             "Hi",
@@ -467,9 +437,7 @@ class TestSaveDetectionEdgeCases:
         assert result.should_save is False
         assert result.confidence < 0.5
 
-    def test_very_long_message_handled(
-        self, save_detection_config, save_detection_matcher
-    ):
+    def test_very_long_message_handled(self, save_detection_config, save_detection_matcher):
         """Very long messages should be handled without error."""
         long_message = "Remember this: " + "PostgreSQL " * 500
 
@@ -483,9 +451,7 @@ class TestSaveDetectionEdgeCases:
         assert result.should_save is True
         assert result.confidence >= 0.5
 
-    def test_unicode_handled(
-        self, save_detection_config, save_detection_matcher
-    ):
+    def test_unicode_handled(self, save_detection_config, save_detection_matcher):
         """Unicode characters should be handled correctly."""
         result = detect_save_intent(
             "Remember this: my café database uses PostgreSQL ☕",

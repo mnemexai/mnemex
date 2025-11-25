@@ -9,8 +9,6 @@ detect_recall_intent, and create_activation_signal for:
 - Edge cases (overflow, empty input, boundary values)
 """
 
-import math
-
 import pytest
 
 from cortexgraph.activation.config import ActivationConfig, ConfidenceThreshold, PatternLibrary
@@ -261,7 +259,10 @@ class TestDetectSaveIntent:
         analysis = detect_save_intent(message, test_config, test_matcher)
 
         assert analysis.should_save is True
-        assert "decision_marker" in analysis.phrase_signals or "save_request" in analysis.phrase_signals
+        assert (
+            "decision_marker" in analysis.phrase_signals
+            or "save_request" in analysis.phrase_signals
+        )
 
     def test_suggested_strength_calculation(self, test_config, test_matcher):
         """Test suggested_strength based on confidence."""
