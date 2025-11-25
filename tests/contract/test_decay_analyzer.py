@@ -14,7 +14,6 @@ Contract Requirements:
 from __future__ import annotations
 
 import time
-import uuid
 from typing import TYPE_CHECKING
 from unittest.mock import MagicMock, patch
 
@@ -85,7 +84,7 @@ def mock_storage() -> MagicMock:
 
 
 @pytest.fixture
-def decay_analyzer(mock_storage: MagicMock) -> "DecayAnalyzer":
+def decay_analyzer(mock_storage: MagicMock) -> DecayAnalyzer:
     """Create DecayAnalyzer with mock storage and controlled score computation."""
     from cortexgraph.agents.decay_analyzer import DecayAnalyzer
 
@@ -105,12 +104,12 @@ def decay_analyzer(mock_storage: MagicMock) -> "DecayAnalyzer":
 class TestDecayAnalyzerScanContract:
     """Contract tests for DecayAnalyzer.scan() method (T023)."""
 
-    def test_scan_returns_list(self, decay_analyzer: "DecayAnalyzer") -> None:
+    def test_scan_returns_list(self, decay_analyzer: DecayAnalyzer) -> None:
         """scan() MUST return a list."""
         result = decay_analyzer.scan()
         assert isinstance(result, list)
 
-    def test_scan_returns_string_ids(self, decay_analyzer: "DecayAnalyzer") -> None:
+    def test_scan_returns_string_ids(self, decay_analyzer: DecayAnalyzer) -> None:
         """scan() MUST return list of string memory IDs."""
         result = decay_analyzer.scan()
         for item in result:
@@ -131,7 +130,7 @@ class TestDecayAnalyzerScanContract:
             assert result == []
 
     def test_scan_only_returns_low_score_memories(
-        self, decay_analyzer: "DecayAnalyzer", mock_storage: MagicMock
+        self, decay_analyzer: DecayAnalyzer, mock_storage: MagicMock
     ) -> None:
         """scan() MUST only return memories with score < threshold (0.35)."""
         result = decay_analyzer.scan()
@@ -142,7 +141,7 @@ class TestDecayAnalyzerScanContract:
         assert len(result) == 3
 
     def test_scan_does_not_modify_data(
-        self, decay_analyzer: "DecayAnalyzer", mock_storage: MagicMock
+        self, decay_analyzer: DecayAnalyzer, mock_storage: MagicMock
     ) -> None:
         """scan() MUST NOT modify any data."""
         # Take snapshot before
@@ -158,7 +157,7 @@ class TestDecayAnalyzerScanContract:
             assert mock_storage.memories[mem_id].score == original_score
 
     def test_scan_is_subclass_of_consolidation_agent(
-        self, decay_analyzer: "DecayAnalyzer"
+        self, decay_analyzer: DecayAnalyzer
     ) -> None:
         """DecayAnalyzer MUST inherit from ConsolidationAgent."""
         assert isinstance(decay_analyzer, ConsolidationAgent)
@@ -173,14 +172,14 @@ class TestDecayAnalyzerProcessItemContract:
     """Contract tests for DecayAnalyzer.process_item() method (T024)."""
 
     def test_process_item_returns_decay_result(
-        self, decay_analyzer: "DecayAnalyzer"
+        self, decay_analyzer: DecayAnalyzer
     ) -> None:
         """process_item() MUST return DecayResult."""
         result = decay_analyzer.process_item("mem-critical")
         assert isinstance(result, DecayResult)
 
     def test_process_item_result_has_required_fields(
-        self, decay_analyzer: "DecayAnalyzer"
+        self, decay_analyzer: DecayAnalyzer
     ) -> None:
         """DecayResult MUST have all required fields."""
         result = decay_analyzer.process_item("mem-danger")
@@ -198,24 +197,24 @@ class TestDecayAnalyzerProcessItemContract:
         assert isinstance(result.action, DecayAction)
 
     def test_process_item_score_in_range(
-        self, decay_analyzer: "DecayAnalyzer"
+        self, decay_analyzer: DecayAnalyzer
     ) -> None:
         """DecayResult.score MUST be in range [0.0, 1.0]."""
         result = decay_analyzer.process_item("mem-critical")
         assert 0.0 <= result.score <= 1.0
 
     def test_process_item_memory_id_matches_input(
-        self, decay_analyzer: "DecayAnalyzer"
+        self, decay_analyzer: DecayAnalyzer
     ) -> None:
         """DecayResult.memory_id MUST match input memory_id."""
         result = decay_analyzer.process_item("mem-danger")
         assert result.memory_id == "mem-danger"
 
     def test_process_item_raises_on_invalid_id(
-        self, decay_analyzer: "DecayAnalyzer"
+        self, decay_analyzer: DecayAnalyzer
     ) -> None:
         """process_item() MUST raise exception for invalid memory ID."""
-        with pytest.raises(Exception):  # Specific exception type may vary
+        with pytest.raises((ValueError, KeyError, RuntimeError)):
             decay_analyzer.process_item("nonexistent-memory")
 
     def test_process_item_dry_run_no_side_effects(
@@ -239,7 +238,7 @@ class TestDecayAnalyzerProcessItemContract:
             mock_storage.delete_memory.assert_not_called()
 
     def test_process_item_completes_within_timeout(
-        self, decay_analyzer: "DecayAnalyzer"
+        self, decay_analyzer: DecayAnalyzer
     ) -> None:
         """process_item() SHOULD complete within 5 seconds."""
         start = time.time()
@@ -258,7 +257,7 @@ class TestDecayAnalyzerFullContract:
     """Integration tests verifying full contract compliance."""
 
     def test_run_method_uses_scan_and_process_item(
-        self, decay_analyzer: "DecayAnalyzer"
+        self, decay_analyzer: DecayAnalyzer
     ) -> None:
         """run() MUST call scan() then process_item() for each result."""
         results = decay_analyzer.run()
@@ -299,7 +298,7 @@ class TestDecayAnalyzerFullContract:
             assert len(results) == 3  # All should be processed
 
     def test_run_handles_errors_gracefully(
-        self, decay_analyzer: "DecayAnalyzer", mock_storage: MagicMock
+        self, decay_analyzer: DecayAnalyzer, mock_storage: MagicMock
     ) -> None:
         """run() MUST handle errors per-item without aborting all."""
         # Add a memory that will cause an error during score computation

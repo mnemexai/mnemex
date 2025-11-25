@@ -6,7 +6,6 @@ with real storage and relation creation.
 
 from __future__ import annotations
 
-import tempfile
 import time
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -445,7 +444,7 @@ class TestRelationshipDiscoveryLiveMode:
             assert len(candidates) >= 1
 
             # Process first candidate
-            result = discovery.process_item(candidates[0])
+            discovery.process_item(candidates[0])
 
             # Verify relation was created with complete metadata
             relations = populated_storage.get_relations()
@@ -614,8 +613,9 @@ class TestRelationshipDiscoveryCoverageGaps:
         self, temp_storage: JSONLStorage
     ) -> None:
         """_get_memory uses storage.get_memory when no dict (covers lines 368-374)."""
-        from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
         from unittest.mock import MagicMock
+
+        from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
 
         # Create storage mock with get_memory but no memories dict
         mock_storage = MagicMock()
@@ -651,8 +651,9 @@ class TestRelationshipDiscoveryCoverageGaps:
         self, temp_storage: JSONLStorage
     ) -> None:
         """_get_memory returns None when get_memory raises exception."""
-        from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
         from unittest.mock import MagicMock
+
+        from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
 
         mock_storage = MagicMock()
         del mock_storage.memories
@@ -722,8 +723,9 @@ class TestRelationshipDiscoveryCoverageGaps:
         self, temp_storage: JSONLStorage
     ) -> None:
         """Scan uses list_memories when available (covers lines 111-115)."""
-        from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
         from unittest.mock import MagicMock
+
+        from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
 
         now = int(time.time())
         memories = [
@@ -773,8 +775,9 @@ class TestRelationshipDiscoveryCoverageGaps:
         self, temp_storage: JSONLStorage
     ) -> None:
         """Scan handles RuntimeError from storage (covers lines 116-118)."""
-        from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
         from unittest.mock import MagicMock
+
+        from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
 
         mock_storage = MagicMock()
         del mock_storage.memories
@@ -796,8 +799,9 @@ class TestRelationshipDiscoveryCoverageGaps:
         self, temp_storage: JSONLStorage
     ) -> None:
         """_get_existing_relation_pairs uses get_relations method (covers 195-205)."""
-        from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
         from unittest.mock import MagicMock
+
+        from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
 
         existing_rel = Relation(
             id="rel-1",
@@ -826,8 +830,9 @@ class TestRelationshipDiscoveryCoverageGaps:
         self, temp_storage: JSONLStorage
     ) -> None:
         """_get_existing_relation_pairs falls back to get_all_relations (lines 206-215)."""
-        from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
         from unittest.mock import MagicMock
+
+        from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
 
         existing_rel = Relation(
             id="rel-1",
@@ -856,8 +861,9 @@ class TestRelationshipDiscoveryCoverageGaps:
         self, temp_storage: JSONLStorage
     ) -> None:
         """Scan uses get_all_memories when list_memories not available (line 115)."""
-        from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
         from unittest.mock import MagicMock
+
+        from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
 
         now = int(time.time())
         memories = [

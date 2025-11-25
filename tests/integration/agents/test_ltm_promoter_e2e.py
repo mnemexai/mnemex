@@ -18,7 +18,6 @@ from cortexgraph.agents.models import PromotionResult
 from cortexgraph.storage.jsonl_storage import JSONLStorage
 from cortexgraph.storage.models import Memory, MemoryStatus
 
-
 # =============================================================================
 # Test Fixtures
 # =============================================================================

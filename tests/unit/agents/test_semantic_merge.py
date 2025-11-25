@@ -20,7 +20,7 @@ import pytest
 from cortexgraph.agents.models import MergeResult
 
 if TYPE_CHECKING:
-    from cortexgraph.agents.semantic_merge import SemanticMerge
+    pass
 
 
 # =============================================================================

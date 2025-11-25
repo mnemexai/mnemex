@@ -140,7 +140,7 @@ def ltm_promoter(
     mock_storage: MagicMock,
     mock_vault_writer: MagicMock,
     mock_beads_integration: MagicMock,
-) -> "LTMPromoter":
+) -> LTMPromoter:
     """Create LTMPromoter with mocked dependencies."""
     from cortexgraph.agents.ltm_promoter import LTMPromoter
 
@@ -171,12 +171,12 @@ def ltm_promoter(
 class TestLTMPromoterScanContract:
     """Contract tests for LTMPromoter.scan() method (T057)."""
 
-    def test_scan_returns_list(self, ltm_promoter: "LTMPromoter") -> None:
+    def test_scan_returns_list(self, ltm_promoter: LTMPromoter) -> None:
         """scan() MUST return a list."""
         result = ltm_promoter.scan()
         assert isinstance(result, list)
 
-    def test_scan_returns_string_ids(self, ltm_promoter: "LTMPromoter") -> None:
+    def test_scan_returns_string_ids(self, ltm_promoter: LTMPromoter) -> None:
         """scan() MUST return list of string memory IDs."""
         result = ltm_promoter.scan()
         for item in result:
@@ -215,20 +215,20 @@ class TestLTMPromoterScanContract:
             # May be empty if no memories meet criteria
             assert isinstance(result, list)
 
-    def test_scan_excludes_already_promoted(self, ltm_promoter: "LTMPromoter") -> None:
+    def test_scan_excludes_already_promoted(self, ltm_promoter: LTMPromoter) -> None:
         """scan() MUST NOT return already-promoted memories."""
         result = ltm_promoter.scan()
         # mem-promoted has PROMOTED status and should be excluded
         assert "mem-promoted" not in result
 
-    def test_scan_excludes_archived(self, ltm_promoter: "LTMPromoter") -> None:
+    def test_scan_excludes_archived(self, ltm_promoter: LTMPromoter) -> None:
         """scan() MUST NOT return archived memories."""
         result = ltm_promoter.scan()
         # mem-archived has ARCHIVED status and should be excluded
         assert "mem-archived" not in result
 
     def test_scan_does_not_modify_data(
-        self, ltm_promoter: "LTMPromoter", mock_storage: MagicMock
+        self, ltm_promoter: LTMPromoter, mock_storage: MagicMock
     ) -> None:
         """scan() MUST NOT modify any data."""
         # Take snapshot before
@@ -241,7 +241,7 @@ class TestLTMPromoterScanContract:
         assert len(mock_storage.memories) == original_count
 
     def test_scan_is_subclass_of_consolidation_agent(
-        self, ltm_promoter: "LTMPromoter"
+        self, ltm_promoter: LTMPromoter
     ) -> None:
         """LTMPromoter MUST inherit from ConsolidationAgent."""
         assert isinstance(ltm_promoter, ConsolidationAgent)
@@ -256,7 +256,7 @@ class TestLTMPromoterProcessItemContract:
     """Contract tests for LTMPromoter.process_item() method (T058)."""
 
     def test_process_item_returns_promotion_result(
-        self, ltm_promoter: "LTMPromoter"
+        self, ltm_promoter: LTMPromoter
     ) -> None:
         """process_item() MUST return PromotionResult."""
         memory_ids = ltm_promoter.scan()
@@ -265,7 +265,7 @@ class TestLTMPromoterProcessItemContract:
             assert isinstance(result, PromotionResult)
 
     def test_process_item_result_has_required_fields(
-        self, ltm_promoter: "LTMPromoter"
+        self, ltm_promoter: LTMPromoter
     ) -> None:
         """PromotionResult MUST have all required fields."""
         memory_ids = ltm_promoter.scan()
@@ -286,7 +286,7 @@ class TestLTMPromoterProcessItemContract:
             assert isinstance(result.success, bool)
 
     def test_process_item_criteria_met_minimum_one(
-        self, ltm_promoter: "LTMPromoter"
+        self, ltm_promoter: LTMPromoter
     ) -> None:
         """PromotionResult.criteria_met MUST have at least 1 item."""
         memory_ids = ltm_promoter.scan()
@@ -295,10 +295,10 @@ class TestLTMPromoterProcessItemContract:
             assert len(result.criteria_met) >= 1
 
     def test_process_item_raises_on_invalid_memory_id(
-        self, ltm_promoter: "LTMPromoter"
+        self, ltm_promoter: LTMPromoter
     ) -> None:
         """process_item() MUST raise exception for invalid memory ID."""
-        with pytest.raises(Exception):  # Specific exception type may vary
+        with pytest.raises((ValueError, KeyError, RuntimeError)):
             ltm_promoter.process_item("nonexistent-memory")
 
     def test_process_item_dry_run_no_side_effects(
@@ -340,7 +340,7 @@ class TestLTMPromoterProcessItemContract:
                 mock_vault_writer.write_note.assert_not_called()
 
     def test_process_item_completes_within_timeout(
-        self, ltm_promoter: "LTMPromoter"
+        self, ltm_promoter: LTMPromoter
     ) -> None:
         """process_item() SHOULD complete within 5 seconds."""
         memory_ids = ltm_promoter.scan()
@@ -361,7 +361,7 @@ class TestLTMPromoterFullContract:
     """Integration tests verifying full contract compliance."""
 
     def test_run_method_uses_scan_and_process_item(
-        self, ltm_promoter: "LTMPromoter"
+        self, ltm_promoter: LTMPromoter
     ) -> None:
         """run() MUST call scan() then process_item() for each result."""
         results = ltm_promoter.run()
@@ -371,7 +371,7 @@ class TestLTMPromoterFullContract:
             assert isinstance(result, PromotionResult)
 
     def test_criteria_met_valid_values(
-        self, ltm_promoter: "LTMPromoter"
+        self, ltm_promoter: LTMPromoter
     ) -> None:
         """criteria_met MUST contain valid promotion criteria names."""
         # Valid criteria names based on data-model.md

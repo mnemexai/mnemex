@@ -6,12 +6,10 @@ Tests the token bucket rate limiting implementation.
 from __future__ import annotations
 
 import time
-from unittest.mock import patch
 
 import pytest
 
 from cortexgraph.agents.rate_limiter import AgentRateLimiters, RateLimiter
-
 
 # =============================================================================
 # RateLimiter Tests

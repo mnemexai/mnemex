@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 AGENT_ORDER = ["decay", "cluster", "merge", "promote", "relations"]
 
 
-def get_storage() -> "JSONLStorage":
+def get_storage() -> JSONLStorage:
     """Get storage instance for agents.
 
     Returns:
@@ -47,7 +47,7 @@ def get_storage() -> "JSONLStorage":
     return get_db()
 
 
-def get_agent(name: str, dry_run: bool = False) -> "ConsolidationAgent[Any]":
+def get_agent(name: str, dry_run: bool = False) -> ConsolidationAgent[Any]:
     """Factory function to create agent instances.
 
     Args:

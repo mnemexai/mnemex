@@ -16,8 +16,7 @@ from cortexgraph.agents.decay_analyzer import (
     URGENCY_MEDIUM_THRESHOLD,
     DecayAnalyzer,
 )
-from cortexgraph.agents.models import DecayAction, DecayResult, Urgency
-
+from cortexgraph.agents.models import DecayAction, Urgency
 
 # =============================================================================
 # Test Fixtures

@@ -6,7 +6,6 @@ requiring actual beads installation during testing.
 
 from __future__ import annotations
 
-import json
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -22,7 +21,6 @@ from cortexgraph.agents.beads_integration import (
     create_consolidation_issue,
     query_consolidation_issues,
 )
-
 
 # =============================================================================
 # _run_bd_command Tests

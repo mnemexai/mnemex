@@ -138,7 +138,7 @@ def mock_beads_integration() -> MagicMock:
 def relationship_discovery(
     mock_storage: MagicMock,
     mock_beads_integration: MagicMock,
-) -> "RelationshipDiscovery":
+) -> RelationshipDiscovery:
     """Create RelationshipDiscovery with mocked dependencies."""
     from cortexgraph.agents.relationship_discovery import RelationshipDiscovery
 
@@ -170,13 +170,13 @@ def relationship_discovery(
 class TestRelationshipDiscoveryScanContract:
     """Contract tests for RelationshipDiscovery.scan() method (T069)."""
 
-    def test_scan_returns_list(self, relationship_discovery: "RelationshipDiscovery") -> None:
+    def test_scan_returns_list(self, relationship_discovery: RelationshipDiscovery) -> None:
         """scan() MUST return a list."""
         result = relationship_discovery.scan()
         assert isinstance(result, list)
 
     def test_scan_returns_string_pairs(
-        self, relationship_discovery: "RelationshipDiscovery"
+        self, relationship_discovery: RelationshipDiscovery
     ) -> None:
         """scan() MUST return list of string pair identifiers."""
         result = relationship_discovery.scan()
@@ -269,7 +269,7 @@ class TestRelationshipDiscoveryScanContract:
                 assert pair_id != "mem-postgres:mem-fastapi"
 
     def test_scan_excludes_archived_memories(
-        self, relationship_discovery: "RelationshipDiscovery"
+        self, relationship_discovery: RelationshipDiscovery
     ) -> None:
         """scan() MUST NOT include archived memories."""
         result = relationship_discovery.scan()
@@ -279,7 +279,7 @@ class TestRelationshipDiscoveryScanContract:
             assert "mem-archived" not in pair_id
 
     def test_scan_does_not_modify_data(
-        self, relationship_discovery: "RelationshipDiscovery", mock_storage: MagicMock
+        self, relationship_discovery: RelationshipDiscovery, mock_storage: MagicMock
     ) -> None:
         """scan() MUST NOT modify any data."""
         # Take snapshot before
@@ -294,7 +294,7 @@ class TestRelationshipDiscoveryScanContract:
         assert len(mock_storage.relations) == original_relations
 
     def test_scan_is_subclass_of_consolidation_agent(
-        self, relationship_discovery: "RelationshipDiscovery"
+        self, relationship_discovery: RelationshipDiscovery
     ) -> None:
         """RelationshipDiscovery MUST inherit from ConsolidationAgent."""
         assert isinstance(relationship_discovery, ConsolidationAgent)
@@ -309,7 +309,7 @@ class TestRelationshipDiscoveryProcessItemContract:
     """Contract tests for RelationshipDiscovery.process_item() method (T070)."""
 
     def test_process_item_returns_relation_result(
-        self, relationship_discovery: "RelationshipDiscovery"
+        self, relationship_discovery: RelationshipDiscovery
     ) -> None:
         """process_item() MUST return RelationResult."""
         pair_ids = relationship_discovery.scan()
@@ -318,7 +318,7 @@ class TestRelationshipDiscoveryProcessItemContract:
             assert isinstance(result, RelationResult)
 
     def test_process_item_result_has_required_fields(
-        self, relationship_discovery: "RelationshipDiscovery"
+        self, relationship_discovery: RelationshipDiscovery
     ) -> None:
         """RelationResult MUST have all required fields."""
         pair_ids = relationship_discovery.scan()
@@ -342,7 +342,7 @@ class TestRelationshipDiscoveryProcessItemContract:
             assert isinstance(result.confidence, float)
 
     def test_process_item_strength_in_valid_range(
-        self, relationship_discovery: "RelationshipDiscovery"
+        self, relationship_discovery: RelationshipDiscovery
     ) -> None:
         """strength MUST be in range [0.0, 1.0]."""
         pair_ids = relationship_discovery.scan()
@@ -351,7 +351,7 @@ class TestRelationshipDiscoveryProcessItemContract:
             assert 0.0 <= result.strength <= 1.0
 
     def test_process_item_confidence_in_valid_range(
-        self, relationship_discovery: "RelationshipDiscovery"
+        self, relationship_discovery: RelationshipDiscovery
     ) -> None:
         """confidence MUST be in range [0.0, 1.0]."""
         pair_ids = relationship_discovery.scan()
@@ -360,7 +360,7 @@ class TestRelationshipDiscoveryProcessItemContract:
             assert 0.0 <= result.confidence <= 1.0
 
     def test_process_item_reasoning_not_empty(
-        self, relationship_discovery: "RelationshipDiscovery"
+        self, relationship_discovery: RelationshipDiscovery
     ) -> None:
         """reasoning MUST NOT be empty."""
         pair_ids = relationship_discovery.scan()
@@ -369,10 +369,10 @@ class TestRelationshipDiscoveryProcessItemContract:
             assert len(result.reasoning) > 0
 
     def test_process_item_raises_on_invalid_pair_id(
-        self, relationship_discovery: "RelationshipDiscovery"
+        self, relationship_discovery: RelationshipDiscovery
     ) -> None:
         """process_item() MUST raise exception for invalid pair ID."""
-        with pytest.raises(Exception):  # Specific exception type may vary
+        with pytest.raises((ValueError, KeyError, RuntimeError)):
             relationship_discovery.process_item("nonexistent:pair")
 
     def test_process_item_dry_run_no_side_effects(
@@ -412,7 +412,7 @@ class TestRelationshipDiscoveryProcessItemContract:
                 mock_storage.create_relation.assert_not_called()
 
     def test_process_item_completes_within_timeout(
-        self, relationship_discovery: "RelationshipDiscovery"
+        self, relationship_discovery: RelationshipDiscovery
     ) -> None:
         """process_item() SHOULD complete within 5 seconds."""
         pair_ids = relationship_discovery.scan()
@@ -433,7 +433,7 @@ class TestRelationshipDiscoveryFullContract:
     """Integration tests verifying full contract compliance."""
 
     def test_run_method_uses_scan_and_process_item(
-        self, relationship_discovery: "RelationshipDiscovery"
+        self, relationship_discovery: RelationshipDiscovery
     ) -> None:
         """run() MUST call scan() then process_item() for each result."""
         results = relationship_discovery.run()
@@ -443,7 +443,7 @@ class TestRelationshipDiscoveryFullContract:
             assert isinstance(result, RelationResult)
 
     def test_shared_entities_populated(
-        self, relationship_discovery: "RelationshipDiscovery"
+        self, relationship_discovery: RelationshipDiscovery
     ) -> None:
         """shared_entities SHOULD be populated for related memories."""
         pair_ids = relationship_discovery.scan()

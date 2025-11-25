@@ -22,7 +22,6 @@ from cortexgraph.agents.semantic_merge import SemanticMerge
 from cortexgraph.storage.jsonl_storage import JSONLStorage
 from cortexgraph.storage.models import Memory
 
-
 # =============================================================================
 # Test Fixtures
 # =============================================================================

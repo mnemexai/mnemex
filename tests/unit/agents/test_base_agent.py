@@ -12,14 +12,13 @@ from __future__ import annotations
 from typing import ClassVar
 
 import pytest
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from cortexgraph.agents.base import (
     ConfidenceConfig,
     ConsolidationAgent,
 )
 from cortexgraph.agents.models import ProcessingDecision
-
 
 # =============================================================================
 # Test Fixtures

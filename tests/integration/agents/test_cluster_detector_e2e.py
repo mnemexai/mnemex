@@ -21,7 +21,6 @@ from cortexgraph.agents.models import ClusterAction, ClusterResult
 from cortexgraph.storage.jsonl_storage import JSONLStorage
 from cortexgraph.storage.models import Memory
 
-
 # =============================================================================
 # Test Fixtures
 # =============================================================================

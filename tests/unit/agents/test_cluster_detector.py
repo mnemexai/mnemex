@@ -18,7 +18,6 @@ from cortexgraph.agents.cluster_detector import (
 )
 from cortexgraph.agents.models import ClusterAction
 
-
 # =============================================================================
 # Test Fixtures
 # =============================================================================

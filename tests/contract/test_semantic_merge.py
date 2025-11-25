@@ -133,7 +133,7 @@ def mock_beads_integration() -> MagicMock:
 
 
 @pytest.fixture
-def semantic_merge(mock_storage: MagicMock, mock_beads_integration: MagicMock) -> "SemanticMerge":
+def semantic_merge(mock_storage: MagicMock, mock_beads_integration: MagicMock) -> SemanticMerge:
     """Create SemanticMerge with mocked dependencies."""
     from cortexgraph.agents.semantic_merge import SemanticMerge
 
@@ -166,12 +166,12 @@ def semantic_merge(mock_storage: MagicMock, mock_beads_integration: MagicMock) -
 class TestSemanticMergeScanContract:
     """Contract tests for SemanticMerge.scan() method (T045)."""
 
-    def test_scan_returns_list(self, semantic_merge: "SemanticMerge") -> None:
+    def test_scan_returns_list(self, semantic_merge: SemanticMerge) -> None:
         """scan() MUST return a list."""
         result = semantic_merge.scan()
         assert isinstance(result, list)
 
-    def test_scan_returns_string_ids(self, semantic_merge: "SemanticMerge") -> None:
+    def test_scan_returns_string_ids(self, semantic_merge: SemanticMerge) -> None:
         """scan() MUST return list of string beads issue IDs."""
         result = semantic_merge.scan()
         for item in result:
@@ -217,7 +217,7 @@ class TestSemanticMergeScanContract:
             # Verify beads was queried
             mock_beads_integration.query_consolidation_issues.assert_called()
 
-    def test_scan_returns_beads_issue_ids(self, semantic_merge: "SemanticMerge") -> None:
+    def test_scan_returns_beads_issue_ids(self, semantic_merge: SemanticMerge) -> None:
         """scan() MUST return beads issue IDs (not memory IDs)."""
         result = semantic_merge.scan()
 
@@ -227,7 +227,7 @@ class TestSemanticMergeScanContract:
             assert issue_id in expected_ids
 
     def test_scan_does_not_modify_data(
-        self, semantic_merge: "SemanticMerge", mock_storage: MagicMock
+        self, semantic_merge: SemanticMerge, mock_storage: MagicMock
     ) -> None:
         """scan() MUST NOT modify any data."""
         # Take snapshot before
@@ -240,7 +240,7 @@ class TestSemanticMergeScanContract:
         assert len(mock_storage.memories) == original_count
 
     def test_scan_is_subclass_of_consolidation_agent(
-        self, semantic_merge: "SemanticMerge"
+        self, semantic_merge: SemanticMerge
     ) -> None:
         """SemanticMerge MUST inherit from ConsolidationAgent."""
         assert isinstance(semantic_merge, ConsolidationAgent)
@@ -255,7 +255,7 @@ class TestSemanticMergeProcessItemContract:
     """Contract tests for SemanticMerge.process_item() method (T046)."""
 
     def test_process_item_returns_merge_result(
-        self, semantic_merge: "SemanticMerge"
+        self, semantic_merge: SemanticMerge
     ) -> None:
         """process_item() MUST return MergeResult."""
         issue_ids = semantic_merge.scan()
@@ -264,7 +264,7 @@ class TestSemanticMergeProcessItemContract:
             assert isinstance(result, MergeResult)
 
     def test_process_item_result_has_required_fields(
-        self, semantic_merge: "SemanticMerge"
+        self, semantic_merge: SemanticMerge
     ) -> None:
         """MergeResult MUST have all required fields."""
         issue_ids = semantic_merge.scan()
@@ -289,7 +289,7 @@ class TestSemanticMergeProcessItemContract:
             assert isinstance(result.success, bool)
 
     def test_process_item_source_ids_minimum_two(
-        self, semantic_merge: "SemanticMerge"
+        self, semantic_merge: SemanticMerge
     ) -> None:
         """MergeResult.source_ids MUST have at least 2 memories."""
         issue_ids = semantic_merge.scan()
@@ -298,7 +298,7 @@ class TestSemanticMergeProcessItemContract:
             assert len(result.source_ids) >= 2
 
     def test_process_item_entities_preserved_non_negative(
-        self, semantic_merge: "SemanticMerge"
+        self, semantic_merge: SemanticMerge
     ) -> None:
         """MergeResult.entities_preserved MUST be >= 0."""
         issue_ids = semantic_merge.scan()
@@ -307,10 +307,10 @@ class TestSemanticMergeProcessItemContract:
             assert result.entities_preserved >= 0
 
     def test_process_item_raises_on_invalid_issue_id(
-        self, semantic_merge: "SemanticMerge"
+        self, semantic_merge: SemanticMerge
     ) -> None:
         """process_item() MUST raise exception for invalid beads issue ID."""
-        with pytest.raises(Exception):  # Specific exception type may vary
+        with pytest.raises((ValueError, KeyError, RuntimeError)):
             semantic_merge.process_item("nonexistent-issue")
 
     def test_process_item_dry_run_no_side_effects(
@@ -354,7 +354,7 @@ class TestSemanticMergeProcessItemContract:
                 mock_beads_integration.close_issue.assert_not_called()
 
     def test_process_item_completes_within_timeout(
-        self, semantic_merge: "SemanticMerge"
+        self, semantic_merge: SemanticMerge
     ) -> None:
         """process_item() SHOULD complete within 5 seconds."""
         issue_ids = semantic_merge.scan()
@@ -375,7 +375,7 @@ class TestSemanticMergeFullContract:
     """Integration tests verifying full contract compliance."""
 
     def test_run_method_uses_scan_and_process_item(
-        self, semantic_merge: "SemanticMerge"
+        self, semantic_merge: SemanticMerge
     ) -> None:
         """run() MUST call scan() then process_item() for each result."""
         results = semantic_merge.run()
@@ -385,7 +385,7 @@ class TestSemanticMergeFullContract:
             assert isinstance(result, MergeResult)
 
     def test_content_diff_describes_merge(
-        self, semantic_merge: "SemanticMerge"
+        self, semantic_merge: SemanticMerge
     ) -> None:
         """MergeResult.content_diff MUST describe the merge operation."""
         issue_ids = semantic_merge.scan()
