@@ -24,15 +24,12 @@ A Model Context Protocol (MCP) server providing **human-like memory dynamics** f
 > - Maintains continuity: users can migrate from `pip install mnemex` → `pip install cortexgraph`
 > - Reflects that while the code is mature, the cortexgraph identity is just beginning
 
-> [!WARNING]
-> **🚧 ACTIVE DEVELOPMENT - EXPECT BUGS 🚧**
+> [!IMPORTANT]
+> **🔬 RESEARCH ARTIFACT - NOT FOR PRODUCTION**
 >
-> This project is under active development and should be considered **experimental**. You will likely encounter bugs, breaking changes, and incomplete features. Use at your own risk. Please report issues on GitHub, but understand that this is research code, not production-ready software.
+> This software is a **Proof of Concept (PoC)** and reference implementation for research purposes. It exists to validate theoretical frameworks in cognitive architecture and AI safety (specifically the [STOPPER Protocol](https://prefrontal.systems/frameworks/stopper) and [CortexGraph](https://prefrontal.systems/frameworks/cortexgraph)).
 >
-> **Known issues:**
->
-> - API may change without notice between versions
-> - Test coverage is incomplete
+> **It is NOT a commercial product.** It is not maintained for general production use, may contain breaking changes, and offers no guarantees of stability or support. Use it to study the concepts, but build your own production implementations.
 
 > **📖 New to this project?** Start with the [ELI5 Guide](ELI5.md) for a simple explanation of what this does and how to use it.
 
