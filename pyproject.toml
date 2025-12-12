@@ -1,6 +1,6 @@
 [project]
 name = "cortexgraph"
-version = "0.7.5"
+version = "1.1.0"
 description = "CortexGraph: Temporal memory management for AI assistants with human-like dynamics"
 readme = "README.md"
 requires-python = ">=3.10"
