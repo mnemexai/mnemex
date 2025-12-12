@@ -17,24 +17,20 @@ def cluster_memories(
     find_duplicates: bool = False,
     duplicate_threshold: float | None = None,
 ) -> dict[str, Any]:
-    """
-    Cluster similar memories for potential consolidation or find duplicates.
-
-    Groups similar memories based on semantic similarity (if embeddings are
-    enabled) or other strategies. Useful for identifying redundant memories.
+    """Cluster similar memories or find duplicates.
 
     Args:
-        strategy: Clustering strategy (default: "similarity").
-        threshold: Similarity threshold for linking (0.0-1.0, uses config default if not specified).
-        max_cluster_size: Maximum memories per cluster (1-100, uses config default if not specified).
-        find_duplicates: Find likely duplicate pairs instead of clustering.
-        duplicate_threshold: Similarity threshold for duplicates (0.0-1.0, uses config default).
+        strategy: Clustering strategy (default "similarity").
+        threshold: Similarity threshold (0.0-1.0, uses config default if None).
+        max_cluster_size: Max cluster size (1-100, uses config default if None).
+        find_duplicates: Find duplicate pairs instead of clustering.
+        duplicate_threshold: Duplicate threshold (0.0-1.0, uses config default if None).
 
     Returns:
-        List of clusters or duplicate pairs with scores and suggested actions.
+        Dict with clusters or duplicates list, scores, suggested_action.
 
     Raises:
-        ValueError: If any input fails validation.
+        ValueError: Invalid threshold or max_cluster_size.
     """
     # Input validation
     if threshold is not None:

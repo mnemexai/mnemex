@@ -20,37 +20,17 @@ logger = logging.getLogger(__name__)
 @mcp.tool()
 @time_operation("analyze_for_recall")
 def analyze_for_recall(message: str) -> dict[str, Any]:
-    """
-    Analyze a message to detect recall/search intent.
-
-    Returns detection signals and suggested parameters for search_memory.
-    This tool helps the LLM decide whether to search memories based on
-    natural language patterns like "what did I say about", "do you remember", etc.
-
-    **Decision Support (v0.6.0)**: Provides confidence scores and reasoning to help
-    Claude determine if search_memory should be called. High confidence (>0.7) suggests
-    automatic search; medium confidence (0.4-0.7) suggests asking user first.
+    """Analyze message for recall/search intent.
 
     Args:
-        message: User message to analyze for recall patterns
+        message: User message text.
 
     Returns:
-        Dictionary containing:
-        - should_search (bool): Recommendation to search
-        - confidence (float): 0.0-1.0 confidence in recommendation
-        - suggested_query (str): Extracted query terms
-        - suggested_tags (list[str]): Tags to filter by (empty in Phase 1)
-        - suggested_entities (list[str]): Entities to filter by
-        - reasoning (str): Explanation of decision
+        Dict with: should_search, confidence, suggested_query, suggested_tags,
+        suggested_entities, reasoning, phrase_signals.
 
-    Example:
-        >>> result = analyze_for_recall("What did I say about my API preferences?")
-        >>> result["should_search"]
-        True
-        >>> result["confidence"]
-        0.9
-        >>> result["suggested_query"]
-        "API preferences"
+    Raises:
+        ValueError: Invalid input.
     """
     config = get_config()
 

@@ -21,25 +21,20 @@ def promote_memory(
     target: str = "obsidian",
     force: bool = False,
 ) -> dict[str, Any]:
-    """
-    Promote high-value memories to long-term storage.
-
-    Memories with high scores or frequent usage are promoted to the Obsidian
-    vault (or other long-term storage) where they become permanent.
+    """Promote high-value memories to long-term storage.
 
     Args:
-        memory_id: Specific memory ID to promote (valid UUID).
-        auto_detect: Automatically detect promotion candidates.
-        dry_run: Preview what would be promoted without promoting.
-        target: Storage backend for promotion. Default: "obsidian" (Obsidian-compatible markdown).
-                Note: This is a storage format, not a file path. Path configured via LTM_VAULT_PATH.
-        force: Force promotion even if criteria not met.
+        memory_id: Memory UUID to promote.
+        auto_detect: Detect promotion candidates automatically.
+        dry_run: Preview without promoting.
+        target: Storage format ("obsidian").
+        force: Promote even if criteria not met.
 
     Returns:
-        List of promoted memories and promotion statistics.
+        Dict with candidates, promoted_ids, and statistics.
 
     Raises:
-        ValueError: If memory_id is invalid or target is not supported.
+        ValueError: If memory_id invalid or target unsupported.
     """
     # Input validation
     if memory_id is not None:

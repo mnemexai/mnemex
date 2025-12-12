@@ -101,52 +101,25 @@ def search_memory(
     page_size: int | None = None,
     preview_length: int | None = None,
 ) -> dict[str, Any]:
-    """
-    Search for memories with optional filters and scoring.
-
-    This tool implements natural spaced repetition by blending memories due
-    for review into results when they're relevant. This creates the "Maslow
-    effect" - natural reinforcement through conversation.
-
-    **Content Preview (v0.7.0):** By default, returns first 300 characters of each
-    memory to reduce context usage. Pass `preview_length=0` for full content, or
-    set a custom length (1-5000 characters).
-
-    **Pagination:** Results are paginated to help you find specific memories across
-    large result sets. Use `page` and `page_size` to navigate through results.
-    If a search term isn't found on the first page, increment `page` to see more results.
+    """Search memories with filters and pagination.
 
     Args:
-        query: Text query to search for (max 50,000 chars).
-        tags: Filter by tags (max 50 tags).
-        top_k: Maximum number of results before pagination (1-100).
-        window_days: Only search memories from last N days (1-3650).
-        min_score: Minimum decay score threshold (0.0-1.0).
-        use_embeddings: Use semantic search with embeddings.
-        include_review_candidates: Blend in memories due for review (default True).
-        page: Page number to retrieve (1-indexed, default: 1).
-        page_size: Number of memories per page (default: 10, max: 100).
-        preview_length: Content preview length in chars (default: 300, 0 = full content).
+        query: Search text (max 50k chars).
+        tags: Filter by tags (max 50).
+        top_k: Max results (1-100).
+        window_days: Recent memories only (1-3650 days).
+        min_score: Min decay score (0.0-1.0).
+        use_embeddings: Enable semantic search.
+        include_review_candidates: Include review-due memories.
+        page: Page number (default: 1).
+        page_size: Results per page (10-100, default: 10).
+        preview_length: Content chars (0-5000, default: 300).
 
     Returns:
-        Dictionary with paginated results including:
-        - results: List of matching memories with scores for current page
-        - pagination: Metadata (page, page_size, total_count, total_pages, has_more)
-
-        Some results may be review candidates that benefit from reinforcement.
-
-    Examples:
-        # Get first page with previews (default 300 chars)
-        search_memory(query="authentication", page=1, page_size=10)
-
-        # Get full content
-        search_memory(query="authentication", preview_length=0)
-
-        # Custom preview length
-        search_memory(query="authentication", preview_length=500)
+        Dict with results list and pagination metadata.
 
     Raises:
-        ValueError: If any input fails validation.
+        ValueError: Invalid parameters.
     """
     # Input validation
     if query is not None:

@@ -91,44 +91,25 @@ def search_unified(
     page_size: int | None = None,
     preview_length: int | None = None,
 ) -> dict[str, Any]:
-    """
-    Search across both STM and LTM with unified ranking.
-
-    **Content Preview (v0.7.0):** By default, returns first 300 characters of each
-    memory to reduce context usage. Pass `preview_length=0` for full content, or
-    set a custom length (1-5000 characters).
-
-    **Pagination:** Results are paginated to help you find specific memories across
-    large result sets from both short-term and long-term memory. Use `page` and `page_size`
-    to navigate through results. If a search term isn't found on the first page,
-    increment `page` to see more results.
+    """Search across STM and LTM with unified ranking.
 
     Args:
-        query: Text query to search for (max 50,000 chars).
-        tags: Filter by tags (max 50 tags).
-        limit: Maximum total results before pagination (1-100).
-        stm_weight: Weight multiplier for STM results (0.0-2.0).
-        ltm_weight: Weight multiplier for LTM results (0.0-2.0).
-        window_days: Only include STM memories from last N days (1-3650).
-        min_score: Minimum score threshold for STM memories (0.0-1.0).
-        page: Page number to retrieve (1-indexed, default: 1).
-        page_size: Number of memories per page (default: 10, max: 100).
-        preview_length: Content preview length in chars (default: 300, 0 = full content).
+        query: Search text (max 50k chars).
+        tags: Filter by tags (max 50).
+        limit: Max results (1-100).
+        stm_weight: STM multiplier (0.0-2.0).
+        ltm_weight: LTM multiplier (0.0-2.0).
+        window_days: Recent STM only (1-3650 days).
+        min_score: Min STM score (0.0-1.0).
+        page: Page number (default: 1).
+        page_size: Results per page (10-100, default: 10).
+        preview_length: Content chars (0-5000, default: 300).
 
     Returns:
-        Dictionary with paginated results including:
-        - results: List of matching memories from STM and LTM for current page
-        - pagination: Metadata (page, page_size, total_count, total_pages, has_more)
-
-    Examples:
-        # Get first page with previews (default 300 chars)
-        search_unified(query="architecture", page=1, page_size=10)
-
-        # Get full content
-        search_unified(query="architecture", preview_length=0)
+        Dict with results from both STM/LTM and pagination metadata.
 
     Raises:
-        ValueError: If any input fails validation.
+        ValueError: Invalid parameters.
     """
     # Input validation
     if query is not None:

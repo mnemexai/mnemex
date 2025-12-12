@@ -10,21 +10,17 @@ from ..security.validators import validate_uuid
 
 @mcp.tool()
 def touch_memory(memory_id: str, boost_strength: bool = False) -> dict[str, Any]:
-    """
-    Reinforce a memory by updating its last accessed time and use count.
-
-    This resets the temporal decay and increases the memory's resistance to
-    being forgotten. Optionally can boost the memory's base strength.
+    """Reinforce memory to reset decay.
 
     Args:
-        memory_id: ID of the memory to reinforce (valid UUID).
-        boost_strength: Whether to boost the base strength.
+        memory_id: Memory UUID.
+        boost_strength: Increase base strength.
 
     Returns:
-        Updated memory statistics including old and new scores.
+        Dict with old_score, new_score, use_count, strength.
 
     Raises:
-        ValueError: If memory_id is invalid.
+        ValueError: Invalid UUID.
     """
     # Input validation
     memory_id = validate_uuid(memory_id, "memory_id")

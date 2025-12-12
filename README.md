@@ -740,10 +740,11 @@ Frequent access significantly extends retention.
 
 ## Documentation
 
+- **[MCP Tools Reference](docs/mcp-tools.md)** - Comprehensive documentation for all 18 MCP tools
+- **[API Quick Reference](docs/api.md)** - Minimal tool signatures and usage examples
 - **[Scoring Algorithm](docs/scoring_algorithm.md)** - Complete mathematical model with LaTeX formulas
 - **[Smart Prompting](docs/prompts/memory_system_prompt.md)** - Patterns for natural LLM integration
 - **[Architecture](docs/architecture.md)** - System design and implementation
-- **[API Reference](docs/api.md)** - MCP tool documentation
 - **[Multi-Agent System](docs/agents.md)** - Consolidation agents and pipeline architecture
 - **[Bear Integration](docs/bear-integration.md)** - Guide to using Bear app as an LTM store
 - **[Graph Features](docs/graph_features.md)** - Knowledge graph usage

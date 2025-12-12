@@ -20,38 +20,19 @@ def consolidate_memories(
     auto_detect: bool = False,
     cohesion_threshold: float = 0.75,
 ) -> dict[str, Any]:
-    """
-    Consolidate similar memories using algorithmic merging or linking.
-
-    This tool handles clusters in three ways:
-    1. MERGE (mode="apply"): Combine memories into one (high cohesion ≥0.75)
-    2. LINK (mode="link"): Create 'related' relations without merging (medium cohesion 0.40-0.75)
-    3. PREVIEW (mode="preview"): Show what would happen without making changes
-
-    Merging intelligently:
-    - Combines content (preserving unique information)
-    - Merges tags and entities (union)
-    - Calculates appropriate strength based on cohesion
-    - Preserves earliest created_at and latest last_used timestamps
-
-    Linking creates bidirectional 'related' relations to form knowledge graph connections.
-
-    Modes:
-    - "preview": Generate merge preview without making changes
-    - "apply": Execute the consolidation/merge (requires cluster_id or auto_detect)
-    - "link": Create relations between cluster members without merging
+    """Merge or link similar memories algorithmically.
 
     Args:
-        cluster_id: Specific cluster ID to act on (valid UUID, required unless auto_detect=True).
-        mode: Operation mode - "preview", "apply", or "link".
-        auto_detect: If True, automatically find high-cohesion clusters.
-        cohesion_threshold: Minimum cohesion for auto-detection (0.0-1.0, default: 0.75).
+        cluster_id: Cluster UUID to act on (required unless auto_detect=True).
+        mode: "preview" (no changes), "apply" (merge), or "link" (relations only).
+        auto_detect: Find high-cohesion clusters automatically.
+        cohesion_threshold: Minimum cohesion (0.0-1.0).
 
     Returns:
-        Consolidation/linking preview or execution results.
+        Dict with success, mode, consolidated clusters, and results.
 
     Raises:
-        ValueError: If cluster_id is invalid or cohesion_threshold is out of range.
+        ValueError: If cluster_id invalid or cohesion_threshold out of range.
     """
     # Input validation
     if cluster_id is not None:

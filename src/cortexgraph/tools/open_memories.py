@@ -17,38 +17,20 @@ def open_memories(
     page: int | None = None,
     page_size: int | None = None,
 ) -> dict[str, Any]:
-    """
-    Retrieve specific memories by their IDs.
-
-    Similar to the reference MCP memory server's open_nodes functionality.
-    Returns detailed information about the requested memories including
-    their relations to other memories.
-
-    **Pagination:** When retrieving many memories by ID, results are paginated.
-    Use `page` and `page_size` to navigate through the list of requested memories.
+    """Retrieve specific memories by IDs with detailed information.
 
     Args:
-        memory_ids: Single memory ID or list of memory IDs to retrieve (max 100 IDs).
-        include_relations: Include relations from/to these memories.
+        memory_ids: Single ID or list of IDs (max 100).
+        include_relations: Include outgoing/incoming relations.
         include_scores: Include decay scores and age.
-        page: Page number to retrieve (1-indexed, default: 1).
-        page_size: Number of memories per page (default: 10, max: 100).
+        page: Page number (1-indexed).
+        page_size: Memories per page (max 100).
 
     Returns:
-        Dictionary with paginated results including:
-        - memories: Detailed memory information for current page
-        - not_found: List of IDs that weren't found
-        - pagination: Metadata (page, page_size, total_count, total_pages, has_more)
-
-    Examples:
-        # Get first page of memories
-        open_memories(["id1", "id2", "id3", ...], page=1, page_size=10)
-
-        # Get next page
-        open_memories(["id1", "id2", "id3", ...], page=2, page_size=10)
+        Dict with memories, not_found IDs, and pagination metadata.
 
     Raises:
-        ValueError: If any memory ID is invalid or list exceeds maximum length.
+        ValueError: If memory ID invalid or list exceeds max length.
     """
     # Input validation
     ids = [memory_ids] if isinstance(memory_ids, str) else memory_ids

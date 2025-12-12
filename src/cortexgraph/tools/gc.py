@@ -16,23 +16,18 @@ def gc(
     archive_instead: bool = False,
     limit: int | None = None,
 ) -> dict[str, Any]:
-    """
-    Perform garbage collection on low-scoring memories.
-
-    Removes or archives memories whose decay score has fallen below the
-    forget threshold. This prevents the database from growing indefinitely
-    with unused memories.
+    """Remove or archive low-scoring memories.
 
     Args:
-        dry_run: Preview what would be removed without actually removing.
-        archive_instead: Archive memories instead of deleting.
-        limit: Maximum number of memories to process (1-10,000).
+        dry_run: Preview without removing.
+        archive_instead: Archive instead of deleting.
+        limit: Max memories to process (1-10,000).
 
     Returns:
-        Statistics about removed/archived memories.
+        Dict with removed_count, archived_count, freed_score_sum, memory_ids.
 
     Raises:
-        ValueError: If limit is out of valid range.
+        ValueError: Invalid limit range.
     """
     # Input validation
     if limit is not None:

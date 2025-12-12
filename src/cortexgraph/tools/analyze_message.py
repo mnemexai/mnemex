@@ -207,42 +207,17 @@ def _make_error_response(reason: str) -> dict[str, Any]:
 @mcp.tool()
 @time_operation("analyze_message")
 def analyze_message(message: str) -> dict[str, Any]:
-    """
-    Analyze a message to determine if it contains memory-worthy content.
-
-    Returns activation signals and suggested parameters for save_memory.
-    This tool helps the LLM decide whether to save information without explicit
-    "remember this" commands.
-
-    **Decision Support (v0.6.0)**: Provides confidence scores and reasoning to help
-    Claude determine if save_memory should be called. High confidence (>0.7) suggests
-    automatic save; medium confidence (0.4-0.7) suggests asking user first.
-
-    **Activation Module (v0.7.5)**: Now uses the configurable activation module with
-    weighted sigmoid confidence calculation. Supports "I prefer" and other preference
-    patterns from activation.yaml configuration.
+    """Analyze message for memory-worthy content.
 
     Args:
-        message: User message to analyze
+        message: User message text.
 
     Returns:
-        Dictionary containing:
-        - should_save (bool): Recommendation to save
-        - confidence (float): 0.0-1.0 confidence in recommendation
-        - suggested_entities (list[str]): Detected entities
-        - suggested_tags (list[str]): Suggested tags
-        - suggested_strength (float): Calculated importance (1.0-2.0)
-        - reasoning (str): Explanation of decision
-        - phrase_signals (dict): Detected signals for transparency
+        Dict with: should_save, confidence, suggested_entities, suggested_tags,
+        suggested_strength, reasoning, phrase_signals.
 
-    Example:
-        >>> result = analyze_message("I prefer PostgreSQL for databases")
-        >>> result["should_save"]
-        True
-        >>> result["confidence"]
-        0.73
-        >>> "preference" in result["reasoning"].lower()
-        True
+    Raises:
+        ValueError: Invalid input.
     """
     # Input validation
     if message is None:

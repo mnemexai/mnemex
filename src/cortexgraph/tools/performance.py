@@ -8,22 +8,20 @@ from ..performance import get_performance_stats, reset_metrics
 
 @mcp.tool()
 def get_performance_metrics() -> dict[str, Any]:
-    """
-    Get current performance metrics and statistics.
+    """Get current performance metrics.
 
     Returns:
-        Dictionary containing performance statistics for various operations.
+        Dict with: operation stats, counts, timings.
     """
     return get_performance_stats()
 
 
 @mcp.tool()
 def reset_performance_metrics() -> dict[str, Any]:
-    """
-    Reset all performance metrics and return confirmation.
+    """Reset all performance metrics.
 
     Returns:
-        Dictionary confirming metrics have been reset.
+        Dict with: success, message.
     """
     reset_metrics()
     return {"success": True, "message": "Performance metrics have been reset"}

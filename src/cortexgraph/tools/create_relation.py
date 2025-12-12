@@ -17,24 +17,20 @@ def create_relation(
     strength: float = 1.0,
     metadata: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """
-    Create an explicit relation between two memories.
-
-    Links two memories with a typed relationship.
+    """Link two memories with typed relationship.
 
     Args:
-        from_memory_id: Source memory ID (valid UUID).
-        to_memory_id: Target memory ID (valid UUID).
-        relation_type: Type of relation (must be one of: related, causes, supports,
-                       contradicts, has_decision, consolidated_from).
-        strength: Strength of the relation (0.0-1.0).
-        metadata: Additional metadata about the relation.
+        from_memory_id: Source memory UUID.
+        to_memory_id: Target memory UUID.
+        relation_type: Type (related, causes, supports, contradicts, has_decision, consolidated_from).
+        strength: Relation strength (0.0-1.0).
+        metadata: Optional metadata dict.
 
     Returns:
-        Created relation ID and confirmation.
+        Dict with relation_id, from, to, type, strength.
 
     Raises:
-        ValueError: If any input fails validation.
+        ValueError: Invalid UUID or relation type.
     """
     # Input validation
     from_memory_id = validate_uuid(from_memory_id, "from_memory_id")

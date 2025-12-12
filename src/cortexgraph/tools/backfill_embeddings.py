@@ -27,60 +27,21 @@ def backfill_embeddings(
     force: bool = False,
     dry_run: bool = False,
 ) -> dict[str, Any]:
-    """
-    Generate embeddings for memories that don't have them.
-
-    This tool backfills embedding vectors for existing memories, enabling
-    semantic search and improved clustering. Embeddings are generated using
-    sentence-transformers models (default: all-MiniLM-L6-v2).
-
-    **When to use:**
-    - After importing memories without embeddings
-    - When switching from text-only to semantic search
-    - Before running consolidation with embedding-based clustering
-    - To enable similarity-based features
-
-    **Safety features:**
-    - dry_run: Preview what would be processed without making changes
-    - limit: Process only N memories (useful for testing or incremental backfill)
-    - force: Regenerate embeddings even if they exist (for model upgrades)
+    """Generate embeddings for memories that lack them.
 
     Args:
-        model: Sentence-transformers model name (default: "all-MiniLM-L6-v2").
-               Common alternatives: "all-mpnet-base-v2" (higher quality, slower),
-               "paraphrase-MiniLM-L6-v2" (good for paraphrase detection).
-        limit: Maximum number of memories to process (1-10,000). If None, processes all.
-        force: If True, regenerate embeddings even if they exist (for model upgrades).
-        dry_run: If True, show what would be done without actually doing it.
+        model: Model name (default: all-MiniLM-L6-v2).
+        limit: Max memories to process (1-10k, None=all).
+        force: Regenerate existing embeddings.
+        dry_run: Preview only.
 
     Returns:
-        Result dictionary with:
-        - success: Whether operation completed successfully
-        - dry_run: Whether this was a dry run
-        - processed: Number of memories processed (0 if dry_run)
-        - errors: Number of errors encountered
-        - model: Model name used
-        - total_memories: Total memories in database
-        - memories_without_embeddings: Count of memories lacking embeddings
-        - would_process: Number of memories that would be processed (dry_run only)
-        - message: Human-readable summary
+        Dict with: success, processed, errors, model, total_memories,
+        memories_without_embeddings, message.
 
     Raises:
-        ValueError: If limit is out of valid range.
-        ImportError: If sentence-transformers is not installed.
-
-    Example:
-        # Preview what would be backfilled
-        backfill_embeddings(dry_run=True)
-
-        # Backfill 10 memories for testing
-        backfill_embeddings(limit=10)
-
-        # Backfill all memories without embeddings
-        backfill_embeddings()
-
-        # Force regenerate with better model
-        backfill_embeddings(model="all-mpnet-base-v2", force=True)
+        ValueError: Invalid limit.
+        ImportError: sentence-transformers not installed.
     """
     # Check if sentence-transformers is available
     if not SENTENCE_TRANSFORMERS_AVAILABLE:

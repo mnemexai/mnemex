@@ -82,30 +82,22 @@ def save_memory(
     meta: dict[str, Any] | None = None,
     strength: float | None = None,
 ) -> dict[str, Any]:
-    """
-    Save a new memory to short-term storage with automatic preprocessing.
-
-    The memory will have temporal decay applied and will be forgotten if not used
-    regularly. Frequently accessed memories may be promoted to long-term storage
-    automatically.
-
-    **Auto-enrichment (v0.6.0)**: If entities or strength are not provided, they will
-    be automatically extracted/calculated from the content using natural language
-    preprocessing. This makes save_memory "just work" for conversational use.
+    """Save memory to short-term storage with auto-enrichment.
 
     Args:
-        content: The content to remember (max 50,000 chars).
-        tags: Tags for categorization (max 50 tags, each max 100 chars).
-        entities: Named entities in this memory (max 100 entities).
-                  If None, automatically extracted from content.
-        source: Source of the memory (max 500 chars).
-        context: Context when memory was created (max 1,000 chars).
-        meta: Additional custom metadata.
-        strength: Base strength multiplier (1.0-2.0). If None, automatically
-                  calculated based on content importance.
+        content: Memory content (max 50k chars).
+        tags: Tags (max 50).
+        entities: Named entities (max 100, auto-extracted if None).
+        source: Source (max 500 chars).
+        context: Context (max 1k chars).
+        meta: Custom metadata dict.
+        strength: Base strength (1.0-2.0, auto-calculated if None).
+
+    Returns:
+        Dict with: success, memory_id, message, has_embedding, enrichment_applied.
 
     Raises:
-        ValueError: If any input fails validation.
+        ValueError: Invalid input.
     """
     # Input validation
     content = cast(

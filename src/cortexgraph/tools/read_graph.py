@@ -18,42 +18,20 @@ def read_graph(
     page: int | None = None,
     page_size: int | None = None,
 ) -> dict[str, Any]:
-    """
-    Read the entire knowledge graph of memories and relations.
-
-    Returns the complete graph structure including all memories (with decay scores),
-    all relations between memories, and statistics about the graph.
-
-    **Pagination:** Results are paginated to help you navigate large knowledge graphs.
-    Use `page` and `page_size` to retrieve specific portions of the graph.
-    If searching for specific memories or patterns, increment `page` to see more results.
+    """Return entire knowledge graph with memories and relations.
 
     Args:
-        status: Filter memories by status - "active", "promoted", "archived", or "all".
-        include_scores: Include decay scores and age in results.
-        limit: Maximum number of memories to return (1-10,000).
-        page: Page number to retrieve (1-indexed, default: 1).
-        page_size: Number of memories per page (default: 10, max: 100).
+        status: "active", "promoted", "archived", or "all".
+        include_scores: Include decay scores and age.
+        limit: Max memories (1-10,000).
+        page: Page number (1-indexed).
+        page_size: Memories per page (max 100).
 
     Returns:
-        Dictionary with paginated graph including:
-        - memories: List of memories for current page
-        - relations: All relations (not paginated, for graph structure)
-        - stats: Graph statistics
-        - pagination: Metadata (page, page_size, total_count, total_pages, has_more)
-
-    Examples:
-        # Get first page of active memories
-        read_graph(status="active", page=1, page_size=10)
-
-        # Get next page
-        read_graph(status="active", page=2, page_size=10)
-
-        # Larger page for overview
-        read_graph(status="active", page=1, page_size=50)
+        Dict with memories, relations, stats, and pagination metadata.
 
     Raises:
-        ValueError: If status is invalid or limit is out of range.
+        ValueError: If status invalid or limit out of range.
     """
     # Input validation
     valid_statuses = {"active", "promoted", "archived", "all"}
