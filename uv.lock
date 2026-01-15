@@ -163,7 +163,7 @@ wheels = [
 
 [[package]]
 name = "cortexgraph"
-version = "0.7.5"
+version = "1.1.1"
 source = { editable = "." }
 dependencies = [
     { name = "fastapi" },
