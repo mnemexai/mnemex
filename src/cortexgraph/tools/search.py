@@ -16,6 +16,7 @@ from ..security.validators import (
     validate_list_length,
     validate_positive_int,
     validate_score,
+    validate_status,
     validate_string_length,
     validate_tag,
 )
@@ -92,6 +93,7 @@ def _truncate_content(content: str, max_length: int | None) -> str:
 def search_memory(
     query: str | None = None,
     tags: list[str] | None = None,
+    status: str | list[str] | None = None,
     top_k: int = 10,
     window_days: int | None = None,
     min_score: float | None = None,
@@ -106,6 +108,8 @@ def search_memory(
     Args:
         query: Search text (max 50k chars).
         tags: Filter by tags (max 50).
+        status: Filter by status ('active', 'promoted', 'archived' or list of these).
+                Defaults to ['active', 'promoted'] if None.
         top_k: Max results (1-100).
         window_days: Recent memories only (1-3650 days).
         min_score: Min decay score (0.0-1.0).
@@ -128,6 +132,16 @@ def search_memory(
     if tags is not None:
         tags = validate_list_length(tags, MAX_TAGS_COUNT, "tags")
         tags = [validate_tag(tag, f"tags[{i}]") for i, tag in enumerate(tags)]
+
+    # Validate status
+    search_status: list[MemoryStatus] | MemoryStatus
+    if status is None:
+        search_status = [MemoryStatus.ACTIVE, MemoryStatus.PROMOTED]
+    elif isinstance(status, list):
+        status = validate_list_length(status, 5, "status")
+        search_status = [MemoryStatus(validate_status(s, f"status[{i}]")) for i, s in enumerate(status)]
+    else:
+        search_status = MemoryStatus(validate_status(status, "status"))
 
     top_k = validate_positive_int(top_k, "top_k", min_value=1, max_value=100)
 
@@ -161,7 +175,7 @@ def search_memory(
 
     memories = db.search_memories(
         tags=tags,
-        status=MemoryStatus.ACTIVE,
+        status=search_status,
         window_days=window_days,
         limit=top_k * 3,
     )
@@ -207,8 +221,10 @@ def search_memory(
     final_memories = [r.memory for r in results[:top_k]]
 
     if include_review_candidates and query:
-        # Get all active memories for review queue
-        all_active = db.search_memories(status=MemoryStatus.ACTIVE, limit=10000)
+        # Get memories for review queue matching search status
+        all_active = db.search_memories(
+            status=search_status, limit=10000
+        )
 
         # Get memories due for review
         review_queue = get_memories_due_for_review(all_active, min_priority=0.3, limit=20)

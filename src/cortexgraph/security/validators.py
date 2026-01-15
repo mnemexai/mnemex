@@ -51,6 +51,33 @@ TAG_PATTERN = re.compile(r"^[a-zA-Z0-9\-_/]+$")
 ENTITY_PATTERN = re.compile(r"^[a-zA-Z0-9\-_ ]+$")  # Same as tags but with spaces, no slashes
 
 
+ALLOWED_STATUSES = {"active", "promoted", "archived"}
+
+
+def validate_status(status: str, field_name: str = "status") -> str:
+    """
+    Validate memory status against allowed values.
+
+    Args:
+        status: Status string to validate
+        field_name: Name of field for error messages
+
+    Returns:
+        Validated status string
+
+    Raises:
+        ValueError: If status is not in allowed values
+    """
+    if not isinstance(status, str):
+        raise ValueError(f"{field_name} must be a string, got {type(status).__name__}")
+
+    status = status.lower().strip()
+    if status not in ALLOWED_STATUSES:
+        raise ValueError(f"{field_name} must be one of {sorted(ALLOWED_STATUSES)}, got: {status}")
+
+    return status
+
+
 def validate_uuid(value: str, field_name: str = "value") -> str:
     """
     Validate that a string is a properly formatted UUID.

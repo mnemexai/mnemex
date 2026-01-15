@@ -334,7 +334,7 @@ class SQLiteStorage:
         self,
         query: str | None = None,
         tags: list[str] | None = None,
-        status: MemoryStatus | None = MemoryStatus.ACTIVE,
+        status: MemoryStatus | list[MemoryStatus] | None = MemoryStatus.ACTIVE,
         window_days: int | None = None,
         limit: int = 10,
     ) -> list[Memory]:
@@ -346,8 +346,14 @@ class SQLiteStorage:
         params: list[Any] = []
 
         if status is not None:
-            sql_query += " AND status = ?"
-            params.append(status.value)
+            if isinstance(status, list):
+                if status:
+                    placeholders = ", ".join(["?"] * len(status))
+                    sql_query += f" AND status IN ({placeholders})"
+                    params.extend([s.value for s in status])
+            else:
+                sql_query += " AND status = ?"
+                params.append(status.value)
 
         if window_days is not None:
             cutoff = int(time.time()) - (window_days * 86400)

@@ -14,10 +14,12 @@ from ..security.validators import (
     validate_list_length,
     validate_positive_int,
     validate_score,
+    validate_status,
     validate_string_length,
     validate_tag,
 )
 from ..storage.ltm_index import LTMIndex
+from ..storage.models import MemoryStatus
 
 
 def _truncate_content(content: str, max_length: int | None) -> str:
@@ -82,6 +84,7 @@ class UnifiedSearchResult:
 def search_unified(
     query: str | None = None,
     tags: list[str] | None = None,
+    status: str | list[str] | None = None,
     limit: int = 10,
     stm_weight: float = 1.0,
     ltm_weight: float = 0.7,
@@ -96,6 +99,8 @@ def search_unified(
     Args:
         query: Search text (max 50k chars).
         tags: Filter by tags (max 50).
+        status: Filter STM by status ('active', 'promoted', 'archived' or list of these).
+                Defaults to ['active', 'promoted'] if None.
         limit: Max results (1-100).
         stm_weight: STM multiplier (0.0-2.0).
         ltm_weight: LTM multiplier (0.0-2.0).
@@ -118,6 +123,16 @@ def search_unified(
     if tags is not None:
         tags = validate_list_length(tags, MAX_TAGS_COUNT, "tags")
         tags = [validate_tag(tag, f"tags[{i}]") for i, tag in enumerate(tags)]
+
+    # Validate status
+    search_status: list[MemoryStatus] | MemoryStatus
+    if status is None:
+        search_status = [MemoryStatus.ACTIVE, MemoryStatus.PROMOTED]
+    elif isinstance(status, list):
+        status = validate_list_length(status, 5, "status")
+        search_status = [MemoryStatus(validate_status(s, f"status[{i}]")) for i, s in enumerate(status)]
+    else:
+        search_status = MemoryStatus(validate_status(status, "status"))
 
     limit = validate_positive_int(limit, "limit", min_value=1, max_value=100)
 
@@ -152,7 +167,12 @@ def search_unified(
 
     # Search STM
     try:
-        stm_memories = db.search_memories(tags=tags, window_days=window_days, limit=limit * 2)
+        stm_memories = db.search_memories(
+            tags=tags,
+            status=search_status,
+            window_days=window_days,
+            limit=limit * 2,
+        )
         if query:
             stm_memories = [m for m in stm_memories if query.lower() in m.content.lower()]
 
