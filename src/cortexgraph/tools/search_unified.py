@@ -130,7 +130,9 @@ def search_unified(
         search_status = [MemoryStatus.ACTIVE, MemoryStatus.PROMOTED]
     elif isinstance(status, list):
         status = validate_list_length(status, 5, "status")
-        search_status = [MemoryStatus(validate_status(s, f"status[{i}]")) for i, s in enumerate(status)]
+        search_status = [
+            MemoryStatus(validate_status(s, f"status[{i}]")) for i, s in enumerate(status)
+        ]
     else:
         search_status = MemoryStatus(validate_status(status, "status"))
 

@@ -139,7 +139,9 @@ def search_memory(
         search_status = [MemoryStatus.ACTIVE, MemoryStatus.PROMOTED]
     elif isinstance(status, list):
         status = validate_list_length(status, 5, "status")
-        search_status = [MemoryStatus(validate_status(s, f"status[{i}]")) for i, s in enumerate(status)]
+        search_status = [
+            MemoryStatus(validate_status(s, f"status[{i}]")) for i, s in enumerate(status)
+        ]
     else:
         search_status = MemoryStatus(validate_status(status, "status"))
 
@@ -222,9 +224,7 @@ def search_memory(
 
     if include_review_candidates and query:
         # Get memories for review queue matching search status
-        all_active = db.search_memories(
-            status=search_status, limit=10000
-        )
+        all_active = db.search_memories(status=search_status, limit=10000)
 
         # Get memories due for review
         review_queue = get_memories_due_for_review(all_active, min_priority=0.3, limit=20)
