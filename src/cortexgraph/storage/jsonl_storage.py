@@ -467,7 +467,7 @@ class JSONLStorage:
         self,
         query: str | None = None,
         tags: list[str] | None = None,
-        status: MemoryStatus | None = MemoryStatus.ACTIVE,
+        status: MemoryStatus | list[MemoryStatus] | None = MemoryStatus.ACTIVE,
         window_days: int | None = None,
         limit: int = 10,
     ) -> list[Memory]:
@@ -477,7 +477,7 @@ class JSONLStorage:
         Args:
             query: Text to search for in content
             tags: Filter by tags (any match)
-            status: Filter by status
+            status: Filter by status (single, list, or None)
             window_days: Only return memories from last N days
             limit: Maximum results
 
@@ -502,7 +502,11 @@ class JSONLStorage:
 
         # Filter by status
         if status is not None:
-            memories = [m for m in memories if m.status == status]
+            if isinstance(status, list):
+                status_values = set(status)
+                memories = [m for m in memories if m.status in status_values]
+            else:
+                memories = [m for m in memories if m.status == status]
 
         # Filter by time window
         if window_days is not None:

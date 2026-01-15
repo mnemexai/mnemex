@@ -326,11 +326,11 @@ class AutoRecallEngine:
         # Build search query from topics
         query = " ".join(topics)
 
-        # Get all active memories
+        # Get all active and promoted memories
         from cortexgraph.storage.models import MemoryStatus
 
         memories = storage.search_memories(
-            status=MemoryStatus.ACTIVE,
+            status=[MemoryStatus.ACTIVE, MemoryStatus.PROMOTED],
             limit=max_results * 10,  # Get more for filtering
         )
 
