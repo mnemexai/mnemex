@@ -1,24 +1,26 @@
 
-import pytest
-import time
 from pathlib import Path
+
+import pytest
+
 from cortexgraph.config import Config, set_config
 from cortexgraph.context import db
-from cortexgraph.storage.models import Memory, MemoryMetadata, MemoryStatus
+from cortexgraph.storage.models import Memory, MemoryStatus
 from cortexgraph.tools.search import search_memory
 from cortexgraph.tools.search_unified import search_unified
+
 
 @pytest.fixture(autouse=True)
 def setup_db(tmp_path: Path):
     storage_dir = tmp_path / "jsonl"
     cfg = Config(storage_path=storage_dir, enable_embeddings=False)
     set_config(cfg)
-    
+
     # Force disconnect and clear state
     db.close()
     db.storage_path = storage_dir
     db.connect()
-    
+
     # Manual clear of in-memory state for JSONLStorage
     if hasattr(db, "_memories"):
         db._memories = {}
@@ -26,7 +28,7 @@ def setup_db(tmp_path: Path):
         db._relations = {}
     if hasattr(db, "_tag_index"):
         db._tag_index = {}
-        
+
     yield
     db.close()
 
@@ -49,7 +51,7 @@ def test_search_memory_includes_promoted():
     # Search without specifying status - should find both
     results = search_memory(query="memory")
     found_ids = [r["id"] for r in results["results"]]
-    
+
     assert "active-1" in found_ids
     assert "promoted-1" in found_ids
 
@@ -90,7 +92,7 @@ def test_search_unified_includes_promoted():
     # Search without specifying status
     results = search_unified(query="stm")
     found_ids = [r["memory_id"] for r in results["results"] if r["source"] == "stm"]
-    
+
     assert "active-1-unified" in found_ids
     assert "promoted-1-unified" in found_ids
 
@@ -102,6 +104,6 @@ def test_search_unified_custom_status():
     # Only active
     results = search_unified(status="active")
     found_ids = [r["memory_id"] for r in results["results"] if r["source"] == "stm"]
-    
+
     assert "u1" in found_ids
     assert "u2" not in found_ids
