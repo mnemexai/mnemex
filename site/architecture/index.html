@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
     
     
       
@@ -33,7 +33,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.618322db.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -868,6 +868,34 @@
     <span class="md-ellipsis">
       
         Usage Pattern (Conversational)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core-module-organization-v120" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Module Organization (v1.2.0+)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Core Module Organization (v1.2.0+)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#agent-utilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Utilities
       
     </span>
   </a>
@@ -1962,6 +1990,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#core-module-organization-v120" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Module Organization (v1.2.0+)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Core Module Organization (v1.2.0+)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#agent-utilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Utilities
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#system-architecture" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2482,35 +2538,115 @@
 <li><strong>Next search</strong> naturally surfaces memories in danger zone</li>
 </ol>
 <p><strong>No explicit review commands. No interruptions. Just natural strengthening through use.</strong></p>
+<h2 id="core-module-organization-v120">Core Module Organization (v1.2.0+)<a class="headerlink" href="#core-module-organization-v120" title="Permanent link">&para;</a></h2>
+<p>The <code>cortexgraph.core</code> package contains foundational algorithms organized into focused modules:</p>
+<table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>decay.py</code></td>
+<td>Temporal decay calculations (power-law, exponential, two-component)</td>
+</tr>
+<tr>
+<td><code>similarity.py</code></td>
+<td>Similarity metrics (<code>cosine_similarity</code>, <code>jaccard_similarity</code>, <code>tfidf_similarity</code>, <code>text_similarity</code>)</td>
+</tr>
+<tr>
+<td><code>clustering.py</code></td>
+<td>Memory clustering logic using similarity functions</td>
+</tr>
+<tr>
+<td><code>consolidation.py</code></td>
+<td>Memory merging algorithms with batch operations</td>
+</tr>
+<tr>
+<td><code>search_common.py</code></td>
+<td>Shared search validation (<code>SearchParams</code>, <code>validate_search_params</code>)</td>
+</tr>
+<tr>
+<td><code>text_utils.py</code></td>
+<td>Text processing utilities (<code>truncate_content</code>)</td>
+</tr>
+<tr>
+<td><code>pagination.py</code></td>
+<td>Pagination helpers</td>
+</tr>
+<tr>
+<td><code>scoring.py</code></td>
+<td>Score-based decision functions</td>
+</tr>
+</tbody>
+</table>
+<h3 id="agent-utilities">Agent Utilities<a class="headerlink" href="#agent-utilities" title="Permanent link">&para;</a></h3>
+<p>The <code>cortexgraph.agents</code> package includes:</p>
+<table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>storage_utils.py</code></td>
+<td>Shared storage access (<code>get_storage()</code>)</td>
+</tr>
+<tr>
+<td><code>base.py</code></td>
+<td>Base agent class for consolidation pipeline</td>
+</tr>
+<tr>
+<td>Individual agents</td>
+<td><code>decay_analyzer.py</code>, <code>cluster_detector.py</code>, <code>semantic_merge.py</code>, etc.</td>
+</tr>
+</tbody>
+</table>
+<p>All core functions are re-exported from <code>cortexgraph.core</code> for convenient imports:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">cortexgraph.core</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    <span class="n">cosine_similarity</span><span class="p">,</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>    <span class="n">jaccard_similarity</span><span class="p">,</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>    <span class="n">text_similarity</span><span class="p">,</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>    <span class="n">truncate_content</span><span class="p">,</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>    <span class="n">SearchParams</span><span class="p">,</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>    <span class="n">validate_search_params</span><span class="p">,</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="p">)</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="kn">from</span><span class="w"> </span><span class="nn">cortexgraph.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_storage</span>
+</code></pre></div>
 <h2 id="system-architecture">System Architecture<a class="headerlink" href="#system-architecture" title="Permanent link">&para;</a></h2>
 <h3 id="layers">Layers<a class="headerlink" href="#layers" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>┌─────────────────────────────────────┐
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>│       MCP Tools (API Layer)         │
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>│  save, search, touch, gc, promote   │
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>└─────────────────┬───────────────────┘
-<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>                  │
-<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>┌─────────────────▼───────────────────┐
-<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>│         Core Logic Layer            │
-<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>│   decay, scoring, clustering        │
-<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>└─────────────────┬───────────────────┘
-<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>                  │
-<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>┌─────────────────▼───────────────────┐
-<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>│      Storage Layer (JSONL)          │
-<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>│  human-readable files + models      │
-<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>└─────────────────────────────────────┘
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>┌─────────────────────────────────────┐
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>│       MCP Tools (API Layer)         │
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>│  save, search, touch, gc, promote   │
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>└─────────────────┬───────────────────┘
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>                  │
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>┌─────────────────▼───────────────────┐
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>│         Core Logic Layer            │
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>│   decay, scoring, clustering        │
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>└─────────────────┬───────────────────┘
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>                  │
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>┌─────────────────▼───────────────────┐
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>│      Storage Layer (JSONL)          │
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>│  human-readable files + models      │
+<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>└─────────────────────────────────────┘
 </code></pre></div>
 <h3 id="storage-format-jsonl">Storage Format (JSONL)<a class="headerlink" href="#storage-format-jsonl" title="Permanent link">&para;</a></h3>
 <p>Each memory is stored as a JSON object, one per line, in <code>memories.jsonl</code>. Relations in <code>relations.jsonl</code>.</p>
 <p>Example line:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>{&quot;id&quot;:&quot;...&quot;,&quot;content&quot;:&quot;...&quot;,&quot;meta&quot;:{&quot;tags&quot;:[&quot;...&quot;]},&quot;created_at&quot;:1736275200,&quot;last_used&quot;:1736275200,&quot;use_count&quot;:0,&quot;strength&quot;:1.0,&quot;status&quot;:&quot;active&quot;}
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>{&quot;id&quot;:&quot;...&quot;,&quot;content&quot;:&quot;...&quot;,&quot;meta&quot;:{&quot;tags&quot;:[&quot;...&quot;]},&quot;created_at&quot;:1736275200,&quot;last_used&quot;:1736275200,&quot;use_count&quot;:0,&quot;strength&quot;:1.0,&quot;status&quot;:&quot;active&quot;}
 </code></pre></div></p>
 <p>In-memory indexes are built at startup for fast queries; periodic compaction rewrites files to remove tombstones and duplicates.</p>
 <h3 id="memory-states">Memory States<a class="headerlink" href="#memory-states" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>ACTIVE → [high score/usage] → PROMOTED
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>   ↓
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>[low score]
-<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>   ↓
-<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>ARCHIVED or DELETED
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>ACTIVE → [high score/usage] → PROMOTED
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>   ↓
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>[low score]
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>   ↓
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>ARCHIVED or DELETED
 </code></pre></div>
 <ul>
 <li><strong>ACTIVE</strong>: Normal short-term memory undergoing decay</li>
@@ -2519,78 +2655,80 @@
 </ul>
 <h2 id="data-flow">Data Flow<a class="headerlink" href="#data-flow" title="Permanent link">&para;</a></h2>
 <h3 id="saving-a-memory">Saving a Memory<a class="headerlink" href="#saving-a-memory" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>User/AI → save_memory(content, tags)
-<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>    ↓
-<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>Generate embedding (optional)
-<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>    ↓
-<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>Create Memory object
-<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>    ↓
-<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>Append to JSONL storage
-<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>    ↓
-<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>Return memory_id
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>User/AI → save_memory(content, tags)
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>    ↓
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>Generate embedding (optional)
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>    ↓
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>Create Memory object
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>    ↓
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>Append to JSONL storage
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>    ↓
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>Return memory_id
 </code></pre></div>
 <h3 id="searching-memories">Searching Memories<a class="headerlink" href="#searching-memories" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>User/AI → search_memory(query, filters)
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>    ↓
-<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>Database query (tags, window, status)
-<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>    ↓
-<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>Calculate decay scores for each
-<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>    ↓
-<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>[Optional] Calculate semantic similarity
-<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>    ↓
-<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>Rank by combined score
-<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>    ↓
-<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>Return top_k results
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>User/AI → search_memory(query, filters)
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>    ↓
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>Database query (tags, window, status)
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>    ↓
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>Calculate decay scores for each
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>    ↓
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>[Optional] Calculate semantic similarity
+<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>    ↓
+<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>Rank by combined score
+<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>    ↓
+<a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>Return top_k results
 </code></pre></div>
 <h3 id="touching-a-memory">Touching a Memory<a class="headerlink" href="#touching-a-memory" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>User/AI → touch_memory(id)
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>    ↓
-<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>Get existing memory
-<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>    ↓
-<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>Update: last_used=now, use_count+=1, strength+=boost
-<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>    ↓
-<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>Calculate new score
-<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>    ↓
-<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>Save updated memory
-<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>    ↓
-<a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>Return old/new scores
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>User/AI → touch_memory(id)
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>    ↓
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>Get existing memory
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>    ↓
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>Update: last_used=now, use_count+=1, strength+=boost
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>    ↓
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>Calculate new score
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a>    ↓
+<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>Save updated memory
+<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a>    ↓
+<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a>Return old/new scores
 </code></pre></div>
 <h3 id="promotion-flow">Promotion Flow<a class="headerlink" href="#promotion-flow" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>[Automatic or Manual Trigger]
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>    ↓
-<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>Identify candidates (score/usage criteria)
-<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>    ↓
-<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>[Optional: Dry-run preview]
-<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>    ↓
-<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>For each candidate:
-<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a>    ├─ Generate Markdown note
-<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>    ├─ Write to Obsidian vault
-<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a>    ├─ Update status=PROMOTED
-<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a>    └─ Store vault path
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>[Automatic or Manual Trigger]
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>    ↓
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>Identify candidates (score/usage criteria)
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>    ↓
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>[Optional: Dry-run preview]
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>    ↓
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>For each candidate:
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>    ├─ Generate Markdown note
+<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>    ├─ Write to Obsidian vault
+<a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a>    ├─ Update status=PROMOTED
+<a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a>    └─ Store vault path
 </code></pre></div>
 <h3 id="garbage-collection_1">Garbage Collection<a class="headerlink" href="#garbage-collection_1" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>gc(dry_run, archive_instead)
-<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>    ↓
-<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>Get all ACTIVE memories
-<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>    ↓
-<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>Calculate scores
-<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>    ↓
-<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>Filter: score &lt; forget_threshold
-<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>    ↓
-<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>[Optional: Dry-run preview]
-<a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a>    ↓
-<a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a>Delete or Archive
-<a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a>    ↓
-<a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a>Return statistics
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>gc(dry_run, archive_instead)
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>    ↓
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>Get all ACTIVE memories
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>    ↓
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>Calculate scores
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>    ↓
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>Filter: score &lt; forget_threshold
+<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>    ↓
+<a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>[Optional: Dry-run preview]
+<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a>    ↓
+<a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a>Delete or Archive
+<a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a>    ↓
+<a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a>Return statistics
 </code></pre></div>
 <h2 id="clustering-for-consolidation">Clustering for Consolidation<a class="headerlink" href="#clustering-for-consolidation" title="Permanent link">&para;</a></h2>
 <h3 id="similarity-based-clustering">Similarity-Based Clustering<a class="headerlink" href="#similarity-based-clustering" title="Permanent link">&para;</a></h3>
+<p>Uses functions from <code>cortexgraph.core.similarity</code>:</p>
 <ol>
 <li><strong>Embedding Generation</strong>: Use sentence-transformers to create vectors</li>
-<li><strong>Pairwise Similarity</strong>: Calculate cosine similarity between memories</li>
+<li><strong>Pairwise Similarity</strong>: Calculate <code>cosine_similarity()</code> between memory embeddings</li>
+<li><strong>Fallback</strong>: Use <code>text_similarity()</code> (Jaccard-based) when embeddings unavailable</li>
 <li><strong>Linking</strong>: Connect memories with similarity &gt; threshold (default: 0.83)</li>
 <li><strong>Cluster Formation</strong>: Single-linkage clustering</li>
-<li><strong>Cohesion Calculation</strong>: Average intra-cluster similarity</li>
+<li><strong>Cohesion Calculation</strong>: Average intra-cluster similarity via <code>calculate_centroid()</code></li>
 </ol>
 <h3 id="cluster-actions">Cluster Actions<a class="headerlink" href="#cluster-actions" title="Permanent link">&para;</a></h3>
 <ul>
@@ -2751,10 +2889,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "content.action.edit"], "search": "../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "content.action.edit"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>

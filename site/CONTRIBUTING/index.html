@@ -25,7 +25,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
     
     
       
@@ -33,7 +33,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.618322db.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -1464,6 +1464,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#project-structure-v120" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project Structure (v1.2.0+)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Project Structure (v1.2.0+)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-modules-added-in-v120" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Modules Added in v1.2.0
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#testing" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2483,6 +2511,34 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#project-structure-v120" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project Structure (v1.2.0+)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Project Structure (v1.2.0+)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key-modules-added-in-v120" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Modules Added in v1.2.0
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#testing" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3267,93 +3323,160 @@
 <a id="__codelineno-38-4" name="__codelineno-38-4" href="#__codelineno-38-4"></a>test: add tests for decay calculation edge cases
 </code></pre></div></p>
 <hr />
+<h2 id="project-structure-v120">Project Structure (v1.2.0+)<a class="headerlink" href="#project-structure-v120" title="Permanent link">&para;</a></h2>
+<p>The source code is organized into focused modules:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>src/cortexgraph/
+<a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a>├── core/                       # Foundational algorithms
+<a id="__codelineno-39-3" name="__codelineno-39-3" href="#__codelineno-39-3"></a>│   ├── __init__.py             # Exports all core functions
+<a id="__codelineno-39-4" name="__codelineno-39-4" href="#__codelineno-39-4"></a>│   ├── decay.py                # Decay calculations
+<a id="__codelineno-39-5" name="__codelineno-39-5" href="#__codelineno-39-5"></a>│   ├── similarity.py           # Similarity metrics (NEW)
+<a id="__codelineno-39-6" name="__codelineno-39-6" href="#__codelineno-39-6"></a>│   ├── clustering.py           # Clustering logic
+<a id="__codelineno-39-7" name="__codelineno-39-7" href="#__codelineno-39-7"></a>│   ├── consolidation.py        # Memory merging
+<a id="__codelineno-39-8" name="__codelineno-39-8" href="#__codelineno-39-8"></a>│   ├── search_common.py        # Search validation (NEW)
+<a id="__codelineno-39-9" name="__codelineno-39-9" href="#__codelineno-39-9"></a>│   ├── text_utils.py           # Text utilities (NEW)
+<a id="__codelineno-39-10" name="__codelineno-39-10" href="#__codelineno-39-10"></a>│   ├── pagination.py           # Pagination helpers
+<a id="__codelineno-39-11" name="__codelineno-39-11" href="#__codelineno-39-11"></a>│   └── scoring.py              # Score decisions
+<a id="__codelineno-39-12" name="__codelineno-39-12" href="#__codelineno-39-12"></a>├── agents/                     # Multi-agent consolidation
+<a id="__codelineno-39-13" name="__codelineno-39-13" href="#__codelineno-39-13"></a>│   ├── __init__.py             # Exports agents + get_storage
+<a id="__codelineno-39-14" name="__codelineno-39-14" href="#__codelineno-39-14"></a>│   ├── storage_utils.py        # Storage access utility (NEW)
+<a id="__codelineno-39-15" name="__codelineno-39-15" href="#__codelineno-39-15"></a>│   ├── base.py                 # Base agent class
+<a id="__codelineno-39-16" name="__codelineno-39-16" href="#__codelineno-39-16"></a>│   ├── decay_analyzer.py       # Find at-risk memories
+<a id="__codelineno-39-17" name="__codelineno-39-17" href="#__codelineno-39-17"></a>│   ├── cluster_detector.py     # Group similar memories
+<a id="__codelineno-39-18" name="__codelineno-39-18" href="#__codelineno-39-18"></a>│   ├── semantic_merge.py       # Combine memory groups
+<a id="__codelineno-39-19" name="__codelineno-39-19" href="#__codelineno-39-19"></a>│   ├── ltm_promoter.py         # Promote to LTM
+<a id="__codelineno-39-20" name="__codelineno-39-20" href="#__codelineno-39-20"></a>│   └── relationship_discovery.py # Find cross-domain links
+<a id="__codelineno-39-21" name="__codelineno-39-21" href="#__codelineno-39-21"></a>├── storage/                    # Storage backends
+<a id="__codelineno-39-22" name="__codelineno-39-22" href="#__codelineno-39-22"></a>│   ├── jsonl_storage.py        # JSONL with batch operations
+<a id="__codelineno-39-23" name="__codelineno-39-23" href="#__codelineno-39-23"></a>│   ├── sqlite_storage.py       # SQLite backend
+<a id="__codelineno-39-24" name="__codelineno-39-24" href="#__codelineno-39-24"></a>│   ├── ltm_index.py            # LTM indexing
+<a id="__codelineno-39-25" name="__codelineno-39-25" href="#__codelineno-39-25"></a>│   └── models.py               # Data models
+<a id="__codelineno-39-26" name="__codelineno-39-26" href="#__codelineno-39-26"></a>├── tools/                      # MCP tool implementations
+<a id="__codelineno-39-27" name="__codelineno-39-27" href="#__codelineno-39-27"></a>│   ├── search.py               # search_memory tool
+<a id="__codelineno-39-28" name="__codelineno-39-28" href="#__codelineno-39-28"></a>│   ├── search_unified.py       # search_unified tool
+<a id="__codelineno-39-29" name="__codelineno-39-29" href="#__codelineno-39-29"></a>│   └── ...                     # Other MCP tools
+<a id="__codelineno-39-30" name="__codelineno-39-30" href="#__codelineno-39-30"></a>└── cli/                        # Command-line interfaces
+<a id="__codelineno-39-31" name="__codelineno-39-31" href="#__codelineno-39-31"></a>    └── ...
+</code></pre></div>
+<h3 id="key-modules-added-in-v120">Key Modules Added in v1.2.0<a class="headerlink" href="#key-modules-added-in-v120" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Location</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>similarity.py</code></td>
+<td><code>core/similarity.py</code></td>
+<td>Similarity metrics (<code>cosine_similarity</code>, <code>jaccard_similarity</code>, etc.)</td>
+</tr>
+<tr>
+<td><code>search_common.py</code></td>
+<td><code>core/search_common.py</code></td>
+<td>Search validation (<code>SearchParams</code>, <code>validate_search_params</code>)</td>
+</tr>
+<tr>
+<td><code>text_utils.py</code></td>
+<td><code>core/text_utils.py</code></td>
+<td>Text utilities (<code>truncate_content</code>)</td>
+</tr>
+<tr>
+<td><code>storage_utils.py</code></td>
+<td><code>agents/storage_utils.py</code></td>
+<td>Storage access (<code>get_storage</code>)</td>
+</tr>
+</tbody>
+</table>
+<hr />
 <h2 id="testing">Testing<a class="headerlink" href="#testing" title="Permanent link">&para;</a></h2>
 <h3 id="test-structure">Test Structure<a class="headerlink" href="#test-structure" title="Permanent link">&para;</a></h3>
 <p>Tests are organized in the <code>tests/</code> directory:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>tests/
-<a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a>├── test_consolidation.py    # Consolidation logic tests
-<a id="__codelineno-39-3" name="__codelineno-39-3" href="#__codelineno-39-3"></a>├── test_decay.py             # Decay algorithm tests
-<a id="__codelineno-39-4" name="__codelineno-39-4" href="#__codelineno-39-4"></a>├── test_decay_models.py      # Decay model tests
-<a id="__codelineno-39-5" name="__codelineno-39-5" href="#__codelineno-39-5"></a>├── test_ltm_index.py         # LTM index tests
-<a id="__codelineno-39-6" name="__codelineno-39-6" href="#__codelineno-39-6"></a>├── test_search_unified.py    # Unified search tests
-<a id="__codelineno-39-7" name="__codelineno-39-7" href="#__codelineno-39-7"></a>└── test_storage.py           # Storage layer tests
+<div class="highlight"><pre><span></span><code><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>tests/
+<a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a>├── test_consolidation.py    # Consolidation logic tests
+<a id="__codelineno-40-3" name="__codelineno-40-3" href="#__codelineno-40-3"></a>├── test_decay.py             # Decay algorithm tests
+<a id="__codelineno-40-4" name="__codelineno-40-4" href="#__codelineno-40-4"></a>├── test_decay_models.py      # Decay model tests
+<a id="__codelineno-40-5" name="__codelineno-40-5" href="#__codelineno-40-5"></a>├── test_ltm_index.py         # LTM index tests
+<a id="__codelineno-40-6" name="__codelineno-40-6" href="#__codelineno-40-6"></a>├── test_search_unified.py    # Unified search tests
+<a id="__codelineno-40-7" name="__codelineno-40-7" href="#__codelineno-40-7"></a>└── test_storage.py           # Storage layer tests
 </code></pre></div>
 <h3 id="writing-tests">Writing Tests<a class="headerlink" href="#writing-tests" title="Permanent link">&para;</a></h3>
 <p>Follow these guidelines when writing tests:</p>
 <ol>
 <li>
 <p><strong>Use descriptive names:</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_merge_content_preserves_unique_information</span><span class="p">():</span>
-<a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Test that content merging keeps unique info from all memories.&quot;&quot;&quot;</span>
-<a id="__codelineno-40-3" name="__codelineno-40-3" href="#__codelineno-40-3"></a>    <span class="c1"># Test implementation</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_merge_content_preserves_unique_information</span><span class="p">():</span>
+<a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Test that content merging keeps unique info from all memories.&quot;&quot;&quot;</span>
+<a id="__codelineno-41-3" name="__codelineno-41-3" href="#__codelineno-41-3"></a>    <span class="c1"># Test implementation</span>
 </code></pre></div></p>
 </li>
 <li>
 <p><strong>Use fixtures for common setup:</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
-<a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">sample_memories</span><span class="p">():</span>
-<a id="__codelineno-41-3" name="__codelineno-41-3" href="#__codelineno-41-3"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Create sample memories for testing.&quot;&quot;&quot;</span>
-<a id="__codelineno-41-4" name="__codelineno-41-4" href="#__codelineno-41-4"></a>    <span class="k">return</span> <span class="p">[</span>
-<a id="__codelineno-41-5" name="__codelineno-41-5" href="#__codelineno-41-5"></a>        <span class="n">Memory</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;mem-1&quot;</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s2">&quot;Test content 1&quot;</span><span class="p">),</span>
-<a id="__codelineno-41-6" name="__codelineno-41-6" href="#__codelineno-41-6"></a>        <span class="n">Memory</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;mem-2&quot;</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s2">&quot;Test content 2&quot;</span><span class="p">),</span>
-<a id="__codelineno-41-7" name="__codelineno-41-7" href="#__codelineno-41-7"></a>    <span class="p">]</span>
-<a id="__codelineno-41-8" name="__codelineno-41-8" href="#__codelineno-41-8"></a>
-<a id="__codelineno-41-9" name="__codelineno-41-9" href="#__codelineno-41-9"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_something</span><span class="p">(</span><span class="n">sample_memories</span><span class="p">):</span>
-<a id="__codelineno-41-10" name="__codelineno-41-10" href="#__codelineno-41-10"></a>    <span class="c1"># Use the fixture</span>
-<a id="__codelineno-41-11" name="__codelineno-41-11" href="#__codelineno-41-11"></a>    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_memories</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<a id="__codelineno-42-2" name="__codelineno-42-2" href="#__codelineno-42-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">sample_memories</span><span class="p">():</span>
+<a id="__codelineno-42-3" name="__codelineno-42-3" href="#__codelineno-42-3"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Create sample memories for testing.&quot;&quot;&quot;</span>
+<a id="__codelineno-42-4" name="__codelineno-42-4" href="#__codelineno-42-4"></a>    <span class="k">return</span> <span class="p">[</span>
+<a id="__codelineno-42-5" name="__codelineno-42-5" href="#__codelineno-42-5"></a>        <span class="n">Memory</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;mem-1&quot;</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s2">&quot;Test content 1&quot;</span><span class="p">),</span>
+<a id="__codelineno-42-6" name="__codelineno-42-6" href="#__codelineno-42-6"></a>        <span class="n">Memory</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;mem-2&quot;</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s2">&quot;Test content 2&quot;</span><span class="p">),</span>
+<a id="__codelineno-42-7" name="__codelineno-42-7" href="#__codelineno-42-7"></a>    <span class="p">]</span>
+<a id="__codelineno-42-8" name="__codelineno-42-8" href="#__codelineno-42-8"></a>
+<a id="__codelineno-42-9" name="__codelineno-42-9" href="#__codelineno-42-9"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_something</span><span class="p">(</span><span class="n">sample_memories</span><span class="p">):</span>
+<a id="__codelineno-42-10" name="__codelineno-42-10" href="#__codelineno-42-10"></a>    <span class="c1"># Use the fixture</span>
+<a id="__codelineno-42-11" name="__codelineno-42-11" href="#__codelineno-42-11"></a>    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_memories</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
 </code></pre></div></p>
 </li>
 <li>
 <p><strong>Test edge cases:</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_merge_content_empty</span><span class="p">():</span>
-<a id="__codelineno-42-2" name="__codelineno-42-2" href="#__codelineno-42-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Test merging with empty list.&quot;&quot;&quot;</span>
-<a id="__codelineno-42-3" name="__codelineno-42-3" href="#__codelineno-42-3"></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">merge_content_smart</span><span class="p">([])</span>
-<a id="__codelineno-42-4" name="__codelineno-42-4" href="#__codelineno-42-4"></a>    <span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span>
-<a id="__codelineno-42-5" name="__codelineno-42-5" href="#__codelineno-42-5"></a>
-<a id="__codelineno-42-6" name="__codelineno-42-6" href="#__codelineno-42-6"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_merge_content_single</span><span class="p">():</span>
-<a id="__codelineno-42-7" name="__codelineno-42-7" href="#__codelineno-42-7"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Test merging with single memory.&quot;&quot;&quot;</span>
-<a id="__codelineno-42-8" name="__codelineno-42-8" href="#__codelineno-42-8"></a>    <span class="n">memories</span> <span class="o">=</span> <span class="p">[</span><span class="n">Memory</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s2">&quot;Single&quot;</span><span class="p">)]</span>
-<a id="__codelineno-42-9" name="__codelineno-42-9" href="#__codelineno-42-9"></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">merge_content_smart</span><span class="p">(</span><span class="n">memories</span><span class="p">)</span>
-<a id="__codelineno-42-10" name="__codelineno-42-10" href="#__codelineno-42-10"></a>    <span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="s2">&quot;Single&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_merge_content_empty</span><span class="p">():</span>
+<a id="__codelineno-43-2" name="__codelineno-43-2" href="#__codelineno-43-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Test merging with empty list.&quot;&quot;&quot;</span>
+<a id="__codelineno-43-3" name="__codelineno-43-3" href="#__codelineno-43-3"></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">merge_content_smart</span><span class="p">([])</span>
+<a id="__codelineno-43-4" name="__codelineno-43-4" href="#__codelineno-43-4"></a>    <span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span>
+<a id="__codelineno-43-5" name="__codelineno-43-5" href="#__codelineno-43-5"></a>
+<a id="__codelineno-43-6" name="__codelineno-43-6" href="#__codelineno-43-6"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_merge_content_single</span><span class="p">():</span>
+<a id="__codelineno-43-7" name="__codelineno-43-7" href="#__codelineno-43-7"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Test merging with single memory.&quot;&quot;&quot;</span>
+<a id="__codelineno-43-8" name="__codelineno-43-8" href="#__codelineno-43-8"></a>    <span class="n">memories</span> <span class="o">=</span> <span class="p">[</span><span class="n">Memory</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s2">&quot;Single&quot;</span><span class="p">)]</span>
+<a id="__codelineno-43-9" name="__codelineno-43-9" href="#__codelineno-43-9"></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">merge_content_smart</span><span class="p">(</span><span class="n">memories</span><span class="p">)</span>
+<a id="__codelineno-43-10" name="__codelineno-43-10" href="#__codelineno-43-10"></a>    <span class="k">assert</span> <span class="n">result</span> <span class="o">==</span> <span class="s2">&quot;Single&quot;</span>
 </code></pre></div></p>
 </li>
 <li>
 <p><strong>Use parametrize for multiple cases:</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;use_count,expected&quot;</span><span class="p">,</span> <span class="p">[</span>
-<a id="__codelineno-43-2" name="__codelineno-43-2" href="#__codelineno-43-2"></a>    <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
-<a id="__codelineno-43-3" name="__codelineno-43-3" href="#__codelineno-43-3"></a>    <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mf">2.6</span><span class="p">),</span>
-<a id="__codelineno-43-4" name="__codelineno-43-4" href="#__codelineno-43-4"></a>    <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">),</span>
-<a id="__codelineno-43-5" name="__codelineno-43-5" href="#__codelineno-43-5"></a><span class="p">])</span>
-<a id="__codelineno-43-6" name="__codelineno-43-6" href="#__codelineno-43-6"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_use_count_boost</span><span class="p">(</span><span class="n">use_count</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
-<a id="__codelineno-43-7" name="__codelineno-43-7" href="#__codelineno-43-7"></a>    <span class="n">boost</span> <span class="o">=</span> <span class="n">calculate_boost</span><span class="p">(</span><span class="n">use_count</span><span class="p">)</span>
-<a id="__codelineno-43-8" name="__codelineno-43-8" href="#__codelineno-43-8"></a>    <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">boost</span> <span class="o">-</span> <span class="n">expected</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.1</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">&quot;use_count,expected&quot;</span><span class="p">,</span> <span class="p">[</span>
+<a id="__codelineno-44-2" name="__codelineno-44-2" href="#__codelineno-44-2"></a>    <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+<a id="__codelineno-44-3" name="__codelineno-44-3" href="#__codelineno-44-3"></a>    <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mf">2.6</span><span class="p">),</span>
+<a id="__codelineno-44-4" name="__codelineno-44-4" href="#__codelineno-44-4"></a>    <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">),</span>
+<a id="__codelineno-44-5" name="__codelineno-44-5" href="#__codelineno-44-5"></a><span class="p">])</span>
+<a id="__codelineno-44-6" name="__codelineno-44-6" href="#__codelineno-44-6"></a><span class="k">def</span><span class="w"> </span><span class="nf">test_use_count_boost</span><span class="p">(</span><span class="n">use_count</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+<a id="__codelineno-44-7" name="__codelineno-44-7" href="#__codelineno-44-7"></a>    <span class="n">boost</span> <span class="o">=</span> <span class="n">calculate_boost</span><span class="p">(</span><span class="n">use_count</span><span class="p">)</span>
+<a id="__codelineno-44-8" name="__codelineno-44-8" href="#__codelineno-44-8"></a>    <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">boost</span> <span class="o">-</span> <span class="n">expected</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.1</span>
 </code></pre></div></p>
 </li>
 </ol>
 <h3 id="running-specific-tests">Running Specific Tests<a class="headerlink" href="#running-specific-tests" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a><span class="c1"># Run a specific test file</span>
-<a id="__codelineno-44-2" name="__codelineno-44-2" href="#__codelineno-44-2"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>tests/test_consolidation.py
-<a id="__codelineno-44-3" name="__codelineno-44-3" href="#__codelineno-44-3"></a>
-<a id="__codelineno-44-4" name="__codelineno-44-4" href="#__codelineno-44-4"></a><span class="c1"># Run a specific test</span>
-<a id="__codelineno-44-5" name="__codelineno-44-5" href="#__codelineno-44-5"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>tests/test_consolidation.py::test_merge_tags
-<a id="__codelineno-44-6" name="__codelineno-44-6" href="#__codelineno-44-6"></a>
-<a id="__codelineno-44-7" name="__codelineno-44-7" href="#__codelineno-44-7"></a><span class="c1"># Run tests matching a pattern</span>
-<a id="__codelineno-44-8" name="__codelineno-44-8" href="#__codelineno-44-8"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>-k<span class="w"> </span><span class="s2">&quot;consolidation&quot;</span>
-<a id="__codelineno-44-9" name="__codelineno-44-9" href="#__codelineno-44-9"></a>
-<a id="__codelineno-44-10" name="__codelineno-44-10" href="#__codelineno-44-10"></a><span class="c1"># Run with verbose output</span>
-<a id="__codelineno-44-11" name="__codelineno-44-11" href="#__codelineno-44-11"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>-v
-<a id="__codelineno-44-12" name="__codelineno-44-12" href="#__codelineno-44-12"></a>
-<a id="__codelineno-44-13" name="__codelineno-44-13" href="#__codelineno-44-13"></a><span class="c1"># Run with detailed output on failures</span>
-<a id="__codelineno-44-14" name="__codelineno-44-14" href="#__codelineno-44-14"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>-vv
-<a id="__codelineno-44-15" name="__codelineno-44-15" href="#__codelineno-44-15"></a>
-<a id="__codelineno-44-16" name="__codelineno-44-16" href="#__codelineno-44-16"></a><span class="c1"># Stop on first failure</span>
-<a id="__codelineno-44-17" name="__codelineno-44-17" href="#__codelineno-44-17"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>-x
-<a id="__codelineno-44-18" name="__codelineno-44-18" href="#__codelineno-44-18"></a>
-<a id="__codelineno-44-19" name="__codelineno-44-19" href="#__codelineno-44-19"></a><span class="c1"># Show local variables on failure</span>
-<a id="__codelineno-44-20" name="__codelineno-44-20" href="#__codelineno-44-20"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>-l
-<a id="__codelineno-44-21" name="__codelineno-44-21" href="#__codelineno-44-21"></a>
-<a id="__codelineno-44-22" name="__codelineno-44-22" href="#__codelineno-44-22"></a><span class="c1"># Run tests in parallel (requires pytest-xdist)</span>
-<a id="__codelineno-44-23" name="__codelineno-44-23" href="#__codelineno-44-23"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>-n<span class="w"> </span>auto
+<div class="highlight"><pre><span></span><code><a id="__codelineno-45-1" name="__codelineno-45-1" href="#__codelineno-45-1"></a><span class="c1"># Run a specific test file</span>
+<a id="__codelineno-45-2" name="__codelineno-45-2" href="#__codelineno-45-2"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>tests/test_consolidation.py
+<a id="__codelineno-45-3" name="__codelineno-45-3" href="#__codelineno-45-3"></a>
+<a id="__codelineno-45-4" name="__codelineno-45-4" href="#__codelineno-45-4"></a><span class="c1"># Run a specific test</span>
+<a id="__codelineno-45-5" name="__codelineno-45-5" href="#__codelineno-45-5"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>tests/test_consolidation.py::test_merge_tags
+<a id="__codelineno-45-6" name="__codelineno-45-6" href="#__codelineno-45-6"></a>
+<a id="__codelineno-45-7" name="__codelineno-45-7" href="#__codelineno-45-7"></a><span class="c1"># Run tests matching a pattern</span>
+<a id="__codelineno-45-8" name="__codelineno-45-8" href="#__codelineno-45-8"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>-k<span class="w"> </span><span class="s2">&quot;consolidation&quot;</span>
+<a id="__codelineno-45-9" name="__codelineno-45-9" href="#__codelineno-45-9"></a>
+<a id="__codelineno-45-10" name="__codelineno-45-10" href="#__codelineno-45-10"></a><span class="c1"># Run with verbose output</span>
+<a id="__codelineno-45-11" name="__codelineno-45-11" href="#__codelineno-45-11"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>-v
+<a id="__codelineno-45-12" name="__codelineno-45-12" href="#__codelineno-45-12"></a>
+<a id="__codelineno-45-13" name="__codelineno-45-13" href="#__codelineno-45-13"></a><span class="c1"># Run with detailed output on failures</span>
+<a id="__codelineno-45-14" name="__codelineno-45-14" href="#__codelineno-45-14"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>-vv
+<a id="__codelineno-45-15" name="__codelineno-45-15" href="#__codelineno-45-15"></a>
+<a id="__codelineno-45-16" name="__codelineno-45-16" href="#__codelineno-45-16"></a><span class="c1"># Stop on first failure</span>
+<a id="__codelineno-45-17" name="__codelineno-45-17" href="#__codelineno-45-17"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>-x
+<a id="__codelineno-45-18" name="__codelineno-45-18" href="#__codelineno-45-18"></a>
+<a id="__codelineno-45-19" name="__codelineno-45-19" href="#__codelineno-45-19"></a><span class="c1"># Show local variables on failure</span>
+<a id="__codelineno-45-20" name="__codelineno-45-20" href="#__codelineno-45-20"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>-l
+<a id="__codelineno-45-21" name="__codelineno-45-21" href="#__codelineno-45-21"></a>
+<a id="__codelineno-45-22" name="__codelineno-45-22" href="#__codelineno-45-22"></a><span class="c1"># Run tests in parallel (requires pytest-xdist)</span>
+<a id="__codelineno-45-23" name="__codelineno-45-23" href="#__codelineno-45-23"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>-n<span class="w"> </span>auto
 </code></pre></div>
 <h3 id="coverage-requirements">Coverage Requirements<a class="headerlink" href="#coverage-requirements" title="Permanent link">&para;</a></h3>
 <ul>
@@ -3361,74 +3484,74 @@
 <li>Critical paths (decay, storage, consolidation) should have <strong>95%+ coverage</strong></li>
 <li>Check coverage with:</li>
 </ul>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-45-1" name="__codelineno-45-1" href="#__codelineno-45-1"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>--cov<span class="o">=</span>cortexgraph<span class="w"> </span>--cov-report<span class="o">=</span>term-missing
+<div class="highlight"><pre><span></span><code><a id="__codelineno-46-1" name="__codelineno-46-1" href="#__codelineno-46-1"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>--cov<span class="o">=</span>cortexgraph<span class="w"> </span>--cov-report<span class="o">=</span>term-missing
 </code></pre></div>
 <hr />
 <h2 id="code-style">Code Style<a class="headerlink" href="#code-style" title="Permanent link">&para;</a></h2>
 <h3 id="python-style-guidelines">Python Style Guidelines<a class="headerlink" href="#python-style-guidelines" title="Permanent link">&para;</a></h3>
 <p>We use <strong>Ruff</strong> for linting and formatting (no Black):</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-46-1" name="__codelineno-46-1" href="#__codelineno-46-1"></a><span class="c1"># Check for style issues</span>
-<a id="__codelineno-46-2" name="__codelineno-46-2" href="#__codelineno-46-2"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>src/cortexgraph<span class="w"> </span>tests
-<a id="__codelineno-46-3" name="__codelineno-46-3" href="#__codelineno-46-3"></a>
-<a id="__codelineno-46-4" name="__codelineno-46-4" href="#__codelineno-46-4"></a><span class="c1"># Auto-fix issues</span>
-<a id="__codelineno-46-5" name="__codelineno-46-5" href="#__codelineno-46-5"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>--fix<span class="w"> </span>src/cortexgraph<span class="w"> </span>tests
-<a id="__codelineno-46-6" name="__codelineno-46-6" href="#__codelineno-46-6"></a>
-<a id="__codelineno-46-7" name="__codelineno-46-7" href="#__codelineno-46-7"></a><span class="c1"># Format code</span>
-<a id="__codelineno-46-8" name="__codelineno-46-8" href="#__codelineno-46-8"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>format<span class="w"> </span>src/cortexgraph<span class="w"> </span>tests
+<div class="highlight"><pre><span></span><code><a id="__codelineno-47-1" name="__codelineno-47-1" href="#__codelineno-47-1"></a><span class="c1"># Check for style issues</span>
+<a id="__codelineno-47-2" name="__codelineno-47-2" href="#__codelineno-47-2"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>src/cortexgraph<span class="w"> </span>tests
+<a id="__codelineno-47-3" name="__codelineno-47-3" href="#__codelineno-47-3"></a>
+<a id="__codelineno-47-4" name="__codelineno-47-4" href="#__codelineno-47-4"></a><span class="c1"># Auto-fix issues</span>
+<a id="__codelineno-47-5" name="__codelineno-47-5" href="#__codelineno-47-5"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>--fix<span class="w"> </span>src/cortexgraph<span class="w"> </span>tests
+<a id="__codelineno-47-6" name="__codelineno-47-6" href="#__codelineno-47-6"></a>
+<a id="__codelineno-47-7" name="__codelineno-47-7" href="#__codelineno-47-7"></a><span class="c1"># Format code</span>
+<a id="__codelineno-47-8" name="__codelineno-47-8" href="#__codelineno-47-8"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>format<span class="w"> </span>src/cortexgraph<span class="w"> </span>tests
 </code></pre></div>
 <h3 id="type-hints">Type Hints<a class="headerlink" href="#type-hints" title="Permanent link">&para;</a></h3>
 <p>All functions must have type hints:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-47-1" name="__codelineno-47-1" href="#__codelineno-47-1"></a><span class="c1"># Good ✓</span>
-<a id="__codelineno-47-2" name="__codelineno-47-2" href="#__codelineno-47-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">calculate_score</span><span class="p">(</span><span class="n">use_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">last_used</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">strength</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<a id="__codelineno-47-3" name="__codelineno-47-3" href="#__codelineno-47-3"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate memory score.&quot;&quot;&quot;</span>
-<a id="__codelineno-47-4" name="__codelineno-47-4" href="#__codelineno-47-4"></a>    <span class="k">return</span> <span class="p">(</span><span class="n">use_count</span> <span class="o">**</span> <span class="mf">0.6</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.0001</span> <span class="o">*</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span> <span class="o">*</span> <span class="n">strength</span>
-<a id="__codelineno-47-5" name="__codelineno-47-5" href="#__codelineno-47-5"></a>
-<a id="__codelineno-47-6" name="__codelineno-47-6" href="#__codelineno-47-6"></a><span class="c1"># Bad ✗</span>
-<a id="__codelineno-47-7" name="__codelineno-47-7" href="#__codelineno-47-7"></a><span class="k">def</span><span class="w"> </span><span class="nf">calculate_score</span><span class="p">(</span><span class="n">use_count</span><span class="p">,</span> <span class="n">last_used</span><span class="p">,</span> <span class="n">strength</span><span class="p">):</span>
-<a id="__codelineno-47-8" name="__codelineno-47-8" href="#__codelineno-47-8"></a>    <span class="k">return</span> <span class="p">(</span><span class="n">use_count</span> <span class="o">**</span> <span class="mf">0.6</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.0001</span> <span class="o">*</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span> <span class="o">*</span> <span class="n">strength</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-48-1" name="__codelineno-48-1" href="#__codelineno-48-1"></a><span class="c1"># Good ✓</span>
+<a id="__codelineno-48-2" name="__codelineno-48-2" href="#__codelineno-48-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">calculate_score</span><span class="p">(</span><span class="n">use_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">last_used</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">strength</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<a id="__codelineno-48-3" name="__codelineno-48-3" href="#__codelineno-48-3"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate memory score.&quot;&quot;&quot;</span>
+<a id="__codelineno-48-4" name="__codelineno-48-4" href="#__codelineno-48-4"></a>    <span class="k">return</span> <span class="p">(</span><span class="n">use_count</span> <span class="o">**</span> <span class="mf">0.6</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.0001</span> <span class="o">*</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span> <span class="o">*</span> <span class="n">strength</span>
+<a id="__codelineno-48-5" name="__codelineno-48-5" href="#__codelineno-48-5"></a>
+<a id="__codelineno-48-6" name="__codelineno-48-6" href="#__codelineno-48-6"></a><span class="c1"># Bad ✗</span>
+<a id="__codelineno-48-7" name="__codelineno-48-7" href="#__codelineno-48-7"></a><span class="k">def</span><span class="w"> </span><span class="nf">calculate_score</span><span class="p">(</span><span class="n">use_count</span><span class="p">,</span> <span class="n">last_used</span><span class="p">,</span> <span class="n">strength</span><span class="p">):</span>
+<a id="__codelineno-48-8" name="__codelineno-48-8" href="#__codelineno-48-8"></a>    <span class="k">return</span> <span class="p">(</span><span class="n">use_count</span> <span class="o">**</span> <span class="mf">0.6</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.0001</span> <span class="o">*</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span> <span class="o">*</span> <span class="n">strength</span>
 </code></pre></div>
 <p>Run type checker:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-48-1" name="__codelineno-48-1" href="#__codelineno-48-1"></a>uv<span class="w"> </span>run<span class="w"> </span>mypy<span class="w"> </span>src/cortexgraph
+<div class="highlight"><pre><span></span><code><a id="__codelineno-49-1" name="__codelineno-49-1" href="#__codelineno-49-1"></a>uv<span class="w"> </span>run<span class="w"> </span>mypy<span class="w"> </span>src/cortexgraph
 </code></pre></div>
 <h3 id="docstrings">Docstrings<a class="headerlink" href="#docstrings" title="Permanent link">&para;</a></h3>
 <p>Use Google-style docstrings:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-49-1" name="__codelineno-49-1" href="#__codelineno-49-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">merge_content_smart</span><span class="p">(</span><span class="n">memories</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Memory</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<a id="__codelineno-49-2" name="__codelineno-49-2" href="#__codelineno-49-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<a id="__codelineno-49-3" name="__codelineno-49-3" href="#__codelineno-49-3"></a><span class="sd">    Intelligently merge content from multiple memories.</span>
-<a id="__codelineno-49-4" name="__codelineno-49-4" href="#__codelineno-49-4"></a>
-<a id="__codelineno-49-5" name="__codelineno-49-5" href="#__codelineno-49-5"></a><span class="sd">    Strategy:</span>
-<a id="__codelineno-49-6" name="__codelineno-49-6" href="#__codelineno-49-6"></a><span class="sd">    - If very similar (duplicates), keep the longest/most detailed version</span>
-<a id="__codelineno-49-7" name="__codelineno-49-7" href="#__codelineno-49-7"></a><span class="sd">    - If related but distinct, combine with clear separation</span>
-<a id="__codelineno-49-8" name="__codelineno-49-8" href="#__codelineno-49-8"></a><span class="sd">    - Preserve unique information from each memory</span>
-<a id="__codelineno-49-9" name="__codelineno-49-9" href="#__codelineno-49-9"></a>
-<a id="__codelineno-49-10" name="__codelineno-49-10" href="#__codelineno-49-10"></a><span class="sd">    Args:</span>
-<a id="__codelineno-49-11" name="__codelineno-49-11" href="#__codelineno-49-11"></a><span class="sd">        memories: List of memories to merge</span>
-<a id="__codelineno-49-12" name="__codelineno-49-12" href="#__codelineno-49-12"></a>
-<a id="__codelineno-49-13" name="__codelineno-49-13" href="#__codelineno-49-13"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-49-14" name="__codelineno-49-14" href="#__codelineno-49-14"></a><span class="sd">        Merged content string</span>
-<a id="__codelineno-49-15" name="__codelineno-49-15" href="#__codelineno-49-15"></a>
-<a id="__codelineno-49-16" name="__codelineno-49-16" href="#__codelineno-49-16"></a><span class="sd">    Example:</span>
-<a id="__codelineno-49-17" name="__codelineno-49-17" href="#__codelineno-49-17"></a><span class="sd">        &gt;&gt;&gt; memories = [Memory(id=&quot;1&quot;, content=&quot;Python is great&quot;)]</span>
-<a id="__codelineno-49-18" name="__codelineno-49-18" href="#__codelineno-49-18"></a><span class="sd">        &gt;&gt;&gt; merge_content_smart(memories)</span>
-<a id="__codelineno-49-19" name="__codelineno-49-19" href="#__codelineno-49-19"></a><span class="sd">        &#39;Python is great&#39;</span>
-<a id="__codelineno-49-20" name="__codelineno-49-20" href="#__codelineno-49-20"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-49-21" name="__codelineno-49-21" href="#__codelineno-49-21"></a>    <span class="c1"># Implementation</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-50-1" name="__codelineno-50-1" href="#__codelineno-50-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">merge_content_smart</span><span class="p">(</span><span class="n">memories</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Memory</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<a id="__codelineno-50-2" name="__codelineno-50-2" href="#__codelineno-50-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-50-3" name="__codelineno-50-3" href="#__codelineno-50-3"></a><span class="sd">    Intelligently merge content from multiple memories.</span>
+<a id="__codelineno-50-4" name="__codelineno-50-4" href="#__codelineno-50-4"></a>
+<a id="__codelineno-50-5" name="__codelineno-50-5" href="#__codelineno-50-5"></a><span class="sd">    Strategy:</span>
+<a id="__codelineno-50-6" name="__codelineno-50-6" href="#__codelineno-50-6"></a><span class="sd">    - If very similar (duplicates), keep the longest/most detailed version</span>
+<a id="__codelineno-50-7" name="__codelineno-50-7" href="#__codelineno-50-7"></a><span class="sd">    - If related but distinct, combine with clear separation</span>
+<a id="__codelineno-50-8" name="__codelineno-50-8" href="#__codelineno-50-8"></a><span class="sd">    - Preserve unique information from each memory</span>
+<a id="__codelineno-50-9" name="__codelineno-50-9" href="#__codelineno-50-9"></a>
+<a id="__codelineno-50-10" name="__codelineno-50-10" href="#__codelineno-50-10"></a><span class="sd">    Args:</span>
+<a id="__codelineno-50-11" name="__codelineno-50-11" href="#__codelineno-50-11"></a><span class="sd">        memories: List of memories to merge</span>
+<a id="__codelineno-50-12" name="__codelineno-50-12" href="#__codelineno-50-12"></a>
+<a id="__codelineno-50-13" name="__codelineno-50-13" href="#__codelineno-50-13"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-50-14" name="__codelineno-50-14" href="#__codelineno-50-14"></a><span class="sd">        Merged content string</span>
+<a id="__codelineno-50-15" name="__codelineno-50-15" href="#__codelineno-50-15"></a>
+<a id="__codelineno-50-16" name="__codelineno-50-16" href="#__codelineno-50-16"></a><span class="sd">    Example:</span>
+<a id="__codelineno-50-17" name="__codelineno-50-17" href="#__codelineno-50-17"></a><span class="sd">        &gt;&gt;&gt; memories = [Memory(id=&quot;1&quot;, content=&quot;Python is great&quot;)]</span>
+<a id="__codelineno-50-18" name="__codelineno-50-18" href="#__codelineno-50-18"></a><span class="sd">        &gt;&gt;&gt; merge_content_smart(memories)</span>
+<a id="__codelineno-50-19" name="__codelineno-50-19" href="#__codelineno-50-19"></a><span class="sd">        &#39;Python is great&#39;</span>
+<a id="__codelineno-50-20" name="__codelineno-50-20" href="#__codelineno-50-20"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-50-21" name="__codelineno-50-21" href="#__codelineno-50-21"></a>    <span class="c1"># Implementation</span>
 </code></pre></div>
 <h3 id="code-organization">Code Organization<a class="headerlink" href="#code-organization" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>4-space indentation</strong> (no tabs)</li>
 <li><strong>Line length: 100 characters max</strong></li>
 <li><strong>Module organization:</strong>
-  <div class="highlight"><pre><span></span><code><a id="__codelineno-50-1" name="__codelineno-50-1" href="#__codelineno-50-1"></a><span class="c1"># Standard library imports</span>
-<a id="__codelineno-50-2" name="__codelineno-50-2" href="#__codelineno-50-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
-<a id="__codelineno-50-3" name="__codelineno-50-3" href="#__codelineno-50-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-<a id="__codelineno-50-4" name="__codelineno-50-4" href="#__codelineno-50-4"></a>
-<a id="__codelineno-50-5" name="__codelineno-50-5" href="#__codelineno-50-5"></a><span class="c1"># Third-party imports</span>
-<a id="__codelineno-50-6" name="__codelineno-50-6" href="#__codelineno-50-6"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
-<a id="__codelineno-50-7" name="__codelineno-50-7" href="#__codelineno-50-7"></a>
-<a id="__codelineno-50-8" name="__codelineno-50-8" href="#__codelineno-50-8"></a><span class="c1"># Local imports</span>
-<a id="__codelineno-50-9" name="__codelineno-50-9" href="#__codelineno-50-9"></a><span class="kn">from</span><span class="w"> </span><span class="nn">..storage.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Memory</span>
-<a id="__codelineno-50-10" name="__codelineno-50-10" href="#__codelineno-50-10"></a><span class="kn">from</span><span class="w"> </span><span class="nn">..config</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_config</span>
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-51-1" name="__codelineno-51-1" href="#__codelineno-51-1"></a><span class="c1"># Standard library imports</span>
+<a id="__codelineno-51-2" name="__codelineno-51-2" href="#__codelineno-51-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<a id="__codelineno-51-3" name="__codelineno-51-3" href="#__codelineno-51-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<a id="__codelineno-51-4" name="__codelineno-51-4" href="#__codelineno-51-4"></a>
+<a id="__codelineno-51-5" name="__codelineno-51-5" href="#__codelineno-51-5"></a><span class="c1"># Third-party imports</span>
+<a id="__codelineno-51-6" name="__codelineno-51-6" href="#__codelineno-51-6"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+<a id="__codelineno-51-7" name="__codelineno-51-7" href="#__codelineno-51-7"></a>
+<a id="__codelineno-51-8" name="__codelineno-51-8" href="#__codelineno-51-8"></a><span class="c1"># Local imports</span>
+<a id="__codelineno-51-9" name="__codelineno-51-9" href="#__codelineno-51-9"></a><span class="kn">from</span><span class="w"> </span><span class="nn">..storage.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Memory</span>
+<a id="__codelineno-51-10" name="__codelineno-51-10" href="#__codelineno-51-10"></a><span class="kn">from</span><span class="w"> </span><span class="nn">..config</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_config</span>
 </code></pre></div></li>
 </ul>
 <hr />
@@ -3437,14 +3560,14 @@
 <ol>
 <li>
 <p><strong>Ensure all tests pass:</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-51-1" name="__codelineno-51-1" href="#__codelineno-51-1"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest
+<div class="highlight"><pre><span></span><code><a id="__codelineno-52-1" name="__codelineno-52-1" href="#__codelineno-52-1"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pytest
 </code></pre></div></p>
 </li>
 <li>
 <p><strong>Check code style:</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-52-1" name="__codelineno-52-1" href="#__codelineno-52-1"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>src/cortexgraph<span class="w"> </span>tests
-<a id="__codelineno-52-2" name="__codelineno-52-2" href="#__codelineno-52-2"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>format<span class="w"> </span>src/cortexgraph<span class="w"> </span>tests
-<a id="__codelineno-52-3" name="__codelineno-52-3" href="#__codelineno-52-3"></a>uv<span class="w"> </span>run<span class="w"> </span>mypy<span class="w"> </span>src/cortexgraph
+<div class="highlight"><pre><span></span><code><a id="__codelineno-53-1" name="__codelineno-53-1" href="#__codelineno-53-1"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>src/cortexgraph<span class="w"> </span>tests
+<a id="__codelineno-53-2" name="__codelineno-53-2" href="#__codelineno-53-2"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>format<span class="w"> </span>src/cortexgraph<span class="w"> </span>tests
+<a id="__codelineno-53-3" name="__codelineno-53-3" href="#__codelineno-53-3"></a>uv<span class="w"> </span>run<span class="w"> </span>mypy<span class="w"> </span>src/cortexgraph
 </code></pre></div></p>
 </li>
 <li>
@@ -3463,7 +3586,7 @@
 <ol>
 <li>
 <p><strong>Push your branch:</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-53-1" name="__codelineno-53-1" href="#__codelineno-53-1"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>feature/your-feature-name
+<div class="highlight"><pre><span></span><code><a id="__codelineno-54-1" name="__codelineno-54-1" href="#__codelineno-54-1"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>feature/your-feature-name
 </code></pre></div></p>
 </li>
 <li>
@@ -3478,26 +3601,26 @@
 <li>Any <strong>breaking changes</strong></li>
 </ol>
 <p><strong>Example PR template:</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-54-1" name="__codelineno-54-1" href="#__codelineno-54-1"></a><span class="gu">## Description</span>
-<a id="__codelineno-54-2" name="__codelineno-54-2" href="#__codelineno-54-2"></a>Implement spaced repetition scheduling for memory review.
-<a id="__codelineno-54-3" name="__codelineno-54-3" href="#__codelineno-54-3"></a>
-<a id="__codelineno-54-4" name="__codelineno-54-4" href="#__codelineno-54-4"></a><span class="gu">## Motivation</span>
-<a id="__codelineno-54-5" name="__codelineno-54-5" href="#__codelineno-54-5"></a>Users requested a way to get reminders for reviewing important memories
-<a id="__codelineno-54-6" name="__codelineno-54-6" href="#__codelineno-54-6"></a>before they decay too much.
-<a id="__codelineno-54-7" name="__codelineno-54-7" href="#__codelineno-54-7"></a>
-<a id="__codelineno-54-8" name="__codelineno-54-8" href="#__codelineno-54-8"></a><span class="gu">## Changes</span>
-<a id="__codelineno-54-9" name="__codelineno-54-9" href="#__codelineno-54-9"></a><span class="k">-</span><span class="w"> </span>Add <span class="sb">`calculate_next_review()`</span> function to core/scheduling.py
-<a id="__codelineno-54-10" name="__codelineno-54-10" href="#__codelineno-54-10"></a><span class="k">-</span><span class="w"> </span>Add <span class="sb">`get_review_queue()`</span> MCP tool
-<a id="__codelineno-54-11" name="__codelineno-54-11" href="#__codelineno-54-11"></a><span class="k">-</span><span class="w"> </span>Add tests in tests/test_scheduling.py (100% coverage)
-<a id="__codelineno-54-12" name="__codelineno-54-12" href="#__codelineno-54-12"></a><span class="k">-</span><span class="w"> </span>Update README.md with usage examples
-<a id="__codelineno-54-13" name="__codelineno-54-13" href="#__codelineno-54-13"></a>
-<a id="__codelineno-54-14" name="__codelineno-54-14" href="#__codelineno-54-14"></a><span class="gu">## Testing</span>
-<a id="__codelineno-54-15" name="__codelineno-54-15" href="#__codelineno-54-15"></a><span class="k">-</span><span class="w"> </span>All existing tests pass
-<a id="__codelineno-54-16" name="__codelineno-54-16" href="#__codelineno-54-16"></a><span class="k">-</span><span class="w"> </span>Added 12 new tests for scheduling logic
-<a id="__codelineno-54-17" name="__codelineno-54-17" href="#__codelineno-54-17"></a><span class="k">-</span><span class="w"> </span>Tested manually with 100+ memories
-<a id="__codelineno-54-18" name="__codelineno-54-18" href="#__codelineno-54-18"></a>
-<a id="__codelineno-54-19" name="__codelineno-54-19" href="#__codelineno-54-19"></a><span class="gu">## Breaking Changes</span>
-<a id="__codelineno-54-20" name="__codelineno-54-20" href="#__codelineno-54-20"></a>None - this is a new feature with no API changes.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-55-1" name="__codelineno-55-1" href="#__codelineno-55-1"></a><span class="gu">## Description</span>
+<a id="__codelineno-55-2" name="__codelineno-55-2" href="#__codelineno-55-2"></a>Implement spaced repetition scheduling for memory review.
+<a id="__codelineno-55-3" name="__codelineno-55-3" href="#__codelineno-55-3"></a>
+<a id="__codelineno-55-4" name="__codelineno-55-4" href="#__codelineno-55-4"></a><span class="gu">## Motivation</span>
+<a id="__codelineno-55-5" name="__codelineno-55-5" href="#__codelineno-55-5"></a>Users requested a way to get reminders for reviewing important memories
+<a id="__codelineno-55-6" name="__codelineno-55-6" href="#__codelineno-55-6"></a>before they decay too much.
+<a id="__codelineno-55-7" name="__codelineno-55-7" href="#__codelineno-55-7"></a>
+<a id="__codelineno-55-8" name="__codelineno-55-8" href="#__codelineno-55-8"></a><span class="gu">## Changes</span>
+<a id="__codelineno-55-9" name="__codelineno-55-9" href="#__codelineno-55-9"></a><span class="k">-</span><span class="w"> </span>Add <span class="sb">`calculate_next_review()`</span> function to core/scheduling.py
+<a id="__codelineno-55-10" name="__codelineno-55-10" href="#__codelineno-55-10"></a><span class="k">-</span><span class="w"> </span>Add <span class="sb">`get_review_queue()`</span> MCP tool
+<a id="__codelineno-55-11" name="__codelineno-55-11" href="#__codelineno-55-11"></a><span class="k">-</span><span class="w"> </span>Add tests in tests/test_scheduling.py (100% coverage)
+<a id="__codelineno-55-12" name="__codelineno-55-12" href="#__codelineno-55-12"></a><span class="k">-</span><span class="w"> </span>Update README.md with usage examples
+<a id="__codelineno-55-13" name="__codelineno-55-13" href="#__codelineno-55-13"></a>
+<a id="__codelineno-55-14" name="__codelineno-55-14" href="#__codelineno-55-14"></a><span class="gu">## Testing</span>
+<a id="__codelineno-55-15" name="__codelineno-55-15" href="#__codelineno-55-15"></a><span class="k">-</span><span class="w"> </span>All existing tests pass
+<a id="__codelineno-55-16" name="__codelineno-55-16" href="#__codelineno-55-16"></a><span class="k">-</span><span class="w"> </span>Added 12 new tests for scheduling logic
+<a id="__codelineno-55-17" name="__codelineno-55-17" href="#__codelineno-55-17"></a><span class="k">-</span><span class="w"> </span>Tested manually with 100+ memories
+<a id="__codelineno-55-18" name="__codelineno-55-18" href="#__codelineno-55-18"></a>
+<a id="__codelineno-55-19" name="__codelineno-55-19" href="#__codelineno-55-19"></a><span class="gu">## Breaking Changes</span>
+<a id="__codelineno-55-20" name="__codelineno-55-20" href="#__codelineno-55-20"></a>None - this is a new feature with no API changes.
 </code></pre></div>
 <h3 id="code-review-process">Code Review Process<a class="headerlink" href="#code-review-process" title="Permanent link">&para;</a></h3>
 <ul>
@@ -3518,46 +3641,46 @@
 <li>Steps to reproduce</li>
 </ol>
 <h3 id="bug-report-template">Bug Report Template<a class="headerlink" href="#bug-report-template" title="Permanent link">&para;</a></h3>
-<p><div class="highlight"><pre><span></span><code><a id="__codelineno-55-1" name="__codelineno-55-1" href="#__codelineno-55-1"></a><span class="gs">**Describe the bug**</span>
-<a id="__codelineno-55-2" name="__codelineno-55-2" href="#__codelineno-55-2"></a>A clear description of what the bug is.
-<a id="__codelineno-55-3" name="__codelineno-55-3" href="#__codelineno-55-3"></a>
-<a id="__codelineno-55-4" name="__codelineno-55-4" href="#__codelineno-55-4"></a><span class="gs">**To Reproduce**</span>
-<a id="__codelineno-55-5" name="__codelineno-55-5" href="#__codelineno-55-5"></a>Steps to reproduce:
-<a id="__codelineno-55-6" name="__codelineno-55-6" href="#__codelineno-55-6"></a><span class="k">1.</span> Install CortexGraph with <span class="sb">`uv tool install...`</span>
-<a id="__codelineno-55-7" name="__codelineno-55-7" href="#__codelineno-55-7"></a><span class="k">2.</span> Configure with these settings: ...
-<a id="__codelineno-55-8" name="__codelineno-55-8" href="#__codelineno-55-8"></a><span class="k">3.</span> Run command <span class="sb">`...`</span>
-<a id="__codelineno-55-9" name="__codelineno-55-9" href="#__codelineno-55-9"></a><span class="k">4.</span> See error
-<a id="__codelineno-55-10" name="__codelineno-55-10" href="#__codelineno-55-10"></a>
-<a id="__codelineno-55-11" name="__codelineno-55-11" href="#__codelineno-55-11"></a><span class="gs">**Expected behavior**</span>
-<a id="__codelineno-55-12" name="__codelineno-55-12" href="#__codelineno-55-12"></a>What you expected to happen.
-<a id="__codelineno-55-13" name="__codelineno-55-13" href="#__codelineno-55-13"></a>
-<a id="__codelineno-55-14" name="__codelineno-55-14" href="#__codelineno-55-14"></a><span class="gs">**Actual behavior**</span>
-<a id="__codelineno-55-15" name="__codelineno-55-15" href="#__codelineno-55-15"></a>What actually happened.
-<a id="__codelineno-55-16" name="__codelineno-55-16" href="#__codelineno-55-16"></a>
-<a id="__codelineno-55-17" name="__codelineno-55-17" href="#__codelineno-55-17"></a><span class="gs">**Environment:**</span>
-<a id="__codelineno-55-18" name="__codelineno-55-18" href="#__codelineno-55-18"></a><span class="k">-</span><span class="w"> </span>OS: [e.g., Windows 11, Ubuntu 22.04, macOS 14]
-<a id="__codelineno-55-19" name="__codelineno-55-19" href="#__codelineno-55-19"></a><span class="k">-</span><span class="w"> </span>Python version: [e.g., 3.10.13]
-<a id="__codelineno-55-20" name="__codelineno-55-20" href="#__codelineno-55-20"></a><span class="k">-</span><span class="w"> </span>CortexGraph version: [e.g., 1.0.0]
-<a id="__codelineno-55-21" name="__codelineno-55-21" href="#__codelineno-55-21"></a><span class="k">-</span><span class="w"> </span>Installation method: [uv tool install / editable]
-<a id="__codelineno-55-22" name="__codelineno-55-22" href="#__codelineno-55-22"></a>
-<a id="__codelineno-55-23" name="__codelineno-55-23" href="#__codelineno-55-23"></a><span class="gs">**Logs/Screenshots**</span>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-56-1" name="__codelineno-56-1" href="#__codelineno-56-1"></a><span class="gs">**Describe the bug**</span>
+<a id="__codelineno-56-2" name="__codelineno-56-2" href="#__codelineno-56-2"></a>A clear description of what the bug is.
+<a id="__codelineno-56-3" name="__codelineno-56-3" href="#__codelineno-56-3"></a>
+<a id="__codelineno-56-4" name="__codelineno-56-4" href="#__codelineno-56-4"></a><span class="gs">**To Reproduce**</span>
+<a id="__codelineno-56-5" name="__codelineno-56-5" href="#__codelineno-56-5"></a>Steps to reproduce:
+<a id="__codelineno-56-6" name="__codelineno-56-6" href="#__codelineno-56-6"></a><span class="k">1.</span> Install CortexGraph with <span class="sb">`uv tool install...`</span>
+<a id="__codelineno-56-7" name="__codelineno-56-7" href="#__codelineno-56-7"></a><span class="k">2.</span> Configure with these settings: ...
+<a id="__codelineno-56-8" name="__codelineno-56-8" href="#__codelineno-56-8"></a><span class="k">3.</span> Run command <span class="sb">`...`</span>
+<a id="__codelineno-56-9" name="__codelineno-56-9" href="#__codelineno-56-9"></a><span class="k">4.</span> See error
+<a id="__codelineno-56-10" name="__codelineno-56-10" href="#__codelineno-56-10"></a>
+<a id="__codelineno-56-11" name="__codelineno-56-11" href="#__codelineno-56-11"></a><span class="gs">**Expected behavior**</span>
+<a id="__codelineno-56-12" name="__codelineno-56-12" href="#__codelineno-56-12"></a>What you expected to happen.
+<a id="__codelineno-56-13" name="__codelineno-56-13" href="#__codelineno-56-13"></a>
+<a id="__codelineno-56-14" name="__codelineno-56-14" href="#__codelineno-56-14"></a><span class="gs">**Actual behavior**</span>
+<a id="__codelineno-56-15" name="__codelineno-56-15" href="#__codelineno-56-15"></a>What actually happened.
+<a id="__codelineno-56-16" name="__codelineno-56-16" href="#__codelineno-56-16"></a>
+<a id="__codelineno-56-17" name="__codelineno-56-17" href="#__codelineno-56-17"></a><span class="gs">**Environment:**</span>
+<a id="__codelineno-56-18" name="__codelineno-56-18" href="#__codelineno-56-18"></a><span class="k">-</span><span class="w"> </span>OS: [e.g., Windows 11, Ubuntu 22.04, macOS 14]
+<a id="__codelineno-56-19" name="__codelineno-56-19" href="#__codelineno-56-19"></a><span class="k">-</span><span class="w"> </span>Python version: [e.g., 3.10.13]
+<a id="__codelineno-56-20" name="__codelineno-56-20" href="#__codelineno-56-20"></a><span class="k">-</span><span class="w"> </span>CortexGraph version: [e.g., 1.0.0]
+<a id="__codelineno-56-21" name="__codelineno-56-21" href="#__codelineno-56-21"></a><span class="k">-</span><span class="w"> </span>Installation method: [uv tool install / editable]
+<a id="__codelineno-56-22" name="__codelineno-56-22" href="#__codelineno-56-22"></a>
+<a id="__codelineno-56-23" name="__codelineno-56-23" href="#__codelineno-56-23"></a><span class="gs">**Logs/Screenshots**</span>
 </code></pre></div>
 [Paste any error messages or logs here]
-<div class="highlight"><pre><span></span><code><a id="__codelineno-56-1" name="__codelineno-56-1" href="#__codelineno-56-1"></a>**Additional context**
-<a id="__codelineno-56-2" name="__codelineno-56-2" href="#__codelineno-56-2"></a>Any other information that might help.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-57-1" name="__codelineno-57-1" href="#__codelineno-57-1"></a>**Additional context**
+<a id="__codelineno-57-2" name="__codelineno-57-2" href="#__codelineno-57-2"></a>Any other information that might help.
 </code></pre></div></p>
 <h3 id="feature-requests">Feature Requests<a class="headerlink" href="#feature-requests" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-57-1" name="__codelineno-57-1" href="#__codelineno-57-1"></a><span class="gs">**Feature description**</span>
-<a id="__codelineno-57-2" name="__codelineno-57-2" href="#__codelineno-57-2"></a>A clear description of the feature you&#39;d like.
-<a id="__codelineno-57-3" name="__codelineno-57-3" href="#__codelineno-57-3"></a>
-<a id="__codelineno-57-4" name="__codelineno-57-4" href="#__codelineno-57-4"></a><span class="gs">**Use case**</span>
-<a id="__codelineno-57-5" name="__codelineno-57-5" href="#__codelineno-57-5"></a>Why would this feature be useful? What problem does it solve?
-<a id="__codelineno-57-6" name="__codelineno-57-6" href="#__codelineno-57-6"></a>
-<a id="__codelineno-57-7" name="__codelineno-57-7" href="#__codelineno-57-7"></a><span class="gs">**Proposed solution**</span>
-<a id="__codelineno-57-8" name="__codelineno-57-8" href="#__codelineno-57-8"></a>If you have ideas on how to implement it.
-<a id="__codelineno-57-9" name="__codelineno-57-9" href="#__codelineno-57-9"></a>
-<a id="__codelineno-57-10" name="__codelineno-57-10" href="#__codelineno-57-10"></a><span class="gs">**Alternatives considered**</span>
-<a id="__codelineno-57-11" name="__codelineno-57-11" href="#__codelineno-57-11"></a>Other approaches you&#39;ve thought about.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-58-1" name="__codelineno-58-1" href="#__codelineno-58-1"></a><span class="gs">**Feature description**</span>
+<a id="__codelineno-58-2" name="__codelineno-58-2" href="#__codelineno-58-2"></a>A clear description of the feature you&#39;d like.
+<a id="__codelineno-58-3" name="__codelineno-58-3" href="#__codelineno-58-3"></a>
+<a id="__codelineno-58-4" name="__codelineno-58-4" href="#__codelineno-58-4"></a><span class="gs">**Use case**</span>
+<a id="__codelineno-58-5" name="__codelineno-58-5" href="#__codelineno-58-5"></a>Why would this feature be useful? What problem does it solve?
+<a id="__codelineno-58-6" name="__codelineno-58-6" href="#__codelineno-58-6"></a>
+<a id="__codelineno-58-7" name="__codelineno-58-7" href="#__codelineno-58-7"></a><span class="gs">**Proposed solution**</span>
+<a id="__codelineno-58-8" name="__codelineno-58-8" href="#__codelineno-58-8"></a>If you have ideas on how to implement it.
+<a id="__codelineno-58-9" name="__codelineno-58-9" href="#__codelineno-58-9"></a>
+<a id="__codelineno-58-10" name="__codelineno-58-10" href="#__codelineno-58-10"></a><span class="gs">**Alternatives considered**</span>
+<a id="__codelineno-58-11" name="__codelineno-58-11" href="#__codelineno-58-11"></a>Other approaches you&#39;ve thought about.
 </code></pre></div>
 <hr />
 <h2 id="getting-help">Getting Help<a class="headerlink" href="#getting-help" title="Permanent link">&para;</a></h2>
@@ -3652,10 +3775,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "content.action.edit"], "search": "../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "content.action.edit"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>

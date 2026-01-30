@@ -114,6 +114,15 @@ Search across both STM and LTM:
 - **Entity matching**: Find related concepts
 - **Tag filtering**: Narrow results by category
 
+### 🧩 Modular Architecture (v1.2.0+)
+
+Clean separation of concerns:
+
+- **cortexgraph.core**: Similarity, clustering, decay, search validation
+- **cortexgraph.agents**: Consolidation pipeline with storage utilities
+- **cortexgraph.storage**: JSONL/SQLite backends with batch operations
+- **cortexgraph.tools**: MCP tool implementations
+
 ### 💬 Natural Language Activation (v0.6.0+)
 
 Conversational memory without explicit commands:
@@ -142,6 +151,6 @@ MIT License - see [LICENSE](LICENSE.md) for details.
 
 ## Status
 
-✅ **v1.0.0 Released** (2025-10-09)
+✅ **v1.2.0 Released** (2026-01-30)
 
 See [ROADMAP.md](ROADMAP.md) for upcoming features.
