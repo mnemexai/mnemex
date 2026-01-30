@@ -22,7 +22,7 @@ try:
 
     SPACY_AVAILABLE = True
 except ImportError:
-    spacy = None  # type: ignore[assignment]
+    spacy = None  # type: ignore[assignment,unused-ignore]
     SPACY_AVAILABLE = False
 
 
