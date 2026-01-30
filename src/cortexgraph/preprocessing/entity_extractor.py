@@ -11,13 +11,18 @@ Phase 1 Implementation (v0.6.0):
 """
 
 import re
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from spacy.language import Language  # pyright: ignore[reportMissingImports]
 
 try:
-    import spacy
-    from spacy.language import Language
+    import spacy  # pyright: ignore[reportMissingImports]
+    from spacy.language import Language  # pyright: ignore[reportMissingImports]
 
     SPACY_AVAILABLE = True
 except ImportError:
+    spacy = None  # type: ignore[assignment,unused-ignore]
     SPACY_AVAILABLE = False
 
 
@@ -42,11 +47,11 @@ class EntityExtractor:
             model_name: spaCy model to use (default: en_core_web_sm)
                        Download with: python -m spacy download en_core_web_sm
         """
-        self.nlp: Language | None = None
+        self.nlp: "Language | None" = None
 
-        if SPACY_AVAILABLE:
+        if SPACY_AVAILABLE and spacy is not None:
             try:
-                self.nlp = spacy.load(model_name)
+                self.nlp = spacy.load(model_name)  # pyright: ignore[reportOptionalMemberAccess]
             except OSError:
                 # Model not downloaded - will use fallback patterns
                 pass

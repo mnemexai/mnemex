@@ -585,6 +585,55 @@ test: add tests for decay calculation edge cases
 
 ---
 
+## Project Structure (v1.2.0+)
+
+The source code is organized into focused modules:
+
+```
+src/cortexgraph/
+├── core/                       # Foundational algorithms
+│   ├── __init__.py             # Exports all core functions
+│   ├── decay.py                # Decay calculations
+│   ├── similarity.py           # Similarity metrics (NEW)
+│   ├── clustering.py           # Clustering logic
+│   ├── consolidation.py        # Memory merging
+│   ├── search_common.py        # Search validation (NEW)
+│   ├── text_utils.py           # Text utilities (NEW)
+│   ├── pagination.py           # Pagination helpers
+│   └── scoring.py              # Score decisions
+├── agents/                     # Multi-agent consolidation
+│   ├── __init__.py             # Exports agents + get_storage
+│   ├── storage_utils.py        # Storage access utility (NEW)
+│   ├── base.py                 # Base agent class
+│   ├── decay_analyzer.py       # Find at-risk memories
+│   ├── cluster_detector.py     # Group similar memories
+│   ├── semantic_merge.py       # Combine memory groups
+│   ├── ltm_promoter.py         # Promote to LTM
+│   └── relationship_discovery.py # Find cross-domain links
+├── storage/                    # Storage backends
+│   ├── jsonl_storage.py        # JSONL with batch operations
+│   ├── sqlite_storage.py       # SQLite backend
+│   ├── ltm_index.py            # LTM indexing
+│   └── models.py               # Data models
+├── tools/                      # MCP tool implementations
+│   ├── search.py               # search_memory tool
+│   ├── search_unified.py       # search_unified tool
+│   └── ...                     # Other MCP tools
+└── cli/                        # Command-line interfaces
+    └── ...
+```
+
+### Key Modules Added in v1.2.0
+
+| Module | Location | Purpose |
+|--------|----------|---------|
+| `similarity.py` | `core/similarity.py` | Similarity metrics (`cosine_similarity`, `jaccard_similarity`, etc.) |
+| `search_common.py` | `core/search_common.py` | Search validation (`SearchParams`, `validate_search_params`) |
+| `text_utils.py` | `core/text_utils.py` | Text utilities (`truncate_content`) |
+| `storage_utils.py` | `agents/storage_utils.py` | Storage access (`get_storage`) |
+
+---
+
 ## Testing
 
 ### Test Structure

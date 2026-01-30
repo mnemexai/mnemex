@@ -28,6 +28,7 @@ from typing import TYPE_CHECKING
 
 from cortexgraph.agents.base import ConsolidationAgent
 from cortexgraph.agents.models import DecayAction, DecayResult, Urgency
+from cortexgraph.agents.storage_utils import get_storage
 from cortexgraph.core.decay import calculate_score
 
 if TYPE_CHECKING:
@@ -42,13 +43,6 @@ SCAN_THRESHOLD = 0.35
 # Urgency boundaries
 URGENCY_HIGH_THRESHOLD = 0.10
 URGENCY_MEDIUM_THRESHOLD = 0.25
-
-
-def get_storage() -> JSONLStorage:
-    """Get storage instance. Separated for testability."""
-    from cortexgraph.context import get_db
-
-    return get_db()
 
 
 class DecayAnalyzer(ConsolidationAgent[DecayResult]):
@@ -79,10 +73,10 @@ class DecayAnalyzer(ConsolidationAgent[DecayResult]):
         """
         super().__init__(dry_run=dry_run, rate_limit=rate_limit)
         self.scan_threshold = scan_threshold
-        self._storage: JSONLStorage | None = None
+        self._storage: "JSONLStorage | None" = None
 
     @property
-    def storage(self) -> JSONLStorage:
+    def storage(self) -> "JSONLStorage":
         """Get storage, initializing lazily."""
         if self._storage is None:
             self._storage = get_storage()

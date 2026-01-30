@@ -435,7 +435,7 @@ class TestAgentFactory:
         """get_agent('decay') returns DecayAnalyzer instance."""
         from cortexgraph.cli.consolidate import get_agent
 
-        with patch("cortexgraph.cli.consolidate.get_storage"):
+        with patch("cortexgraph.agents.storage_utils.get_storage"):
             agent = get_agent("decay", dry_run=True)
 
             from cortexgraph.agents.decay_analyzer import DecayAnalyzer
@@ -447,7 +447,7 @@ class TestAgentFactory:
         """get_agent('cluster') returns ClusterDetector instance."""
         from cortexgraph.cli.consolidate import get_agent
 
-        with patch("cortexgraph.cli.consolidate.get_storage"):
+        with patch("cortexgraph.agents.storage_utils.get_storage"):
             agent = get_agent("cluster", dry_run=True)
 
             from cortexgraph.agents.cluster_detector import ClusterDetector
@@ -458,7 +458,7 @@ class TestAgentFactory:
         """get_agent('merge') returns SemanticMerge instance."""
         from cortexgraph.cli.consolidate import get_agent
 
-        with patch("cortexgraph.cli.consolidate.get_storage"):
+        with patch("cortexgraph.agents.storage_utils.get_storage"):
             agent = get_agent("merge", dry_run=True)
 
             from cortexgraph.agents.semantic_merge import SemanticMerge
@@ -469,7 +469,7 @@ class TestAgentFactory:
         """get_agent('promote') returns LTMPromoter instance."""
         from cortexgraph.cli.consolidate import get_agent
 
-        with patch("cortexgraph.cli.consolidate.get_storage"):
+        with patch("cortexgraph.agents.storage_utils.get_storage"):
             agent = get_agent("promote", dry_run=True)
 
             from cortexgraph.agents.ltm_promoter import LTMPromoter
@@ -480,7 +480,7 @@ class TestAgentFactory:
         """get_agent('relations') returns RelationshipDiscovery instance."""
         from cortexgraph.cli.consolidate import get_agent
 
-        with patch("cortexgraph.cli.consolidate.get_storage"):
+        with patch("cortexgraph.agents.storage_utils.get_storage"):
             agent = get_agent("relations", dry_run=True)
 
             from cortexgraph.agents.relationship_discovery import RelationshipDiscovery

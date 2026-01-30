@@ -24,6 +24,25 @@ Each agent has a specific responsibility and can be run independently or as part
 
 ## Agent Architecture
 
+### Storage Utilities (v1.2.0+)
+
+Agents access storage through a shared utility function:
+
+```python
+from cortexgraph.agents import get_storage
+
+# Get the current storage instance
+storage = get_storage()
+```
+
+This utility is exported from `cortexgraph.agents` and provides consistent storage access across all agents. The function retrieves the storage instance from the context, enabling:
+
+- **Testability**: Easy to mock for unit tests
+- **Consistency**: All agents use the same storage instance
+- **Decoupling**: Agents don't need to know about context management
+
+The utility is defined in `cortexgraph.agents.storage_utils` and re-exported from `cortexgraph.agents.__init__`.
+
 ### Base Agent Contract
 
 All agents extend `ConsolidationAgent[T]`, which provides:

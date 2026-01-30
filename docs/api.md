@@ -2,6 +2,96 @@
 
 Complete reference for all MCP tools provided by CortexGraph.
 
+## Core Utilities (v1.2.0+)
+
+New utility modules provide reusable functions for similarity calculations, search validation, and text processing.
+
+### Similarity Functions
+
+The `cortexgraph.core.similarity` module provides similarity metrics:
+
+```python
+from cortexgraph.core import (
+    cosine_similarity,
+    jaccard_similarity,
+    tfidf_similarity,
+    text_similarity,
+    tokenize_text,
+    calculate_centroid,
+)
+
+# Cosine similarity for embeddings
+similarity = cosine_similarity(vec1, vec2)
+
+# Jaccard similarity for token sets
+similarity = jaccard_similarity(tokens1, tokens2)
+
+# Text similarity (Jaccard on tokenized text)
+similarity = text_similarity(text1, text2)
+
+# TF-IDF weighted similarity
+similarity = tfidf_similarity(text1, text2)
+
+# Calculate centroid of embeddings
+centroid = calculate_centroid(embeddings)
+```
+
+### Search Validation
+
+The `cortexgraph.core.search_common` module provides shared search parameter validation:
+
+```python
+from cortexgraph.core import SearchParams, validate_search_params
+
+# Validate and normalize search parameters
+params = validate_search_params(
+    query="example",
+    tags=["tag1"],
+    limit=10,
+    min_score=0.1,
+)
+# Returns SearchParams dataclass with validated values
+```
+
+### Text Utilities
+
+```python
+from cortexgraph.core import truncate_content
+
+# Truncate content with ellipsis
+preview = truncate_content(content, max_length=300)
+```
+
+### Storage Utilities
+
+```python
+from cortexgraph.agents import get_storage
+
+# Get the current storage instance
+storage = get_storage()
+```
+
+### Batch Operations (v1.2.0+)
+
+For better performance when processing multiple items:
+
+```python
+from cortexgraph.storage.jsonl_storage import JSONLStorage
+
+storage = JSONLStorage()
+storage.connect()
+
+# Batch delete memories
+deleted_count = storage.delete_memories_batch(["id1", "id2", "id3"])
+
+# Batch create relations
+storage.create_relations_batch([relation1, relation2, relation3])
+```
+
+These operations are significantly faster than individual calls for bulk processing (used internally by consolidation agents).
+
+---
+
 ## Core Memory Tools
 
 ### save_memory

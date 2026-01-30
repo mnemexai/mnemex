@@ -27,19 +27,12 @@ from cortexgraph.agents.beads_integration import (
     create_consolidation_issue,
 )
 from cortexgraph.agents.models import RelationResult
+from cortexgraph.agents.storage_utils import get_storage
 from cortexgraph.storage.models import MemoryStatus, Relation
 
 if TYPE_CHECKING:
     from cortexgraph.storage.jsonl_storage import JSONLStorage
     from cortexgraph.storage.models import Memory
-
-
-def get_storage() -> JSONLStorage:
-    """Get storage instance. Separated for testability."""
-    from cortexgraph.context import get_db
-
-    return get_db()
-
 
 logger = logging.getLogger(__name__)
 
@@ -74,13 +67,13 @@ class RelationshipDiscovery(ConsolidationAgent[RelationResult]):
             min_shared_entities: Minimum shared entities for candidate detection
         """
         super().__init__(dry_run=dry_run, rate_limit=rate_limit)
-        self._storage: JSONLStorage | None = None
+        self._storage: "JSONLStorage | None" = None
         self._min_confidence = min_confidence
         self._min_shared_entities = min_shared_entities
         self._candidate_cache: dict[str, tuple[str, str, set[str]]] = {}
 
     @property
-    def storage(self) -> JSONLStorage:
+    def storage(self) -> "JSONLStorage":
         """Get storage instance (lazy initialization)."""
         if self._storage is None:
             self._storage = get_storage()
@@ -112,7 +105,7 @@ class RelationshipDiscovery(ConsolidationAgent[RelationResult]):
                 if hasattr(self.storage, "list_memories"):
                     memories = {m.id: m for m in self.storage.list_memories()}
                 elif hasattr(self.storage, "get_all_memories"):
-                    memories = {m.id: m for m in self.storage.get_all_memories()}
+                    memories = {m.id: m for m in self.storage.get_all_memories()}  # pyright: ignore[reportAttributeAccessIssue]
             except RuntimeError:
                 logger.warning("Storage not connected, cannot scan")
                 return []
@@ -216,11 +209,11 @@ class RelationshipDiscovery(ConsolidationAgent[RelationResult]):
 
         return existing
 
-    def process_item(self, pair_id: str) -> RelationResult:
+    def process_item(self, memory_id: str) -> RelationResult:
         """Process a single memory pair for potential relationship.
 
         Args:
-            pair_id: Pair identifier in format "mem-id-1:mem-id-2"
+            memory_id: Pair identifier in format "mem-id-1:mem-id-2"
 
         Returns:
             RelationResult with relationship outcome
@@ -233,22 +226,22 @@ class RelationshipDiscovery(ConsolidationAgent[RelationResult]):
             - If dry_run=True, MUST NOT modify any data
 
         Raises:
-            ValueError: If pair_id is invalid or memories not found
+            ValueError: If memory_id is invalid or memories not found
             RuntimeError: If relation creation fails
         """
         # Parse pair ID
-        if ":" not in pair_id:
-            raise ValueError(f"Invalid pair ID format: {pair_id}")
+        if ":" not in memory_id:
+            raise ValueError(f"Invalid pair ID format: {memory_id}")
 
-        parts = pair_id.split(":", 1)
+        parts = memory_id.split(":", 1)
         if len(parts) != 2:
-            raise ValueError(f"Invalid pair ID format: {pair_id}")
+            raise ValueError(f"Invalid pair ID format: {memory_id}")
 
         mem_id_1, mem_id_2 = parts
 
         # Get from cache or recalculate shared entities
-        if pair_id in self._candidate_cache:
-            _, _, shared_entities = self._candidate_cache[pair_id]
+        if memory_id in self._candidate_cache:
+            _, _, shared_entities = self._candidate_cache[memory_id]
         else:
             # Fetch memories and calculate shared entities
             mem1 = self._get_memory(mem_id_1)
@@ -293,7 +286,7 @@ class RelationshipDiscovery(ConsolidationAgent[RelationResult]):
         # Check confidence threshold
         if confidence < self._min_confidence:
             logger.info(
-                f"Skipping relation {pair_id}: confidence {confidence:.2f} < {self._min_confidence}"
+                f"Skipping relation {memory_id}: confidence {confidence:.2f} < {self._min_confidence}"
             )
             return RelationResult(
                 from_memory_id=mem_id_1,
@@ -355,7 +348,7 @@ class RelationshipDiscovery(ConsolidationAgent[RelationResult]):
             )
 
         except Exception as e:
-            logger.error(f"Failed to create relation for {pair_id}: {e}")
+            logger.error(f"Failed to create relation for {memory_id}: {e}")
             raise RuntimeError(f"Relation creation failed: {e}") from e
 
     def _get_memory(self, memory_id: str) -> Memory | None:

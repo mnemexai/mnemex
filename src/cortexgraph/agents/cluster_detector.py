@@ -21,6 +21,7 @@ from typing import TYPE_CHECKING
 
 from cortexgraph.agents.base import ConsolidationAgent
 from cortexgraph.agents.models import ClusterAction, ClusterResult
+from cortexgraph.agents.storage_utils import get_storage
 from cortexgraph.core.clustering import cluster_memories_simple
 from cortexgraph.storage.models import ClusterConfig
 
@@ -28,13 +29,6 @@ if TYPE_CHECKING:
     from cortexgraph.storage.jsonl_storage import JSONLStorage
 
 logger = logging.getLogger(__name__)
-
-
-def get_storage() -> JSONLStorage:
-    """Get storage instance. Separated for testability."""
-    from cortexgraph.context import get_db
-
-    return get_db()
 
 
 # =============================================================================
@@ -96,7 +90,7 @@ class ClusterDetector(ConsolidationAgent[ClusterResult]):
         super().__init__(dry_run=dry_run, rate_limit=rate_limit)
         self.similarity_threshold = similarity_threshold
         self.min_cluster_size = min_cluster_size
-        self._storage: JSONLStorage = get_storage()
+        self._storage: "JSONLStorage" = get_storage()
         self._cached_clusters: dict[str, list[str]] = {}  # memory_id -> cluster memory_ids
         self._cached_cohesion: dict[str, float] = {}  # cluster_key -> cohesion
 

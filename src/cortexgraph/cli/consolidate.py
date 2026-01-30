@@ -28,23 +28,12 @@ from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from cortexgraph.agents.base import ConsolidationAgent
-    from cortexgraph.storage.jsonl_storage import JSONLStorage
+
 
 logger = logging.getLogger(__name__)
 
 # Pipeline execution order
 AGENT_ORDER = ["decay", "cluster", "merge", "promote", "relations"]
-
-
-def get_storage() -> JSONLStorage:
-    """Get storage instance for agents.
-
-    Returns:
-        Configured JSONLStorage instance
-    """
-    from cortexgraph.context import get_db
-
-    return get_db()
 
 
 def get_agent(name: str, dry_run: bool = False) -> ConsolidationAgent[Any]:

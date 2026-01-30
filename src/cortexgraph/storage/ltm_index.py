@@ -151,12 +151,17 @@ class LTMIndex:
                 post = frontmatter.load(f)
 
             # Extract title (from frontmatter or filename)
-            title = post.get("title", file_path.stem)
+            title_raw = post.get("title", file_path.stem)
+            title = str(title_raw) if title_raw else file_path.stem
 
             # Extract tags from frontmatter
-            fm_tags = post.get("tags", [])
-            if isinstance(fm_tags, str):
-                fm_tags = [fm_tags]
+            fm_tags_raw = post.get("tags", [])
+            if isinstance(fm_tags_raw, str):
+                fm_tags: list[str] = [fm_tags_raw]
+            elif isinstance(fm_tags_raw, list):
+                fm_tags = fm_tags_raw
+            else:
+                fm_tags = []
 
             # Extract hashtags from content
             content_tags = self.extract_hashtags(post.content)

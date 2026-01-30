@@ -25,12 +25,16 @@ import uuid
 from typing import TYPE_CHECKING, Any
 
 from cortexgraph.agents.base import ConsolidationAgent
+
+if TYPE_CHECKING:
+    from cortexgraph.storage.jsonl_storage import JSONLStorage
 from cortexgraph.agents.beads_integration import (
     claim_issue,
     close_issue,
     query_consolidation_issues,
 )
 from cortexgraph.agents.models import MergeResult
+from cortexgraph.agents.storage_utils import get_storage
 from cortexgraph.core.consolidation import (
     calculate_merged_strength,
     merge_content_smart,
@@ -38,17 +42,6 @@ from cortexgraph.core.consolidation import (
     merge_metadata,
 )
 from cortexgraph.storage.models import Memory, MemoryStatus, Relation
-
-if TYPE_CHECKING:
-    from cortexgraph.storage.jsonl_storage import JSONLStorage
-
-
-def get_storage() -> JSONLStorage:
-    """Get storage instance. Separated for testability."""
-    from cortexgraph.context import get_db
-
-    return get_db()
-
 
 logger = logging.getLogger(__name__)
 
@@ -80,11 +73,11 @@ class SemanticMerge(ConsolidationAgent[MergeResult]):
             rate_limit: Max operations per minute
         """
         super().__init__(dry_run=dry_run, rate_limit=rate_limit)
-        self._storage: JSONLStorage | None = None
+        self._storage: "JSONLStorage | None" = None
         self._pending_issues: dict[str, dict[str, Any]] = {}  # Cache issue data by ID
 
     @property
-    def storage(self) -> JSONLStorage:
+    def storage(self) -> "JSONLStorage":
         """Get storage instance (lazy initialization)."""
         if self._storage is None:
             self._storage = get_storage()
@@ -110,11 +103,11 @@ class SemanticMerge(ConsolidationAgent[MergeResult]):
         # Return issue IDs
         return list(self._pending_issues.keys())
 
-    def process_item(self, issue_id: str) -> MergeResult:
+    def process_item(self, memory_id: str) -> MergeResult:
         """Process a single merge request from beads.
 
         Args:
-            issue_id: Beads issue ID containing merge request
+            memory_id: Beads issue ID containing merge request
 
         Returns:
             MergeResult with merge outcome
@@ -128,21 +121,21 @@ class SemanticMerge(ConsolidationAgent[MergeResult]):
             - If dry_run=True, MUST NOT modify any data
 
         Raises:
-            ValueError: If issue_id is invalid or memories not found
+            ValueError: If memory_id is invalid or memories not found
             RuntimeError: If merge fails
         """
         # Get issue data
-        issue = self._pending_issues.get(issue_id)
+        issue = self._pending_issues.get(memory_id)
         if not issue:
             # Try to fetch from beads
             issues = query_consolidation_issues(agent="merge", status="open")
             for i in issues:
-                if i["id"] == issue_id:
+                if i["id"] == memory_id:
                     issue = i
                     break
 
         if not issue:
-            raise ValueError(f"Unknown beads issue: {issue_id}")
+            raise ValueError(f"Unknown beads issue: {memory_id}")
 
         # Parse issue notes for memory IDs
         try:
@@ -150,10 +143,10 @@ class SemanticMerge(ConsolidationAgent[MergeResult]):
             memory_ids = notes.get("memory_ids", [])
             cluster_id = notes.get("cluster_id", "unknown")
         except json.JSONDecodeError as e:
-            raise ValueError(f"Invalid notes JSON in issue {issue_id}") from e
+            raise ValueError(f"Invalid notes JSON in issue {memory_id}") from e
 
         if len(memory_ids) < 2:
-            raise ValueError(f"Issue {issue_id} has fewer than 2 memories to merge")
+            raise ValueError(f"Issue {memory_id} has fewer than 2 memories to merge")
 
         # Fetch source memories
         # Check memories dict first (for tests), then try connected storage methods
@@ -214,14 +207,14 @@ class SemanticMerge(ConsolidationAgent[MergeResult]):
                 content_diff=content_diff,
                 entities_preserved=len(all_entities),
                 success=True,
-                beads_issue_id=issue_id,
+                beads_issue_id=memory_id,
             )
 
         # === LIVE MODE: Actually perform the merge ===
 
         # Claim the issue
-        if not claim_issue(issue_id):
-            raise RuntimeError(f"Failed to claim issue {issue_id}")
+        if not claim_issue(memory_id):
+            raise RuntimeError(f"Failed to claim issue {memory_id}")
 
         try:
             # Get cohesion from issue notes (for strength calculation)
@@ -271,7 +264,7 @@ class SemanticMerge(ConsolidationAgent[MergeResult]):
                     metadata={
                         "cluster_id": cluster_id,
                         "cohesion": cohesion,
-                        "beads_issue_id": issue_id,
+                        "beads_issue_id": memory_id,
                     },
                 )
                 self.storage.create_relation(relation)
@@ -284,7 +277,7 @@ class SemanticMerge(ConsolidationAgent[MergeResult]):
             logger.info(f"Archived {len(memory_ids)} original memories")
 
             # Close the beads issue (T056)
-            close_issue(issue_id, f"Merged into {new_memory_id}")
+            close_issue(memory_id, f"Merged into {new_memory_id}")
 
             return MergeResult(
                 new_memory_id=new_memory_id,
@@ -293,9 +286,9 @@ class SemanticMerge(ConsolidationAgent[MergeResult]):
                 content_diff=content_diff,
                 entities_preserved=len(all_entities),
                 success=True,
-                beads_issue_id=issue_id,
+                beads_issue_id=memory_id,
             )
 
         except Exception as e:
-            logger.error(f"Merge failed for {issue_id}: {e}")
+            logger.error(f"Merge failed for {memory_id}: {e}")
             raise RuntimeError(f"Merge failed: {e}") from e

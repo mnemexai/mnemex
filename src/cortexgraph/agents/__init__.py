@@ -31,6 +31,7 @@ from cortexgraph.agents.models import (
     RelationResult,
     Urgency,
 )
+from cortexgraph.agents.storage_utils import get_storage
 
 __all__ = [
     # Base class
@@ -50,4 +51,6 @@ __all__ = [
     "DecayAction",
     "ClusterAction",
     "ProcessingDecision",
+    # Utilities
+    "get_storage",
 ]

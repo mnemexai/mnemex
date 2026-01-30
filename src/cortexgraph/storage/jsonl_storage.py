@@ -413,6 +413,51 @@ class JSONLStorage:
 
         return True
 
+    def delete_memories_batch(self, memory_ids: list[str]) -> int:
+        """
+        Delete multiple memories in a single batch operation for better performance.
+
+        Args:
+            memory_ids: List of memory IDs to delete
+
+        Returns:
+            Number of memories actually deleted (skips non-existent IDs)
+        """
+        if not self._connected:
+            raise RuntimeError("Storage not connected")
+
+        if not memory_ids:
+            return 0
+
+        # Filter to only existing memories
+        existing_ids = [mid for mid in memory_ids if mid in self._memories]
+
+        if not existing_ids:
+            return 0
+
+        # Remove from in-memory index
+        for memory_id in existing_ids:
+            del self._memories[memory_id]
+            self._deleted_memory_ids.add(memory_id)
+
+        # Batch write deletion markers
+        file_created = not self.memories_path.exists()
+        with open(self.memories_path, "a", buffering=8192) as f:
+            for memory_id in existing_ids:
+                marker = {"id": memory_id, "_deleted": True}
+                f.write(json.dumps(marker) + "\n")
+
+        # Secure file permissions if newly created
+        if file_created:
+            try:
+                from ..security.permissions import secure_file
+
+                secure_file(self.memories_path)
+            except Exception as e:
+                logging.warning(f"Failed to secure file '{self.memories_path}': {e}")
+
+        return len(existing_ids)
+
     def list_memories(
         self,
         status: MemoryStatus | None = None,
@@ -565,6 +610,51 @@ class JSONLStorage:
 
         # Append to JSONL file
         self._append_relation(relation)
+
+    def create_relations_batch(self, relations: list[Relation]) -> None:
+        """
+        Create multiple relations in a single batch operation for better performance.
+
+        Validates all foreign keys before creating any relations.
+
+        Args:
+            relations: List of Relation objects to create
+
+        Raises:
+            ValueError: If any relation references non-existent memories
+        """
+        if not self._connected:
+            raise RuntimeError("Storage not connected")
+
+        if not relations:
+            return
+
+        # Validate all foreign keys before making any changes
+        for relation in relations:
+            if relation.from_memory_id not in self._memories:
+                raise ValueError(f"Source memory {relation.from_memory_id} does not exist")
+            if relation.to_memory_id not in self._memories:
+                raise ValueError(f"Target memory {relation.to_memory_id} does not exist")
+
+        # Update in-memory index
+        for relation in relations:
+            self._relations[relation.id] = relation
+
+        # Batch write to JSONL file
+        file_created = not self.relations_path.exists()
+        with open(self.relations_path, "a", buffering=8192) as f:
+            for relation in relations:
+                data = relation.model_dump(mode="json")
+                f.write(json.dumps(data) + "\n")
+
+        # Secure file permissions if newly created
+        if file_created:
+            try:
+                from ..security.permissions import secure_file
+
+                secure_file(self.relations_path)
+            except Exception as e:
+                logging.warning(f"Failed to secure file '{self.relations_path}': {e}")
 
     def get_relations(
         self,

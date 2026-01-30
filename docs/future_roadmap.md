@@ -384,7 +384,8 @@ uv tool install git+https://github.com/simplemindedbot/cortexgraph.git
 **Completed:** Algorithmic consolidation with preview/apply modes
 
 **Files Added:**
-- `src/cortexgraph/core/consolidation.py` - Core merging logic
+- `src/cortexgraph/core/consolidation.py` - Core merging logic (uses batch operations in v1.2.0+)
+- `src/cortexgraph/core/similarity.py` - Similarity calculation functions (extracted in v1.2.0)
 - `tests/test_consolidation.py` - Comprehensive test suite (15 tests, 100% coverage)
 
 **Features:**

@@ -131,6 +131,7 @@ select = [
 ]
 ignore = [
     "E501",  # line too long (handled by formatter)
+    "UP037", # quoted type annotations (required for TYPE_CHECKING imports)
     "UP038", # isinstance with tuple (deprecated, slower than tuple syntax)
 ]
 

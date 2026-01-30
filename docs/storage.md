@@ -70,6 +70,50 @@ CORTEXGRAPH_STORAGE_BACKEND=sqlite
 # CORTEXGRAPH_SQLITE_PATH=~/.config/cortexgraph/my_db.sqlite
 ```
 
+## Batch Operations (v1.2.0+)
+
+For performance-critical operations, JSONL storage supports batch methods that are significantly faster than individual calls:
+
+```python
+from cortexgraph.storage.jsonl_storage import JSONLStorage
+
+storage = JSONLStorage()
+storage.connect()
+
+# Batch delete memories (more efficient than loop)
+memory_ids = ["id1", "id2", "id3"]
+deleted_count = storage.delete_memories_batch(memory_ids)
+print(f"Deleted {deleted_count} memories")
+
+# Batch create relations
+from cortexgraph.storage.models import Relation
+relations = [
+    Relation(from_id="mem-1", to_id="mem-2", type="related"),
+    Relation(from_id="mem-2", to_id="mem-3", type="supports"),
+]
+storage.create_relations_batch(relations)
+```
+
+### Method Reference
+
+| Method | Parameters | Returns | Description |
+|--------|------------|---------|-------------|
+| `delete_memories_batch` | `memory_ids: list[str]` | `int` (count deleted) | Delete multiple memories atomically |
+| `create_relations_batch` | `relations: list[Relation]` | `int` (count created) | Create multiple relations atomically |
+
+### Performance Benefits
+
+These batch operations are used internally by consolidation agents for better performance:
+
+- **Single I/O operation**: Writes all changes in one file operation instead of N operations
+- **Index updates**: Updates in-memory indexes once instead of N times
+- **Atomic**: All-or-nothing semantics for consistency
+
+**When to use batch operations:**
+- Consolidating multiple memories (SemanticMerge agent)
+- Bulk cleanup during garbage collection
+- Creating multiple relations from a cluster
+
 ## Markdown Export
 
 CortexGraph includes a utility to export memories to Markdown files, useful for:
