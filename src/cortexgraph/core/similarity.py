@@ -16,10 +16,15 @@ from collections import Counter
 # Pre-compile regex pattern for tokenization (avoid recompilation on each call)
 _CLEAN_PATTERN = re.compile(r"[^\w\s]")
 
+# Pre-compile commonly used patterns for efficiency
+_WHITESPACE_PATTERN = re.compile(r"\s+")
+
 
 def cosine_similarity(vec1: list[float], vec2: list[float]) -> float:
     """
     Calculate cosine similarity between two vectors.
+
+    Optimized with fast paths for edge cases and early termination.
 
     Args:
         vec1: First vector
@@ -31,12 +36,27 @@ def cosine_similarity(vec1: list[float], vec2: list[float]) -> float:
     if len(vec1) != len(vec2):
         raise ValueError("Vectors must have the same length")
 
-    dot_product = sum(a * b for a, b in zip(vec1, vec2, strict=False))
-    mag1 = math.sqrt(sum(a * a for a in vec1))
-    mag2 = math.sqrt(sum(b * b for b in vec2))
-
-    if mag1 == 0 or mag2 == 0:
+    # Fast path: empty vectors
+    if not vec1:
         return 0.0
+
+    # Calculate dot product and magnitudes in one pass
+    dot_product = 0.0
+    mag1_sq = 0.0
+    mag2_sq = 0.0
+
+    for a, b in zip(vec1, vec2, strict=False):
+        dot_product += a * b
+        mag1_sq += a * a
+        mag2_sq += b * b
+
+    # Fast path: zero magnitude vectors
+    if mag1_sq == 0 or mag2_sq == 0:
+        return 0.0
+
+    # Calculate magnitudes from squared values
+    mag1 = math.sqrt(mag1_sq)
+    mag2 = math.sqrt(mag2_sq)
 
     return dot_product / (mag1 * mag2)
 
@@ -45,7 +65,8 @@ def tokenize_text(text: str) -> list[str]:
     """
     Tokenize text into words for similarity calculation.
 
-    Uses pre-compiled regex pattern for efficiency.
+    Uses pre-compiled regex patterns for efficiency.
+    Optimized with early termination for very short text.
 
     Args:
         text: Input text
@@ -53,10 +74,16 @@ def tokenize_text(text: str) -> list[str]:
     Returns:
         List of lowercase tokens (length > 2)
     """
-    # Remove punctuation and split on whitespace
+    # Early exit for very short text
+    if not text or len(text) < 3:
+        return []
+
+    # Remove punctuation and normalize whitespace using pre-compiled patterns
     text = _CLEAN_PATTERN.sub(" ", text.lower())
-    tokens = text.split()
-    return [t for t in tokens if len(t) > 2]  # Filter out very short tokens
+    tokens = _WHITESPACE_PATTERN.split(text.strip())
+
+    # Filter out empty strings and very short tokens
+    return [t for t in tokens if len(t) > 2]
 
 
 def compute_tf(tokens: list[str]) -> dict[str, float]:
@@ -142,6 +169,8 @@ def jaccard_similarity(tokens1: set[str], tokens2: set[str]) -> float:
     """
     Calculate Jaccard similarity between two sets of tokens.
 
+    Optimized with fast paths for edge cases.
+
     Args:
         tokens1: First set of tokens
         tokens2: Second set of tokens
@@ -149,15 +178,22 @@ def jaccard_similarity(tokens1: set[str], tokens2: set[str]) -> float:
     Returns:
         Jaccard similarity (0 to 1)
     """
+    # Fast path: empty sets
     if not tokens1 or not tokens2:
         return 0.0
 
-    intersection = tokens1 & tokens2
-    union = tokens1 | tokens2
+    # Fast path: identical sets
+    if tokens1 is tokens2:
+        return 1.0
 
-    if not union:
+    # Calculate intersection and union
+    intersection = tokens1 & tokens2
+
+    # Fast path: no intersection
+    if not intersection:
         return 0.0
 
+    union = tokens1 | tokens2
     return len(intersection) / len(union)
 
 
