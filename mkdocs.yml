@@ -53,6 +53,7 @@ markdown_extensions:
       custom_fences:
         - name: mermaid
           class: mermaid
+          # PyYAML object tag - loads Python function for Mermaid diagram rendering
           format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.tabbed:
       alternate_style: true
