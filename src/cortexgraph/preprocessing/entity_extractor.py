@@ -14,13 +14,13 @@ import re
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from spacy.language import Language  # type: ignore[import-not-found]
+    from spacy.language import Language
 
 spacy: Any = None
 
 try:
-    import spacy  # type: ignore[import-not-found]
-    from spacy.language import Language  # type: ignore[import-not-found]
+    import spacy
+    from spacy.language import Language
 
     SPACY_AVAILABLE = True
 except ImportError:
