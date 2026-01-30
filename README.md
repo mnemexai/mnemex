@@ -259,39 +259,40 @@ See `docs/prompts/` for LLM system prompt templates that enable natural memory u
 
 ### 4. Two-Layer Architecture
 
-```
-┌─────────────────────────────────────┐
-│   Short-term memory                 │
-│   - JSONL storage                   │
-│   - Temporal decay                  │
-│   - Hours to weeks retention        │
-└──────────────┬──────────────────────┘
-               │ Automatic promotion
-               ↓
-┌─────────────────────────────────────┐
-│   LTM (Long-Term Memory)            │
-│   - Markdown files (Obsidian)       │
-│   - Permanent storage               │
-│   - Git version control             │
-└─────────────────────────────────────┘
+```mermaid
+graph TD
+    STM["<b>Short-Term Memory</b><br/>- JSONL storage<br/>- Temporal decay<br/>- Hours to weeks retention"]
+    LTM["<b>LTM (Long-Term Memory)</b><br/>- Markdown files Obsidian<br/>- Permanent storage<br/>- Git version control"]
+    
+    STM -->|Automatic promotion| LTM
+    
+    style STM fill:#e1f5ff,stroke:#01579b,stroke-width:2px
+    style LTM fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
 ```
 
 ### 5. Multi-Agent Consolidation Pipeline
 
 Automated memory maintenance through five specialized agents:
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                    Consolidation Pipeline                            │
-│                                                                       │
-│   decay → cluster → merge → promote → relations                      │
-│     │        │        │        │          │                          │
-│     ▼        ▼        ▼        ▼          ▼                          │
-│  Find at- Find   Combine  Promote  Discover                         │
-│  risk    similar similar  to LTM   cross-                           │
-│  memories groups  groups           domain                            │
-│                                    links                             │
-└─────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph LR
+    decay["<b>DecayAnalyzer</b><br/>Find at-risk<br/>memories"]
+    cluster["<b>ClusterDetector</b><br/>Find similar<br/>groups"]
+    merge["<b>SemanticMerge</b><br/>Combine<br/>similar groups"]
+    promote["<b>LTMPromoter</b><br/>Promote<br/>to LTM"]
+    relations["<b>RelationshipDiscovery</b><br/>Discover cross-<br/>domain links"]
+    
+    decay --> cluster
+    cluster --> merge
+    merge --> promote
+    promote --> relations
+    relations -.->|feedback| decay
+    
+    style decay fill:#ffebee,stroke:#b71c1c,stroke-width:2px
+    style cluster fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    style merge fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    style promote fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
+    style relations fill:#e1f5fe,stroke:#01579b,stroke-width:2px
 ```
 
 **The Five Agents:**

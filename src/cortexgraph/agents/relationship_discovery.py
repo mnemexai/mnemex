@@ -27,19 +27,11 @@ from cortexgraph.agents.beads_integration import (
     create_consolidation_issue,
 )
 from cortexgraph.agents.models import RelationResult
+from cortexgraph.agents.storage_utils import get_storage
 from cortexgraph.storage.models import MemoryStatus, Relation
 
 if TYPE_CHECKING:
-    from cortexgraph.storage.jsonl_storage import JSONLStorage
     from cortexgraph.storage.models import Memory
-
-
-def get_storage() -> JSONLStorage:
-    """Get storage instance. Separated for testability."""
-    from cortexgraph.context import get_db
-
-    return get_db()
-
 
 logger = logging.getLogger(__name__)
 

@@ -28,20 +28,13 @@ from cortexgraph.agents.beads_integration import (
     create_consolidation_issue,
 )
 from cortexgraph.agents.models import PromotionResult
+from cortexgraph.agents.storage_utils import get_storage
 from cortexgraph.core.scoring import should_promote
 from cortexgraph.storage.models import MemoryStatus
 from cortexgraph.vault.markdown_writer import MarkdownWriter
 
 if TYPE_CHECKING:
-    from cortexgraph.storage.jsonl_storage import JSONLStorage
     from cortexgraph.storage.models import Memory
-
-
-def get_storage() -> JSONLStorage:
-    """Get storage instance. Separated for testability."""
-    from cortexgraph.context import get_db
-
-    return get_db()
 
 
 def get_vault_path() -> Path:

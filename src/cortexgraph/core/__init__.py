@@ -9,6 +9,7 @@ from .pagination import (
     validate_pagination_params,
 )
 from .scoring import should_forget, should_promote
+from .text_utils import truncate_content
 
 __all__ = [
     "calculate_score",
@@ -20,4 +21,5 @@ __all__ = [
     "validate_pagination_params",
     "DEFAULT_PAGE_SIZE",
     "MAX_PAGE_SIZE",
+    "truncate_content",
 ]

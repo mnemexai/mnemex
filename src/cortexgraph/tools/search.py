@@ -9,6 +9,7 @@ from ..core.clustering import cosine_similarity, text_similarity
 from ..core.decay import calculate_score
 from ..core.pagination import paginate_list, validate_pagination_params
 from ..core.review import blend_search_results, get_memories_due_for_review
+from ..core.text_utils import truncate_content
 from ..performance import time_operation
 from ..security.validators import (
     MAX_CONTENT_LENGTH,
@@ -69,23 +70,6 @@ def _generate_query_embedding(query: str) -> list[float] | None:
         return cast(list[float], embedding.tolist())
     except Exception:
         return None
-
-
-def _truncate_content(content: str, max_length: int | None) -> str:
-    """
-    Truncate content to specified length with ellipsis.
-
-    Args:
-        content: The content to truncate.
-        max_length: Maximum length (None or 0 = no truncation).
-
-    Returns:
-        Truncated content with "..." appended if truncated.
-    """
-    if max_length is None or max_length == 0 or len(content) <= max_length:
-        return content
-
-    return content[:max_length].rstrip() + "..."
 
 
 @mcp.tool()

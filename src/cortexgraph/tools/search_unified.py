@@ -7,6 +7,7 @@ from ..config import get_config
 from ..context import db, mcp
 from ..core.decay import calculate_score
 from ..core.pagination import paginate_list, validate_pagination_params
+from ..core.text_utils import truncate_content
 from ..performance import time_operation
 from ..security.validators import (
     MAX_CONTENT_LENGTH,
@@ -20,23 +21,6 @@ from ..security.validators import (
 )
 from ..storage.ltm_index import LTMIndex
 from ..storage.models import MemoryStatus
-
-
-def _truncate_content(content: str, max_length: int | None) -> str:
-    """
-    Truncate content to specified length with ellipsis.
-
-    Args:
-        content: The content to truncate.
-        max_length: Maximum length (None or 0 = no truncation).
-
-    Returns:
-        Truncated content with "..." appended if truncated.
-    """
-    if max_length is None or max_length == 0 or len(content) <= max_length:
-        return content
-
-    return content[:max_length].rstrip() + "..."
 
 
 class UnifiedSearchResult:

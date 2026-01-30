@@ -31,6 +31,7 @@ from cortexgraph.agents.beads_integration import (
     query_consolidation_issues,
 )
 from cortexgraph.agents.models import MergeResult
+from cortexgraph.agents.storage_utils import get_storage
 from cortexgraph.core.consolidation import (
     calculate_merged_strength,
     merge_content_smart,
@@ -38,17 +39,6 @@ from cortexgraph.core.consolidation import (
     merge_metadata,
 )
 from cortexgraph.storage.models import Memory, MemoryStatus, Relation
-
-if TYPE_CHECKING:
-    from cortexgraph.storage.jsonl_storage import JSONLStorage
-
-
-def get_storage() -> JSONLStorage:
-    """Get storage instance. Separated for testability."""
-    from cortexgraph.context import get_db
-
-    return get_db()
-
 
 logger = logging.getLogger(__name__)
 

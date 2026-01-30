@@ -21,20 +21,11 @@ from typing import TYPE_CHECKING
 
 from cortexgraph.agents.base import ConsolidationAgent
 from cortexgraph.agents.models import ClusterAction, ClusterResult
+from cortexgraph.agents.storage_utils import get_storage
 from cortexgraph.core.clustering import cluster_memories_simple
 from cortexgraph.storage.models import ClusterConfig
 
-if TYPE_CHECKING:
-    from cortexgraph.storage.jsonl_storage import JSONLStorage
-
 logger = logging.getLogger(__name__)
-
-
-def get_storage() -> JSONLStorage:
-    """Get storage instance. Separated for testability."""
-    from cortexgraph.context import get_db
-
-    return get_db()
 
 
 # =============================================================================
