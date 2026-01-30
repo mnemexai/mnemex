@@ -3,7 +3,7 @@
 import uuid
 
 from ..storage.models import Cluster, ClusterConfig, Memory
-from .similarity import calculate_centroid, cosine_similarity, text_similarity, tokenize_text
+from .similarity import calculate_centroid, cosine_similarity, text_similarity
 
 
 def cluster_memories_simple(memories: list[Memory], config: ClusterConfig) -> list[Cluster]:

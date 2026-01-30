@@ -21,14 +21,14 @@ from ..security.validators import (
 from ..storage.models import Memory, MemoryMetadata
 
 if TYPE_CHECKING:
-    from sentence_transformers import SentenceTransformer
+    from sentence_transformers import SentenceTransformer  # type: ignore[import-untyped]
 
 logger = logging.getLogger(__name__)
 
 # Optional dependency for embeddings
 _SentenceTransformer: "type[SentenceTransformer] | None"
 try:
-    from sentence_transformers import SentenceTransformer
+    from sentence_transformers import SentenceTransformer  # type: ignore[import-untyped]
 
     _SentenceTransformer = SentenceTransformer
     SENTENCE_TRANSFORMERS_AVAILABLE = True

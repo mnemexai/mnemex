@@ -5,7 +5,6 @@ for STM and unified search operations to eliminate duplication.
 """
 
 from dataclasses import dataclass
-from typing import Any
 
 from ..config import get_config
 from ..security.validators import (

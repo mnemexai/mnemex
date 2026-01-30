@@ -6,12 +6,12 @@ from ..context import db, mcp
 from ..security.validators import validate_positive_int
 
 if TYPE_CHECKING:
-    from sentence_transformers import SentenceTransformer
+    from sentence_transformers import SentenceTransformer  # type: ignore[import-untyped]
 
 # Optional dependency for embeddings
 _SentenceTransformer: "type[SentenceTransformer] | None"
 try:
-    from sentence_transformers import SentenceTransformer
+    from sentence_transformers import SentenceTransformer  # type: ignore[import-untyped]
 
     _SentenceTransformer = SentenceTransformer
     SENTENCE_TRANSFORMERS_AVAILABLE = True

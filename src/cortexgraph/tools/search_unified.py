@@ -11,7 +11,6 @@ from ..core.search_common import is_pagination_requested, validate_search_params
 from ..core.text_utils import truncate_content
 from ..performance import time_operation
 from ..storage.ltm_index import LTMIndex
-from ..storage.models import MemoryStatus
 
 
 def _search_stm(
@@ -27,7 +26,7 @@ def _search_stm(
     Returns:
         List of UnifiedSearchResult objects from STM
     """
-    results: list["UnifiedSearchResult"] = []
+    results: list[UnifiedSearchResult] = []
 
     try:
         stm_memories = db.search_memories(
@@ -81,7 +80,7 @@ def _search_ltm(
     Returns:
         List of UnifiedSearchResult objects from LTM
     """
-    results: list["UnifiedSearchResult"] = []
+    results: list[UnifiedSearchResult] = []
 
     try:
         config = get_config()
@@ -147,7 +146,7 @@ def _deduplicate_results(
         Deduplicated list of results
     """
     seen_content = set()
-    deduplicated: list["UnifiedSearchResult"] = []
+    deduplicated: list[UnifiedSearchResult] = []
     for result in results:
         dedup_key = result.content[:100].lower().strip()
         if dedup_key not in seen_content:

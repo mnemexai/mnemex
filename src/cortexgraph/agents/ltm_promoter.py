@@ -34,6 +34,7 @@ from cortexgraph.storage.models import MemoryStatus
 from cortexgraph.vault.markdown_writer import MarkdownWriter
 
 if TYPE_CHECKING:
+    from cortexgraph.storage.jsonl_storage import JSONLStorage
     from cortexgraph.storage.models import Memory
 
 
@@ -75,13 +76,13 @@ class LTMPromoter(ConsolidationAgent[PromotionResult]):
             vault_path: Path to Obsidian vault (defaults to LTM_VAULT_PATH env var)
         """
         super().__init__(dry_run=dry_run, rate_limit=rate_limit)
-        self._storage: JSONLStorage | None = None
+        self._storage: "JSONLStorage | None" = None
         self._writer: MarkdownWriter | None = None
         self._vault_path = vault_path or get_vault_path()
         self._promotion_candidates: dict[str, tuple[bool, str, float]] = {}
 
     @property
-    def storage(self) -> JSONLStorage:
+    def storage(self) -> "JSONLStorage":
         """Get storage instance (lazy initialization)."""
         if self._storage is None:
             self._storage = get_storage()
@@ -118,7 +119,7 @@ class LTMPromoter(ConsolidationAgent[PromotionResult]):
             # Try storage methods for real storage
             try:
                 if hasattr(self.storage, "get_all_memories"):
-                    memories = {m.id: m for m in self.storage.get_all_memories()}
+                    memories = {m.id: m for m in self.storage.get_all_memories()}  # type: ignore[attr-defined]
             except RuntimeError:
                 logger.warning("Storage not connected, cannot scan")
                 return []

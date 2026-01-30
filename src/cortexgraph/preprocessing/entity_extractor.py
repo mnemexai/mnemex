@@ -11,6 +11,12 @@ Phase 1 Implementation (v0.6.0):
 """
 
 import re
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from spacy.language import Language
+
+spacy: Any = None
 
 try:
     import spacy
@@ -42,7 +48,7 @@ class EntityExtractor:
             model_name: spaCy model to use (default: en_core_web_sm)
                        Download with: python -m spacy download en_core_web_sm
         """
-        self.nlp: Language | None = None
+        self.nlp: "Language | None" = None
 
         if SPACY_AVAILABLE:
             try:

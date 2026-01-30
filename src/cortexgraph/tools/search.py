@@ -12,15 +12,15 @@ from ..core.search_common import is_pagination_requested, validate_search_params
 from ..core.similarity import cosine_similarity, text_similarity
 from ..core.text_utils import truncate_content
 from ..performance import time_operation
-from ..storage.models import MemoryStatus, SearchResult
+from ..storage.models import SearchResult
 
 if TYPE_CHECKING:
-    from sentence_transformers import SentenceTransformer
+    from sentence_transformers import SentenceTransformer  # type: ignore[import-untyped]
 
 # Optional dependency for embeddings
 _SentenceTransformer: "type[SentenceTransformer] | None"
 try:
-    from sentence_transformers import SentenceTransformer
+    from sentence_transformers import SentenceTransformer  # type: ignore[import-untyped]
 
     _SentenceTransformer = SentenceTransformer
     SENTENCE_TRANSFORMERS_AVAILABLE = True

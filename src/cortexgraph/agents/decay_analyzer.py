@@ -32,6 +32,7 @@ from cortexgraph.agents.storage_utils import get_storage
 from cortexgraph.core.decay import calculate_score
 
 if TYPE_CHECKING:
+    from cortexgraph.storage.jsonl_storage import JSONLStorage
     from cortexgraph.storage.models import Memory
 
 logger = logging.getLogger(__name__)
@@ -72,10 +73,10 @@ class DecayAnalyzer(ConsolidationAgent[DecayResult]):
         """
         super().__init__(dry_run=dry_run, rate_limit=rate_limit)
         self.scan_threshold = scan_threshold
-        self._storage: JSONLStorage | None = None
+        self._storage: "JSONLStorage | None" = None
 
     @property
-    def storage(self) -> JSONLStorage:
+    def storage(self) -> "JSONLStorage":
         """Get storage, initializing lazily."""
         if self._storage is None:
             self._storage = get_storage()
