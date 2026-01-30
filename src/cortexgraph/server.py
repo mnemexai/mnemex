@@ -1,5 +1,6 @@
 """MCP Server entry point for CortexGraph."""
 
+import argparse
 import logging
 import sys
 from pathlib import Path
@@ -53,6 +54,30 @@ logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
+
+
+def get_version() -> str:
+    """Get version from pyproject.toml."""
+    try:
+        # Try Python 3.11+ built-in tomllib
+        try:
+            import tomllib
+        except ImportError:
+            # Fall back to toml package for older Python
+            import tomli as tomllib  # type: ignore
+
+        # Find pyproject.toml relative to this file
+        project_root = Path(__file__).parent.parent.parent
+        pyproject_path = project_root / "pyproject.toml"
+
+        if pyproject_path.exists():
+            with open(pyproject_path, "rb") as f:
+                pyproject_data = tomllib.load(f)
+                return pyproject_data.get("project", {}).get("version", "unknown")
+    except Exception as e:
+        logger.debug(f"Could not read version from pyproject.toml: {e}")
+
+    return "unknown"
 
 
 def initialize_server() -> None:
@@ -145,6 +170,18 @@ def initialize_server() -> None:
 
 def main_sync() -> None:
     """Synchronous entry point for the server."""
+    parser = argparse.ArgumentParser(
+        description="CortexGraph: Temporal memory management for AI assistants"
+    )
+    parser.add_argument(
+        "-v",
+        "--version",
+        action="version",
+        version=f"cortexgraph {get_version()}",
+    )
+
+    parser.parse_args()
+
     try:
         initialize_server()
         mcp.run()
