@@ -275,8 +275,9 @@ def execute_consolidation(
     # (storage enforces foreign key constraints)
     from ..storage.models import Relation
 
-    for orig_id in original_ids:
-        relation = Relation(
+    # Batch create relations for better performance
+    relations = [
+        Relation(
             id=str(uuid.uuid4()),
             from_memory_id=consolidated_memory.id,
             to_memory_id=orig_id,
@@ -288,11 +289,12 @@ def execute_consolidation(
                 "cluster_cohesion": cluster.cohesion,
             },
         )
-        storage.create_relation(relation)
+        for orig_id in original_ids
+    ]
+    storage.create_relations_batch(relations)
 
-    # Mark original memories as consolidated (delete them after relations created)
-    for orig_id in original_ids:
-        storage.delete_memory(orig_id)
+    # Mark original memories as consolidated (batch delete for better performance)
+    storage.delete_memories_batch(original_ids)
 
     return {
         "success": True,
