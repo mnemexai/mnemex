@@ -241,6 +241,46 @@ The natural spaced repetition system works entirely through conversation:
 
 **No explicit review commands. No interruptions. Just natural strengthening through use.**
 
+## Core Module Organization (v1.2.0+)
+
+The `cortexgraph.core` package contains foundational algorithms organized into focused modules:
+
+| Module | Purpose |
+|--------|---------|
+| `decay.py` | Temporal decay calculations (power-law, exponential, two-component) |
+| `similarity.py` | Similarity metrics (`cosine_similarity`, `jaccard_similarity`, `tfidf_similarity`, `text_similarity`) |
+| `clustering.py` | Memory clustering logic using similarity functions |
+| `consolidation.py` | Memory merging algorithms with batch operations |
+| `search_common.py` | Shared search validation (`SearchParams`, `validate_search_params`) |
+| `text_utils.py` | Text processing utilities (`truncate_content`) |
+| `pagination.py` | Pagination helpers |
+| `scoring.py` | Score-based decision functions |
+
+### Agent Utilities
+
+The `cortexgraph.agents` package includes:
+
+| Module | Purpose |
+|--------|---------|
+| `storage_utils.py` | Shared storage access (`get_storage()`) |
+| `base.py` | Base agent class for consolidation pipeline |
+| Individual agents | `decay_analyzer.py`, `cluster_detector.py`, `semantic_merge.py`, etc. |
+
+All core functions are re-exported from `cortexgraph.core` for convenient imports:
+
+```python
+from cortexgraph.core import (
+    cosine_similarity,
+    jaccard_similarity,
+    text_similarity,
+    truncate_content,
+    SearchParams,
+    validate_search_params,
+)
+
+from cortexgraph.agents import get_storage
+```
+
 ## System Architecture
 
 ### Layers
@@ -373,11 +413,14 @@ Return statistics
 
 ### Similarity-Based Clustering
 
+Uses functions from `cortexgraph.core.similarity`:
+
 1. **Embedding Generation**: Use sentence-transformers to create vectors
-2. **Pairwise Similarity**: Calculate cosine similarity between memories
-3. **Linking**: Connect memories with similarity > threshold (default: 0.83)
-4. **Cluster Formation**: Single-linkage clustering
-5. **Cohesion Calculation**: Average intra-cluster similarity
+2. **Pairwise Similarity**: Calculate `cosine_similarity()` between memory embeddings
+3. **Fallback**: Use `text_similarity()` (Jaccard-based) when embeddings unavailable
+4. **Linking**: Connect memories with similarity > threshold (default: 0.83)
+5. **Cluster Formation**: Single-linkage clustering
+6. **Cohesion Calculation**: Average intra-cluster similarity via `calculate_centroid()`
 
 ### Cluster Actions
 

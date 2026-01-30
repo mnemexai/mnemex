@@ -84,6 +84,15 @@ This repository contains research, design, and a complete implementation of a sh
 - **Git-friendly storage** with human-readable JSONL
 - **Knowledge graph** with entities and relations
 
+### Module Organization
+
+CortexGraph follows a modular architecture:
+
+- **`cortexgraph.core`**: Foundational algorithms (decay, similarity, clustering, consolidation, search validation)
+- **`cortexgraph.agents`**: Multi-agent consolidation pipeline and storage utilities
+- **`cortexgraph.storage`**: JSONL and SQLite storage backends with batch operations
+- **`cortexgraph.tools`**: MCP tool implementations
+
 ## Why CortexGraph?
 
 ### 🔒 Privacy & Transparency

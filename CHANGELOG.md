@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-01-30
+
+### Changed
+
+- **Code Consolidation & Optimization** - Major internal refactoring for better maintainability
+  - Extracted similarity functions into dedicated `cortexgraph.core.similarity` module
+  - Consolidated search validation into `cortexgraph.core.search_common` module
+  - Created `cortexgraph.core.text_utils` for shared text utilities
+  - Created `cortexgraph.agents.storage_utils` for agent storage access
+  - Refactored `search_unified.py` into smaller, testable functions (`_search_stm()`, `_search_ltm()`, `_deduplicate_results()`)
+  - Reduced `clustering.py` from ~290 to ~110 lines
+
+### Added
+
+- **Batch Storage Operations** - Performance improvements for bulk operations
+  - `JSONLStorage.create_relations_batch()` - Create multiple relations atomically
+  - `JSONLStorage.delete_memories_batch()` - Delete multiple memories atomically
+  - Consolidation now uses batch operations for faster execution
+
+### Notes
+
+- No breaking API changes - all existing imports continue to work
+- New module exports available via `cortexgraph.core` and `cortexgraph.agents`
+
 ## [0.6.9] - 2025-11-19
 
 ### Added
