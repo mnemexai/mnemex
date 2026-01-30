@@ -16,8 +16,6 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from spacy.language import Language
 
-spacy: Any = None
-
 try:
     import spacy
     from spacy.language import Language
