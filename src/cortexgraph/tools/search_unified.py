@@ -7,18 +7,9 @@ from ..config import get_config
 from ..context import db, mcp
 from ..core.decay import calculate_score
 from ..core.pagination import paginate_list, validate_pagination_params
+from ..core.search_common import is_pagination_requested, validate_search_params
 from ..core.text_utils import truncate_content
 from ..performance import time_operation
-from ..security.validators import (
-    MAX_CONTENT_LENGTH,
-    MAX_TAGS_COUNT,
-    validate_list_length,
-    validate_positive_int,
-    validate_score,
-    validate_status,
-    validate_string_length,
-    validate_tag,
-)
 from ..storage.ltm_index import LTMIndex
 from ..storage.models import MemoryStatus
 
@@ -100,27 +91,18 @@ def search_unified(
     Raises:
         ValueError: Invalid parameters.
     """
-    # Input validation
-    if query is not None:
-        query = validate_string_length(query, MAX_CONTENT_LENGTH, "query", allow_none=True)
-
-    if tags is not None:
-        tags = validate_list_length(tags, MAX_TAGS_COUNT, "tags")
-        tags = [validate_tag(tag, f"tags[{i}]") for i, tag in enumerate(tags)]
-
-    # Validate status
-    search_status: list[MemoryStatus] | MemoryStatus
-    if status is None:
-        search_status = [MemoryStatus.ACTIVE, MemoryStatus.PROMOTED]
-    elif isinstance(status, list):
-        status = validate_list_length(status, 5, "status")
-        search_status = [
-            MemoryStatus(validate_status(s, f"status[{i}]")) for i, s in enumerate(status)
-        ]
-    else:
-        search_status = MemoryStatus(validate_status(status, "status"))
-
-    limit = validate_positive_int(limit, "limit", min_value=1, max_value=100)
+    # Validate parameters using shared validation
+    params = validate_search_params(
+        query=query,
+        tags=tags,
+        status=status,
+        limit=limit,
+        window_days=window_days,
+        min_score=min_score,
+        preview_length=preview_length,
+        page=page,
+        page_size=page_size,
+    )
 
     # Weights can be higher than 1.0 to boost importance
     if not 0.0 <= stm_weight <= 2.0:
@@ -128,39 +110,21 @@ def search_unified(
     if not 0.0 <= ltm_weight <= 2.0:
         raise ValueError(f"ltm_weight must be between 0.0 and 2.0, got {ltm_weight}")
 
-    if window_days is not None:
-        window_days = validate_positive_int(window_days, "window_days", min_value=1, max_value=3650)
-
-    if min_score is not None:
-        min_score = validate_score(min_score, "min_score")
-
-    # Validate preview_length
-    if preview_length is not None:
-        preview_length = validate_positive_int(
-            preview_length, "preview_length", min_value=0, max_value=5000
-        )
-
-    # Only validate pagination if explicitly requested
-    pagination_requested = page is not None or page_size is not None
-
-    config = get_config()
-
-    # Use config default if preview_length not specified
-    if preview_length is None:
-        preview_length = config.search_default_preview_length
+    # Check if pagination was explicitly requested
+    pagination_requested = is_pagination_requested(page, page_size)
 
     results: list[UnifiedSearchResult] = []
 
     # Search STM
     try:
         stm_memories = db.search_memories(
-            tags=tags,
-            status=search_status,
-            window_days=window_days,
-            limit=limit * 2,
+            tags=params.tags,
+            status=params.status,
+            window_days=params.window_days,
+            limit=params.limit * 2,
         )
-        if query:
-            stm_memories = [m for m in stm_memories if query.lower() in m.content.lower()]
+        if params.query:
+            stm_memories = [m for m in stm_memories if params.query.lower() in m.content.lower()]
 
         now = int(time.time())
         for memory in stm_memories:
@@ -170,12 +134,12 @@ def search_unified(
                 strength=memory.strength,
                 now=now,
             )
-            if min_score is not None and score < min_score:
+            if params.min_score is not None and score < params.min_score:
                 continue
 
             results.append(
                 UnifiedSearchResult(
-                    content=_truncate_content(memory.content, preview_length),
+                    content=truncate_content(memory.content, params.preview_length),
                     title=f"Memory {memory.id[:8]}",
                     source="stm",
                     score=score * stm_weight,
@@ -190,6 +154,7 @@ def search_unified(
 
     # Search LTM (lazy loading)
     try:
+        config = get_config()
         if config.ltm_vault_path and config.ltm_vault_path.exists():
             ltm_index = LTMIndex(vault_path=config.ltm_vault_path)
 
@@ -214,17 +179,19 @@ def search_unified(
             # Load and search index if it exists
             if ltm_index.index_path.exists():
                 ltm_index.load_index()
-                ltm_docs = ltm_index.search(query=query, tags=tags, limit=limit * 2)
+                ltm_docs = ltm_index.search(
+                    query=params.query, tags=params.tags, limit=params.limit * 2
+                )
                 for doc in ltm_docs:
                     relevance_score = 0.5
-                    if query:
-                        title_match = 2.0 if query.lower() in doc.title.lower() else 0.0
-                        content_match = 1.0 if query.lower() in doc.content.lower() else 0.0
+                    if params.query:
+                        title_match = 2.0 if params.query.lower() in doc.title.lower() else 0.0
+                        content_match = 1.0 if params.query.lower() in doc.content.lower() else 0.0
                         relevance_score = min(1.0, (title_match + content_match) / 3.0)
 
                     results.append(
                         UnifiedSearchResult(
-                            content=_truncate_content(doc.content, preview_length),
+                            content=truncate_content(doc.content, params.preview_length),
                             title=doc.title,
                             source="ltm",
                             score=relevance_score * ltm_weight,
@@ -244,7 +211,7 @@ def search_unified(
         if dedup_key not in seen_content:
             seen_content.add(dedup_key)
             deduplicated.append(result)
-            if len(deduplicated) >= limit:
+            if len(deduplicated) >= params.limit:
                 break
 
     # Apply pagination only if requested

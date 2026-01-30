@@ -9,18 +9,9 @@ from ..core.clustering import cosine_similarity, text_similarity
 from ..core.decay import calculate_score
 from ..core.pagination import paginate_list, validate_pagination_params
 from ..core.review import blend_search_results, get_memories_due_for_review
+from ..core.search_common import is_pagination_requested, validate_search_params
 from ..core.text_utils import truncate_content
 from ..performance import time_operation
-from ..security.validators import (
-    MAX_CONTENT_LENGTH,
-    MAX_TAGS_COUNT,
-    validate_list_length,
-    validate_positive_int,
-    validate_score,
-    validate_status,
-    validate_string_length,
-    validate_tag,
-)
 from ..storage.models import MemoryStatus, SearchResult
 
 if TYPE_CHECKING:
@@ -109,66 +100,37 @@ def search_memory(
     Raises:
         ValueError: Invalid parameters.
     """
-    # Input validation
-    if query is not None:
-        query = validate_string_length(query, MAX_CONTENT_LENGTH, "query", allow_none=True)
+    # Validate parameters using shared validation
+    params = validate_search_params(
+        query=query,
+        tags=tags,
+        status=status,
+        limit=top_k,
+        window_days=window_days,
+        min_score=min_score,
+        preview_length=preview_length,
+        page=page,
+        page_size=page_size,
+        use_embeddings=use_embeddings,
+    )
 
-    if tags is not None:
-        tags = validate_list_length(tags, MAX_TAGS_COUNT, "tags")
-        tags = [validate_tag(tag, f"tags[{i}]") for i, tag in enumerate(tags)]
-
-    # Validate status
-    search_status: list[MemoryStatus] | MemoryStatus
-    if status is None:
-        search_status = [MemoryStatus.ACTIVE, MemoryStatus.PROMOTED]
-    elif isinstance(status, list):
-        status = validate_list_length(status, 5, "status")
-        search_status = [
-            MemoryStatus(validate_status(s, f"status[{i}]")) for i, s in enumerate(status)
-        ]
-    else:
-        search_status = MemoryStatus(validate_status(status, "status"))
-
-    top_k = validate_positive_int(top_k, "top_k", min_value=1, max_value=100)
-
-    if window_days is not None:
-        window_days = validate_positive_int(
-            window_days,
-            "window_days",
-            min_value=1,
-            max_value=3650,  # Max 10 years
-        )
-
-    if min_score is not None:
-        min_score = validate_score(min_score, "min_score")
-
-    # Validate preview_length
-    if preview_length is not None:
-        preview_length = validate_positive_int(
-            preview_length, "preview_length", min_value=0, max_value=5000
-        )
-
-    # Only validate pagination if explicitly requested
-    pagination_requested = page is not None or page_size is not None
-
-    config = get_config()
-
-    # Use config default if preview_length not specified
-    if preview_length is None:
-        preview_length = config.search_default_preview_length
+    # Check if pagination was explicitly requested
+    pagination_requested = is_pagination_requested(page, page_size)
 
     now = int(time.time())
 
     memories = db.search_memories(
-        tags=tags,
-        status=search_status,
-        window_days=window_days,
-        limit=top_k * 3,
+        tags=params.tags,
+        status=params.status,
+        window_days=params.window_days,
+        limit=params.limit * 3,
     )
 
     query_embed = None
-    if use_embeddings and query and config.enable_embeddings:
-        query_embed = _generate_query_embedding(query)
+    if params.use_embeddings and params.query:
+        config = get_config()
+        if config.enable_embeddings:
+            query_embed = _generate_query_embedding(params.query)
 
     results: list[SearchResult] = []
     for memory in memories:
@@ -179,7 +141,7 @@ def search_memory(
             now=now,
         )
 
-        if min_score is not None and score < min_score:
+        if params.min_score is not None and score < params.min_score:
             continue
 
         similarity = None
@@ -188,10 +150,10 @@ def search_memory(
             similarity = cosine_similarity(query_embed, memory.embed)
 
         relevance = 1.0
-        if query and not use_embeddings:
+        if params.query and not params.use_embeddings:
             # Fallback: Use Jaccard similarity for better semantic matching
             # This matches the sophisticated fallback in clustering.py
-            text_sim = text_similarity(query, memory.content)
+            text_sim = text_similarity(params.query, memory.content)
             # Scale to 1.0-2.0 range (0.0 similarity = 1.0 relevance, 1.0 similarity = 2.0 relevance)
             relevance = 1.0 + text_sim
 
@@ -204,11 +166,11 @@ def search_memory(
     results.sort(key=lambda r: r.score, reverse=True)
 
     # Natural spaced repetition: blend in review candidates
-    final_memories = [r.memory for r in results[:top_k]]
+    final_memories = [r.memory for r in results[: params.limit]]
 
-    if include_review_candidates and query:
+    if include_review_candidates and params.query:
         # Get memories for review queue matching search status
-        all_active = db.search_memories(status=search_status, limit=10000)
+        all_active = db.search_memories(status=params.status, limit=10000)
 
         # Get memories due for review
         review_queue = get_memories_due_for_review(all_active, min_priority=0.3, limit=20)
@@ -224,8 +186,8 @@ def search_memory(
                 if sim and sim > 0.6:  # Somewhat relevant
                     is_relevant = True
             # Fallback: Use Jaccard similarity for text matching
-            elif query:
-                text_sim = text_similarity(query, mem.content)
+            elif params.query:
+                text_sim = text_similarity(params.query, mem.content)
                 if text_sim > 0.3:  # Some token overlap
                     is_relevant = True
 
@@ -234,6 +196,7 @@ def search_memory(
 
         # Blend primary results with review candidates
         if relevant_reviews:
+            config = get_config()
             final_memories = blend_search_results(
                 final_memories,
                 relevant_reviews,
@@ -268,7 +231,7 @@ def search_memory(
             "results": [
                 {
                     "id": r.memory.id,
-                    "content": _truncate_content(r.memory.content, preview_length),
+                    "content": truncate_content(r.memory.content, params.preview_length),
                     "tags": r.memory.meta.tags,
                     "score": round(r.score, 4),
                     "similarity": round(r.similarity, 4) if r.similarity else None,
@@ -291,7 +254,7 @@ def search_memory(
             "results": [
                 {
                     "id": r.memory.id,
-                    "content": _truncate_content(r.memory.content, preview_length),
+                    "content": truncate_content(r.memory.content, params.preview_length),
                     "tags": r.memory.meta.tags,
                     "score": round(r.score, 4),
                     "similarity": round(r.similarity, 4) if r.similarity else None,

@@ -9,6 +9,7 @@ from .pagination import (
     validate_pagination_params,
 )
 from .scoring import should_forget, should_promote
+from .search_common import SearchParams, is_pagination_requested, validate_search_params
 from .text_utils import truncate_content
 
 __all__ = [
@@ -22,4 +23,7 @@ __all__ = [
     "DEFAULT_PAGE_SIZE",
     "MAX_PAGE_SIZE",
     "truncate_content",
+    "SearchParams",
+    "validate_search_params",
+    "is_pagination_requested",
 ]
