@@ -5,11 +5,11 @@ from typing import TYPE_CHECKING, Any, cast
 
 from ..config import get_config
 from ..context import db, mcp
-from ..core.clustering import cosine_similarity, text_similarity
 from ..core.decay import calculate_score
 from ..core.pagination import paginate_list, validate_pagination_params
 from ..core.review import blend_search_results, get_memories_due_for_review
 from ..core.search_common import is_pagination_requested, validate_search_params
+from ..core.similarity import cosine_similarity, text_similarity
 from ..core.text_utils import truncate_content
 from ..performance import time_operation
 from ..storage.models import MemoryStatus, SearchResult
