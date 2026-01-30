@@ -119,7 +119,7 @@ class LTMPromoter(ConsolidationAgent[PromotionResult]):
             # Try storage methods for real storage
             try:
                 if hasattr(self.storage, "get_all_memories"):
-                    memories = {m.id: m for m in self.storage.get_all_memories()}
+                    memories = {m.id: m for m in self.storage.get_all_memories()}  # pyright: ignore[reportAttributeAccessIssue]
             except RuntimeError:
                 logger.warning("Storage not connected, cannot scan")
                 return []

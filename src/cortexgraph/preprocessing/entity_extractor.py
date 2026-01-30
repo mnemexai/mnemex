@@ -11,17 +11,18 @@ Phase 1 Implementation (v0.6.0):
 """
 
 import re
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from spacy.language import Language
+    from spacy.language import Language  # pyright: ignore[reportMissingImports]
 
 try:
-    import spacy
-    from spacy.language import Language
+    import spacy  # pyright: ignore[reportMissingImports]
+    from spacy.language import Language  # pyright: ignore[reportMissingImports]
 
     SPACY_AVAILABLE = True
 except ImportError:
+    spacy = None  # type: ignore[assignment]
     SPACY_AVAILABLE = False
 
 
@@ -48,9 +49,9 @@ class EntityExtractor:
         """
         self.nlp: "Language | None" = None
 
-        if SPACY_AVAILABLE:
+        if SPACY_AVAILABLE and spacy is not None:
             try:
-                self.nlp = spacy.load(model_name)
+                self.nlp = spacy.load(model_name)  # pyright: ignore[reportOptionalMemberAccess]
             except OSError:
                 # Model not downloaded - will use fallback patterns
                 pass

@@ -105,7 +105,7 @@ class RelationshipDiscovery(ConsolidationAgent[RelationResult]):
                 if hasattr(self.storage, "list_memories"):
                     memories = {m.id: m for m in self.storage.list_memories()}
                 elif hasattr(self.storage, "get_all_memories"):
-                    memories = {m.id: m for m in self.storage.get_all_memories()}
+                    memories = {m.id: m for m in self.storage.get_all_memories()}  # pyright: ignore[reportAttributeAccessIssue]
             except RuntimeError:
                 logger.warning("Storage not connected, cannot scan")
                 return []
