@@ -14,6 +14,151 @@ from ..storage.ltm_index import LTMIndex
 from ..storage.models import MemoryStatus
 
 
+def _search_stm(
+    params,
+    stm_weight: float,
+) -> list["UnifiedSearchResult"]:
+    """Search short-term memory and return scored results.
+
+    Args:
+        params: Validated search parameters (SearchParams)
+        stm_weight: Weight multiplier for STM scores
+
+    Returns:
+        List of UnifiedSearchResult objects from STM
+    """
+    results: list["UnifiedSearchResult"] = []
+
+    try:
+        stm_memories = db.search_memories(
+            tags=params.tags,
+            status=params.status,
+            window_days=params.window_days,
+            limit=params.limit * 2,
+        )
+        if params.query:
+            stm_memories = [m for m in stm_memories if params.query.lower() in m.content.lower()]
+
+        now = int(time.time())
+        for memory in stm_memories:
+            score = calculate_score(
+                use_count=memory.use_count,
+                last_used=memory.last_used,
+                strength=memory.strength,
+                now=now,
+            )
+            if params.min_score is not None and score < params.min_score:
+                continue
+
+            results.append(
+                UnifiedSearchResult(
+                    content=truncate_content(memory.content, params.preview_length),
+                    title=f"Memory {memory.id[:8]}",
+                    source="stm",
+                    score=score * stm_weight,
+                    memory_id=memory.id,
+                    tags=memory.meta.tags,
+                    created_at=memory.created_at,
+                    last_used=memory.last_used,
+                )
+            )
+    except Exception as e:
+        print(f"Warning: STM search failed: {e}")
+
+    return results
+
+
+def _search_ltm(
+    params,
+    ltm_weight: float,
+) -> list["UnifiedSearchResult"]:
+    """Search long-term memory and return scored results.
+
+    Args:
+        params: Validated search parameters (SearchParams)
+        ltm_weight: Weight multiplier for LTM scores
+
+    Returns:
+        List of UnifiedSearchResult objects from LTM
+    """
+    results: list["UnifiedSearchResult"] = []
+
+    try:
+        config = get_config()
+        if config.ltm_vault_path and config.ltm_vault_path.exists():
+            ltm_index = LTMIndex(vault_path=config.ltm_vault_path)
+
+            # Check if index exists and is fresh
+            index_needs_rebuild = False
+            if not ltm_index.index_path.exists():
+                index_needs_rebuild = True
+            else:
+                index_age = time.time() - ltm_index.index_path.stat().st_mtime
+                if index_age >= config.ltm_index_max_age_seconds:
+                    index_needs_rebuild = True
+
+            # Auto-rebuild stale or missing index
+            if index_needs_rebuild:
+                try:
+                    ltm_index.build_index(force=False, verbose=False)
+                except Exception as e:
+                    print(f"Warning: Failed to rebuild LTM index: {e}")
+
+            # Load and search index if it exists
+            if ltm_index.index_path.exists():
+                ltm_index.load_index()
+                ltm_docs = ltm_index.search(
+                    query=params.query, tags=params.tags, limit=params.limit * 2
+                )
+                for doc in ltm_docs:
+                    relevance_score = 0.5
+                    if params.query:
+                        title_match = 2.0 if params.query.lower() in doc.title.lower() else 0.0
+                        content_match = 1.0 if params.query.lower() in doc.content.lower() else 0.0
+                        relevance_score = min(1.0, (title_match + content_match) / 3.0)
+
+                    results.append(
+                        UnifiedSearchResult(
+                            content=truncate_content(doc.content, params.preview_length),
+                            title=doc.title,
+                            source="ltm",
+                            score=relevance_score * ltm_weight,
+                            path=doc.path,
+                            tags=doc.tags,
+                        )
+                    )
+    except Exception as e:
+        print(f"Warning: LTM search failed: {e}")
+
+    return results
+
+
+def _deduplicate_results(
+    results: list["UnifiedSearchResult"],
+    limit: int,
+) -> list["UnifiedSearchResult"]:
+    """Remove duplicate results based on content prefix.
+
+    Args:
+        results: List of search results (assumed sorted by score)
+        limit: Maximum number of results to keep
+
+    Returns:
+        Deduplicated list of results
+    """
+    seen_content = set()
+    deduplicated: list["UnifiedSearchResult"] = []
+    for result in results:
+        dedup_key = result.content[:100].lower().strip()
+        if dedup_key not in seen_content:
+            seen_content.add(dedup_key)
+            deduplicated.append(result)
+            if len(deduplicated) >= limit:
+                break
+
+    return deduplicated
+
+
 class UnifiedSearchResult:
     """Result from unified search across STM and LTM."""
 
@@ -113,106 +258,16 @@ def search_unified(
     # Check if pagination was explicitly requested
     pagination_requested = is_pagination_requested(page, page_size)
 
-    results: list[UnifiedSearchResult] = []
+    # Search both STM and LTM
+    stm_results = _search_stm(params, stm_weight)
+    ltm_results = _search_ltm(params, ltm_weight)
 
-    # Search STM
-    try:
-        stm_memories = db.search_memories(
-            tags=params.tags,
-            status=params.status,
-            window_days=params.window_days,
-            limit=params.limit * 2,
-        )
-        if params.query:
-            stm_memories = [m for m in stm_memories if params.query.lower() in m.content.lower()]
+    # Combine and sort by score
+    all_results = stm_results + ltm_results
+    all_results.sort(key=lambda r: r.score, reverse=True)
 
-        now = int(time.time())
-        for memory in stm_memories:
-            score = calculate_score(
-                use_count=memory.use_count,
-                last_used=memory.last_used,
-                strength=memory.strength,
-                now=now,
-            )
-            if params.min_score is not None and score < params.min_score:
-                continue
-
-            results.append(
-                UnifiedSearchResult(
-                    content=truncate_content(memory.content, params.preview_length),
-                    title=f"Memory {memory.id[:8]}",
-                    source="stm",
-                    score=score * stm_weight,
-                    memory_id=memory.id,
-                    tags=memory.meta.tags,
-                    created_at=memory.created_at,
-                    last_used=memory.last_used,
-                )
-            )
-    except Exception as e:
-        print(f"Warning: STM search failed: {e}")
-
-    # Search LTM (lazy loading)
-    try:
-        config = get_config()
-        if config.ltm_vault_path and config.ltm_vault_path.exists():
-            ltm_index = LTMIndex(vault_path=config.ltm_vault_path)
-
-            # Check if index exists and is fresh
-            index_needs_rebuild = False
-            if not ltm_index.index_path.exists():
-                # No index exists, need to build it
-                index_needs_rebuild = True
-            else:
-                # Check if index is stale (older than configured max age)
-                index_age = time.time() - ltm_index.index_path.stat().st_mtime
-                if index_age >= config.ltm_index_max_age_seconds:
-                    index_needs_rebuild = True
-
-            # Auto-rebuild stale or missing index
-            if index_needs_rebuild:
-                try:
-                    ltm_index.build_index(force=False, verbose=False)  # Incremental rebuild
-                except Exception as e:
-                    print(f"Warning: Failed to rebuild LTM index: {e}")
-
-            # Load and search index if it exists
-            if ltm_index.index_path.exists():
-                ltm_index.load_index()
-                ltm_docs = ltm_index.search(
-                    query=params.query, tags=params.tags, limit=params.limit * 2
-                )
-                for doc in ltm_docs:
-                    relevance_score = 0.5
-                    if params.query:
-                        title_match = 2.0 if params.query.lower() in doc.title.lower() else 0.0
-                        content_match = 1.0 if params.query.lower() in doc.content.lower() else 0.0
-                        relevance_score = min(1.0, (title_match + content_match) / 3.0)
-
-                    results.append(
-                        UnifiedSearchResult(
-                            content=truncate_content(doc.content, params.preview_length),
-                            title=doc.title,
-                            source="ltm",
-                            score=relevance_score * ltm_weight,
-                            path=doc.path,
-                            tags=doc.tags,
-                        )
-                    )
-    except Exception as e:
-        print(f"Warning: LTM search failed: {e}")
-
-    results.sort(key=lambda r: r.score, reverse=True)
-
-    seen_content = set()
-    deduplicated: list[UnifiedSearchResult] = []
-    for result in results:
-        dedup_key = result.content[:100].lower().strip()
-        if dedup_key not in seen_content:
-            seen_content.add(dedup_key)
-            deduplicated.append(result)
-            if len(deduplicated) >= params.limit:
-                break
+    # Deduplicate results
+    deduplicated = _deduplicate_results(all_results, params.limit)
 
     # Apply pagination only if requested
     if pagination_requested:
