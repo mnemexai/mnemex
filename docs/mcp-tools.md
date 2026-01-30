@@ -695,5 +695,5 @@ Dictionary with:
 
 - [Architecture Documentation](architecture.md) - System design and components
 - [API Quick Reference](api.md) - Minimal tool signatures
-- [Configuration Guide](../README.md#configuration) - Environment variables and settings
+- [Configuration Guide](configuration.md) - Environment variables and settings
 - [GitHub Repository](https://github.com/simplemindedbot/cortexgraph) - Source code and issues
